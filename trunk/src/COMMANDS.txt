@@ -1,0 +1,211 @@
+Commands.txt
+--------------------------------------------------------------------------
+    This document provide information on how to use the commands and
+    search terms.
+    
+    Input commands into the command line located above the playlist.
+        use the up and down arrow keys to scroll through the list
+        of previously entered text.
+        
+    Input Searches into the search bar in the Library tab
+        all matching songs will appear instantly
+
+User Commands
+--------------------------------------------------------------------------
+ These are general commands for music playback
+ '--' denotes no input
+ 
+| Command   | Parameter | Description
+|-----------------------|-------------------------------------------------
+| play      | --        | same as pressing the play button
+| pause     | --        | same as pressing the pause button
+| playpause | --        | toggles state of playback
+| next      | --        | go to the next song
+| prev      | --        | go to the previous song
+| cont      | --        | 'Continue-Stop' Stops playback when the current song finishes
+| stop      | --        | stops playback and unloads the current song from memory. There is no equivalent button
+| volume    | dec:0-100 | Sets the volume of the player to the provided number. 
+|           |           | When no input is provided it displays the volume in the debug window.
+|           |           | 'vol' can be used as a shortcut
+| BLANK     | --        | When the line is blank and enter is pressed, the current song begins playing
+|           |           | if a new playlist was just made, then playback of the current song ends
+|           |           | and the first song of the new playlist is played
+
+
+PlayList Commands
+--------------------------------------------------------------------------
+ These commands are specific to interaction with the playlist
+ '--' denotes no input
+ 
+ For 'insert','new', and '.', type 'help command' in the player 
+    for more details
+ 
+ 
+| Command   | Parameter | Description
+|-----------------------|-------------------------------------------------
+| clear     | --        | clears the selection pool, clears all playlist settings
+|           |           |
+| hash      | integer   | builds a new playlist. each artist in the selection pool
+|           |           | will have no more than X number of songs in the playlist
+|           |           |
+| help      | command   | see documentation on each command in the debug window
+|           |           |
+| hook      | --        | begin detection of media key presses
+|           |           |
+| insert    | see help  | Parameters are identical to 'new' however the created playlist 
+|           |           | is then inserted after the current song.
+|           |           |
+| new       | see help  | Build a new playlist from songs in the selection pool
+|           |           | type 'help new' for more
+|           |           |
+| .         | see help  | A single period, acts the same as new
+| save      |           | save library data. Called automatically on player close
+|           |           |
+| undo      | --        | Allows undoing of certain actions, type 'help undo' 
+|           |           | for more disable detection of media key presses
+|           |           |
+| SEARCH    | see help  | Input any valid search and matching songs will be 
+|           |           | added to the selection pool. this is the same as 
+|           |           | entering the search into the search box and 
+|           |           | clicking the 'Select All' button.
+
+Special Commands
+--------------------------------------------------------------------------
+ More advanced commands.
+ '--' denotes no input
+ 
+| Command   | Parameter | Description
+|-----------------------|-------------------------------------------------
+| eval      | string    | evaluates the python expression, surround the string 
+|           |           | in double quotes
+|           |           |
+| exec      |           | executes the python expression, surround the string
+|           |           | in double quotes
+|           |           |
+| build     | integer   | Rebuilds the Quick Selection list. 
+|           |           | optional agrument will hide all artists whose song 
+|           |           | count is lower than input
+|           |           |
+| ss        | 1/0 or    | displays information on the Screen Saver service,
+|           |  on/off   | {0,1} to Disable/Enable; on/off to turn screen saver 
+|           |           | on or off
+|           |           |
+| print     | string    | see eval
+|           |           |
+| test      | user-def  | Prints the contents of the input object. Use to test
+|           |           | the command line 
+|           |           |    
+| state     | --        | Prints the current state of media to the debug window
+|           |           |
+
+
+--------------------------------------------------------------------------
+Searching the Library
+--------------------------------------------------------------------------
+    Type any song title, artist name, album, etc and all matching songs
+will instantly be displayed. You can refine your search by using the 
+search terms listed below. These allow you to define ranges on numerical
+data to be displayed. Multiple terms can be combined together to exclude
+or include any combination of songs.
+
+Searching is not case sensitive.
+Separate different search fields by commas.
+
+The Basics
+--------------------------------------------------------------------------
+What a 'Frame' is:
+    When you type in a search it is separated into frames by either commas or
+    semicolons. Each frame can search for exactly one type of meta data.
+    Change the search type by typing a DOT-WORD as the first word in the frame
+    If no DOT-WORD is supplied it defaults to .exif, which will search all text data.
+    
+    Any number of words can be put into a frame. if the word has a space in it
+    surround the word by quotes.
+    
+    You can refine the search by adding modifiers to each word in
+    the frame. Modifiers are any one of <, >, =, <=, >= and  stand for
+    Less Than, Greater Than, equal to, Less Than or Equal to and 
+    Greater than or Equal to.
+
+    Additionally you can perform logic operations with searches.
+    Using the symbols ! and + before a word in a frame (not DOT-WORD).
+    
+    Logical Not (!) : removes all matching songs
+    Logical Or  (+) : a song with any matching term will be included
+                (.) : resets the boolean logic to include all songs.
+                
+    NOTE: For Text Data, directional modifiers do not mean anything.
+        The Equals sign will however force songs to match exactly the entered term.
+        But only for the number of entered characters
+        EG: for two songs Sea of Sorrow, Seed to the Tree.
+            =se     :  matches both songs
+            =sea    :  matches only Sea of Sorrow.
+            
+    NOTE: prefixes carry on to the next word in the frame (left to right)
+        It is only required to type the prefix once, when a new prefix 
+        is encountered it will replace the old one.
+        
+    NOTE: Prefixes must go before directional modifiers.
+    
+    Examples:
+        Blind Melon
+            Search for all songs that contain both Blind and Melon
+            
+        .art "Stone Temple Pilots",.abm Core
+            Search for all songs that contain artist and album.
+            
+        .rte >1 <=4
+            Will return songs with a rating of 1,2,3 or 4.
+            
+        .gen +rock funk !jazz
+            Returns songs that have a genre of rock or funk, and are
+            not classified as jazz.
+            
+        .rte +>3; .freq +<44; len +>60 <180
+            Returns any song that match any one of:
+                rating >3
+                frequency <44
+                song length between 1 and 3 minutes.
+        .art =s
+            Returns all songs whose artist's first letter in the name
+                is the letter 'S'
+
+Search Terms:
+--------------------------------------------------------------------------
+    
+
+ Text Terms (Searching by Words):
+|---------|----------------------------------------------------------------
+|.art     | Search by Artist Name
+|.ttl     | Search by Song Title
+|.abm     | Search by Song Album
+|.gen     | Search by Genre
+
+|.comm    | Search by comments
+|.path    | Search by file path
+|.exif    | This is the default term, searches all text fields at the same time.
+
+ Number Terms (Searching by Numbers):
+|---------|----------------------------------------------------------------
+|.rte     | rating of the song, from 0 to 5
+|.len     | length of song in seconds (90 or 1:30 are valid)
+|.pcnt    | Play Count
+|.scnt    | Skip Count
+|.size    | Size of the file in KB.
+|.freq    | frequency
+
+ Date Specific 
+|---------|----------------------------------------------------------------
+|.date    | YYYY/MM/DD Searches for dates in the ISO 8601 standard format.
+|.dateeu  | DD/MM/YYYY Searches for dates using the common method.
+|.dateus  | MM/DD/YYYY Legacy formating
+|         |
+|.day     | Searches by how many days have passed since the song was last player.
+|.week    | same as day, but value is taken in terms of weeks
+|.month   | same as day, but value is taken in terms of months
+
+     
+    
+
+
+

@@ -1,0 +1,232 @@
+/* Custom Style Sheet							*/
+/* Interpreter Version: 1.1						*/
+/* File Name:								*/
+/* 	Main.css							*/
+/*									*/
+/* File Description:							*/
+/*	The Main.css File is loaded First. Remember that order matters. */
+/*	This file contains basic styling for all widgets used in the	*/
+/*	Application. Specialized styling for other widgets are found	*/
+/*	in their respective files					*/
+/*									*/
+/* Version Notes:							*/
+/*      Only one line comments are supported				*/
+/*	Comments must have opening '/*' and closing '*/' 		*/
+/*		characters - all on one line				*/
+/*									*/
+/*      Place images in ./style/images/					*/
+/*      path to images is: url(%IMAGE%image.png)			*/
+/*									*/
+/*      If a file named 'Main.css' exists, it will be loaded first 	*/
+/*	Files that contain the lowercase letter 'x' as the first 	*/
+/*		letter in the name will be ignored when styles 		*/
+/*		are being loaded					*/
+/* Examples:								*/
+/* http://web.mit.edu/qt-dynamic/www/stylesheet-examples.html -->  	*/
+/* http://web.mit.edu/qt-dynamic/www/stylesheet.html -->          	*/
+/* http://web.mit.edu/qt-dynamic/www/index.html -->               	*/
+
+* {
+    font-family: "%font_family%";
+    font-style:normal;
+    font-size:%font_size%px;
+}
+
+QMainWindow QLineEdit {
+    /*border: 2px solid %theme_border_color%;*/
+    /*border-radius: 6px;*/
+    padding: 0 4px;
+    
+    font-family: "%font_family%";
+    font-style:normal;
+    font-size:%font_size%px;
+}
+
+QPlainTextEdit {
+    font-family: "Lucida Console";
+    font-style:normal;
+    font-size:%font_size%px;
+}
+
+/* QLineEdit#Console {                          */
+/*     border: 2px solid %theme_border_color%;  */
+/*     border-top-left-radius: 2px;             */
+/*     border-top-right-radius: 2px;            */
+/*     border-bottom-left-radius: 0px ;         */
+/*     border-bottom-right-radius: 0px;         */
+/* 	padding: 0 4px;                             */
+/* }                                            */
+
+QLabel#ColorEditor {
+    border: 3px solid %theme_border_color%
+} 
+
+QPushButton#MpMediaPrev {
+    background-image: url(%IMAGE%mpmedia_prev.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+QPushButton#MpMediaNext {
+    background-image: url(%IMAGE%mpmedia_next.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+QPushButton#MpExplorer_Back{
+    
+    background-image: url(%IMAGE%mpmedia_prev.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+QPushButton#MpCloseTabButton {	
+	background-image: url(%IMAGE%mpclose_default.png);
+	background-repeat: no-repeat;
+	background-position: center;
+	border: 0px solid transparent;
+	border-radius: 0px;
+	background-color: transparent;
+}
+
+QPushButton#MpCloseTabButton:hover {
+    background-image: url(%IMAGE%mpclose_hover.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+QPushButton#MpCloseTabButton:pressed {	
+    background-image: url(%IMAGE%mpclose_down.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    border: 0px solid transparent;
+    border-radius: 0px;
+    background-color: transparent;
+}
+
+
+QScrollBar#MpMediaTime:horizontal {
+    border-top: 2px solid %theme_border_color%;
+    border-bottom: 2px solid %theme_border_color%;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 %theme_s_vdark%, stop: 0.7 %theme_s_dark%,
+                    stop: 1.0 %theme_s_vdark%);
+    height: 16px;
+    margin: 0px 8px 0px 8px;
+}
+
+QScrollBar#MpMediaTime::handle:horizontal {
+
+    /* background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,             */
+    /*                 stop: 0 %theme_p_dark%, stop: 0.4 %theme_s_mid%,    */
+    /*                 stop: 0.7 %theme_p_mid%, stop: 1.0 %theme_p_dark%); */
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0.0 %theme_p_dark%, 
+                    stop: 0.5 %theme_p_mid%, 
+                    stop: 1.0 %theme_p_dark%);
+
+    border: 2px solid %theme_p_dark%;
+    border-radius: 1px;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    /*  border-top-left-radius: 16px;        */
+    /*  border-top-right-radius: 16px;       */
+    /*  border-bottom-left-radius: 16px;     */
+    /*  border-bottom-right-radius: 16px;    */
+             
+    min-width: 8px;
+    max-width: 8px;
+}
+
+/*left button*/
+QScrollBar#MpMediaTime::sub-line:horizontal {
+    border-color: %theme_border_color%;
+    border: 1px solid;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+    border-right: 2px solid;
+    border-radius: 0px;
+    margin: -1px 0 -1px 0;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 %theme_s_dark%, stop: 0.3 %theme_s_mid%,
+                    stop: 1.0 %theme_s_dark%);
+    width: 10px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+
+/*right button*/
+QScrollBar#MpMediaTime::add-line:horizontal {
+    border-color: %theme_border_color%;
+    border: 1px solid;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+    border-left: 2px solid;
+    border-radius: 0px;
+    margin: -1px 0 -1px 0;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 %theme_s_dark%, stop: 0.3 %theme_s_mid%,
+                    stop: 1.0 %theme_s_dark%);
+    width: 10px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+    
+}
+
+QScrollBar#MpMediaTime::sub-line:horizontal:hover, QScrollBar#MpMediaTime::add-line:horizontal:hover  {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 %theme_s_mid%, stop: 0.5 %theme_s_light%,
+                    stop: 1.0 %theme_s_dark%);
+}
+
+QScrollBar#MpMediaTime::sub-line:horizontal:pressed, QScrollBar#MpMediaTime::add-line:horizontal:pressed  {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0 %theme_s_light%, stop: 0.5 %theme_s_dark%,
+                    stop: 1.0 %theme_s_mid%);
+}
+
+QScrollBar#MpMediaTime::left-arrow:horizontal, QScrollBar#MpMediaTime::right-arrow:horizontal {
+    border-image: none;
+    width: 0px;
+    height: 0px;
+}
+
+QScrollBar#MpMediaTime::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+/*************************************************/
+/*************************************************/
+/*************************************************/
+QSlider#MpMediaTime:horizontal {
+    /*border-top: 2px solid %theme_very_dark%;*/
+    /*border-bottom: 2px solid %theme_very_dark%;
+    /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,                   */
+    /*                stop: 0 %theme_s_vdark%, stop: 0.7 %theme_s_dark%,          */
+    /*                stop: 1.0 %theme_s_vdark%);                                 */
+    height: 16px;
+    margin: 0px 8px 0px 8px;
+}
+
+QSlider#MpMediaTime::handle:horizontal {
+
+    /* background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,             */
+    /*                 stop: 0 %theme_p_dark%, stop: 0.4 %theme_s_mid%,    */
+    /*                 stop: 0.7 %theme_p_mid%, stop: 1.0 %theme_p_dark%); */
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                    stop: 0.0 %theme_p_dark%, 
+                    stop: 0.5 %theme_p_mid%, 
+                    stop: 1.0 %theme_p_dark%);
+
+    border: 2px solid %theme_p_dark%;
+    border-radius: 1px;
+    margin-top: -2px;
+    margin-bottom: -2px;
+    /*  border-top-left-radius: 16px;        */
+    /*  border-top-right-radius: 16px;       */
+    /*  border-bottom-left-radius: 16px;     */
+    /*  border-bottom-right-radius: 16px;    */
+             
+    min-width: 8px;
+
+}
+
