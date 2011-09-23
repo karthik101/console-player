@@ -1,2 +1,0 @@
-copy "D:\\Dropbox\\ConsolePlayer\\user\\music.library" "D:\\Dropbox\\ConsolePlayer\\user\\backup\\%DATE%-music.library"
-copy "D:\\Dropbox\\ConsolePlayer\\user\\music.library" "D:\\Dropbox\\Scripting\\PyQt\\ConsolePlayer\\src\\user\\music.library"
