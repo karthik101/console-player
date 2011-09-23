@@ -1,0 +1,822 @@
+__main__: None -> <Module __main__ C:\Python27\Lib\site-packages\pyInstaller\support/_mountzlib.py imports=[('archive', 0, 0, -1), ('iu', 0, 0, -1), ('sys', 0, 0, -1)] binaries=[] datas=[]>
+archive: None -> <Module archive C:\Python27\Lib\site-packages\pyInstaller\archive.pyc imports=[('marshal', 0, 0, -1), ('struct', 0, 0, -1), ('imp', 0, 0, -1), ('sys', 0, 0, -1), ('iu', 0, 0, -1), ('imp', 1, 0, -1), ('os', 1, 1, -1), ('zlib', 1, 1, -1), ('AES', 1, 1, -1), ('os', 1, 1, -1)] binaries=[] datas=[]>
+iu: None -> <Module iu C:\Python27\Lib\site-packages\pyInstaller\iu.pyc imports=[('sys', 0, 0, -1), ('imp', 0, 0, -1), ('marshal', 0, 0, -1), ('zipimport', 0, 0, -1), ('win32api', 1, 0, -1), ('__builtin__', 1, 0, -1), ('posix', 1, 1, -1), ('posix.stat', 1, 1, -1), ('posix.getcwd', 1, 1, -1), ('posix.environ', 1, 1, -1), ('posix.listdir', 1, 1, -1), ('nt', 1, 1, -1), ('nt.stat', 1, 1, -1), ('nt.getcwd', 1, 1, -1), ('nt.environ', 1, 1, -1), ('nt.listdir', 1, 1, -1), ('dos', 1, 1, -1), ('dos.stat', 1, 1, -1), ('dos.getcwd', 1, 1, -1), ('dos.environ', 1, 1, -1), ('dos.listdir', 1, 1, -1), ('os2', 1, 1, -1), ('os2.stat', 1, 1, -1), ('os2.getcwd', 1, 1, -1), ('os2.environ', 1, 1, -1), ('os2.listdir', 1, 1, -1), ('mac', 1, 1, -1), ('mac.stat', 1, 1, -1), ('mac.getcwd', 1, 1, -1), ('mac.environ', 1, 1, -1), ('mac.listdir', 1, 1, -1)] binaries=[] datas=[]>
+sys: None -> <Module sys None imports=[] binaries=[] datas=[]>
+marshal: None -> <Module marshal None imports=[] binaries=[] datas=[]>
+struct: None -> <Module struct C:\Python27\lib\struct.pyc imports=[('_struct', 0, 0, -1), ('_struct.*', 0, 0, -1), ('_struct', 0, 0, -1), ('_struct._clearcache', 0, 0, -1), ('_struct', 0, 0, -1), ('_struct.__doc__', 0, 0, -1)] binaries=[] datas=[]>
+imp: None -> <Module imp None imports=[] binaries=[] datas=[]>
+os: None -> <Module os C:\Python27\lib\os.pyc imports=[('sys', 0, 0, -1), ('errno', 0, 0, -1), ('posix', 0, 1, -1), ('posix.*', 0, 1, -1), ('posix', 0, 1, -1), ('posix._exit', 0, 1, -1), ('posixpath', 0, 1, -1), ('posix', 0, 1, -1), ('nt', 0, 1, -1), ('nt.*', 0, 1, -1), ('nt', 0, 1, -1), ('nt._exit', 0, 1, -1), ('ntpath', 0, 1, -1), ('nt', 0, 1, -1), ('os2', 0, 1, -1), ('os2.*', 0, 1, -1), ('os2', 0, 1, -1), ('os2._exit', 0, 1, -1), ('ntpath', 0, 1, -1), ('os2emxpath', 0, 1, -1), ('_emx_link', 0, 1, -1), ('_emx_link.link', 0, 1, -1), ('os2', 0, 1, -1), ('ce', 0, 1, -1), ('ce.*', 0, 1, -1), ('ce', 0, 1, -1), ('ce._exit', 0, 1, -1), ('ntpath', 0, 1, -1), ('ce', 0, 1, -1), ('riscos', 0, 1, -1), ('riscos.*', 0, 1, -1), ('riscos', 0, 1, -1), ('riscos._exit', 0, 1, -1), ('riscospath', 0, 1, -1), ('riscos', 0, 1, -1), ('os.path', 0, 0, -1), ('os.path.curdir', 0, 0, -1), ('os.path.pardir', 0, 0, -1), ('os.path.sep', 0, 0, -1), ('os.path.pathsep', 0, 0, -1), ('os.path.defpath', 0, 0, -1), ('os.path.extsep', 0, 0, -1), ('os.path.altsep', 0, 0, -1), ('os.path.devnull', 0, 0, -1), ('UserDict', 0, 1, -1), ('riscosenviron', 0, 1, -1), ('riscosenviron._Environ', 0, 1, -1), ('copy_reg', 0, 0, -1), ('warnings', 1, 0, -1), ('subprocess', 1, 0, -1), ('warnings', 1, 0, -1), ('subprocess', 1, 0, -1), ('warnings', 1, 0, -1), ('subprocess', 1, 0, -1)] binaries=[] datas=[]>
+zlib: None -> <Module zlib None imports=[] binaries=[] datas=[]>
+AES: None -> None
+  DEL AES
+_struct: None -> <Module _struct None imports=[] binaries=[] datas=[]>
+zipimport: None -> <Module zipimport None imports=[] binaries=[] datas=[]>
+win32api: None -> <Module win32api C:\Python27\lib\site-packages\win32\win32api.pyd imports=[] binaries=[] datas=[]>
+__builtin__: None -> <Module __builtin__ None imports=[] binaries=[] datas=[]>
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+nt: None -> <Module nt None imports=[] binaries=[] datas=[]>
+errno: None -> <Module errno None imports=[] binaries=[] datas=[]>
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posixpath: None -> <Module posixpath C:\Python27\lib\posixpath.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('stat', 0, 0, -1), ('genericpath', 0, 0, -1), ('warnings', 0, 0, -1), ('genericpath', 0, 0, -1), ('genericpath.*', 0, 0, -1), ('pwd', 1, 1, -1), ('pwd', 1, 1, -1), ('re', 1, 1, -1)] binaries=[] datas=[]>
+posix: None -> None
+  DEL posix
+ntpath: None -> <Module ntpath C:\Python27\lib\ntpath.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('stat', 0, 0, -1), ('genericpath', 0, 0, -1), ('warnings', 0, 0, -1), ('genericpath', 0, 0, -1), ('genericpath.*', 0, 0, -1), ('nt', 0, 0, -1), ('nt._getfullpathname', 0, 0, -1), ('string', 1, 0, -1)] binaries=[] datas=[]>
+os2emxpath: None -> <Module os2emxpath C:\Python27\lib\os2emxpath.pyc imports=[('os', 0, 0, -1), ('stat', 0, 0, -1), ('genericpath', 0, 0, -1), ('genericpath.*', 0, 0, -1), ('ntpath', 0, 0, -1), ('ntpath.expanduser', 0, 0, -1), ('ntpath.expandvars', 0, 0, -1), ('ntpath.isabs', 0, 0, -1), ('ntpath.islink', 0, 0, -1), ('ntpath.splitdrive', 0, 0, -1), ('ntpath.splitext', 0, 0, -1), ('ntpath.split', 0, 0, -1), ('ntpath.walk', 0, 0, -1)] binaries=[] datas=[]>
+_emx_link: None -> None
+  DEL _emx_link
+_emx_link: None -> None
+  DEL _emx_link
+UserDict: None -> <Module UserDict C:\Python27\lib\UserDict.pyc imports=[('_abcoll', 0, 0, -1), ('copy', 1, 0, -1)] binaries=[] datas=[]>
+copy_reg: None -> <Module copy_reg C:\Python27\lib\copy_reg.pyc imports=[('types', 0, 0, -1), ('types.ClassType', 0, 0, -1)] binaries=[] datas=[]>
+warnings: None -> <Module warnings C:\Python27\lib\warnings.pyc imports=[('linecache', 0, 0, -1), ('sys', 0, 0, -1), ('types', 0, 0, -1), ('_warnings', 0, 0, -1), ('_warnings.filters', 0, 0, -1), ('_warnings.default_action', 0, 0, -1), ('_warnings.once_registry', 0, 0, -1), ('_warnings.warn', 0, 0, -1), ('_warnings.warn_explicit', 0, 0, -1), ('re', 1, 0, -1), ('re', 1, 0, -1), ('re', 1, 0, -1)] binaries=[] datas=[]>
+subprocess: None -> <Module subprocess C:\Python27\lib\subprocess.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('types', 0, 0, -1), ('traceback', 0, 0, -1), ('gc', 0, 0, -1), ('signal', 0, 0, -1), ('errno', 0, 0, -1), ('threading', 0, 1, -1), ('msvcrt', 0, 1, -1), ('_subprocess', 0, 1, -1), ('select', 0, 1, -1), ('fcntl', 0, 1, -1), ('pickle', 0, 1, -1), ('_subprocess', 0, 1, -1), ('_subprocess.CREATE_NEW_CONSOLE', 0, 1, -1), ('_subprocess.CREATE_NEW_PROCESS_GROUP', 0, 1, -1), ('_subprocess.STD_INPUT_HANDLE', 0, 1, -1), ('_subprocess.STD_OUTPUT_HANDLE', 0, 1, -1), ('_subprocess.STD_ERROR_HANDLE', 0, 1, -1), ('_subprocess.SW_HIDE', 0, 1, -1), ('_subprocess.STARTF_USESTDHANDLES', 0, 1, -1), ('_subprocess.STARTF_USESHOWWINDOW', 0, 1, -1)] binaries=[] datas=[]>
+stat: None -> <Module stat C:\Python27\lib\stat.pyc imports=[] binaries=[] datas=[]>
+genericpath: None -> <Module genericpath C:\Python27\lib\genericpath.pyc imports=[('os', 0, 0, -1), ('stat', 0, 0, -1)] binaries=[] datas=[]>
+pwd: None -> None
+  DEL pwd
+pwd: None -> None
+  DEL pwd
+re: None -> <Module re C:\Python27\lib\re.pyc imports=[('sys', 0, 0, -1), ('sre_compile', 0, 0, -1), ('sre_parse', 0, 0, -1), ('copy_reg', 0, 0, -1), ('sre_constants', 1, 0, -1), ('sre_constants.BRANCH', 1, 0, -1), ('sre_constants.SUBPATTERN', 1, 0, -1)] binaries=[] datas=[]>
+linecache: None -> <Module linecache C:\Python27\lib\linecache.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1)] binaries=[] datas=[]>
+types: None -> <Module types C:\Python27\lib\types.pyc imports=[('sys', 0, 0, -1)] binaries=[] datas=[]>
+_warnings: None -> <Module _warnings None imports=[] binaries=[] datas=[]>
+sre_compile: None -> <Module sre_compile C:\Python27\lib\sre_compile.pyc imports=[('_sre', 0, 0, -1), ('sys', 0, 0, -1), ('sre_parse', 0, 0, -1), ('sre_constants', 0, 0, -1), ('sre_constants.*', 0, 0, -1), ('array', 1, 0, -1)] binaries=[] datas=[]>
+sre_parse: None -> <Module sre_parse C:\Python27\lib\sre_parse.pyc imports=[('sys', 0, 0, -1), ('sre_constants', 0, 0, -1), ('sre_constants.*', 0, 0, -1)] binaries=[] datas=[]>
+sre_constants: None -> <Module sre_constants C:\Python27\lib\sre_constants.pyc imports=[] binaries=[] datas=[]>
+_sre: None -> <Module _sre None imports=[] binaries=[] datas=[]>
+array: None -> <Module array None imports=[] binaries=[] datas=[]>
+string: None -> <Module string C:\Python27\lib\string.pyc imports=[('re', 0, 0, -1), ('strop', 0, 0, -1), ('strop.maketrans', 0, 0, -1), ('strop.lowercase', 0, 0, -1), ('strop.uppercase', 0, 0, -1), ('strop.whitespace', 0, 0, -1)] binaries=[] datas=[]>
+strop: None -> <Module strop None imports=[] binaries=[] datas=[]>
+_abcoll: None -> <Module _abcoll C:\Python27\lib\_abcoll.pyc imports=[('abc', 0, 0, -1), ('abc.ABCMeta', 0, 0, -1), ('abc.abstractmethod', 0, 0, -1), ('sys', 0, 0, -1)] binaries=[] datas=[]>
+copy: None -> <Module copy C:\Python27\lib\copy.pyc imports=[('types', 0, 0, -1), ('weakref', 0, 0, -1), ('copy_reg', 0, 0, -1), ('copy_reg.dispatch_table', 0, 0, -1), ('org.python.core', 0, 0, -1), ('org.python.core.PyStringMap', 0, 0, -1), ('repr', 1, 0, -1), ('repr', 1, 0, -1), ('sys', 1, 1, -1)] binaries=[] datas=[]>
+abc: None -> <Module abc C:\Python27\lib\abc.pyc imports=[('types', 0, 0, -1), ('_weakrefset', 0, 0, -1), ('_weakrefset.WeakSet', 0, 0, -1)] binaries=[] datas=[]>
+_weakrefset: None -> <Module _weakrefset C:\Python27\lib\_weakrefset.pyc imports=[('_weakref', 0, 0, -1), ('_weakref.ref', 0, 0, -1)] binaries=[] datas=[]>
+_weakref: None -> <Module _weakref None imports=[] binaries=[] datas=[]>
+weakref: None -> <Module weakref C:\Python27\lib\weakref.pyc imports=[('UserDict', 0, 0, -1), ('_weakref', 0, 0, -1), ('_weakref.getweakrefcount', 0, 0, -1), ('_weakref.getweakrefs', 0, 0, -1), ('_weakref.ref', 0, 0, -1), ('_weakref.proxy', 0, 0, -1), ('_weakref.CallableProxyType', 0, 0, -1), ('_weakref.ProxyType', 0, 0, -1), ('_weakref.ReferenceType', 0, 0, -1), ('_weakrefset', 0, 0, -1), ('_weakrefset.WeakSet', 0, 0, -1), ('exceptions', 0, 0, -1), ('exceptions.ReferenceError', 0, 0, -1), ('copy', 1, 0, -1), ('copy.deepcopy', 1, 0, -1), ('copy', 1, 0, -1), ('copy.deepcopy', 1, 0, -1)] binaries=[] datas=[]>
+org: None -> None
+  DEL org
+org: None -> None
+  DEL org
+repr: None -> <Module repr C:\Python27\lib\repr.pyc imports=[('__builtin__', 0, 0, -1), ('itertools', 0, 0, -1), ('itertools.islice', 0, 0, -1)] binaries=[] datas=[]>
+exceptions: None -> <Module exceptions None imports=[] binaries=[] datas=[]>
+itertools: None -> <Module itertools None imports=[] binaries=[] datas=[]>
+traceback: None -> <Module traceback C:\Python27\lib\traceback.pyc imports=[('linecache', 0, 0, -1), ('sys', 0, 0, -1), ('types', 0, 0, -1)] binaries=[] datas=[]>
+gc: None -> <Module gc None imports=[] binaries=[] datas=[]>
+signal: None -> <Module signal None imports=[] binaries=[] datas=[]>
+threading: None -> <Module threading C:\Python27\lib\threading.pyc imports=[('sys', 0, 0, -1), ('thread', 0, 0, -1), ('warnings', 0, 0, -1), ('time', 0, 0, -1), ('time.time', 0, 0, -1), ('time.sleep', 0, 0, -1), ('traceback', 0, 0, -1), ('traceback.format_exc', 0, 0, -1), ('collections', 0, 0, -1), ('collections.deque', 0, 0, -1), ('thread', 0, 0, -1), ('thread.stack_size', 0, 0, -1), ('thread', 0, 0, -1), ('thread._local', 0, 0, -1), ('_threading_local', 0, 1, -1), ('_threading_local.local', 0, 1, -1), ('random', 1, 0, -1), ('random.random', 1, 0, -1)] binaries=[] datas=[]>
+msvcrt: None -> <Module msvcrt None imports=[] binaries=[] datas=[]>
+_subprocess: None -> <Module _subprocess None imports=[] binaries=[] datas=[]>
+select: None -> <Module select C:\Python27\DLLs\select.pyd imports=[] binaries=[] datas=[]>
+fcntl: None -> None
+  DEL fcntl
+pickle: None -> <Module pickle C:\Python27\lib\pickle.pyc imports=[('types', 0, 0, -1), ('types.*', 0, 0, -1), ('copy_reg', 0, 0, -1), ('copy_reg.dispatch_table', 0, 0, -1), ('copy_reg', 0, 0, -1), ('copy_reg._extension_registry', 0, 0, -1), ('copy_reg._inverted_registry', 0, 0, -1), ('copy_reg._extension_cache', 0, 0, -1), ('marshal', 0, 0, -1), ('sys', 0, 0, -1), ('struct', 0, 0, -1), ('re', 0, 0, -1), ('org.python.core', 0, 0, -1), ('org.python.core.PyStringMap', 0, 0, -1), ('binascii', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('StringIO', 0, 1, -1), ('StringIO.StringIO', 0, 1, -1), ('doctest', 1, 0, -1)] binaries=[] datas=[]>
+thread: None -> <Module thread None imports=[] binaries=[] datas=[]>
+time: None -> <Module time None imports=[] binaries=[] datas=[]>
+collections: None -> <Module collections C:\Python27\lib\collections.pyc imports=[('_abcoll', 0, 0, -1), ('_abcoll.*', 0, 0, -1), ('_abcoll', 0, 0, -1), ('_collections', 0, 0, -1), ('_collections.deque', 0, 0, -1), ('_collections.defaultdict', 0, 0, -1), ('operator', 0, 0, -1), ('operator.itemgetter', 0, 0, -1), ('keyword', 0, 0, -1), ('keyword.iskeyword', 0, 0, -1), ('sys', 0, 0, -1), ('heapq', 0, 0, -1), ('itertools', 0, 0, -1), ('itertools.repeat', 0, 0, -1), ('itertools.chain', 0, 0, -1), ('itertools.starmap', 0, 0, -1), ('thread', 0, 0, -1), ('thread.get_ident', 0, 0, -1), ('dummy_thread', 0, 1, -1), ('dummy_thread.get_ident', 0, 1, -1), ('cPickle', 0, 1, -1), ('cPickle.loads', 0, 1, -1), ('cPickle.dumps', 0, 1, -1), ('doctest', 0, 1, -1)] binaries=[] datas=[]>
+_threading_local: None -> <Module _threading_local C:\Python27\lib\_threading_local.pyc imports=[('threading', 0, 0, -1), ('threading.current_thread', 0, 0, -1), ('threading.RLock', 0, 0, -1), ('threading', 1, 0, -1)] binaries=[] datas=[]>
+random: None -> <Module random C:\Python27\lib\random.pyc imports=[('__future__', 0, 0, -1), ('__future__.division', 0, 0, -1), ('warnings', 0, 0, -1), ('warnings.warn', 0, 0, -1), ('types', 0, 0, -1), ('types.MethodType', 0, 0, -1), ('types.BuiltinMethodType', 0, 0, -1), ('math', 0, 0, -1), ('math.log', 0, 0, -1), ('math.exp', 0, 0, -1), ('math.pi', 0, 0, -1), ('math.e', 0, 0, -1), ('math.ceil', 0, 0, -1), ('math', 0, 0, -1), ('math.sqrt', 0, 0, -1), ('math.acos', 0, 0, -1), ('math.cos', 0, 0, -1), ('math.sin', 0, 0, -1), ('os', 0, 0, -1), ('os.urandom', 0, 0, -1), ('binascii', 0, 0, -1), ('binascii.hexlify', 0, 0, -1), ('hashlib', 0, 0, -1), ('_random', 0, 0, -1), ('time', 1, 1, -1), ('time', 1, 1, -1), ('time', 1, 1, -1), ('time', 1, 0, -1)] binaries=[] datas=[]>
+_strptime: None -> <Module _strptime C:\Python27\lib\_strptime.pyc imports=[('time', 0, 0, -1), ('locale', 0, 0, -1), ('calendar', 0, 0, -1), ('re', 0, 0, -1), ('re.compile', 0, 0, -1), ('re', 0, 0, -1), ('re.IGNORECASE', 0, 0, -1), ('re', 0, 0, -1), ('re.escape', 0, 0, -1), ('datetime', 0, 0, -1), ('datetime.date', 0, 0, -1), ('thread', 0, 0, -1), ('thread.allocate_lock', 0, 0, -1), ('dummy_thread', 0, 0, -1), ('dummy_thread.allocate_lock', 0, 0, -1)] binaries=[] datas=[]>
+locale: None -> <Module locale C:\Python27\lib\locale.pyc imports=[('sys', 0, 0, -1), ('encodings', 0, 0, -1), ('encodings.aliases', 0, 0, -1), ('re', 0, 0, -1), ('operator', 0, 0, -1), ('functools', 0, 0, -1), ('_locale', 0, 0, -1), ('_locale.*', 0, 0, -1), ('_locale', 1, 0, -1), ('os', 1, 0, -1), ('_locale', 1, 0, -1)] binaries=[] datas=[]>
+calendar: None -> <Module calendar C:\Python27\lib\calendar.pyc imports=[('sys', 0, 0, -1), ('datetime', 0, 0, -1), ('locale', 0, 0, -1), ('optparse', 1, 0, -1)] binaries=[] datas=[]>
+datetime: None -> <Module datetime None imports=[] binaries=[] datas=[]>
+dummy_thread: None -> <Module dummy_thread C:\Python27\lib\dummy_thread.pyc imports=[('traceback', 0, 0, -1)] binaries=[] datas=[]>
+encodings: None -> <Module encodings C:\Python27\lib\encodings\__init__.pyc imports=[('codecs', 0, 0, -1), ('encodings', 0, 0, -1), ('encodings.aliases', 0, 0, -1), ('__builtin__', 0, 0, -1)] binaries=[] datas=[]>
+encodings.aliases: None -> <Module encodings.aliases C:\Python27\lib\encodings\aliases.pyc imports=[] binaries=[] datas=[]>
+operator: None -> <Module operator None imports=[] binaries=[] datas=[]>
+functools: None -> <Module functools C:\Python27\lib\functools.pyc imports=[('_functools', 0, 0, -1), ('_functools.partial', 0, 0, -1), ('_functools.reduce', 0, 0, -1)] binaries=[] datas=[]>
+_locale: None -> <Module _locale None imports=[] binaries=[] datas=[]>
+encodings.codecs: None -> None
+codecs: None -> <Module codecs C:\Python27\lib\codecs.pyc imports=[('__builtin__', 0, 0, -1), ('sys', 0, 0, -1), ('_codecs', 0, 0, -1), ('_codecs.*', 0, 0, -1), ('encodings', 0, 1, -1)] binaries=[] datas=[]>
+encodings.encodings: None -> None
+encodings.__builtin__: None -> None
+encodings.ascii: None -> <Module encodings.ascii C:\Python27\lib\encodings\ascii.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.base64_codec: None -> <Module encodings.base64_codec C:\Python27\lib\encodings\base64_codec.pyc imports=[('codecs', 0, 0, -1), ('base64', 0, 0, -1)] binaries=[] datas=[]>
+encodings.big5: None -> <Module encodings.big5 C:\Python27\lib\encodings\big5.pyc imports=[('_codecs_tw', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.big5hkscs: None -> <Module encodings.big5hkscs C:\Python27\lib\encodings\big5hkscs.pyc imports=[('_codecs_hk', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.bz2_codec: None -> <Module encodings.bz2_codec C:\Python27\lib\encodings\bz2_codec.pyc imports=[('codecs', 0, 0, -1), ('bz2', 0, 0, -1)] binaries=[] datas=[]>
+encodings.charmap: None -> <Module encodings.charmap C:\Python27\lib\encodings\charmap.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp037: None -> <Module encodings.cp037 C:\Python27\lib\encodings\cp037.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1006: None -> <Module encodings.cp1006 C:\Python27\lib\encodings\cp1006.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1026: None -> <Module encodings.cp1026 C:\Python27\lib\encodings\cp1026.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1140: None -> <Module encodings.cp1140 C:\Python27\lib\encodings\cp1140.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1250: None -> <Module encodings.cp1250 C:\Python27\lib\encodings\cp1250.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1251: None -> <Module encodings.cp1251 C:\Python27\lib\encodings\cp1251.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1252: None -> <Module encodings.cp1252 C:\Python27\lib\encodings\cp1252.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1253: None -> <Module encodings.cp1253 C:\Python27\lib\encodings\cp1253.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1254: None -> <Module encodings.cp1254 C:\Python27\lib\encodings\cp1254.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1255: None -> <Module encodings.cp1255 C:\Python27\lib\encodings\cp1255.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1256: None -> <Module encodings.cp1256 C:\Python27\lib\encodings\cp1256.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1257: None -> <Module encodings.cp1257 C:\Python27\lib\encodings\cp1257.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp1258: None -> <Module encodings.cp1258 C:\Python27\lib\encodings\cp1258.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp424: None -> <Module encodings.cp424 C:\Python27\lib\encodings\cp424.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp437: None -> <Module encodings.cp437 C:\Python27\lib\encodings\cp437.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp500: None -> <Module encodings.cp500 C:\Python27\lib\encodings\cp500.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp720: None -> <Module encodings.cp720 C:\Python27\lib\encodings\cp720.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp737: None -> <Module encodings.cp737 C:\Python27\lib\encodings\cp737.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp775: None -> <Module encodings.cp775 C:\Python27\lib\encodings\cp775.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp850: None -> <Module encodings.cp850 C:\Python27\lib\encodings\cp850.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp852: None -> <Module encodings.cp852 C:\Python27\lib\encodings\cp852.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp855: None -> <Module encodings.cp855 C:\Python27\lib\encodings\cp855.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp856: None -> <Module encodings.cp856 C:\Python27\lib\encodings\cp856.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp857: None -> <Module encodings.cp857 C:\Python27\lib\encodings\cp857.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp858: None -> <Module encodings.cp858 C:\Python27\lib\encodings\cp858.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp860: None -> <Module encodings.cp860 C:\Python27\lib\encodings\cp860.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp861: None -> <Module encodings.cp861 C:\Python27\lib\encodings\cp861.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp862: None -> <Module encodings.cp862 C:\Python27\lib\encodings\cp862.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp863: None -> <Module encodings.cp863 C:\Python27\lib\encodings\cp863.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp864: None -> <Module encodings.cp864 C:\Python27\lib\encodings\cp864.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp865: None -> <Module encodings.cp865 C:\Python27\lib\encodings\cp865.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp866: None -> <Module encodings.cp866 C:\Python27\lib\encodings\cp866.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp869: None -> <Module encodings.cp869 C:\Python27\lib\encodings\cp869.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp874: None -> <Module encodings.cp874 C:\Python27\lib\encodings\cp874.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp875: None -> <Module encodings.cp875 C:\Python27\lib\encodings\cp875.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp932: None -> <Module encodings.cp932 C:\Python27\lib\encodings\cp932.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp949: None -> <Module encodings.cp949 C:\Python27\lib\encodings\cp949.pyc imports=[('_codecs_kr', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.cp950: None -> <Module encodings.cp950 C:\Python27\lib\encodings\cp950.pyc imports=[('_codecs_tw', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.euc_jisx0213: None -> <Module encodings.euc_jisx0213 C:\Python27\lib\encodings\euc_jisx0213.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.euc_jis_2004: None -> <Module encodings.euc_jis_2004 C:\Python27\lib\encodings\euc_jis_2004.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.euc_jp: None -> <Module encodings.euc_jp C:\Python27\lib\encodings\euc_jp.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.euc_kr: None -> <Module encodings.euc_kr C:\Python27\lib\encodings\euc_kr.pyc imports=[('_codecs_kr', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.gb18030: None -> <Module encodings.gb18030 C:\Python27\lib\encodings\gb18030.pyc imports=[('_codecs_cn', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.gb2312: None -> <Module encodings.gb2312 C:\Python27\lib\encodings\gb2312.pyc imports=[('_codecs_cn', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.gbk: None -> <Module encodings.gbk C:\Python27\lib\encodings\gbk.pyc imports=[('_codecs_cn', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.hex_codec: None -> <Module encodings.hex_codec C:\Python27\lib\encodings\hex_codec.pyc imports=[('codecs', 0, 0, -1), ('binascii', 0, 0, -1)] binaries=[] datas=[]>
+encodings.hp_roman8: None -> <Module encodings.hp_roman8 C:\Python27\lib\encodings\hp_roman8.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.hz: None -> <Module encodings.hz C:\Python27\lib\encodings\hz.pyc imports=[('_codecs_cn', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.idna: None -> <Module encodings.idna C:\Python27\lib\encodings\idna.pyc imports=[('stringprep', 0, 0, -1), ('re', 0, 0, -1), ('codecs', 0, 0, -1), ('unicodedata', 0, 0, -1), ('unicodedata.ucd_3_2_0', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_jp: None -> <Module encodings.iso2022_jp C:\Python27\lib\encodings\iso2022_jp.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_jp_1: None -> <Module encodings.iso2022_jp_1 C:\Python27\lib\encodings\iso2022_jp_1.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_jp_2: None -> <Module encodings.iso2022_jp_2 C:\Python27\lib\encodings\iso2022_jp_2.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_jp_2004: None -> <Module encodings.iso2022_jp_2004 C:\Python27\lib\encodings\iso2022_jp_2004.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_jp_3: None -> <Module encodings.iso2022_jp_3 C:\Python27\lib\encodings\iso2022_jp_3.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_jp_ext: None -> <Module encodings.iso2022_jp_ext C:\Python27\lib\encodings\iso2022_jp_ext.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso2022_kr: None -> <Module encodings.iso2022_kr C:\Python27\lib\encodings\iso2022_kr.pyc imports=[('_codecs_iso2022', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_1: None -> <Module encodings.iso8859_1 C:\Python27\lib\encodings\iso8859_1.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_10: None -> <Module encodings.iso8859_10 C:\Python27\lib\encodings\iso8859_10.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_11: None -> <Module encodings.iso8859_11 C:\Python27\lib\encodings\iso8859_11.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_13: None -> <Module encodings.iso8859_13 C:\Python27\lib\encodings\iso8859_13.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_14: None -> <Module encodings.iso8859_14 C:\Python27\lib\encodings\iso8859_14.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_15: None -> <Module encodings.iso8859_15 C:\Python27\lib\encodings\iso8859_15.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_16: None -> <Module encodings.iso8859_16 C:\Python27\lib\encodings\iso8859_16.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_2: None -> <Module encodings.iso8859_2 C:\Python27\lib\encodings\iso8859_2.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_3: None -> <Module encodings.iso8859_3 C:\Python27\lib\encodings\iso8859_3.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_4: None -> <Module encodings.iso8859_4 C:\Python27\lib\encodings\iso8859_4.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_5: None -> <Module encodings.iso8859_5 C:\Python27\lib\encodings\iso8859_5.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_6: None -> <Module encodings.iso8859_6 C:\Python27\lib\encodings\iso8859_6.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_7: None -> <Module encodings.iso8859_7 C:\Python27\lib\encodings\iso8859_7.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_8: None -> <Module encodings.iso8859_8 C:\Python27\lib\encodings\iso8859_8.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.iso8859_9: None -> <Module encodings.iso8859_9 C:\Python27\lib\encodings\iso8859_9.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.johab: None -> <Module encodings.johab C:\Python27\lib\encodings\johab.pyc imports=[('_codecs_kr', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.koi8_r: None -> <Module encodings.koi8_r C:\Python27\lib\encodings\koi8_r.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.koi8_u: None -> <Module encodings.koi8_u C:\Python27\lib\encodings\koi8_u.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.latin_1: None -> <Module encodings.latin_1 C:\Python27\lib\encodings\latin_1.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_arabic: None -> <Module encodings.mac_arabic C:\Python27\lib\encodings\mac_arabic.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_centeuro: None -> <Module encodings.mac_centeuro C:\Python27\lib\encodings\mac_centeuro.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_croatian: None -> <Module encodings.mac_croatian C:\Python27\lib\encodings\mac_croatian.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_cyrillic: None -> <Module encodings.mac_cyrillic C:\Python27\lib\encodings\mac_cyrillic.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_farsi: None -> <Module encodings.mac_farsi C:\Python27\lib\encodings\mac_farsi.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_greek: None -> <Module encodings.mac_greek C:\Python27\lib\encodings\mac_greek.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_iceland: None -> <Module encodings.mac_iceland C:\Python27\lib\encodings\mac_iceland.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_latin2: None -> <Module encodings.mac_latin2 C:\Python27\lib\encodings\mac_latin2.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_roman: None -> <Module encodings.mac_roman C:\Python27\lib\encodings\mac_roman.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_romanian: None -> <Module encodings.mac_romanian C:\Python27\lib\encodings\mac_romanian.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mac_turkish: None -> <Module encodings.mac_turkish C:\Python27\lib\encodings\mac_turkish.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.mbcs: None -> <Module encodings.mbcs C:\Python27\lib\encodings\mbcs.pyc imports=[('codecs', 0, 0, -1), ('codecs.mbcs_encode', 0, 0, -1), ('codecs.mbcs_decode', 0, 0, -1), ('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.palmos: None -> <Module encodings.palmos C:\Python27\lib\encodings\palmos.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.ptcp154: None -> <Module encodings.ptcp154 C:\Python27\lib\encodings\ptcp154.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.punycode: None -> <Module encodings.punycode C:\Python27\lib\encodings\punycode.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.quopri_codec: None -> <Module encodings.quopri_codec C:\Python27\lib\encodings\quopri_codec.pyc imports=[('codecs', 0, 0, -1), ('quopri', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('StringIO', 0, 1, -1), ('StringIO.StringIO', 0, 1, -1)] binaries=[] datas=[]>
+encodings.raw_unicode_escape: None -> <Module encodings.raw_unicode_escape C:\Python27\lib\encodings\raw_unicode_escape.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.rot_13: None -> <Module encodings.rot_13 C:\Python27\lib\encodings\rot_13.pyc imports=[('codecs', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+encodings.shift_jis: None -> <Module encodings.shift_jis C:\Python27\lib\encodings\shift_jis.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.shift_jisx0213: None -> <Module encodings.shift_jisx0213 C:\Python27\lib\encodings\shift_jisx0213.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.shift_jis_2004: None -> <Module encodings.shift_jis_2004 C:\Python27\lib\encodings\shift_jis_2004.pyc imports=[('_codecs_jp', 0, 0, -1), ('codecs', 0, 0, -1), ('_multibytecodec', 0, 0, -1)] binaries=[] datas=[]>
+encodings.string_escape: None -> <Module encodings.string_escape C:\Python27\lib\encodings\string_escape.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.tis_620: None -> <Module encodings.tis_620 C:\Python27\lib\encodings\tis_620.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.undefined: None -> <Module encodings.undefined C:\Python27\lib\encodings\undefined.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.unicode_escape: None -> <Module encodings.unicode_escape C:\Python27\lib\encodings\unicode_escape.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.unicode_internal: None -> <Module encodings.unicode_internal C:\Python27\lib\encodings\unicode_internal.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_16: None -> <Module encodings.utf_16 C:\Python27\lib\encodings\utf_16.pyc imports=[('codecs', 0, 0, -1), ('sys', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_16_be: None -> <Module encodings.utf_16_be C:\Python27\lib\encodings\utf_16_be.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_16_le: None -> <Module encodings.utf_16_le C:\Python27\lib\encodings\utf_16_le.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_32: None -> <Module encodings.utf_32 C:\Python27\lib\encodings\utf_32.pyc imports=[('codecs', 0, 0, -1), ('sys', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_32_be: None -> <Module encodings.utf_32_be C:\Python27\lib\encodings\utf_32_be.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_32_le: None -> <Module encodings.utf_32_le C:\Python27\lib\encodings\utf_32_le.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_7: None -> <Module encodings.utf_7 C:\Python27\lib\encodings\utf_7.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_8: None -> <Module encodings.utf_8 C:\Python27\lib\encodings\utf_8.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.utf_8_sig: None -> <Module encodings.utf_8_sig C:\Python27\lib\encodings\utf_8_sig.pyc imports=[('codecs', 0, 0, -1)] binaries=[] datas=[]>
+encodings.uu_codec: None -> <Module encodings.uu_codec C:\Python27\lib\encodings\uu_codec.pyc imports=[('codecs', 0, 0, -1), ('binascii', 0, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('binascii', 1, 0, -1), ('binascii.b2a_uu', 1, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('binascii', 1, 0, -1), ('binascii.a2b_uu', 1, 0, -1)] binaries=[] datas=[]>
+encodings.zlib_codec: None -> <Module encodings.zlib_codec C:\Python27\lib\encodings\zlib_codec.pyc imports=[('codecs', 0, 0, -1), ('zlib', 0, 0, -1)] binaries=[] datas=[]>
+_codecs: None -> <Module _codecs None imports=[] binaries=[] datas=[]>
+encodings.base64: None -> None
+base64: None -> <Module base64 C:\Python27\lib\base64.pyc imports=[('re', 0, 0, -1), ('struct', 0, 0, -1), ('binascii', 0, 0, -1), ('sys', 1, 0, -1), ('getopt', 1, 0, -1)] binaries=[] datas=[]>
+binascii: None -> <Module binascii None imports=[] binaries=[] datas=[]>
+getopt: None -> <Module getopt C:\Python27\lib\getopt.pyc imports=[('os', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+encodings._codecs_tw: None -> None
+_codecs_tw: None -> <Module _codecs_tw None imports=[] binaries=[] datas=[]>
+encodings._multibytecodec: None -> None
+_multibytecodec: None -> <Module _multibytecodec None imports=[] binaries=[] datas=[]>
+encodings._codecs_hk: None -> None
+_codecs_hk: None -> <Module _codecs_hk None imports=[] binaries=[] datas=[]>
+encodings.bz2: None -> None
+bz2: None -> <Module bz2 C:\Python27\DLLs\bz2.pyd imports=[] binaries=[] datas=[]>
+encodings._codecs_jp: None -> None
+_codecs_jp: None -> <Module _codecs_jp None imports=[] binaries=[] datas=[]>
+encodings._codecs_kr: None -> None
+_codecs_kr: None -> <Module _codecs_kr None imports=[] binaries=[] datas=[]>
+encodings._codecs_cn: None -> None
+_codecs_cn: None -> <Module _codecs_cn None imports=[] binaries=[] datas=[]>
+encodings.binascii: None -> None
+encodings.stringprep: None -> None
+stringprep: None -> <Module stringprep C:\Python27\lib\stringprep.pyc imports=[('unicodedata', 0, 0, -1), ('unicodedata.ucd_3_2_0', 0, 0, -1)] binaries=[] datas=[]>
+encodings.re: None -> None
+encodings.unicodedata: None -> None
+unicodedata: None -> <Module unicodedata C:\Python27\DLLs\unicodedata.pyd imports=[] binaries=[] datas=[]>
+encodings._codecs_iso2022: None -> None
+_codecs_iso2022: None -> <Module _codecs_iso2022 None imports=[] binaries=[] datas=[]>
+encodings.quopri: None -> None
+quopri: None -> <Module quopri C:\Python27\lib\quopri.pyc imports=[('binascii', 0, 0, -1), ('binascii.a2b_qp', 0, 0, -1), ('binascii.b2a_qp', 0, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('sys', 1, 0, -1), ('getopt', 1, 0, -1)] binaries=[] datas=[]>
+encodings.cStringIO: None -> None
+cStringIO: None -> <Module cStringIO None imports=[] binaries=[] datas=[]>
+encodings.StringIO: None -> None
+StringIO: None -> <Module StringIO C:\Python27\lib\StringIO.pyc imports=[('errno', 0, 0, -1), ('errno.EINVAL', 0, 0, -1), ('sys', 1, 0, -1)] binaries=[] datas=[]>
+encodings.sys: None -> None
+encodings.zlib: None -> None
+_functools: None -> <Module _functools None imports=[] binaries=[] datas=[]>
+optparse: None -> <Module optparse C:\Python27\lib\optparse.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('types', 0, 0, -1), ('textwrap', 0, 0, -1), ('gettext', 0, 0, -1), ('gettext.gettext', 0, 0, -1), ('__builtin__', 1, 1, -1)] binaries=[] datas=[]>
+textwrap: None -> <Module textwrap C:\Python27\lib\textwrap.pyc imports=[('string', 0, 0, -1), ('re', 0, 0, -1)] binaries=[] datas=[]>
+gettext: None -> <Module gettext C:\Python27\lib\gettext.pyc imports=[('locale', 0, 0, -1), ('copy', 0, 0, -1), ('os', 0, 0, -1), ('re', 0, 0, -1), ('struct', 0, 0, -1), ('sys', 0, 0, -1), ('errno', 0, 0, -1), ('errno.ENOENT', 0, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('StringIO', 1, 1, -1), ('StringIO.StringIO', 1, 1, -1), ('token', 1, 0, -1), ('tokenize', 1, 0, -1), ('locale', 1, 0, -1), ('locale.normalize', 1, 0, -1), ('__builtin__', 1, 0, -1)] binaries=[] datas=[]>
+token: None -> <Module token C:\Python27\lib\token.pyc imports=[('re', 1, 0, -1), ('sys', 1, 0, -1)] binaries=[] datas=[]>
+tokenize: None -> <Module tokenize C:\Python27\lib\tokenize.pyc imports=[('string', 0, 0, -1), ('re', 0, 0, -1), ('token', 0, 0, -1), ('token.*', 0, 0, -1), ('token', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+_collections: None -> <Module _collections None imports=[] binaries=[] datas=[]>
+keyword: None -> <Module keyword C:\Python27\lib\keyword.pyc imports=[('sys', 1, 0, -1), ('re', 1, 0, -1)] binaries=[] datas=[]>
+heapq: None -> <Module heapq C:\Python27\lib\heapq.pyc imports=[('itertools', 0, 0, -1), ('itertools.islice', 0, 0, -1), ('itertools.repeat', 0, 0, -1), ('itertools.count', 0, 0, -1), ('itertools.imap', 0, 0, -1), ('itertools.izip', 0, 0, -1), ('itertools.tee', 0, 0, -1), ('itertools.chain', 0, 0, -1), ('operator', 0, 0, -1), ('operator.itemgetter', 0, 0, -1), ('bisect', 0, 0, -1), ('_heapq', 0, 0, -1), ('_heapq.*', 0, 0, -1), ('doctest', 0, 1, -1)] binaries=[] datas=[]>
+cPickle: None -> <Module cPickle None imports=[] binaries=[] datas=[]>
+doctest: None -> <Module doctest C:\Python27\lib\doctest.pyc imports=[('__future__', 0, 0, -1), ('sys', 0, 0, -1), ('traceback', 0, 0, -1), ('inspect', 0, 0, -1), ('linecache', 0, 0, -1), ('os', 0, 0, -1), ('re', 0, 0, -1), ('unittest', 0, 0, -1), ('difflib', 0, 0, -1), ('pdb', 0, 0, -1), ('tempfile', 0, 0, -1), ('warnings', 0, 0, -1), ('StringIO', 0, 0, -1), ('StringIO.StringIO', 0, 0, -1), ('collections', 0, 0, -1), ('collections.namedtuple', 0, 0, -1), ('types', 1, 0, -1), ('types', 1, 0, -1), ('pdb', 1, 0, -1)] binaries=[] datas=[]>
+bisect: None -> <Module bisect C:\Python27\lib\bisect.pyc imports=[('_bisect', 0, 0, -1), ('_bisect.*', 0, 0, -1)] binaries=[] datas=[]>
+_heapq: None -> <Module _heapq None imports=[] binaries=[] datas=[]>
+_bisect: None -> <Module _bisect None imports=[] binaries=[] datas=[]>
+__future__: None -> <Module __future__ C:\Python27\lib\__future__.pyc imports=[] binaries=[] datas=[]>
+inspect: None -> <Module inspect C:\Python27\lib\inspect.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('types', 0, 0, -1), ('string', 0, 0, -1), ('re', 0, 0, -1), ('dis', 0, 0, -1), ('imp', 0, 0, -1), ('tokenize', 0, 0, -1), ('linecache', 0, 0, -1), ('operator', 0, 0, -1), ('operator.attrgetter', 0, 0, -1), ('collections', 0, 0, -1), ('collections.namedtuple', 0, 0, -1)] binaries=[] datas=[]>
+unittest: None -> <Module unittest C:\Python27\lib\unittest\__init__.pyc imports=[('result', 0, 0, 1), ('result.TestResult', 0, 0, 1), ('case', 0, 0, 1), ('case.TestCase', 0, 0, 1), ('case.FunctionTestCase', 0, 0, 1), ('case.SkipTest', 0, 0, 1), ('case.skip', 0, 0, 1), ('case.skipIf', 0, 0, 1), ('case.skipUnless', 0, 0, 1), ('case.expectedFailure', 0, 0, 1), ('suite', 0, 0, 1), ('suite.BaseTestSuite', 0, 0, 1), ('suite.TestSuite', 0, 0, 1), ('loader', 0, 0, 1), ('loader.TestLoader', 0, 0, 1), ('loader.defaultTestLoader', 0, 0, 1), ('loader.makeSuite', 0, 0, 1), ('loader.getTestCaseNames', 0, 0, 1), ('loader.findTestCases', 0, 0, 1), ('main', 0, 0, 1), ('main.TestProgram', 0, 0, 1), ('main.main', 0, 0, 1), ('runner', 0, 0, 1), ('runner.TextTestRunner', 0, 0, 1), ('runner.TextTestResult', 0, 0, 1), ('signals', 0, 0, 1), ('signals.installHandler', 0, 0, 1), ('signals.registerResult', 0, 0, 1), ('signals.removeResult', 0, 0, 1), ('signals.removeHandler', 0, 0, 1)] binaries=[] datas=[]>
+difflib: None -> <Module difflib C:\Python27\lib\difflib.pyc imports=[('heapq', 0, 0, -1), ('collections', 0, 0, -1), ('collections.namedtuple', 0, 0, -1), ('functools', 0, 0, -1), ('functools.reduce', 0, 0, -1), ('re', 0, 0, -1), ('re', 1, 0, -1), ('doctest', 1, 0, -1), ('difflib', 1, 0, -1)] binaries=[] datas=[]>
+pdb: None -> <Module pdb C:\Python27\lib\pdb.pyc imports=[('sys', 0, 0, -1), ('linecache', 0, 0, -1), ('cmd', 0, 0, -1), ('bdb', 0, 0, -1), ('repr', 0, 0, -1), ('repr.Repr', 0, 0, -1), ('os', 0, 0, -1), ('re', 0, 0, -1), ('pprint', 0, 0, -1), ('traceback', 0, 0, -1), ('pdb', 0, 1, -1), ('readline', 1, 0, -1), ('shlex', 1, 1, -1), ('__main__', 1, 0, -1)] binaries=[] datas=[]>
+tempfile: None -> <Module tempfile C:\Python27\lib\tempfile.pyc imports=[('os', 0, 0, -1), ('errno', 0, 0, -1), ('random', 0, 0, -1), ('random.Random', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('StringIO', 0, 1, -1), ('StringIO.StringIO', 0, 1, -1), ('fcntl', 0, 0, -1), ('thread', 0, 0, -1), ('dummy_thread', 0, 1, -1)] binaries=[] datas=[]>
+dis: None -> <Module dis C:\Python27\lib\dis.pyc imports=[('sys', 0, 0, -1), ('types', 0, 0, -1), ('opcode', 0, 0, -1), ('opcode.*', 0, 0, -1), ('opcode', 0, 0, -1), ('opcode.__all__', 0, 0, -1)] binaries=[] datas=[]>
+opcode: None -> <Module opcode C:\Python27\lib\opcode.pyc imports=[] binaries=[] datas=[]>
+unittest.result: None -> <Module unittest.result C:\Python27\lib\unittest\result.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('traceback', 0, 0, -1), ('StringIO', 0, 0, -1), ('StringIO.StringIO', 0, 0, -1), ('', 0, 0, 1), ('util', 0, 0, 1), ('functools', 0, 0, -1), ('functools.wraps', 0, 0, -1)] binaries=[] datas=[]>
+unittest.case: None -> <Module unittest.case C:\Python27\lib\unittest\case.pyc imports=[('collections', 0, 0, -1), ('sys', 0, 0, -1), ('functools', 0, 0, -1), ('difflib', 0, 0, -1), ('pprint', 0, 0, -1), ('re', 0, 0, -1), ('warnings', 0, 0, -1), ('', 0, 0, 1), ('result', 0, 0, 1), ('util', 0, 0, 1), ('util.strclass', 0, 0, 1), ('util.safe_repr', 0, 0, 1), ('util.unorderable_list_difference', 0, 0, 1), ('util._count_diff_all_purpose', 0, 0, 1), ('util._count_diff_hashable', 0, 0, 1)] binaries=[] datas=[]>
+unittest.suite: None -> <Module unittest.suite C:\Python27\lib\unittest\suite.pyc imports=[('sys', 0, 0, -1), ('', 0, 0, 1), ('case', 0, 0, 1), ('', 0, 0, 1), ('util', 0, 0, 1)] binaries=[] datas=[]>
+unittest.loader: None -> <Module unittest.loader C:\Python27\lib\unittest\loader.pyc imports=[('os', 0, 0, -1), ('re', 0, 0, -1), ('sys', 0, 0, -1), ('traceback', 0, 0, -1), ('types', 0, 0, -1), ('functools', 0, 0, -1), ('functools.cmp_to_key', 0, 0, -1), ('fnmatch', 0, 0, -1), ('fnmatch.fnmatch', 0, 0, -1), ('', 0, 0, 1), ('case', 0, 0, 1), ('suite', 0, 0, 1)] binaries=[] datas=[]>
+unittest.main: None -> <Module unittest.main C:\Python27\lib\unittest\main.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('types', 0, 0, -1), ('', 0, 0, 1), ('loader', 0, 0, 1), ('runner', 0, 0, 1), ('signals', 0, 0, 1), ('signals.installHandler', 0, 0, 1), ('getopt', 1, 0, -1), ('optparse', 1, 0, -1)] binaries=[] datas=[]>
+unittest.runner: None -> <Module unittest.runner C:\Python27\lib\unittest\runner.pyc imports=[('sys', 0, 0, -1), ('time', 0, 0, -1), ('', 0, 0, 1), ('result', 0, 0, 1), ('signals', 0, 0, 1), ('signals.registerResult', 0, 0, 1)] binaries=[] datas=[]>
+unittest.signals: None -> <Module unittest.signals C:\Python27\lib\unittest\signals.pyc imports=[('signal', 0, 0, -1), ('weakref', 0, 0, -1), ('functools', 0, 0, -1), ('functools.wraps', 0, 0, -1)] binaries=[] datas=[]>
+unittest.os: None -> None
+unittest.sys: None -> None
+unittest.traceback: None -> None
+unittest.StringIO: None -> None
+unittest.util: None -> <Module unittest.util C:\Python27\lib\unittest\util.pyc imports=[('collections', 0, 0, -1), ('collections.namedtuple', 0, 0, -1), ('collections.OrderedDict', 0, 0, -1)] binaries=[] datas=[]>
+unittest.functools: None -> None
+unittest.collections: None -> None
+unittest.difflib: None -> None
+unittest.pprint: None -> None
+pprint: None -> <Module pprint C:\Python27\lib\pprint.pyc imports=[('sys', 0, 0, -1), ('warnings', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('time', 1, 0, -1)] binaries=[] datas=[]>
+unittest.re: None -> None
+unittest.warnings: None -> None
+unittest.types: None -> None
+unittest.fnmatch: None -> None
+fnmatch: None -> <Module fnmatch C:\Python27\lib\fnmatch.pyc imports=[('re', 0, 0, -1), ('os', 1, 0, -1), ('os', 1, 0, -1), ('posixpath', 1, 0, -1)] binaries=[] datas=[]>
+unittest.getopt: None -> None
+unittest.optparse: None -> None
+unittest.time: None -> None
+unittest.signal: None -> None
+unittest.weakref: None -> None
+cmd: None -> <Module cmd C:\Python27\lib\cmd.pyc imports=[('string', 0, 0, -1), ('sys', 1, 0, -1), ('readline', 1, 1, -1), ('readline', 1, 1, -1), ('readline', 1, 1, -1)] binaries=[] datas=[]>
+bdb: None -> <Module bdb C:\Python27\lib\bdb.pyc imports=[('fnmatch', 0, 0, -1), ('sys', 0, 0, -1), ('os', 0, 0, -1), ('types', 0, 0, -1), ('linecache', 1, 0, -1), ('linecache', 1, 0, -1), ('linecache', 1, 0, -1), ('repr', 1, 0, -1), ('__main__', 1, 1, -1), ('__main__', 1, 1, -1), ('linecache', 1, 0, -1)] binaries=[] datas=[]>
+readline: None -> None
+  DEL readline
+shlex: None -> <Module shlex C:\Python27\lib\shlex.pyc imports=[('os.path', 0, 0, -1), ('sys', 0, 0, -1), ('collections', 0, 0, -1), ('collections.deque', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('StringIO', 0, 1, -1), ('StringIO.StringIO', 0, 1, -1)] binaries=[] datas=[]>
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+fcntl: None -> None
+  DEL fcntl
+math: None -> <Module math None imports=[] binaries=[] datas=[]>
+hashlib: None -> <Module hashlib C:\Python27\lib\hashlib.pyc imports=[('_hashlib', 0, 0, -1), ('logging', 0, 1, -1), ('_sha', 1, 1, -1), ('_md5', 1, 1, -1), ('_sha256', 1, 1, -1), ('_sha512', 1, 1, -1)] binaries=[] datas=[]>
+_random: None -> <Module _random None imports=[] binaries=[] datas=[]>
+_hashlib: None -> <Module _hashlib C:\Python27\DLLs\_hashlib.pyd imports=[] binaries=[] datas=[]>
+logging: None -> <Module logging C:\Python27\lib\logging\__init__.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('time', 0, 0, -1), ('cStringIO', 0, 0, -1), ('traceback', 0, 0, -1), ('warnings', 0, 0, -1), ('weakref', 0, 0, -1), ('codecs', 0, 0, -1), ('thread', 0, 0, -1), ('threading', 0, 0, -1), ('atexit', 0, 0, -1)] binaries=[] datas=[]>
+_sha: None -> <Module _sha None imports=[] binaries=[] datas=[]>
+_md5: None -> <Module _md5 None imports=[] binaries=[] datas=[]>
+_sha256: None -> <Module _sha256 None imports=[] binaries=[] datas=[]>
+_sha512: None -> <Module _sha512 None imports=[] binaries=[] datas=[]>
+logging.sys: None -> None
+logging.os: None -> None
+logging.time: None -> None
+logging.cStringIO: None -> None
+logging.traceback: None -> None
+logging.warnings: None -> None
+logging.weakref: None -> None
+logging.codecs: None -> None
+logging.thread: None -> None
+logging.threading: None -> None
+logging.atexit: None -> None
+atexit: None -> <Module atexit C:\Python27\lib\atexit.pyc imports=[('sys', 0, 0, -1), ('traceback', 1, 1, -1)] binaries=[] datas=[]>
+org: None -> None
+  DEL org
+org: None -> None
+  DEL org
+__main__: <Module __main__ C:\Python27\Lib\site-packages\pyInstaller\support/_mountzlib.py imports=[('archive', 0, 0, -1), ('iu', 0, 0, -1), ('sys', 0, 0, -1)] binaries=[] datas=[]> -> <Module __main__ C:\Python27\Lib\site-packages\pyInstaller\support/useUnicode.py imports=[('encodings', 0, 0, -1)] binaries=[] datas=[]>
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+_emx_link: None -> None
+  DEL _emx_link
+_emx_link: None -> None
+  DEL _emx_link
+pwd: None -> None
+  DEL pwd
+pwd: None -> None
+  DEL pwd
+org: None -> None
+  DEL org
+org: None -> None
+  DEL org
+fcntl: None -> None
+  DEL fcntl
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+fcntl: None -> None
+  DEL fcntl
+org: None -> None
+  DEL org
+org: None -> None
+  DEL org
+__main__: <Module __main__ C:\Python27\Lib\site-packages\pyInstaller\support/useUnicode.py imports=[('encodings', 0, 0, -1)] binaries=[] datas=[]> -> <Module __main__ D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\ConsolePlayer.py imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('sip', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpApplication', 0, 0, -1), ('MpApplication.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('MpThreading', 0, 0, -1), ('MpThreading.MediaPlayerThread', 0, 0, -1), ('MpFirstTime', 0, 0, -1), ('MpFirstTime.firstTimeCheck', 0, 0, -1), ('MpEventHook', 0, 0, -1), ('VersionController', 0, 0, -1)] binaries=[] datas=[]>
+sip: None -> <Module sip C:\Python27\lib\site-packages\sip.pyd imports=[] binaries=[] datas=[]>
+PyQt4: None -> <Module PyQt4 C:\Python27\lib\site-packages\PyQt4\__init__.pyc imports=[] binaries=[] datas=[]>
+PyQt4.QtCore: None -> <Module PyQt4.QtCore C:\Python27\lib\site-packages\PyQt4\QtCore.pyd imports=[] binaries=[] datas=[]>
+PyQt4.QtGui: None -> <Module PyQt4.QtGui C:\Python27\lib\site-packages\PyQt4\QtGui.pyd imports=[] binaries=[] datas=[]>
+MpGlobalDefines: None -> <Module MpGlobalDefines D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpGlobalDefines.pyc imports=[('ctypes', 0, 0, -1), ('os', 0, 0, -1), ('os', 0, 0, -1)] binaries=[] datas=[]>
+MpApplication: None -> <Module MpApplication D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpApplication.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('math', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('dialogSongEdit', 0, 0, -1), ('dialogSync', 0, 0, -1), ('dialogColumnSelect', 0, 0, -1), ('widgetPage', 0, 0, -1), ('widgetPage.*', 0, 0, -1), ('widgetTable', 0, 0, -1), ('widgetPlayButton', 0, 0, -1), ('widgetLineEdit', 0, 0, -1), ('widgetLineEdit.LineEdit', 0, 0, -1), ('widgetInfoDisplay', 0, 0, -1), ('widgetLineEdit', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('MpCommands', 0, 0, -1), ('MpCommands.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('MpPlayer', 0, 0, -1), ('MpPlayer.*', 0, 0, -1), ('MpEventHook', 0, 0, -1), ('MpEventHook.disableHook', 0, 0, -1), ('UnicodeTranslate', 0, 0, -1), ('UnicodeTranslate.Translate', 0, 0, -1), ('MpThreading', 0, 0, -1), ('MpThreading.Thread_LoadMedia', 0, 0, -1), ('dialogNewPlayList', 0, 0, -1), ('dialogNewPlayList.*', 0, 0, -1), ('dialogHelp', 0, 0, -1), ('dialogHelp.helpDialog', 0, 0, -1)] binaries=[] datas=[]>
+MpScripting: None -> <Module MpScripting D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpScripting.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('calendar', 0, 0, -1), ('calendar.timegm', 0, 0, -1), ('os', 0, 0, -1), ('time', 0, 0, -1), ('datetime', 0, 0, -1), ('random', 0, 0, -1), ('re', 0, 0, -1), ('subprocess', 0, 0, -1), ('ctypes', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('MpID3', 0, 0, -1), ('MpID3.*', 0, 0, -1), ('UnicodeTranslate', 0, 0, -1), ('UnicodeTranslate.Translate', 0, 0, -1), ('MpEventHook', 0, 0, -1), ('MpEventHook.initHook', 0, 0, -1), ('MpEventHook.disableHook', 0, 0, -1), ('dialogSettings', 0, 0, -1), ('dialogSettings.SettingsWindow', 0, 0, -1), ('MpScreenSaver', 0, 0, -1), ('MpScreenSaver.*', 0, 0, -1), ('MpFirstTime', 0, 0, -1), ('MpFirstTime.verifyInstallation', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('sip', 1, 0, -1), ('os', 1, 0, -1)] binaries=[] datas=[]>
+MpThreading: None -> <Module MpThreading D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpThreading.pyc imports=[('sys', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('MpPlayer', 0, 0, -1), ('MpPlayer.*', 0, 0, -1)] binaries=[] datas=[]>
+MpFirstTime: None -> <Module MpFirstTime D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpFirstTime.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('widgetProgressBar', 0, 0, -1), ('widgetProgressBar.ProgressBar', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('os', 0, 0, -1), ('sys', 0, 0, -1), ('MpUnPack', 1, 0, -1), ('MpUnPack', 1, 0, -1)] binaries=[] datas=[]>
+MpEventHook: None -> <Module MpEventHook D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpEventHook.pyc imports=[('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('os', 0, 0, -1), ('pythoncom', 0, 1, -1), ('pyHook', 0, 1, -1)] binaries=[] datas=[]>
+VersionController: None -> <Module VersionController D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\VersionController.pyc imports=[('os', 0, 0, -1), ('VersionControl', 1, 0, -1), ('VersionControl', 1, 0, -1)] binaries=[] datas=[]>
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+posix: None -> None
+  DEL posix
+_emx_link: None -> None
+  DEL _emx_link
+_emx_link: None -> None
+  DEL _emx_link
+pwd: None -> None
+  DEL pwd
+pwd: None -> None
+  DEL pwd
+org: None -> None
+  DEL org
+org: None -> None
+  DEL org
+fcntl: None -> None
+  DEL fcntl
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+readline: None -> None
+  DEL readline
+fcntl: None -> None
+  DEL fcntl
+org: None -> None
+  DEL org
+org: None -> None
+  DEL org
+PyQt4.sip: None -> None
+PyQt4.PyQt4: None -> None
+PyQt4._qt: None -> None
+  DEL PyQt4._qt
+PyQt4._qt: None -> None
+  DEL PyQt4._qt
+PyQt4._qt: None -> None
+  DEL PyQt4._qt
+ctypes: None -> <Module ctypes C:\Python27\lib\ctypes\__init__.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.Union', 0, 0, -1), ('_ctypes.Structure', 0, 0, -1), ('_ctypes.Array', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes._Pointer', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.CFuncPtr', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.__version__', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.RTLD_LOCAL', 0, 0, -1), ('_ctypes.RTLD_GLOBAL', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.ArgumentError', 0, 0, -1), ('struct', 0, 0, -1), ('struct.calcsize', 0, 0, -1), ('_ctypes', 0, 1, -1), ('_ctypes.FormatError', 0, 1, -1), ('_ctypes', 0, 0, -1), ('_ctypes.FUNCFLAG_CDECL', 0, 0, -1), ('_ctypes.FUNCFLAG_PYTHONAPI', 0, 0, -1), ('_ctypes.FUNCFLAG_USE_ERRNO', 0, 0, -1), ('_ctypes.FUNCFLAG_USE_LASTERROR', 0, 0, -1), ('_ctypes', 0, 1, -1), ('_ctypes.LoadLibrary', 0, 1, -1), ('_ctypes', 0, 1, -1), ('_ctypes.FUNCFLAG_STDCALL', 0, 1, -1), ('_ctypes', 0, 1, -1), ('_ctypes.dlopen', 0, 1, -1), ('_ctypes', 0, 0, -1), ('_ctypes.sizeof', 0, 0, -1), ('_ctypes.byref', 0, 0, -1), ('_ctypes.addressof', 0, 0, -1), ('_ctypes.alignment', 0, 0, -1), ('_ctypes.resize', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.get_errno', 0, 0, -1), ('_ctypes.set_errno', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes._SimpleCData', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.POINTER', 0, 0, -1), ('_ctypes.pointer', 0, 0, -1), ('_ctypes._pointer_type_cache', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes.set_conversion_mode', 0, 0, -1), ('_ctypes', 0, 1, -1), ('_ctypes._check_HRESULT', 0, 1, -1), ('_ctypes._SimpleCData', 0, 1, -1), ('_ctypes', 0, 1, -1), ('_ctypes.get_last_error', 0, 1, -1), ('_ctypes.set_last_error', 0, 1, -1), ('_ctypes', 0, 0, -1), ('_ctypes._memmove_addr', 0, 0, -1), ('_ctypes._memset_addr', 0, 0, -1), ('_ctypes._string_at_addr', 0, 0, -1), ('_ctypes._cast_addr', 0, 0, -1), ('_ctypes', 0, 0, -1), ('_ctypes._wstring_at_addr', 0, 0, -1), ('ctypes._endian', 0, 0, -1), ('ctypes._endian.BigEndianStructure', 0, 0, -1), ('ctypes._endian.LittleEndianStructure', 0, 0, -1), ('struct', 1, 0, -1), ('struct.calcsize', 1, 0, -1)] binaries=[('kernel32.dll', 'C:\\Windows\\system32\\kernel32.dll', 'BINARY'), ('kernel32.dll', 'C:\\Windows\\system32\\kernel32.dll', 'BINARY')] datas=[]>
+ctypes.os: None -> None
+ctypes.sys: None -> None
+ctypes._ctypes: None -> None
+_ctypes: None -> <Module _ctypes C:\Python27\DLLs\_ctypes.pyd imports=[] binaries=[] datas=[]>
+ctypes.struct: None -> None
+ctypes.ctypes: None -> None
+ctypes._endian: None -> <Module ctypes._endian C:\Python27\lib\ctypes\_endian.pyc imports=[('sys', 0, 0, -1), ('ctypes', 0, 0, -1), ('ctypes.*', 0, 0, -1)] binaries=[] datas=[]>
+dialogSongEdit: None -> <Module dialogSongEdit D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\dialogSongEdit.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.fileGetPath', 0, 0, -1), ('MpFileAccess.createInternalExif', 0, 0, -1), ('widgetLineEdit', 0, 0, -1), ('widgetLineEdit.*', 0, 0, -1), ('time', 0, 0, -1), ('calendar', 0, 0, -1), ('calendar.timegm', 0, 0, -1), ('sys', 0, 1, -1), ('MpFileAccess', 0, 1, -1), ('MpFileAccess.createSongV2', 0, 1, -1)] binaries=[] datas=[]>
+dialogSync: None -> <Module dialogSync D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\dialogSync.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('widgetProgressBar', 0, 0, -1), ('datetime', 0, 0, -1), ('win32api', 0, 1, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+dialogColumnSelect: None -> <Module dialogColumnSelect D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\dialogColumnSelect.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('sip', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1)] binaries=[] datas=[]>
+widgetPage: None -> <Module widgetPage D:\Dropbox\Scripting\PyModule\GlobalModules\src\widgetPage.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1)] binaries=[] datas=[]>
+widgetTable: None -> <Module widgetTable D:\Dropbox\Scripting\PyModule\GlobalModules\src\widgetTable.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('widgetPage', 0, 0, -1), ('widgetPage.HPage', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+widgetPlayButton: None -> <Module widgetPlayButton D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\widgetPlayButton.pyc imports=[('PyQt4', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+widgetLineEdit: None -> <Module widgetLineEdit D:\Dropbox\Scripting\PyModule\GlobalModules\src\widgetLineEdit.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('UnicodeTranslate', 0, 0, -1), ('UnicodeTranslate.Translate', 0, 0, -1)] binaries=[] datas=[]>
+widgetInfoDisplay: None -> <Module widgetInfoDisplay D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\widgetInfoDisplay.pyc imports=[('PyQt4', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+MpScriptingAdvanced: None -> <Module MpScriptingAdvanced D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpScriptingAdvanced.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('calendar', 0, 0, -1), ('calendar.timegm', 0, 0, -1), ('os', 0, 0, -1), ('time', 0, 0, -1), ('datetime', 0, 0, -1), ('random', 0, 0, -1), ('re', 0, 0, -1), ('subprocess', 0, 0, -1), ('ctypes', 0, 0, -1), ('StringQuoter', 0, 0, -1), ('StringQuoter.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('MpID3', 0, 0, -1), ('MpID3.*', 0, 0, -1), ('UnicodeTranslate', 0, 0, -1), ('UnicodeTranslate.Translate', 0, 0, -1), ('MpEventHook', 0, 0, -1), ('MpEventHook.initHook', 0, 0, -1), ('MpEventHook.disableHook', 0, 0, -1), ('dialogSettings', 0, 0, -1), ('dialogSettings.SettingsWindow', 0, 0, -1), ('MpScreenSaver', 0, 0, -1), ('MpScreenSaver.*', 0, 0, -1), ('MpFirstTime', 0, 0, -1), ('MpFirstTime.verifyInstallation', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1)] binaries=[] datas=[]>
+MpCommands: None -> <Module MpCommands D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpCommands.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('StringQuoter', 0, 0, -1), ('StringQuoter.StringQuote', 0, 0, -1), ('StringParser', 0, 0, -1), ('StringParser.StringParse', 0, 0, -1), ('calendar', 0, 0, -1), ('calendar.timegm', 0, 0, -1), ('os', 0, 0, -1), ('sys', 0, 0, -1), ('time', 0, 0, -1), ('datetime', 0, 0, -1), ('random', 0, 0, -1), ('re', 0, 0, -1), ('subprocess', 0, 0, -1), ('ctypes', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('MpID3', 0, 0, -1), ('MpID3.*', 0, 0, -1), ('UnicodeTranslate', 0, 0, -1), ('UnicodeTranslate.Translate', 0, 0, -1), ('MpEventHook', 0, 0, -1), ('MpEventHook.initHook', 0, 0, -1), ('MpEventHook.disableHook', 0, 0, -1), ('dialogSettings', 0, 0, -1), ('dialogSettings.SettingsWindow', 0, 0, -1), ('dialogHelp', 0, 0, -1), ('dialogHelp.*', 0, 0, -1), ('MpScreenSaver', 0, 0, -1), ('MpScreenSaver.*', 0, 0, -1), ('MpFirstTime', 0, 0, -1), ('MpFirstTime.verifyInstallation', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('dialogSync', 0, 0, -1)] binaries=[] datas=[]>
+MpFileAccess: None -> <Module MpFileAccess D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpFileAccess.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('urllib', 0, 0, -1), ('re', 0, 0, -1), ('win32file', 0, 1, -1), ('win32con', 0, 1, -1), ('hashlib', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('time', 0, 0, -1), ('calendar', 0, 0, -1), ('calendar.timegm', 0, 0, -1), ('shutil', 0, 0, -1), ('shutil.copy', 0, 0, -1), ('ctypes', 1, 0, -1), ('UnicodeTranslate', 1, 0, -1), ('UnicodeTranslate.Translate', 1, 0, -1)] binaries=[] datas=[]>
+MpPlayer: None -> <Module MpPlayer D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpPlayer.pyc imports=[('os.path', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('MpID3', 0, 0, -1), ('MpID3.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('vlc', 0, 0, -1), ('PyQt4.phonon', 0, 0, -1), ('PyQt4.phonon.Phonon', 0, 0, -1)] binaries=[] datas=[]>
+UnicodeTranslate: None -> <Module UnicodeTranslate D:\Dropbox\Scripting\PyModule\GlobalModules\src\UnicodeTranslate.pyc imports=[('re', 0, 0, -1)] binaries=[] datas=[]>
+dialogNewPlayList: None -> <Module dialogNewPlayList D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\dialogNewPlayList.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('widgetLineEdit', 0, 0, -1), ('widgetLineEdit.*', 0, 0, -1), ('StringParser', 0, 0, -1), ('StringParser.StringParse', 0, 0, -1), ('MpGlobalDefines', 0, 1, -1), ('MpGlobalDefines.*', 0, 1, -1), ('sys', 0, 1, -1), ('os', 0, 1, -1)] binaries=[] datas=[]>
+dialogHelp: None -> <Module dialogHelp D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\dialogHelp.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('widgetTree', 0, 0, -1), ('widgetTree.*', 0, 0, -1), ('MpApplication', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpCommands', 0, 0, -1), ('StringParser', 0, 0, -1), ('StringParser.StringParse', 0, 0, -1), ('MpCommands', 0, 0, -1), ('MpCommands.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1)] binaries=[] datas=[]>
+urllib: None -> <Module urllib C:\Python27\lib\urllib.pyc imports=[('string', 0, 0, -1), ('socket', 0, 0, -1), ('os', 0, 0, -1), ('time', 0, 0, -1), ('sys', 0, 0, -1), ('urlparse', 0, 0, -1), ('urlparse.urljoin', 0, 0, -1), ('nturl2path', 0, 1, -1), ('nturl2path.url2pathname', 0, 1, -1), ('nturl2path.pathname2url', 0, 1, -1), ('rourl2path', 0, 1, -1), ('rourl2path.url2pathname', 0, 1, -1), ('rourl2path.pathname2url', 0, 1, -1), ('ssl', 0, 0, -1), ('_scproxy', 0, 1, -1), ('_scproxy._get_proxy_settings', 0, 1, -1), ('_scproxy._get_proxies', 0, 1, -1), ('warnings', 1, 0, -1), ('warnings.warnpy3k', 1, 0, -1), ('tempfile', 1, 1, -1), ('httplib', 1, 0, -1), ('base64', 1, 1, -1), ('base64', 1, 1, -1), ('httplib', 1, 0, -1), ('base64', 1, 1, -1), ('base64', 1, 1, -1), ('mimetypes', 1, 0, -1), ('mimetools', 1, 0, -1), ('email.utils', 1, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('StringIO', 1, 1, -1), ('StringIO.StringIO', 1, 1, -1), ('mimetypes', 1, 0, -1), ('mimetools', 1, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('StringIO', 1, 1, -1), ('StringIO.StringIO', 1, 1, -1), ('ftplib', 1, 1, -1), ('mimetools', 1, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('StringIO', 1, 1, -1), ('StringIO.StringIO', 1, 1, -1), ('base64', 1, 1, -1), ('re', 1, 0, -1), ('re', 1, 0, -1), ('getpass', 1, 0, -1), ('ftplib', 1, 1, -1), ('mimetools', 1, 1, -1), ('cStringIO', 1, 1, -1), ('cStringIO.StringIO', 1, 1, -1), ('StringIO', 1, 1, -1), ('StringIO.StringIO', 1, 1, -1), ('ftplib', 1, 0, -1), ('ftplib', 1, 0, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 1, -1), ('re', 1, 0, -1), ('socket', 1, 0, -1), ('fnmatch', 1, 0, -1), ('fnmatch.fnmatch', 1, 0, -1), ('_winreg', 1, 0, -1), ('re', 1, 1, -1), ('_winreg', 1, 0, -1), ('re', 1, 0, -1), ('getopt', 1, 0, -1), ('sys', 1, 0, -1)] binaries=[] datas=[]>
+win32file: None -> <Module win32file C:\Python27\lib\site-packages\win32\win32file.pyd imports=[] binaries=[] datas=[]>
+win32con: None -> <Module win32con C:\Python27\lib\site-packages\win32\lib\win32con.pyc imports=[] binaries=[] datas=[]>
+shutil: None -> <Module shutil C:\Python27\lib\shutil.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('stat', 0, 0, -1), ('os.path', 0, 0, -1), ('os.path.abspath', 0, 0, -1), ('fnmatch', 0, 0, -1), ('collections', 0, 0, -1), ('errno', 0, 0, -1), ('pwd', 0, 0, -1), ('pwd.getpwnam', 0, 0, -1), ('grp', 0, 0, -1), ('grp.getgrnam', 0, 0, -1), ('tarfile', 1, 0, -1), ('distutils.errors', 1, 0, -1), ('distutils.errors.DistutilsExecError', 1, 0, -1), ('distutils.spawn', 1, 0, -1), ('distutils.spawn.spawn', 1, 0, -1), ('zipfile', 1, 0, -1)] binaries=[] datas=[]>
+socket: None -> <Module socket C:\Python27\lib\socket.pyc imports=[('_socket', 0, 0, -1), ('_socket', 0, 0, -1), ('_socket.*', 0, 0, -1), ('functools', 0, 0, -1), ('functools.partial', 0, 0, -1), ('types', 0, 0, -1), ('types.MethodType', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl', 0, 1, -1), ('_ssl.SSLError', 0, 1, -1), ('_ssl', 0, 1, -1), ('_ssl.RAND_add', 0, 1, -1), ('_ssl.RAND_egd', 0, 1, -1), ('_ssl.RAND_status', 0, 1, -1), ('_ssl.SSL_ERROR_ZERO_RETURN', 0, 1, -1), ('_ssl.SSL_ERROR_WANT_READ', 0, 1, -1), ('_ssl.SSL_ERROR_WANT_WRITE', 0, 1, -1), ('_ssl.SSL_ERROR_WANT_X509_LOOKUP', 0, 1, -1), ('_ssl.SSL_ERROR_SYSCALL', 0, 1, -1), ('_ssl.SSL_ERROR_SSL', 0, 1, -1), ('_ssl.SSL_ERROR_WANT_CONNECT', 0, 1, -1), ('_ssl.SSL_ERROR_EOF', 0, 1, -1), ('_ssl.SSL_ERROR_INVALID_ERROR_CODE', 0, 1, -1), ('os', 0, 0, -1), ('sys', 0, 0, -1), ('warnings', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('StringIO', 0, 1, -1), ('StringIO.StringIO', 0, 1, -1), ('errno', 0, 0, -1), ('ssl', 1, 0, -1)] binaries=[] datas=[]>
+urlparse: None -> <Module urlparse C:\Python27\lib\urlparse.pyc imports=[('collections', 0, 0, -1), ('collections.namedtuple', 0, 0, -1)] binaries=[] datas=[]>
+nturl2path: None -> <Module nturl2path C:\Python27\lib\nturl2path.pyc imports=[('string', 1, 0, -1), ('urllib', 1, 0, -1), ('urllib', 1, 0, -1)] binaries=[] datas=[]>
+rourl2path: None -> None
+  DEL rourl2path
+rourl2path: None -> None
+  DEL rourl2path
+rourl2path: None -> None
+  DEL rourl2path
+ssl: None -> <Module ssl C:\Python27\lib\ssl.pyc imports=[('textwrap', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.OPENSSL_VERSION_NUMBER', 0, 0, -1), ('_ssl.OPENSSL_VERSION_INFO', 0, 0, -1), ('_ssl.OPENSSL_VERSION', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.SSLError', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.CERT_NONE', 0, 0, -1), ('_ssl.CERT_OPTIONAL', 0, 0, -1), ('_ssl.CERT_REQUIRED', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.RAND_status', 0, 0, -1), ('_ssl.RAND_egd', 0, 0, -1), ('_ssl.RAND_add', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.SSL_ERROR_ZERO_RETURN', 0, 0, -1), ('_ssl.SSL_ERROR_WANT_READ', 0, 0, -1), ('_ssl.SSL_ERROR_WANT_WRITE', 0, 0, -1), ('_ssl.SSL_ERROR_WANT_X509_LOOKUP', 0, 0, -1), ('_ssl.SSL_ERROR_SYSCALL', 0, 0, -1), ('_ssl.SSL_ERROR_SSL', 0, 0, -1), ('_ssl.SSL_ERROR_WANT_CONNECT', 0, 0, -1), ('_ssl.SSL_ERROR_EOF', 0, 0, -1), ('_ssl.SSL_ERROR_INVALID_ERROR_CODE', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.PROTOCOL_SSLv3', 0, 0, -1), ('_ssl.PROTOCOL_SSLv23', 0, 0, -1), ('_ssl.PROTOCOL_TLSv1', 0, 0, -1), ('_ssl', 0, 0, -1), ('_ssl.PROTOCOL_SSLv2', 0, 0, -1), ('socket', 0, 0, -1), ('socket.socket', 0, 0, -1), ('socket._fileobject', 0, 0, -1), ('socket._delegate_methods', 0, 0, -1), ('socket.error', 0, 0, -1), ('socket', 0, 0, -1), ('socket.getnameinfo', 0, 0, -1), ('base64', 0, 0, -1), ('errno', 0, 0, -1), ('time', 1, 0, -1)] binaries=[] datas=[]>
+_scproxy: None -> None
+  DEL _scproxy
+_scproxy: None -> None
+  DEL _scproxy
+_scproxy: None -> None
+  DEL _scproxy
+httplib: None -> <Module httplib C:\Python27\lib\httplib.pyc imports=[('array', 0, 0, -1), ('array.array', 0, 0, -1), ('os', 0, 0, -1), ('socket', 0, 0, -1), ('sys', 0, 0, -1), ('sys.py3kwarning', 0, 0, -1), ('urlparse', 0, 0, -1), ('urlparse.urlsplit', 0, 0, -1), ('warnings', 0, 0, -1), ('mimetools', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('StringIO', 0, 1, -1), ('StringIO.StringIO', 0, 1, -1), ('ssl', 0, 0, -1), ('sys', 1, 0, -1), ('getopt', 1, 0, -1), ('ssl', 1, 0, -1)] binaries=[] datas=[]>
+mimetypes: None -> <Module mimetypes C:\Python27\lib\mimetypes.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('posixpath', 0, 0, -1), ('urllib', 0, 0, -1), ('_winreg', 0, 0, -1), ('getopt', 0, 1, -1)] binaries=[] datas=[]>
+mimetools: None -> <Module mimetools C:\Python27\lib\mimetools.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('tempfile', 0, 0, -1), ('warnings', 0, 0, -1), ('warnings.filterwarnings', 0, 0, -1), ('warnings.catch_warnings', 0, 0, -1), ('rfc822', 0, 0, -1), ('warnings', 0, 0, -1), ('warnings.warnpy3k', 0, 0, -1), ('thread', 0, 0, -1), ('dummy_thread', 0, 1, -1), ('time', 1, 0, -1), ('socket', 1, 1, -1), ('base64', 1, 1, -1), ('quopri', 1, 1, -1), ('uu', 1, 1, -1), ('base64', 1, 1, -1), ('quopri', 1, 1, -1), ('uu', 1, 1, -1)] binaries=[] datas=[]>
+email: None -> <Module email C:\Python27\lib\email\__init__.pyc imports=[('sys', 0, 0, -1), ('email.mime', 0, 0, -1), ('email.parser', 1, 0, -1), ('email.parser.Parser', 1, 0, -1), ('email.parser', 1, 0, -1), ('email.parser.Parser', 1, 0, -1)] binaries=[] datas=[]>
+email.utils: None -> <Module email.utils C:\Python27\lib\email\utils.pyc imports=[('os', 0, 0, -1), ('re', 0, 0, -1), ('time', 0, 0, -1), ('base64', 0, 0, -1), ('random', 0, 0, -1), ('socket', 0, 0, -1), ('urllib', 0, 0, -1), ('warnings', 0, 0, -1), ('email._parseaddr', 0, 0, -1), ('email._parseaddr.quote', 0, 0, -1), ('email._parseaddr', 0, 0, -1), ('email._parseaddr.AddressList', 0, 0, -1), ('email._parseaddr', 0, 0, -1), ('email._parseaddr.mktime_tz', 0, 0, -1), ('email._parseaddr', 0, 0, -1), ('email._parseaddr.parsedate', 0, 0, -1), ('email._parseaddr', 0, 0, -1), ('email._parseaddr.parsedate_tz', 0, 0, -1), ('quopri', 0, 0, -1), ('quopri.decodestring', 0, 0, -1), ('email.encoders', 0, 0, -1), ('email.encoders._bencode', 0, 0, -1), ('email.encoders._qencode', 0, 0, -1), ('urllib', 1, 0, -1)] binaries=[] datas=[]>
+ftplib: None -> <Module ftplib C:\Python27\lib\ftplib.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('SOCKS', 0, 0, -1), ('socket', 0, 0, -1), ('socket.getfqdn', 0, 0, -1), ('socket', 0, 1, -1), ('socket', 0, 0, -1), ('socket._GLOBAL_DEFAULT_TIMEOUT', 0, 0, -1), ('ssl', 0, 0, -1), ('re', 1, 1, -1), ('re', 1, 1, -1)] binaries=[] datas=[]>
+getpass: None -> <Module getpass C:\Python27\lib\getpass.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('warnings', 0, 0, -1), ('termios', 0, 0, -1), ('msvcrt', 0, 1, -1), ('EasyDialogs', 0, 1, -1), ('EasyDialogs.AskPassword', 0, 1, -1), ('msvcrt', 1, 0, -1), ('os', 1, 0, -1), ('pwd', 1, 0, -1)] binaries=[] datas=[]>
+_winreg: None -> <Module _winreg None imports=[] binaries=[] datas=[]>
+_socket: None -> <Module _socket C:\Python27\DLLs\_socket.pyd imports=[] binaries=[] datas=[]>
+_ssl: None -> <Module _ssl C:\Python27\DLLs\_ssl.pyd imports=[] binaries=[] datas=[]>
+rfc822: None -> <Module rfc822 C:\Python27\lib\rfc822.pyc imports=[('time', 0, 0, -1), ('warnings', 0, 0, -1), ('warnings.warnpy3k', 0, 0, -1), ('sys', 0, 1, -1), ('os', 0, 1, -1)] binaries=[] datas=[]>
+uu: None -> <Module uu C:\Python27\lib\uu.pyc imports=[('binascii', 0, 0, -1), ('os', 0, 0, -1), ('sys', 0, 0, -1), ('optparse', 1, 0, -1)] binaries=[] datas=[]>
+email.sys: None -> None
+email.email: None -> None
+email.mime: None -> <Module email.mime C:\Python27\lib\email\mime\__init__.pyc imports=[] binaries=[] datas=[]>
+email.parser: None -> <Module email.parser C:\Python27\lib\email\parser.pyc imports=[('warnings', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('email.feedparser', 0, 0, -1), ('email.feedparser.FeedParser', 0, 0, -1), ('email.message', 0, 0, -1), ('email.message.Message', 0, 0, -1)] binaries=[] datas=[]>
+email.warnings: None -> None
+email.cStringIO: None -> None
+email.feedparser: None -> <Module email.feedparser C:\Python27\lib\email\feedparser.pyc imports=[('re', 0, 0, -1), ('email', 0, 0, -1), ('email.errors', 0, 0, -1), ('email', 0, 0, -1), ('email.message', 0, 0, -1)] binaries=[] datas=[]>
+email.message: None -> <Module email.message C:\Python27\lib\email\message.pyc imports=[('re', 0, 0, -1), ('uu', 0, 0, -1), ('binascii', 0, 0, -1), ('warnings', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('email.charset', 0, 0, -1), ('email', 0, 0, -1), ('email.utils', 0, 0, -1), ('email', 0, 0, -1), ('email.errors', 0, 0, -1), ('email.iterators', 1, 0, -1), ('email.iterators.walk', 1, 0, -1), ('email.generator', 1, 0, -1), ('email.generator.Generator', 1, 0, -1)] binaries=[] datas=[]>
+email.re: None -> None
+email.errors: None -> <Module email.errors C:\Python27\lib\email\errors.pyc imports=[] binaries=[] datas=[]>
+email.uu: None -> None
+email.binascii: None -> None
+email.charset: None -> <Module email.charset C:\Python27\lib\email\charset.pyc imports=[('codecs', 0, 0, -1), ('email.base64mime', 0, 0, -1), ('email.quoprimime', 0, 0, -1), ('email', 0, 0, -1), ('email.errors', 0, 0, -1), ('email.encoders', 0, 0, -1), ('email.encoders.encode_7or8bit', 0, 0, -1)] binaries=[] datas=[]>
+email.iterators: None -> <Module email.iterators C:\Python27\lib\email\iterators.pyc imports=[('sys', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1)] binaries=[] datas=[]>
+email.generator: None -> <Module email.generator C:\Python27\lib\email\generator.pyc imports=[('re', 0, 0, -1), ('sys', 0, 0, -1), ('time', 0, 0, -1), ('random', 0, 0, -1), ('warnings', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('email.header', 0, 0, -1), ('email.header.Header', 0, 0, -1)] binaries=[] datas=[]>
+email.codecs: None -> None
+email.base64mime: None -> <Module email.base64mime C:\Python27\lib\email\base64mime.pyc imports=[('binascii', 0, 0, -1), ('binascii.b2a_base64', 0, 0, -1), ('binascii.a2b_base64', 0, 0, -1), ('email.utils', 0, 0, -1), ('email.utils.fix_eols', 0, 0, -1)] binaries=[] datas=[]>
+email.quoprimime: None -> <Module email.quoprimime C:\Python27\lib\email\quoprimime.pyc imports=[('re', 0, 0, -1), ('string', 0, 0, -1), ('string.hexdigits', 0, 0, -1), ('email.utils', 0, 0, -1), ('email.utils.fix_eols', 0, 0, -1)] binaries=[] datas=[]>
+email.encoders: None -> <Module email.encoders C:\Python27\lib\email\encoders.pyc imports=[('base64', 0, 0, -1), ('quopri', 0, 0, -1), ('quopri.encodestring', 0, 0, -1)] binaries=[] datas=[]>
+email.os: None -> None
+email.time: None -> None
+email.base64: None -> None
+email.random: None -> None
+email.socket: None -> None
+email.urllib: None -> None
+email._parseaddr: None -> <Module email._parseaddr C:\Python27\lib\email\_parseaddr.pyc imports=[('time', 0, 0, -1)] binaries=[] datas=[]>
+email.quopri: None -> None
+email.string: None -> None
+email.header: None -> <Module email.header C:\Python27\lib\email\header.pyc imports=[('re', 0, 0, -1), ('binascii', 0, 0, -1), ('email.quoprimime', 0, 0, -1), ('email.base64mime', 0, 0, -1), ('email.errors', 0, 0, -1), ('email.errors.HeaderParseError', 0, 0, -1), ('email.charset', 0, 0, -1), ('email.charset.Charset', 0, 0, -1)] binaries=[] datas=[]>
+SOCKS: None -> None
+  DEL SOCKS
+termios: None -> None
+  DEL termios
+EasyDialogs: None -> None
+  DEL EasyDialogs
+EasyDialogs: None -> None
+  DEL EasyDialogs
+pwd: None -> None
+  DEL pwd
+StringQuoter: None -> <Module StringQuoter D:\Dropbox\Scripting\PyModule\GlobalModules\src\StringQuoter.pyc imports=[] binaries=[] datas=[]>
+MpID3: None -> <Module MpID3 D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpID3.pyc imports=[('mutagen.easyid3', 0, 0, -1), ('mutagen.easyid3.EasyID3', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3', 0, 0, -1), ('mutagen.mp3', 0, 0, -1), ('mutagen.mp3.MP3', 0, 0, -1), ('mutagen.mp4', 0, 0, -1), ('mutagen.mp4.MP4', 0, 0, -1), ('mutagen.asf', 0, 0, -1), ('mutagen.asf.ASF', 0, 0, -1), ('mutagen.flac', 0, 0, -1), ('mutagen.flac.FLAC', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.createExif', 0, 0, -1), ('MpFileAccess.createInternalExif', 0, 0, -1), ('MpFileAccess.fileGetExt', 0, 0, -1), ('MpFileAccess.fileGetSize', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.Qt', 0, 0, -1), ('PyQt4.QtCore.SIGNAL', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpScripting', 0, 0, -1), ('MpScripting.*', 0, 0, -1), ('MpScriptingAdvanced', 0, 0, -1), ('MpScriptingAdvanced.*', 0, 0, -1)] binaries=[] datas=[]>
+dialogSettings: None -> <Module dialogSettings D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\dialogSettings.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('MpGlobalDefines', 0, 0, -1), ('MpGlobalDefines.*', 0, 0, -1), ('MpFileAccess', 0, 0, -1), ('MpFileAccess.fileGetPath', 0, 0, -1), ('MpFileAccess.load_css', 0, 0, -1), ('MpFileAccess.css_save_dict', 0, 0, -1), ('MpCommands', 0, 0, -1), ('MpCommands.*', 0, 0, -1), ('widgetPage', 0, 0, -1), ('widgetPage.VPage', 0, 0, -1), ('os', 0, 0, -1), ('MpEventHook', 0, 0, -1), ('MpEventHook.*', 0, 0, -1)] binaries=[] datas=[]>
+MpScreenSaver: None -> <Module MpScreenSaver D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpScreenSaver.pyc imports=[('os', 0, 0, -1), ('win32gui', 0, 1, -1), ('win32con', 0, 1, -1)] binaries=[] datas=[]>
+mutagen: None -> <Module mutagen C:\Python27\lib\site-packages\mutagen\__init__.pyc imports=[('warnings', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen.asf', 1, 1, -1), ('mutagen.asf.ASF', 1, 1, -1), ('mutagen.apev2', 1, 1, -1), ('mutagen.apev2.APEv2File', 1, 1, -1), ('mutagen.flac', 1, 1, -1), ('mutagen.flac.FLAC', 1, 1, -1), ('mutagen.easyid3', 1, 1, -1), ('mutagen.easyid3.EasyID3FileType', 1, 1, -1), ('mutagen.id3', 1, 1, -1), ('mutagen.id3.ID3FileType', 1, 1, -1), ('mutagen.mp3', 1, 1, -1), ('mutagen.mp3.EasyMP3', 1, 1, -1), ('mutagen.mp3', 1, 1, -1), ('mutagen.mp3.MP3', 1, 1, -1), ('mutagen.oggflac', 1, 1, -1), ('mutagen.oggflac.OggFLAC', 1, 1, -1), ('mutagen.oggspeex', 1, 1, -1), ('mutagen.oggspeex.OggSpeex', 1, 1, -1), ('mutagen.oggtheora', 1, 1, -1), ('mutagen.oggtheora.OggTheora', 1, 1, -1), ('mutagen.oggvorbis', 1, 1, -1), ('mutagen.oggvorbis.OggVorbis', 1, 1, -1), ('mutagen.trueaudio', 1, 1, -1), ('mutagen.trueaudio.EasyTrueAudio', 1, 1, -1), ('mutagen.trueaudio', 1, 1, -1), ('mutagen.trueaudio.TrueAudio', 1, 1, -1), ('mutagen.wavpack', 1, 1, -1), ('mutagen.wavpack.WavPack', 1, 1, -1), ('mutagen.easymp4', 1, 1, -1), ('mutagen.easymp4.EasyMP4', 1, 1, -1), ('mutagen.mp4', 1, 1, -1), ('mutagen.mp4.MP4', 1, 1, -1), ('mutagen.musepack', 1, 1, -1), ('mutagen.musepack.Musepack', 1, 1, -1), ('mutagen.monkeysaudio', 1, 1, -1), ('mutagen.monkeysaudio.MonkeysAudio', 1, 1, -1), ('mutagen.optimfrog', 1, 1, -1), ('mutagen.optimfrog.OptimFROG', 1, 1, -1)] binaries=[] datas=[]>
+mutagen.easyid3: None -> <Module mutagen.easyid3 C:\Python27\lib\site-packages\mutagen\easyid3.pyc imports=[('fnmatch', 0, 0, -1), ('fnmatch.fnmatchcase', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.dict_match', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3', 0, 0, -1), ('mutagen.id3.error', 0, 0, -1), ('mutagen.id3.delete', 0, 0, -1), ('mutagen.id3.ID3FileType', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.id3: None -> <Module mutagen.id3 C:\Python27\lib\site-packages\mutagen\id3.pyc imports=[('struct', 0, 0, -1), ('struct', 0, 0, -1), ('struct.unpack', 0, 0, -1), ('struct.pack', 0, 0, -1), ('zlib', 0, 0, -1), ('zlib.error', 0, 0, -1), ('warnings', 0, 0, -1), ('warnings.warn', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1), ('mutagen._util.DictProxy', 0, 0, -1), ('os.path', 1, 0, -1), ('os.path.getsize', 1, 0, -1), ('sys', 1, 1, -1), ('errno', 1, 1, -1), ('errno.ENOENT', 1, 1, -1), ('errno', 1, 1, -1), ('errno.ENOENT', 1, 1, -1), ('errno', 1, 1, -1), ('errno.EINVAL', 1, 1, -1), ('re', 1, 0, -1), ('mutagen._constants', 1, 0, -1), ('mutagen._constants.GENRES', 1, 0, -1), ('re', 1, 0, -1), ('struct', 1, 0, -1), ('struct.error', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.mp3: None -> <Module mutagen.mp3 C:\Python27\lib\site-packages\mutagen\mp3.pyc imports=[('os', 0, 0, -1), ('struct', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3FileType', 0, 0, -1), ('mutagen.id3.BitPaddedInt', 0, 0, -1), ('mutagen.id3.delete', 0, 0, -1), ('mutagen.easyid3', 1, 0, -1), ('mutagen.easyid3.EasyID3', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.mp4: None -> <Module mutagen.mp4 C:\Python27\lib\site-packages\mutagen\mp4.pyc imports=[('struct', 0, 0, -1), ('sys', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._constants', 0, 0, -1), ('mutagen._constants.GENRES', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1), ('mutagen._util.DictProxy', 0, 0, -1), ('mutagen._util.utf8', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.asf: None -> <Module mutagen.asf C:\Python27\lib\site-packages\mutagen\asf.pyc imports=[('struct', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.flac: None -> <Module mutagen.flac C:\Python27\lib\site-packages\mutagen\flac.pyc imports=[('struct', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('_vorbis', 0, 0, -1), ('_vorbis.VCommentDict', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.BitPaddedInt', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.warnings: None -> None
+mutagen.mutagen: None -> <Module mutagen.mutagen C:\Python27\lib\site-packages\mutagen\mutagen\__init__.pyc imports=[('warnings', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen.asf', 1, 1, -1), ('mutagen.asf.ASF', 1, 1, -1), ('mutagen.apev2', 1, 1, -1), ('mutagen.apev2.APEv2File', 1, 1, -1), ('mutagen.flac', 1, 1, -1), ('mutagen.flac.FLAC', 1, 1, -1), ('mutagen.easyid3', 1, 1, -1), ('mutagen.easyid3.EasyID3FileType', 1, 1, -1), ('mutagen.id3', 1, 1, -1), ('mutagen.id3.ID3FileType', 1, 1, -1), ('mutagen.mp3', 1, 1, -1), ('mutagen.mp3.EasyMP3', 1, 1, -1), ('mutagen.mp3', 1, 1, -1), ('mutagen.mp3.MP3', 1, 1, -1), ('mutagen.oggflac', 1, 1, -1), ('mutagen.oggflac.OggFLAC', 1, 1, -1), ('mutagen.oggspeex', 1, 1, -1), ('mutagen.oggspeex.OggSpeex', 1, 1, -1), ('mutagen.oggtheora', 1, 1, -1), ('mutagen.oggtheora.OggTheora', 1, 1, -1), ('mutagen.oggvorbis', 1, 1, -1), ('mutagen.oggvorbis.OggVorbis', 1, 1, -1), ('mutagen.trueaudio', 1, 1, -1), ('mutagen.trueaudio.EasyTrueAudio', 1, 1, -1), ('mutagen.trueaudio', 1, 1, -1), ('mutagen.trueaudio.TrueAudio', 1, 1, -1), ('mutagen.wavpack', 1, 1, -1), ('mutagen.wavpack.WavPack', 1, 1, -1), ('mutagen.easymp4', 1, 1, -1), ('mutagen.easymp4.EasyMP4', 1, 1, -1), ('mutagen.mp4', 1, 1, -1), ('mutagen.mp4.MP4', 1, 1, -1), ('mutagen.musepack', 1, 1, -1), ('mutagen.musepack.Musepack', 1, 1, -1), ('mutagen.monkeysaudio', 1, 1, -1), ('mutagen.monkeysaudio.MonkeysAudio', 1, 1, -1), ('mutagen.optimfrog', 1, 1, -1), ('mutagen.optimfrog.OptimFROG', 1, 1, -1)] binaries=[] datas=[]>
+mutagen.mutagen._util: None -> <Module mutagen.mutagen._util C:\Python27\lib\site-packages\mutagen\mutagen\_util.pyc imports=[('struct', 0, 0, -1), ('fnmatch', 0, 0, -1), ('fnmatch.fnmatchcase', 0, 0, -1), ('struct', 1, 0, -1), ('struct.error', 1, 0, -1), ('fcntl', 1, 0, -1), ('fcntl', 1, 0, -1), ('mmap', 1, 0, -1), ('mmap', 1, 1, -1)] binaries=[] datas=[]>
+mutagen.mutagen.asf: None -> <Module mutagen.mutagen.asf C:\Python27\lib\site-packages\mutagen\mutagen\asf.pyc imports=[('struct', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.apev2: None -> <Module mutagen.mutagen.apev2 C:\Python27\lib\site-packages\mutagen\mutagen\apev2.pyc imports=[('struct', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen._util.utf8', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.flac: None -> <Module mutagen.mutagen.flac C:\Python27\lib\site-packages\mutagen\mutagen\flac.pyc imports=[('struct', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('_vorbis', 0, 0, -1), ('_vorbis.VCommentDict', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.BitPaddedInt', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.easyid3: None -> <Module mutagen.mutagen.easyid3 C:\Python27\lib\site-packages\mutagen\mutagen\easyid3.pyc imports=[('fnmatch', 0, 0, -1), ('fnmatch.fnmatchcase', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.dict_match', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3', 0, 0, -1), ('mutagen.id3.error', 0, 0, -1), ('mutagen.id3.delete', 0, 0, -1), ('mutagen.id3.ID3FileType', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.id3: None -> <Module mutagen.mutagen.id3 C:\Python27\lib\site-packages\mutagen\mutagen\id3.pyc imports=[('struct', 0, 0, -1), ('struct', 0, 0, -1), ('struct.unpack', 0, 0, -1), ('struct.pack', 0, 0, -1), ('zlib', 0, 0, -1), ('zlib.error', 0, 0, -1), ('warnings', 0, 0, -1), ('warnings.warn', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1), ('mutagen._util.DictProxy', 0, 0, -1), ('os.path', 1, 0, -1), ('os.path.getsize', 1, 0, -1), ('sys', 1, 1, -1), ('errno', 1, 1, -1), ('errno.ENOENT', 1, 1, -1), ('errno', 1, 1, -1), ('errno.ENOENT', 1, 1, -1), ('errno', 1, 1, -1), ('errno.EINVAL', 1, 1, -1), ('re', 1, 0, -1), ('mutagen._constants', 1, 0, -1), ('mutagen._constants.GENRES', 1, 0, -1), ('re', 1, 0, -1), ('struct', 1, 0, -1), ('struct.error', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.mp3: None -> <Module mutagen.mutagen.mp3 C:\Python27\lib\site-packages\mutagen\mutagen\mp3.pyc imports=[('os', 0, 0, -1), ('struct', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3FileType', 0, 0, -1), ('mutagen.id3.BitPaddedInt', 0, 0, -1), ('mutagen.id3.delete', 0, 0, -1), ('mutagen.easyid3', 1, 0, -1), ('mutagen.easyid3.EasyID3', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.oggflac: None -> <Module mutagen.mutagen.oggflac C:\Python27\lib\site-packages\mutagen\mutagen\oggflac.pyc imports=[('struct', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen.flac', 0, 0, -1), ('mutagen.flac.StreamInfo', 0, 0, -1), ('mutagen.flac.VCFLACDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.oggspeex: None -> <Module mutagen.mutagen.oggspeex C:\Python27\lib\site-packages\mutagen\mutagen\oggspeex.pyc imports=[('mutagen._vorbis', 0, 0, -1), ('mutagen._vorbis.VCommentDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.oggtheora: None -> <Module mutagen.mutagen.oggtheora C:\Python27\lib\site-packages\mutagen\mutagen\oggtheora.pyc imports=[('struct', 0, 0, -1), ('mutagen._vorbis', 0, 0, -1), ('mutagen._vorbis.VCommentDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.oggvorbis: None -> <Module mutagen.mutagen.oggvorbis C:\Python27\lib\site-packages\mutagen\mutagen\oggvorbis.pyc imports=[('struct', 0, 0, -1), ('mutagen._vorbis', 0, 0, -1), ('mutagen._vorbis.VCommentDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.trueaudio: None -> <Module mutagen.mutagen.trueaudio C:\Python27\lib\site-packages\mutagen\mutagen\trueaudio.pyc imports=[('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3FileType', 0, 0, -1), ('mutagen.id3.delete', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen.easyid3', 1, 0, -1), ('mutagen.easyid3.EasyID3', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.wavpack: None -> <Module mutagen.mutagen.wavpack C:\Python27\lib\site-packages\mutagen\mutagen\wavpack.pyc imports=[('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.easymp4: None -> <Module mutagen.mutagen.easymp4 C:\Python27\lib\site-packages\mutagen\mutagen\easymp4.pyc imports=[('mutagen.mp4', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.dict_match', 0, 0, -1), ('mutagen._util.utf8', 0, 0, -1), ('mutagen.mp4', 0, 0, -1), ('mutagen.mp4.MP4', 0, 0, -1), ('mutagen.mp4.MP4Tags', 0, 0, -1), ('mutagen.mp4.error', 0, 0, -1), ('mutagen.mp4.delete', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.mp4: None -> <Module mutagen.mutagen.mp4 C:\Python27\lib\site-packages\mutagen\mutagen\mp4.pyc imports=[('struct', 0, 0, -1), ('sys', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._constants', 0, 0, -1), ('mutagen._constants.GENRES', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1), ('mutagen._util.DictProxy', 0, 0, -1), ('mutagen._util.utf8', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.musepack: None -> <Module mutagen.mutagen.musepack C:\Python27\lib\site-packages\mutagen\mutagen\musepack.pyc imports=[('struct', 0, 0, -1), ('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.BitPaddedInt', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.monkeysaudio: None -> <Module mutagen.mutagen.monkeysaudio C:\Python27\lib\site-packages\mutagen\mutagen\monkeysaudio.pyc imports=[('struct', 0, 0, -1), ('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.optimfrog: None -> <Module mutagen.mutagen.optimfrog C:\Python27\lib\site-packages\mutagen\mutagen\optimfrog.pyc imports=[('struct', 0, 0, -1), ('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.warnings: None -> None
+mutagen.mutagen.mutagen: None -> None
+mutagen._util: None -> <Module mutagen._util C:\Python27\lib\site-packages\mutagen\_util.pyc imports=[('struct', 0, 0, -1), ('fnmatch', 0, 0, -1), ('fnmatch.fnmatchcase', 0, 0, -1), ('struct', 1, 0, -1), ('struct.error', 1, 0, -1), ('fcntl', 1, 0, -1), ('fcntl', 1, 0, -1), ('mmap', 1, 0, -1), ('mmap', 1, 1, -1)] binaries=[] datas=[]>
+mutagen.apev2: None -> <Module mutagen.apev2 C:\Python27\lib\site-packages\mutagen\apev2.pyc imports=[('struct', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen._util.utf8', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.oggflac: None -> <Module mutagen.oggflac C:\Python27\lib\site-packages\mutagen\oggflac.pyc imports=[('struct', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen.flac', 0, 0, -1), ('mutagen.flac.StreamInfo', 0, 0, -1), ('mutagen.flac.VCFLACDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.oggspeex: None -> <Module mutagen.oggspeex C:\Python27\lib\site-packages\mutagen\oggspeex.pyc imports=[('mutagen._vorbis', 0, 0, -1), ('mutagen._vorbis.VCommentDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.oggtheora: None -> <Module mutagen.oggtheora C:\Python27\lib\site-packages\mutagen\oggtheora.pyc imports=[('struct', 0, 0, -1), ('mutagen._vorbis', 0, 0, -1), ('mutagen._vorbis.VCommentDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.oggvorbis: None -> <Module mutagen.oggvorbis C:\Python27\lib\site-packages\mutagen\oggvorbis.pyc imports=[('struct', 0, 0, -1), ('mutagen._vorbis', 0, 0, -1), ('mutagen._vorbis.VCommentDict', 0, 0, -1), ('mutagen.ogg', 0, 0, -1), ('mutagen.ogg.OggPage', 0, 0, -1), ('mutagen.ogg.OggFileType', 0, 0, -1), ('mutagen.ogg.error', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.trueaudio: None -> <Module mutagen.trueaudio C:\Python27\lib\site-packages\mutagen\trueaudio.pyc imports=[('mutagen.id3', 0, 0, -1), ('mutagen.id3.ID3FileType', 0, 0, -1), ('mutagen.id3.delete', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen.easyid3', 1, 0, -1), ('mutagen.easyid3.EasyID3', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.wavpack: None -> <Module mutagen.wavpack C:\Python27\lib\site-packages\mutagen\wavpack.pyc imports=[('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.easymp4: None -> <Module mutagen.easymp4 C:\Python27\lib\site-packages\mutagen\easymp4.pyc imports=[('mutagen.mp4', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.Metadata', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.dict_match', 0, 0, -1), ('mutagen._util.utf8', 0, 0, -1), ('mutagen.mp4', 0, 0, -1), ('mutagen.mp4.MP4', 0, 0, -1), ('mutagen.mp4.MP4Tags', 0, 0, -1), ('mutagen.mp4.error', 0, 0, -1), ('mutagen.mp4.delete', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.musepack: None -> <Module mutagen.musepack C:\Python27\lib\site-packages\mutagen\musepack.pyc imports=[('struct', 0, 0, -1), ('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1), ('mutagen.id3', 0, 0, -1), ('mutagen.id3.BitPaddedInt', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.monkeysaudio: None -> <Module mutagen.monkeysaudio C:\Python27\lib\site-packages\mutagen\monkeysaudio.pyc imports=[('struct', 0, 0, -1), ('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.optimfrog: None -> <Module mutagen.optimfrog C:\Python27\lib\site-packages\mutagen\optimfrog.pyc imports=[('struct', 0, 0, -1), ('mutagen.apev2', 0, 0, -1), ('mutagen.apev2.APEv2File', 0, 0, -1), ('mutagen.apev2.error', 0, 0, -1), ('mutagen.apev2.delete', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.struct: None -> None
+mutagen.fnmatch: None -> None
+mutagen.fcntl: None -> None
+fcntl: None -> None
+  DEL fcntl
+fcntl: None -> None
+  DEL fcntl
+mutagen.mmap: None -> None
+mmap: None -> <Module mmap None imports=[] binaries=[] datas=[]>
+mutagen.mutagen.FileType: None -> None
+  DEL mutagen.mutagen.FileType
+mutagen.mutagen.Metadata: None -> None
+  DEL mutagen.mutagen.Metadata
+mutagen.mutagen.struct: None -> None
+mutagen.mutagen.fnmatch: None -> None
+mutagen.mutagen.fcntl: None -> None
+fcntl: None -> None
+  DEL fcntl
+fcntl: None -> None
+  DEL fcntl
+mutagen.mutagen.mmap: None -> None
+mutagen.cStringIO: None -> None
+mutagen.mutagen.Metadata: None -> None
+  DEL mutagen.mutagen.Metadata
+mutagen.mutagen.FileType: None -> None
+  DEL mutagen.mutagen.FileType
+mutagen._vorbis: None -> <Module mutagen._vorbis C:\Python27\lib\site-packages\mutagen\_vorbis.pyc imports=[('sys', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('sets', 0, 1, -1), ('sets.Set', 0, 1, -1)] binaries=[] datas=[]>
+mutagen.mutagen.FileType: None -> None
+  DEL mutagen.mutagen.FileType
+mutagen.sys: None -> None
+mutagen.sets: None -> None
+sets: None -> <Module sets C:\Python27\lib\sets.pyc imports=[('itertools', 0, 0, -1), ('itertools.ifilter', 0, 0, -1), ('itertools.ifilterfalse', 0, 0, -1), ('warnings', 0, 0, -1), ('copy', 1, 0, -1), ('copy.deepcopy', 1, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.zlib: None -> None
+mutagen.mutagen.os: None -> None
+mutagen.mutagen.sys: None -> None
+mutagen.mutagen.errno: None -> None
+mutagen.mutagen.re: None -> None
+mutagen._constants: None -> <Module mutagen._constants C:\Python27\lib\site-packages\mutagen\_constants.pyc imports=[] binaries=[] datas=[]>
+mutagen.mutagen.Metadata: None -> None
+  DEL mutagen.mutagen.Metadata
+mutagen.zlib: None -> None
+mutagen.os: None -> None
+mutagen.errno: None -> None
+mutagen.re: None -> None
+mutagen.mutagen._constants: None -> <Module mutagen.mutagen._constants C:\Python27\lib\site-packages\mutagen\mutagen\_constants.pyc imports=[] binaries=[] datas=[]>
+mutagen.Metadata: None -> None
+  DEL mutagen.Metadata
+mutagen.mutagen.ogg: None -> <Module mutagen.mutagen.ogg C:\Python27\lib\site-packages\mutagen\mutagen\ogg.pyc imports=[('struct', 0, 0, -1), ('sys', 0, 0, -1), ('zlib', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.cStringIO: None -> None
+mutagen.mutagen._vorbis: None -> <Module mutagen.mutagen._vorbis C:\Python27\lib\site-packages\mutagen\mutagen\_vorbis.pyc imports=[('sys', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.DictMixin', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('sets', 0, 1, -1), ('sets.Set', 0, 1, -1)] binaries=[] datas=[]>
+mutagen.FileType: None -> None
+  DEL mutagen.FileType
+mutagen.mutagen.sets: None -> None
+mutagen.FileType: None -> None
+  DEL mutagen.FileType
+mutagen.Metadata: None -> None
+  DEL mutagen.Metadata
+mutagen.FileType: None -> None
+  DEL mutagen.FileType
+mutagen.mutagen.Metadata: None -> None
+  DEL mutagen.mutagen.Metadata
+mutagen.FileType: None -> None
+  DEL mutagen.FileType
+mutagen.Metadata: None -> None
+  DEL mutagen.Metadata
+mutagen.mutagen.FileType: None -> None
+  DEL mutagen.mutagen.FileType
+mutagen.mutagen.Metadata: None -> None
+  DEL mutagen.mutagen.Metadata
+mutagen.FileType: None -> None
+  DEL mutagen.FileType
+mutagen.Metadata: None -> None
+  DEL mutagen.Metadata
+mutagen.ogg: None -> <Module mutagen.ogg C:\Python27\lib\site-packages\mutagen\ogg.pyc imports=[('struct', 0, 0, -1), ('sys', 0, 0, -1), ('zlib', 0, 0, -1), ('cStringIO', 0, 0, -1), ('cStringIO.StringIO', 0, 0, -1), ('mutagen', 0, 0, -1), ('mutagen.FileType', 0, 0, -1), ('mutagen._util', 0, 0, -1), ('mutagen._util.cdata', 0, 0, -1), ('mutagen._util.insert_bytes', 0, 0, -1), ('mutagen._util.delete_bytes', 0, 0, -1)] binaries=[] datas=[]>
+mutagen.mutagen.FileType: None -> None
+  DEL mutagen.mutagen.FileType
+mutagen.Metadata: None -> None
+  DEL mutagen.Metadata
+pythoncom: None -> <Module pythoncom C:\Python27\lib\site-packages\pythoncom.pyc imports=[('pywintypes', 0, 0, -1)] binaries=[] datas=[]>
+pythoncom27: None -> <Module pythoncom27 C:\Windows\system32\pythoncom27.dll imports=[('win32com.server.policy', 0, 0, -1)] binaries=[] datas=[]>
+pyHook: None -> <Module pyHook C:\Python27\lib\site-packages\pyHook\__init__.pyc imports=[('HookManager', 0, 0, -1), ('HookManager.*', 0, 0, -1)] binaries=[] datas=[]>
+win32com: None -> <Module win32com C:\Python27\lib\site-packages\win32com\__init__.pyc imports=[('win32api', 0, 0, -1), ('sys', 0, 0, -1), ('os', 0, 0, -1), ('pythoncom', 0, 0, -1), ('win32com.gen_py', 0, 1, -1), ('imp', 0, 1, -1)] binaries=[] datas=[]>
+win32com.server: None -> <Module win32com.server C:\Python27\lib\site-packages\win32com\server\__init__.pyc imports=[] binaries=[] datas=[]>
+win32com.server.policy: None -> <Module win32com.server.policy C:\Python27\lib\site-packages\win32com\server\policy.pyc imports=[('win32api', 0, 0, -1), ('winerror', 0, 0, -1), ('sys', 0, 0, -1), ('types', 0, 0, -1), ('pywintypes', 0, 0, -1), ('win32con', 0, 0, -1), ('pythoncom', 0, 0, -1), ('pythoncom', 0, 0, -1), ('pythoncom.DISPATCH_METHOD', 0, 0, -1), ('pythoncom.DISPATCH_PROPERTYGET', 0, 0, -1), ('pythoncom.DISPATCH_PROPERTYPUT', 0, 0, -1), ('pythoncom.DISPATCH_PROPERTYPUTREF', 0, 0, -1), ('pythoncom.DISPID_UNKNOWN', 0, 0, -1), ('pythoncom.DISPID_VALUE', 0, 0, -1), ('pythoncom.DISPID_PROPERTYPUT', 0, 0, -1), ('pythoncom.DISPID_NEWENUM', 0, 0, -1), ('pythoncom.DISPID_EVALUATE', 0, 0, -1), ('pythoncom.DISPID_CONSTRUCTOR', 0, 0, -1), ('pythoncom.DISPID_DESTRUCTOR', 0, 0, -1), ('pythoncom.DISPID_COLLECT', 0, 0, -1), ('pythoncom.DISPID_STARTENUM', 0, 0, -1), ('exception', 0, 0, -1), ('exception.COMException', 0, 0, -1), ('dispatcher', 0, 0, -1), ('dispatcher.DispatcherTrace', 0, 0, -1), ('dispatcher.DispatcherWin32trace', 0, 0, -1), ('win32com.util', 1, 1, -1), ('win32com.util.IIDToInterfaceName', 1, 1, -1), ('win32com', 1, 1, -1), ('win32com.universal', 1, 1, -1), ('win32com.client', 1, 1, -1), ('win32com.client', 1, 1, -1)] binaries=[] datas=[]>
+win32com.win32api: None -> None
+win32com.sys: None -> None
+win32com.os: None -> None
+win32com.pythoncom: None -> None
+win32com.win32com: None -> None
+win32com.gen_py: None -> None
+  DEL win32com.gen_py
+win32com.imp: None -> None
+pywintypes: None -> <Module pywintypes C:\Python27\lib\site-packages\win32\lib\pywintypes.pyc imports=[('imp', 0, 0, -1), ('sys', 0, 0, -1), ('os', 0, 0, -1), ('_win32sysloader', 1, 1, -1)] binaries=[] datas=[]>
+PyWinTypes27: None -> <Module PyWinTypes27 C:\Windows\system32\pywintypes27.dll imports=[] binaries=[] datas=[]>
+win32com.server.win32api: None -> None
+win32com.server.winerror: None -> None
+winerror: None -> <Module winerror C:\Python27\lib\site-packages\win32\lib\winerror.pyc imports=[] binaries=[] datas=[]>
+win32com.server.sys: None -> None
+win32com.server.types: None -> None
+win32com.server.pywintypes: None -> None
+win32com.server.win32con: None -> None
+win32com.server.pythoncom: None -> None
+win32com.server.exception: None -> <Module win32com.server.exception C:\Python27\lib\site-packages\win32com\server\exception.pyc imports=[('sys', 0, 0, -1), ('pythoncom', 0, 0, -1)] binaries=[] datas=[]>
+win32com.server.dispatcher: None -> <Module win32com.server.dispatcher C:\Python27\lib\site-packages\win32com\server\dispatcher.pyc imports=[('pythoncom', 0, 0, -1), ('traceback', 0, 0, -1), ('win32api', 0, 0, -1), ('sys', 0, 0, -1), ('sys.exc_info', 0, 0, -1), ('win32com.server.exception', 0, 0, -1), ('win32com.server.exception.IsCOMServerException', 0, 0, -1), ('win32com.util', 0, 0, -1), ('win32com.util.IIDToInterfaceName', 0, 0, -1), ('win32com', 0, 0, -1), ('win32trace', 0, 0, -1), ('win32traceutil', 1, 1, -1)] binaries=[] datas=[]>
+win32com.server.win32com: None -> None
+win32com.util: None -> <Module win32com.util C:\Python27\lib\site-packages\win32com\util.pyc imports=[('pythoncom', 0, 0, -1), ('win32api', 0, 0, -1), ('win32con', 0, 0, -1)] binaries=[] datas=[]>
+win32com.universal: None -> <Module win32com.universal C:\Python27\lib\site-packages\win32com\universal.pyc imports=[('types', 0, 0, -1), ('pythoncom', 0, 0, -1), ('win32com.client', 0, 0, -1), ('win32com.client.gencache', 0, 0, -1), ('win32com.client.build', 1, 1, -1)] binaries=[] datas=[]>
+win32com.client: None -> <Module win32com.client C:\Python27\lib\site-packages\win32com\client\__init__.pyc imports=[('pythoncom', 0, 0, -1), ('dynamic', 0, 0, -1), ('gencache', 0, 0, -1), ('sys', 0, 0, -1), ('pywintypes', 0, 0, -1), ('gencache', 1, 1, -1), ('types', 1, 0, -1), ('types.ClassType', 1, 0, -1), ('new', 1, 0, -1), ('gencache', 1, 0, -1), ('winerror', 1, 1, -1)] binaries=[] datas=[]>
+_win32sysloader: None -> <Module _win32sysloader C:\Python27\lib\site-packages\win32\_win32sysloader.pyd imports=[] binaries=[] datas=[]>
+win32com.server.traceback: None -> None
+win32com.server.win32trace: None -> None
+win32trace: None -> <Module win32trace C:\Python27\lib\site-packages\win32\win32trace.pyd imports=[] binaries=[] datas=[]>
+win32com.server.win32traceutil: None -> None
+win32traceutil: None -> <Module win32traceutil C:\Python27\lib\site-packages\win32\lib\win32traceutil.pyc imports=[('win32trace', 0, 0, -1), ('sys', 1, 0, -1), ('win32api', 1, 0, -1)] binaries=[] datas=[]>
+win32com.win32con: None -> None
+win32com.types: None -> None
+win32com.client.gencache: None -> <Module win32com.client.gencache C:\Python27\lib\site-packages\win32com\client\gencache.pyc imports=[('pywintypes', 0, 0, -1), ('os', 0, 0, -1), ('sys', 0, 0, -1), ('pythoncom', 0, 0, -1), ('win32com', 0, 0, -1), ('win32com.client', 0, 0, -1), ('glob', 0, 0, -1), ('traceback', 0, 0, -1), ('CLSIDToClass', 0, 0, -1), ('operator', 0, 0, -1), ('cPickle', 0, 0, -1), ('getopt', 0, 1, -1), ('cStringIO', 1, 1, -1), ('makepy', 1, 1, -1), ('makepy', 1, 0, -1), ('makepy', 1, 0, -1), ('genpy', 1, 1, -1), ('shutil', 1, 1, -1), ('CLSIDToClass', 1, 1, -1), ('zipfile', 1, 1, -1)] binaries=[] datas=[]>
+win32com.client.build: None -> <Module win32com.client.build C:\Python27\lib\site-packages\win32com\client\build.pyc imports=[('sys', 0, 0, -1), ('string', 0, 0, -1), ('keyword', 0, 0, -1), ('keyword.iskeyword', 0, 0, -1), ('pythoncom', 0, 0, -1), ('pywintypes', 0, 0, -1), ('pywintypes.TimeType', 0, 0, -1), ('winerror', 0, 0, -1), ('datetime', 0, 0, -1)] binaries=[] datas=[]>
+win32com.client.pythoncom: None -> None
+win32com.client.dynamic: None -> <Module win32com.client.dynamic C:\Python27\lib\site-packages\win32com\client\dynamic.pyc imports=[('sys', 0, 0, -1), ('traceback', 0, 0, -1), ('types', 0, 0, -1), ('pythoncom', 0, 0, -1), ('winerror', 0, 0, -1), ('build', 0, 0, -1), ('pywintypes', 0, 0, -1), ('pywintypes.IIDType', 0, 0, -1), ('win32com.client', 0, 0, -1), ('util', 1, 0, -1), ('win32com.client.util', 1, 0, -1)] binaries=[] datas=[]>
+win32com.client.sys: None -> None
+win32com.client.pywintypes: None -> None
+win32com.client.types: None -> None
+win32com.client.new: None -> None
+new: None -> <Module new C:\Python27\lib\new.pyc imports=[('warnings', 0, 0, -1), ('warnings.warnpy3k', 0, 0, -1), ('types', 0, 0, -1), ('types.ClassType', 0, 0, -1), ('types', 0, 0, -1), ('types.FunctionType', 0, 0, -1), ('types', 0, 0, -1), ('types.InstanceType', 0, 0, -1), ('types', 0, 0, -1), ('types.MethodType', 0, 0, -1), ('types', 0, 0, -1), ('types.ModuleType', 0, 0, -1), ('types', 0, 0, -1), ('types.CodeType', 0, 0, -1)] binaries=[] datas=[]>
+win32com.client.winerror: None -> None
+win32com.client.traceback: None -> None
+win32com.client.win32com: None -> None
+win32com.client.util: None -> <Module win32com.client.util C:\Python27\lib\site-packages\win32com\client\util.pyc imports=[('pythoncom', 0, 0, -1), ('win32com.client', 0, 0, -1), ('win32com.client.Dispatch', 0, 0, -1), ('win32com.client._get_good_object_', 0, 0, -1)] binaries=[] datas=[]>
+win32com.client.string: None -> None
+win32com.client.keyword: None -> None
+win32com.client.datetime: None -> None
+win32com.client.Dispatch: None -> None
+win32com.client._get_good_object_: None -> None
+  DEL win32com.client._get_good_object_
+win32com.client.os: None -> None
+win32com.client.glob: None -> None
+glob: None -> <Module glob C:\Python27\lib\glob.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('re', 0, 0, -1), ('fnmatch', 0, 0, -1)] binaries=[] datas=[]>
+win32com.client.CLSIDToClass: None -> <Module win32com.client.CLSIDToClass C:\Python27\lib\site-packages\win32com\client\CLSIDToClass.pyc imports=[] binaries=[] datas=[]>
+win32com.client.operator: None -> None
+win32com.client.cPickle: None -> None
+win32com.client.getopt: None -> None
+win32com.client.cStringIO: None -> None
+win32com.client.makepy: None -> <Module win32com.client.makepy C:\Python27\lib\site-packages\win32com\client\makepy.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('pythoncom', 0, 0, -1), ('win32com.client', 0, 0, -1), ('win32com.client.genpy', 0, 0, -1), ('win32com.client.selecttlb', 0, 0, -1), ('win32com.client.gencache', 0, 0, -1), ('win32com.client', 0, 0, -1), ('win32com.client.Dispatch', 0, 0, -1), ('win32ui', 1, 0, -1), ('pywin', 1, 0, -1), ('pywin.dialogs', 1, 1, -1), ('pywin.dialogs.status', 1, 1, -1), ('getopt', 1, 0, -1), ('codecs', 1, 1, -1)] binaries=[] datas=[]>
+win32com.client.genpy: None -> <Module win32com.client.genpy C:\Python27\lib\site-packages\win32com\client\genpy.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1), ('time', 0, 0, -1), ('win32com', 0, 0, -1), ('pythoncom', 0, 0, -1), ('build', 0, 0, -1), ('codecs', 1, 1, -1)] binaries=[] datas=[]>
+win32com.client.shutil: None -> None
+win32com.client.zipfile: None -> None
+zipfile: None -> <Module zipfile C:\Python27\lib\zipfile.pyc imports=[('struct', 0, 0, -1), ('os', 0, 0, -1), ('time', 0, 0, -1), ('sys', 0, 0, -1), ('shutil', 0, 0, -1), ('binascii', 0, 0, -1), ('cStringIO', 0, 0, -1), ('stat', 0, 0, -1), ('io', 0, 0, -1), ('re', 0, 0, -1), ('zlib', 0, 0, -1), ('py_compile', 1, 1, -1), ('textwrap', 1, 0, -1)] binaries=[] datas=[]>
+win32com.client.selecttlb: None -> <Module win32com.client.selecttlb C:\Python27\lib\site-packages\win32com\client\selecttlb.pyc imports=[('win32api', 0, 0, -1), ('win32con', 0, 0, -1), ('pythoncom', 0, 0, -1), ('pywin.dialogs.list', 1, 0, -1)] binaries=[] datas=[]>
+win32com.client.win32ui: None -> None
+win32ui: None -> <Module win32ui C:\Python27\lib\site-packages\Pythonwin\win32ui.pyd imports=[] binaries=[] datas=[]>
+win32com.client.pywin: None -> None
+pywin: None -> <Module pywin C:\Python27\lib\site-packages\Pythonwin\pywin\__init__.pyc imports=[] binaries=[] datas=[]>
+pywin.dialogs: None -> <Module pywin.dialogs C:\Python27\lib\site-packages\Pythonwin\pywin\dialogs\__init__.pyc imports=[] binaries=[] datas=[]>
+pywin.dialogs.status: None -> <Module pywin.dialogs.status C:\Python27\lib\site-packages\Pythonwin\pywin\dialogs\status.pyc imports=[('pywin.mfc', 0, 0, -1), ('pywin.mfc.dialog', 0, 0, -1), ('pywin.mfc.thread', 0, 0, -1), ('pywin.mfc.thread.WinThread', 0, 0, -1), ('threading', 0, 0, -1), ('win32ui', 0, 0, -1), ('win32con', 0, 0, -1), ('win32api', 0, 0, -1), ('time', 0, 0, -1), ('win32api', 1, 0, -1), ('win32api', 1, 0, -1)] binaries=[] datas=[]>
+win32com.client.codecs: None -> None
+win32com.client.time: None -> None
+win32com.client.win32api: None -> None
+win32com.client.win32con: None -> None
+pywin.dialogs.list: None -> <Module pywin.dialogs.list C:\Python27\lib\site-packages\Pythonwin\pywin\dialogs\list.pyc imports=[('pywin.mfc', 0, 0, -1), ('pywin.mfc.dialog', 0, 0, -1), ('win32ui', 0, 0, -1), ('win32con', 0, 0, -1), ('commctrl', 0, 0, -1), ('win32api', 0, 0, -1)] binaries=[] datas=[]>
+pywin.dialogs.pywin: None -> None
+pywin.mfc: None -> <Module pywin.mfc C:\Python27\lib\site-packages\Pythonwin\pywin\mfc\__init__.pyc imports=[] binaries=[] datas=[]>
+pywin.mfc.dialog: None -> <Module pywin.mfc.dialog C:\Python27\lib\site-packages\Pythonwin\pywin\mfc\dialog.pyc imports=[('win32ui', 0, 0, -1), ('win32con', 0, 0, -1), ('pywin.mfc', 0, 0, -1), ('pywin.mfc.window', 0, 0, -1)] binaries=[] datas=[]>
+pywin.dialogs.win32ui: None -> None
+pywin.dialogs.win32con: None -> None
+pywin.dialogs.commctrl: None -> None
+commctrl: None -> <Module commctrl C:\Python27\lib\site-packages\win32\lib\commctrl.pyc imports=[] binaries=[] datas=[]>
+pywin.dialogs.win32api: None -> None
+pywin.mfc.win32ui: None -> None
+pywin.mfc.win32con: None -> None
+pywin.mfc.pywin: None -> None
+pywin.mfc.window: None -> <Module pywin.mfc.window C:\Python27\lib\site-packages\Pythonwin\pywin\mfc\window.pyc imports=[('object', 0, 0, -1), ('win32ui', 0, 0, -1), ('win32con', 0, 0, -1)] binaries=[] datas=[]>
+pywin.mfc.object: None -> <Module pywin.mfc.object C:\Python27\lib\site-packages\Pythonwin\pywin\mfc\object.pyc imports=[('sys', 0, 0, -1), ('win32ui', 0, 0, -1)] binaries=[] datas=[]>
+pywin.mfc.sys: None -> None
+pywin.mfc.thread: None -> <Module pywin.mfc.thread C:\Python27\lib\site-packages\Pythonwin\pywin\mfc\thread.pyc imports=[('object', 0, 0, -1), ('win32ui', 0, 0, -1)] binaries=[] datas=[]>
+pywin.dialogs.threading: None -> None
+pywin.dialogs.time: None -> None
+pwd: None -> None
+  DEL pwd
+pwd: None -> None
+  DEL pwd
+grp: None -> None
+  DEL grp
+grp: None -> None
+  DEL grp
+tarfile: None -> <Module tarfile C:\Python27\lib\tarfile.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('shutil', 0, 0, -1), ('stat', 0, 0, -1), ('errno', 0, 0, -1), ('time', 0, 0, -1), ('struct', 0, 0, -1), ('copy', 0, 0, -1), ('re', 0, 0, -1), ('operator', 0, 0, -1), ('grp', 0, 0, -1), ('pwd', 0, 0, -1), ('zlib', 1, 1, -1), ('bz2', 1, 1, -1), ('bz2', 1, 0, -1), ('warnings', 1, 0, -1), ('gzip', 1, 0, -1), ('bz2', 1, 0, -1), ('warnings', 1, 1, -1), ('warnings', 1, 0, -1), ('warnings.warnpy3k', 1, 0, -1), ('cStringIO', 1, 0, -1), ('cStringIO.StringIO', 1, 0, -1), ('StringIO', 1, 1, -1), ('StringIO.StringIO', 1, 1, -1), ('calendar', 1, 0, -1)] binaries=[] datas=[]>
+distutils: None -> <Module distutils C:\Python27\lib\distutils\__init__.pyc imports=[] binaries=[] datas=[]>
+distutils.errors: None -> <Module distutils.errors C:\Python27\lib\distutils\errors.pyc imports=[] binaries=[] datas=[]>
+distutils.spawn: None -> <Module distutils.spawn C:\Python27\lib\distutils\spawn.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('distutils.errors', 0, 0, -1), ('distutils.errors.DistutilsPlatformError', 0, 0, -1), ('distutils.errors.DistutilsExecError', 0, 0, -1), ('distutils', 0, 0, -1), ('distutils.log', 0, 0, -1), ('errno', 1, 1, -1)] binaries=[] datas=[]>
+grp: None -> None
+  DEL grp
+pwd: None -> None
+  DEL pwd
+gzip: None -> <Module gzip C:\Python27\lib\gzip.pyc imports=[('struct', 0, 0, -1), ('sys', 0, 0, -1), ('time', 0, 0, -1), ('os', 0, 0, -1), ('zlib', 0, 0, -1), ('io', 0, 0, -1), ('__builtin__', 0, 0, -1), ('warnings', 1, 0, -1), ('errno', 1, 1, -1), ('errno', 1, 1, -1)] binaries=[] datas=[]>
+io: None -> <Module io C:\Python27\lib\io.pyc imports=[('_io', 0, 0, -1), ('abc', 0, 0, -1), ('_io', 0, 0, -1), ('_io.DEFAULT_BUFFER_SIZE', 0, 0, -1), ('_io.BlockingIOError', 0, 0, -1), ('_io.UnsupportedOperation', 0, 0, -1), ('_io.open', 0, 0, -1), ('_io.FileIO', 0, 0, -1), ('_io.BytesIO', 0, 0, -1), ('_io.StringIO', 0, 0, -1), ('_io.BufferedReader', 0, 0, -1), ('_io.BufferedWriter', 0, 0, -1), ('_io.BufferedRWPair', 0, 0, -1), ('_io.BufferedRandom', 0, 0, -1), ('_io.IncrementalNewlineDecoder', 0, 0, -1), ('_io.TextIOWrapper', 0, 0, -1)] binaries=[] datas=[]>
+_io: None -> <Module _io None imports=[] binaries=[] datas=[]>
+distutils.sys: None -> None
+distutils.os: None -> None
+distutils.distutils: None -> None
+distutils.log: None -> <Module distutils.log C:\Python27\lib\distutils\log.pyc imports=[('sys', 0, 0, -1)] binaries=[] datas=[]>
+distutils.errno: None -> None
+py_compile: None -> <Module py_compile C:\Python27\lib\py_compile.pyc imports=[('__builtin__', 0, 0, -1), ('imp', 0, 0, -1), ('marshal', 0, 0, -1), ('os', 0, 0, -1), ('sys', 0, 0, -1), ('traceback', 0, 0, -1)] binaries=[] datas=[]>
+pyHook.HookManager: None -> <Module pyHook.HookManager C:\Python27\lib\site-packages\pyHook\HookManager.pyc imports=[('cpyHook', 0, 0, -1)] binaries=[] datas=[]>
+pyHook.cpyHook: None -> <Module pyHook.cpyHook C:\Python27\lib\site-packages\pyHook\cpyHook.pyc imports=[('sys', 0, 0, -1), ('sys.version_info', 0, 0, -1), ('_cpyHook', 0, 1, -1), ('os.path', 1, 0, -1), ('os.path.dirname', 1, 0, -1), ('imp', 1, 0, -1), ('_cpyHook', 1, 1, -1)] binaries=[] datas=[]>
+pyHook.sys: None -> None
+pyHook._cpyHook: None -> <Module pyHook._cpyHook C:\Python27\lib\site-packages\pyHook\_cpyHook.pyd imports=[] binaries=[] datas=[]>
+pyHook.os: None -> None
+pyHook.imp: None -> None
+StringParser: None -> <Module StringParser D:\Dropbox\Scripting\PyModule\GlobalModules\src\StringParser.pyc imports=[('StringQuoter', 0, 0, -1), ('StringQuoter.*', 0, 0, -1)] binaries=[] datas=[]>
+widgetTree: None -> <Module widgetTree D:\Dropbox\Scripting\PyModule\GlobalModules\src\widgetTree.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1)] binaries=[] datas=[]>
+win32gui: None -> <Module win32gui C:\Python27\lib\site-packages\win32\win32gui.pyd imports=[] binaries=[] datas=[]>
+widgetProgressBar: None -> <Module widgetProgressBar D:\Dropbox\Scripting\PyModule\GlobalModules\src\widgetProgressBar.pyc imports=[('PyQt4.QtCore', 0, 0, -1), ('PyQt4.QtCore.*', 0, 0, -1), ('PyQt4.QtGui', 0, 0, -1), ('PyQt4.QtGui.*', 0, 0, -1), ('sys', 0, 1, -1)] binaries=[] datas=[]>
+MpUnPack: None -> <Module MpUnPack D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\MpUnPack.pyc imports=[('os', 0, 0, -1), ('sys', 0, 0, -1)] binaries=[] datas=[]>
+vlc: None -> <Module vlc D:\Dropbox\Scripting\PyQt\ConsolePlayer\src\vlc.pyc imports=[('ctypes', 0, 0, -1), ('sys', 0, 0, -1), ('os', 0, 0, -1), ('ctypes.util', 0, 1, -1), ('_winreg', 0, 1, -1), ('msvcrt', 0, 1, -1), ('msvcrt.getch', 0, 1, -1), ('tty', 1, 0, -1), ('termios', 1, 0, -1)] binaries=[] datas=[]>
+PyQt4.phonon: None -> <Module PyQt4.phonon C:\Python27\lib\site-packages\PyQt4\phonon.pyd imports=[] binaries=[] datas=[]>
+ctypes.util: None -> <Module ctypes.util C:\Python27\lib\ctypes\util.pyc imports=[('sys', 0, 0, -1), ('os', 0, 0, -1), ('ctypes.macholib.dyld', 0, 1, -1), ('ctypes.macholib.dyld.dyld_find', 0, 1, -1), ('re', 0, 1, -1), ('tempfile', 0, 1, -1), ('errno', 0, 1, -1), ('imp', 1, 0, -1), ('struct', 1, 0, -1), ('ctypes', 1, 0, -1), ('ctypes.cdll', 1, 0, -1)] binaries=[] datas=[]>
+tty: None -> <Module tty C:\Python27\lib\tty.pyc imports=[('termios', 0, 0, -1), ('termios.*', 0, 0, -1)] binaries=[] datas=[]>
+termios: None -> None
+  DEL termios
+ctypes.macholib: None -> <Module ctypes.macholib C:\Python27\lib\ctypes\macholib\__init__.pyc imports=[] binaries=[] datas=[]>
+ctypes.macholib.dyld: None -> <Module ctypes.macholib.dyld C:\Python27\lib\ctypes\macholib\dyld.pyc imports=[('os', 0, 0, -1), ('framework', 0, 0, -1), ('framework.framework_info', 0, 0, -1), ('dylib', 0, 0, -1), ('dylib.dylib_info', 0, 0, -1), ('itertools', 0, 0, -1), ('itertools.*', 0, 0, -1)] binaries=[] datas=[]>
+ctypes.re: None -> None
+ctypes.tempfile: None -> None
+ctypes.errno: None -> None
+ctypes.imp: None -> None
+ctypes.cdll: None -> None
+  DEL ctypes.cdll
+ctypes.macholib.os: None -> None
+ctypes.macholib.framework: None -> <Module ctypes.macholib.framework C:\Python27\lib\ctypes\macholib\framework.pyc imports=[('re', 0, 0, -1)] binaries=[] datas=[]>
+ctypes.macholib.dylib: None -> <Module ctypes.macholib.dylib C:\Python27\lib\ctypes\macholib\dylib.pyc imports=[('re', 0, 0, -1)] binaries=[] datas=[]>
+ctypes.macholib.itertools: None -> None
+ctypes.macholib.re: None -> None
+termios: None -> None
+  DEL termios
+termios: None -> None
+  DEL termios
+PyQt4._qt: None -> None
+  DEL PyQt4._qt
+VersionControl: None -> <Module VersionControl D:\Dropbox\Scripting\PyModule\GlobalModules\src\VersionControl.pyc imports=[] binaries=[] datas=[]>
