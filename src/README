@@ -1,0 +1,53 @@
+
+
+About Console Player
+--------------------------------------------------------------------------
+
+Console Player is a media player and library manager made with Python and Qt4. 
+Media playback through VLC, pr Phonon if VLC is not installed
+
+This project is no longer a true console based media player, 
+However it did start out as one.
+
+Highlights
+    - Provides several ways to quickly build a new playlist
+    - 10 Customizable search presets for dynamic playlists
+    - A button to stop playback when the current song finishes
+    - Text input can control most features
+    - Quickly search through the library with an easy to learn syntax
+    - Full Unicode support*
+    - Supported File Types:
+        mp3, m4a, m4b, m4p, mpeg4, aac, asf, wma, flac
+    
+*Python has issues with unicode paths on Windows.
+
+Getting Started
+--------------------------------------------------------------------------
+1. Drag music, or folders onto the application.
+    - Any recognized file formats will atomatically be loaded into the main library.
+2. type 'new' (without the quotes) in the Command input text box, hit enter
+3. in the same text box, hit enter again ( with no text entered into it)
+    - When the text box is blank the selected song is played.
+
+Type help in the console for more information.
+            
+See the file 'COMMANDS.txt' and 'INTERFACE.txt' for detailed information
+
+Source Dependencies
+--------------------------------------------------------------------------
+  Python 2.7  
+  vlc.py        - default playback device  
+  PyQt4
+  Phonon        - Should come with PyQt, used for playback when VLC is not found
+  mutagen
+  
+  win32file
+  win32con
+  
+  pyHook        - Allows for intercepting keyboard media keys
+  pythoncom
+  
+
+
+
+            

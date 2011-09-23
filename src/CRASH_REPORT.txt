@@ -1,0 +1,3 @@
+Application Crashed unexpectedly
+Main program No Longer Exists
+Thread has no Parent

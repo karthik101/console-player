@@ -1,0 +1,142 @@
+#----------------------------------------------------------
+#----------------------------------------------------------
+#  ConsolePlayer.py
+#----------------------------------------------------------
+   
+import sys
+import os   
+
+
+if __name__ != "__main__":
+    print "Console Player must be started as the main script"
+    sys.exit(1)
+ 
+isPosix = os.name =='posix'
+
+if isPosix:
+    sys.path.append("/home/nick/windows/D_DRIVE/Dropbox/Scripting/PyModule/GlobalModules/src")
+ 
+__debug   = "-debug" in sys.argv;
+__devmode = "-devmode" in sys.argv;
+
+
+import sip
+
+if __debug:
+    # For Python 2.7, PyInstaller
+    # error: http://www.pyinstaller.org/ticket/159
+    # if you see an error related to API already set to Version 1 edit the file:
+    #   %PyInstaller%/support/rthooks/pyi_rth_qt4plugins.py
+    # and add the API changing code at the top of it:
+    API_NAMES = ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]
+    API_VERSION = 2
+    for name in API_NAMES:
+        sip.setapi(name, API_VERSION)
+        
+# there are numerouse if __debug statements spread throughout this file 
+# these are used for determining where a crash occured during boot
+
+if __debug: print "Sip Version Set"        
+#----------------------------------------------------------
+#----------------------------------------------------------
+        
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
+if __debug: print "Qt Imports"    
+#Modules needed to start the player
+from MpGlobalDefines import *
+if __debug: print "MpGlobalDefines Imported"    
+from MpApplication import *
+if __debug: print "MpApplication Imported"    
+from MpScripting import *
+from MpThreading import MediaPlayerThread
+from MpFirstTime import firstTimeCheck
+import MpEventHook
+if __debug: print "Remaining Required Files Imported"    
+
+#debugPreboot("PyQt Version: %s"%(PYQT_VERSION_STR))
+# ######################################
+# Create the Qt Application
+# ###################################### 
+MpGlobal.Application = QApplication(sys.argv)
+MpGlobal.Application.setApplicationName("Console Player")
+MpGlobal.Application.setQuitOnLastWindowClosed(True)
+
+if __debug: print "Application Created %s"%MpGlobal.Application    
+#app.processEvents()
+
+# ######################################
+# Set the Internal Version
+# ###################################### 
+# if in development mode, increment the build number
+import VersionController
+MpGlobal.VERSION = VersionController.AutoVersion(__devmode) 
+MpGlobal.NAME = "Console Player - v%s"%MpGlobal.VERSION
+del VersionController
+print MpGlobal.NAME
+    
+
+if __debug: print "Player Version Set"        
+
+#
+firstTimeCheck();
+
+if __debug: print "First Time Check Done"    
+
+# ######################################
+# Import settings from a text file or use default
+# ######################################
+init_Settings(not __devmode)
+
+if __debug: print "Settings Initialized"
+    
+init_preMainWindow()
+
+if __debug: print "Player Components initialized"    
+
+# ######################################
+# Create the Form
+# ######################################
+MpGlobal.Window = MainWindow(MpGlobal.NAME)
+
+if __debug: print "Main Window Created %s"%MpGlobal.Window    
+# ######################################
+# Create the Player
+# ######################################
+MpGlobal.PlayerThread = MediaPlayerThread(MpGlobal.Window)
+MpGlobal.PlayerThread.start()
+
+if __debug: print "Player Thread Created %s"%MpGlobal.PlayerThread  
+  
+# ######################################
+# Set Keyboard Hook
+# ######################################
+
+if not __devmode and Settings.MEDIAKEYS_ENABLE:
+    MpEventHook.initHook()
+    debugPreboot("KeyBoard Hook Enabled")
+
+# ######################################
+# Finish initializing....
+# ######################################
+MpGlobal.Window.txt_debug.setPlainText(MpGlobal.debug_preboot_string)
+MpGlobal.debug_preboot_string = ""
+
+MpGlobal.Window.show()
+
+if __debug: print "Window Show"    
+
+init_postMainWindow()
+
+if __debug: print "Post Main Window initilizers done"    
+
+# ######################################
+# Start the Main Loop
+# ######################################
+sys.exit(MpGlobal.Application.exec_())
+
+
+
+
+    
