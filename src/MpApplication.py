@@ -2445,6 +2445,8 @@ class TableFileExplorer(widgetTable.Table):
         # get a template song, for batch renames, if none song is found, use this one instead
         # REMARK: template song was not a good idea, what else can i do?
         # any way to pattern rename non-loaded songs? load them and then rename?
+        # bad unicode formatted songs can produce illegal file names
+        # do i whitelist or sanitize all input?
         #template_song = None
         #for row in R: 
         #    s = self.data[row][self.song]

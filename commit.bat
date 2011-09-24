@@ -10,7 +10,7 @@ svn st
 
 set /P input=Enter a commit message:
 
-svn commit -m %input%
+svn commit -m "%input%"
 if errorlevel 1 goto error
 exit
 :error
