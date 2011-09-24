@@ -1,3 +1,6 @@
+
+:: this file will create a standalone exe file in the --onefile configuration
+
 @echo off
 :: change to current drive
 %~d0
