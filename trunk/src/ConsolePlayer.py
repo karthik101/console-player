@@ -12,7 +12,7 @@ if __name__ != "__main__":
  
 isPosix = os.name =='posix'
 
-# add the path to the global modules to the PYTHONPATH for importing
+# add the path to the global modules to the import path list
 path = os.getcwd().replace('\\','/');
 path = path[:path.rfind('/')+1]+'module'
 sys.path.append(path)
