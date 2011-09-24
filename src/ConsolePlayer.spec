@@ -40,7 +40,8 @@ def getVersionNumber(settings_path):
         path must be a full path to a settings file.
         no relative paths
     """
-    version = "";
+    version = "0.0.0.0";
+    
     if os.path.exists(settings_path):
         rf = open(settings_path,"r")
         
