@@ -1,0 +1,7 @@
+...comming soon
+
+
+I'm new to the whole open source / python / svn.
+
+I'm reading up on licenses now and when i figure out what license applys i will put it here
+The tricky part is how the license of PyQt, Mutagen PyInstaller and other modules combine together
