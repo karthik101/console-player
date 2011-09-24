@@ -6,23 +6,24 @@
 import sys
 import os   
 
-
 if __name__ != "__main__":
     print "Console Player must be started as the main script"
     sys.exit(1)
  
 isPosix = os.name =='posix'
 
-if isPosix:
-    sys.path.append("/home/nick/windows/D_DRIVE/Dropbox/Scripting/PyModule/GlobalModules/src")
+# add the path to the global modules to the PYTHONPATH for importing
+path = os.getcwd().replace('\\','/');
+path = path[:path.rfind('/')+1]+'module'
+sys.path.append(path)
  
 __debug   = "-debug" in sys.argv;
 __devmode = "-devmode" in sys.argv;
 
-
 import sip
 
-if __debug:
+if __devmode: # use API 2, when testing
+              # API2 is set by PyInstaller aftercompiled to an exe
     # For Python 2.7, PyInstaller
     # error: http://www.pyinstaller.org/ticket/159
     # if you see an error related to API already set to Version 1 edit the file:
@@ -35,6 +36,7 @@ if __debug:
         
 # there are numerouse if __debug statements spread throughout this file 
 # these are used for determining where a crash occured during boot
+# compile a Console version (exec-c.bat) to see these messages
 
 if __debug: print "Sip Version Set"        
 #----------------------------------------------------------
@@ -55,7 +57,6 @@ from MpFirstTime import firstTimeCheck
 import MpEventHook
 if __debug: print "Remaining Required Files Imported"    
 
-#debugPreboot("PyQt Version: %s"%(PYQT_VERSION_STR))
 # ######################################
 # Create the Qt Application
 # ###################################### 
@@ -64,12 +65,10 @@ MpGlobal.Application.setApplicationName("Console Player")
 MpGlobal.Application.setQuitOnLastWindowClosed(True)
 
 if __debug: print "Application Created %s"%MpGlobal.Application    
-#app.processEvents()
 
 # ######################################
 # Set the Internal Version
 # ###################################### 
-# if in development mode, increment the build number
 import VersionController
 MpGlobal.VERSION = VersionController.AutoVersion(__devmode) 
 MpGlobal.NAME = "Console Player - v%s"%MpGlobal.VERSION
@@ -77,9 +76,11 @@ del VersionController
 print MpGlobal.NAME
     
 
-if __debug: print "Player Version Set"        
-
-#
+if __debug: print "Player Version Set"      
+  
+# ######################################
+# Check if required files need to be extracted
+# ###################################### 
 firstTimeCheck();
 
 if __debug: print "First Time Check Done"    
