@@ -1338,7 +1338,28 @@ def URICreatePath(path):
     path = path.replace("file:///","");
     return urllib.unquote(path);
 
+def OS_FileName_Correct(filename):
+    """
+        filename as filename, from output fileGetName
+        so, no extension and no complete path.
+        
+        this function will make sure that that no illegal characters are in the name
+        example '/' wil be removed
+        some illegal characters could still get thru.
+        unicode is allowed under certain locales of isalpha
+        that may pose problems for some people.
+        
+    """
+    
+    white = " +=-_.()[]{}`~@#$%^&"
+    
+    s = unicode(filename)
+    #print "".join([x for x in s if x.isalpha() or x.isdigit() or x in "+=-_.()[]{}`~@#$%^&"])
+    return "".join([x for x in s if x.isalpha() or x.isdigit() or x in white])
+    
+    
 
+   
 def UnixPathCorrect(path):
     """
         If the path is not found, assume there is a case error
