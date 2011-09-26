@@ -2419,7 +2419,7 @@ class TableFileExplorer(widgetTable.Table):
 
         R = list(self.selection)
         print len(R)
-        prompt = "";
+        fprompt = "";
         new_name = ""
 
         #determine the prompt for the new file name
@@ -2427,9 +2427,10 @@ class TableFileExplorer(widgetTable.Table):
             print "No Items Selected to rename"
             return
         else:
-            prompt = fileGetName(self.data[R[0]][self.name])
-            
-        dialog = dialogRename(prompt)  
+            fprompt = fileGetName(self.data[R[0]][self.name])
+        
+        prompt = 'Pattern Rename songs:\ne.g. $art => artist_name\nAll standard search terms apply except dates.'    
+        dialog = dialogRename(fprompt,'Rename File',prompt)  
         
         #get the new file name
         if dialog.exec_():
@@ -2442,21 +2443,38 @@ class TableFileExplorer(widgetTable.Table):
         # by using the already defined .art .ttl etc. ~ 
         # then appending incrementing numbers for any colliding songs.
         
-        # get a template song, for batch renames, if none song is found, use this one instead
-        # REMARK: template song was not a good idea, what else can i do?
-        # any way to pattern rename non-loaded songs? load them and then rename?
-        # bad unicode formatted songs can produce illegal file names
-        # do i whitelist or sanitize all input?
-        #template_song = None
-        #for row in R: 
-        #    s = self.data[row][self.song]
-        #    if s != None:
-        #        template_song = s;
-        #        continue;
-        #    if template_song != None and s != None and template_song != s:
-        #        template_song = None;
-        #        break;  
-        #print "Template Song: %s"%template_song
+        # a template song is used to check the pattern renaming, and then
+        # askthe user if this is what they want.
+        template_song = None
+        for row in R: 
+            s = self.data[row][self.song]
+            if s != None:
+                template_song = s;
+                break;
+            # if template_song != None and s != None and template_song != s:
+            #     template_song = None;
+            #     break;  
+            continue;
+            
+        sample = OS_FileName_Correct( MpMusic.expandExifMacro(new_name,'$',template_song) )
+        
+        if sample != new_name:
+            message = 'Songs to Modify: %d\n'%len(R)
+            message += 'Rename Pattern:\n%s\n'%new_name
+            message += 'Sample:\n%s\n'%sample
+            message += 'Continue?:'
+            msgBox = QMessageBox(MpGlobal.Window)
+            msgBox.setWindowTitle('Confirm Rename')
+            msgBox.setIcon(QMessageBox.Question)
+            msgBox.setText(message)
+            #    "Delete Song Confirmation", message,
+             #   QMessageBox.NoButton, self)
+            msgBox.addButton("Rename", QMessageBox.AcceptRole)
+            msgBox.addButton("Cancel", QMessageBox.RejectRole)
+            
+            if msgBox.exec_() != QMessageBox.AcceptRole:
+                debug("Rename Request Canceled By User")
+                return;
         #
         filepath = self.__act_dir2__ # root path is the same for all selected songs
         
@@ -2475,13 +2493,16 @@ class TableFileExplorer(widgetTable.Table):
             
             name = MpMusic.expandExifMacro(new_name,'$',song)
             
-            path = filepath+name+'.'+fileext
+            name = OS_FileName_Correct(name) # strip illegal characters with a sudo whitlist
+                                        
             
-            #debug(song[MpMusic.PATH])
-            debug(path)
-            
-            if path != "":
-                self._rename_file_(row,song[MpMusic.PATH],path)
+            if name != '':
+                path = filepath+name+'.'+fileext
+                
+                debug(path)
+
+                #if path != "" and not os.path.exists(path):
+                #    self._rename_file_(row,song[MpMusic.PATH],path)
             
         return;
         
@@ -2543,7 +2564,7 @@ class TableFileExplorer(widgetTable.Table):
         
         # get the new folder name, and whether the user will commit to this 
         
-        dialog = dialogRename(self.data[self.__act_row__][1])
+        dialog = dialogRename(self.data[self.__act_row__][1],"Rename Folder")
         
         if dialog.exec_():
             print "accepted"
@@ -2843,10 +2864,10 @@ class MpSTDDebug():
         #self.stdout.write(data)         
    
 class dialogRename(QDialog):
-    def __init__(self,text='',parent=None):
+    def __init__(self,text='',title='Rename', prompt='', parent=None):
     
         super(dialogRename,self).__init__(parent)
-        self.setWindowTitle("Rename File/Folder")
+        self.setWindowTitle(title)
         self.resize(400, 50)
         
         hbox = QHBoxLayout();
@@ -2860,6 +2881,11 @@ class dialogRename(QDialog):
         hbox.addWidget(self.btna)
         
         vbox.addWidget(self.edit)
+        
+        
+        if len(prompt) > 0:
+            vbox.addWidget(QLabel(prompt))
+            
         vbox.addLayout(hbox)
         
         self.btna.clicked.connect(self.accept)
