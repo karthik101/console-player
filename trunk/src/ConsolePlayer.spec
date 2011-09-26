@@ -19,7 +19,10 @@ isPosix = os.name == 'posix'
 #PATH_TO_DEV_ROOT = fpath[:fpath.rfind('/')+1] # file path of the current file, and the project
 
 # this assumes you are running the supplied exec.sh or exec.bat from the top level directory
-PATH_TO_DEV_ROOT = os.path.join(os.getcwd(),"src","")
+if isPosix:
+    PATH_TO_DEV_ROOT = '/home/nick/windows/D_DRIVE/Dropbox/Scripting/PyQt/console-player/src/'
+else:
+    PATH_TO_DEV_ROOT = os.path.join(os.getcwd(),"src","")
 
 print "\n\n%s\n\n"%PATH_TO_DEV_ROOT
 print os.getcwd();
