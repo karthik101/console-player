@@ -1115,14 +1115,14 @@ class TableLibrary(widgetTable.Table):
                 
                 for j in range(self.colCount):
                     self.model.setData(self.model.index(i,j),R[j])
-                    #self.model.setData(self.model.index(i,j),brush,Qt.BackgroundRole)
+                    self.model.setData(self.model.index(i,j),brush,Qt.BackgroundRole)
  
                 date = self.data[k][MpMusic.DATEVALUE]
                 
-                #self.model.setData(self.model.index(i,self.col_id.index(MpMusic.PLAYCOUNT)),Qt.AlignRight,Qt.TextAlignmentRole)
-                #self.model.setData(self.model.index(i,self.col_id.index(MpMusic.LENGTH   )),Qt.AlignRight,Qt.TextAlignmentRole)
-                #self.model.setData(self.model.index(i,self.col_id.index(MpMusic.RATING   )),Qt.AlignRight,Qt.TextAlignmentRole)
-                #self.model.setData(self.model.index(i,self.col_id.index(MpMusic.FREQUENCY)),Qt.AlignRight,Qt.TextAlignmentRole)
+                self.model.setData(self.model.index(i,self.col_id.index(MpMusic.PLAYCOUNT)),Qt.AlignRight,Qt.TextAlignmentRole)
+                self.model.setData(self.model.index(i,self.col_id.index(MpMusic.LENGTH   )),Qt.AlignRight,Qt.TextAlignmentRole)
+                self.model.setData(self.model.index(i,self.col_id.index(MpMusic.RATING   )),Qt.AlignRight,Qt.TextAlignmentRole)
+                self.model.setData(self.model.index(i,self.col_id.index(MpMusic.FREQUENCY)),Qt.AlignRight,Qt.TextAlignmentRole)
 
                 datecol = self.col_id.index(MpMusic.DATESTAMP)
                 
@@ -1139,7 +1139,7 @@ class TableLibrary(widgetTable.Table):
                     self.model.setData(self.model.index(i,j),self.brush_default,Qt.BackgroundRole) 
                     
         self.event_proc = False
-        #highlight the  
+        #highlight the current song
         #qFG_text_color = self.brush_text_default;
         #if self.data[k] == MpGlobal.Player.CurrentSong:
         #    qFG_text_color = self.brush_text_recent;
