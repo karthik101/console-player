@@ -7,7 +7,7 @@
 :: change to current directory
 cd %~dp0
 :: build using pyInstaller
-"C:\Python27\python.exe" "C:\Python27\Lib\site-packages\pyInstaller\Build.py" "./src/ConsolePlayer.spec"\
+"C:\Python27\python.exe" "C:\Python27\Lib\site-packages\pyInstaller\Build.py" "./src/ConsolePlayer.spec"
 :: you can remove the pause
 pause
 

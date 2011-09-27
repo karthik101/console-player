@@ -2251,15 +2251,17 @@ class TableFileExplorer(widgetTable.Table):
                 contextMenu.addAction("Add to Library",self.__Action_load_song__)
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename File",self.__Action_Rename_File)
+                contextMenu.addAction("New Folder",self.__Action_NewFolder)
             else:
                 contextMenu.addAction("Open "+self.data[row][self.name],self.__Action_open_dir__)
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename Folder",self.__Action_Rename_Folder)
+                contextMenu.addAction("New Folder",self.__Action_NewFolder)
                 
                 
             contextMenu.addSeparator()
-            contextMenu.addAction("Explore "+dirGetParentDirName(self.currentPath),self.__Action_explore_folder)
-
+            contextMenu.addAction("Open Directory",self.__Action_explore_folder) #+dirGetParentDirName(self.currentPath)
+            
             #contextMenu.addAction("Explore "+self.parentFolderName)
             #self.__Show_Context_Menu__(event.globalPos(),row)
             # iconText returns the text used in constructing the menu
@@ -2411,6 +2413,29 @@ class TableFileExplorer(widgetTable.Table):
             os.startfile(self.__act_dir2__)
         except:
             pass
+
+    def __Action_NewFolder(self):
+        """
+            create a new folder with the given name
+        """
+        dialog = dialogRename("New Folder","Create Folder")
+        
+        if not dialog.exec_():
+            print "rejected"
+            return;
+
+        name = dialog.edit.displayText();
+        
+        name = OS_FileName_Correct(name).strip() 
+
+        path = os.path.join(self.currentPath,name);
+        
+        print path
+        
+        if not os.path.exists(path):
+            self.data.insert(0, [self.t_dir,name, path ,False,None] ) 
+            self.FillTable();
+            os.mkdir(path);
     
     def __Action_Rename_File(self):
         """
@@ -2493,16 +2518,15 @@ class TableFileExplorer(widgetTable.Table):
             
             name = MpMusic.expandExifMacro(new_name,'$',song)
             
-            name = OS_FileName_Correct(name) # strip illegal characters with a sudo whitlist
-                                        
+            name = OS_FileName_Correct(name).strip() # strip illegal characters with a sudo whitlist
             
             if name != '':
                 path = filepath+name+'.'+fileext
                 
                 debug(path)
 
-                #if path != "" and not os.path.exists(path):
-                #    self._rename_file_(row,song[MpMusic.PATH],path)
+                if path != "" and not os.path.exists(path):
+                    self._rename_file_(row,song[MpMusic.PATH],path)
             
         return;
         
