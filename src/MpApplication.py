@@ -2165,6 +2165,9 @@ class TableFileExplorer(widgetTable.Table):
     #edit = None;
     contextMenu = None # for songs
     
+    cut_file = []   # the list of [path,SONG=None] items that will be pasted somewhere new
+    cut_folder = "" # the path to the folder that will be moved on paste
+    
     def __init__(self,parent,textEdit):
         header = ("   ","Path")
         super(TableFileExplorer,self).__init__(parent,header)
@@ -2251,12 +2254,25 @@ class TableFileExplorer(widgetTable.Table):
                 contextMenu.addAction("Add to Library",self.__Action_load_song__)
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename File",self.__Action_Rename_File)
+                if len(self.cut_file) > 0:
+                    contextMenu.addAction("paste %d File%s"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
+                elif self.cut_folder != "":
+                    contextMenu.addAction("paste Folder",self.__Action_paste_folder)
+                contextMenu.addAction("cut File%s"%('s' if len(self.selection) > 1 else ""),self.__Action_cut_file)
+                
                 contextMenu.addAction("New Folder",self.__Action_NewFolder)
             else:
                 contextMenu.addAction("Open "+self.data[row][self.name],self.__Action_open_dir__)
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename Folder",self.__Action_Rename_Folder)
                 contextMenu.addAction("New Folder",self.__Action_NewFolder)
+                if len(self.cut_file) > 0:
+                    contextMenu.addAction("paste %d File%s"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
+                elif self.cut_folder != "":
+                    contextMenu.addAction("paste Folder",self.__Action_paste_folder)
+                if len(self.selection) == 1 :
+                    contextMenu.addAction("cut Folder",self.__Action_cut_folder)
+                    
                 
                 
             contextMenu.addSeparator()
@@ -2372,6 +2388,7 @@ class TableFileExplorer(widgetTable.Table):
         
         if dir != "":
             self.__load_Directory__(dir)
+    
     def __Goto_NewDir__(self):
         path = self.textEditor.currentText();
         if os.path.isdir(path):
@@ -2394,6 +2411,9 @@ class TableFileExplorer(widgetTable.Table):
                 
     def __Action_load_song__(self):
         """ add the selected songs to the list of songs to load"""
+        self.cut_folder = ""
+        self.cut_file = []
+        
         for i in self.selection:
             f = self.data[i][self.flag]
             if f != self.f_exists and f != self.f_invalid and f != self.f_pending and self.data[i][self.type] == self.t_mp3:
@@ -2421,7 +2441,7 @@ class TableFileExplorer(widgetTable.Table):
         dialog = dialogRename("New Folder","Create Folder")
         
         if not dialog.exec_():
-            print "rejected"
+            print "Folder Create Reject"
             return;
 
         name = dialog.edit.displayText();
@@ -2430,18 +2450,18 @@ class TableFileExplorer(widgetTable.Table):
 
         path = os.path.join(self.currentPath,name);
         
-        print path
-        
         if not os.path.exists(path):
             self.data.insert(0, [self.t_dir,name, path ,False,None] ) 
-            self.FillTable();
             os.mkdir(path);
+            self.FillTable();
     
     def __Action_Rename_File(self):
         """
             Rename a single file.
         """
-
+        self.cut_folder = ""
+        self.cut_file = []
+        
         R = list(self.selection)
         print len(R)
         fprompt = "";
@@ -2531,11 +2551,14 @@ class TableFileExplorer(widgetTable.Table):
         return;
         
     def __Action_Rename_Folder(self):
-        #os.rename(src,dst)
-        print "Current Folder: %s"%self.currentPath
-        print "Target  Folder: %s"%self.__act_dir1__ 
-        print "Working Folder: %s"%self.__act_dir2__ 
+        
+        #print "Current Folder: %s"%self.currentPath
+        #print "Target  Folder: %s"%self.__act_dir1__ 
+        #print "Working Folder: %s"%self.__act_dir2__ 
         #print "Renaming: %s"%self.__act_dir2__
+        
+        self.cut_folder = ""
+        self.cut_file = []
         
         R = [] # list of songs in the target folder, and all sub folders
         
@@ -2628,6 +2651,39 @@ class TableFileExplorer(widgetTable.Table):
             self.FillTable()
         
         return;
+    
+    def __Action_cut_file(self):
+        self.cut_folder = ""
+        self.cut_file = []
+
+        R = list(self.selection)
+        for row in R: 
+            p = self.data[row][self.path]
+            s = self.data[row][self.song]
+            self.cut_file.append([p,s])
+        print "%d files to paste"%len(self.cut_file)
+        
+    def __Action_paste_file(self):
+        self.cut_folder = ""
+        self.cut_file = []
+        
+    def __Action_cut_folder(self):
+        """
+            cutting a folder is as easy as saving the current selected folder
+        """
+        R = list(self.selection)
+        
+        self.cut_folder = ""
+        self.cut_file = []
+        
+        if len(R) == 1:
+            self.cut_folder = self.data[R[0]][self.path]
+            
+        print self.cut_folder
+        
+    def __Action_paste_folder(self):
+        self.cut_folder = ""
+        self.cut_file = []
     
     def _rename_file_(self,row,filepath,newpath):
         try:
