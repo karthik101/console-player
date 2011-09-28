@@ -515,7 +515,8 @@ class MainWindow(QMainWindow):
                         load_music_from_dir(unicode(dir))
             
                 external_Load_Start()
-
+                Player_set_unsaved();
+                
     def init_Gui(self): 
         pagem  = VPage(self)
         hbox = QHBoxLayout()
@@ -2421,6 +2422,7 @@ class TableFileExplorer(widgetTable.Table):
                 MpGlobal.Player.external.append(self.data[i][self.path])
                 
         external_Load_Start()
+        Player_set_unsaved();
         
     def __Action_open_dir__(self):
         self.__load_Directory__(self.__act_dir1__)
@@ -2457,7 +2459,7 @@ class TableFileExplorer(widgetTable.Table):
     
     def __Action_Rename_File(self):
         """
-            Rename a single file.
+            Rename a single file or a group of files.
         """
         self.cut_folder = ""
         self.cut_file = []
@@ -2503,7 +2505,7 @@ class TableFileExplorer(widgetTable.Table):
             
         sample = OS_FileName_Correct( MpMusic.expandExifMacro(new_name,'$',template_song) )
         
-        if sample != new_name:
+        if sample != new_name: # show a second prompt if the user wants pattern replacement
             message = 'Songs to Modify: %d\n'%len(R)
             message += 'Rename Pattern:\n%s\n'%new_name
             message += 'Sample:\n%s\n'%sample
@@ -2541,7 +2543,7 @@ class TableFileExplorer(widgetTable.Table):
             name = OS_FileName_Correct(name).strip() # strip illegal characters with a sudo whitlist
             
             if name != '':
-                path = filepath+name+'.'+fileext
+                path = os.path.join(filepath,name+'.'+fileext)
                 
                 debug(path)
 
@@ -2549,6 +2551,7 @@ class TableFileExplorer(widgetTable.Table):
                     self._rename_file_(row,song[MpMusic.PATH],path)
             
         return;
+        Player_set_unsaved();
         
     def __Action_Rename_Folder(self):
         
@@ -2650,6 +2653,7 @@ class TableFileExplorer(widgetTable.Table):
         finally:
             self.FillTable()
         
+        Player_set_unsaved();
         return;
     
     def __Action_cut_file(self):
@@ -2661,7 +2665,6 @@ class TableFileExplorer(widgetTable.Table):
             p = self.data[row][self.path]
             s = self.data[row][self.song]
             self.cut_file.append([p,s])
-        print "%d files to paste"%len(self.cut_file)
         
     def __Action_paste_file(self):
         """
@@ -2678,6 +2681,7 @@ class TableFileExplorer(widgetTable.Table):
         self.cut_file = []
         #self.FillTable();
         self.__load_Directory__(self.currentPath);
+        Player_set_unsaved();
 
     def _paste_one_file(self,src,dst_folder,song=None):
     
@@ -2737,6 +2741,7 @@ class TableFileExplorer(widgetTable.Table):
         # clear the cut variables
         self.cut_folder = ""
         self.cut_file = []
+        Player_set_unsaved();
     
     def _rename_file_(self,row,filepath,newpath):
         try:
