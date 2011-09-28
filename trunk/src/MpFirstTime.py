@@ -176,13 +176,13 @@ def verifyInstallation(dir,quick=False):
     
     #-----------------------------------------------------  
     # unpack the files to target directory
-    value = 0;
+    _value = 0;
     for item in MpUnPack.UnPackFiles():
         obj = item(dir);
         filepath = os.path.join(dir,obj.fname)
         progress.label.setText(fileGetFileName(obj.fname))
         if quick and os.path.exists(filepath):
-            value += stallCount
+            _value += stallCount
             MpGlobal.Application.processEvents()
         else:
             obj.verify()
@@ -190,8 +190,9 @@ def verifyInstallation(dir,quick=False):
             # stall update the progress bar
             # smaller burts of sleep create a smoother update
             for i in range(stallCount):
-                value += 1
-                progress.pbar.setValue(value)
+
+                _value += 1
+                progress.pbar.setValue(_value)
                 MpGlobal.Application.processEvents()
                 QThread.msleep(stallTime)
     #-----------------------------------------------------        

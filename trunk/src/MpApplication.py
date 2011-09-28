@@ -3037,15 +3037,6 @@ class dialogRename(QDialog):
 # Event Functions
 # ######################################
 
-# def txtMain_OnTextEnter():
-    # txt = MpGlobal.Window.txt_main
-    
-    # str = txt.displayText()
-    # txt.setText("")
-
-    # processTextInput(str)
- 
-
 def init_preMainWindow():
     """
         Events to initalize after creation of the 

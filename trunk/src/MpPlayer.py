@@ -534,7 +534,7 @@ class MediaManager(object):
         
         
 
-        if self.CurrentSong != None:
+        if type(self.CurrentSong) == Song:
         
             path = self.CurrentSong[PATH]
         
