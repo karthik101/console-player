@@ -2255,7 +2255,7 @@ class TableFileExplorer(widgetTable.Table):
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename File",self.__Action_Rename_File)
                 if len(self.cut_file) > 0:
-                    contextMenu.addAction("paste %d File%s"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
+                    contextMenu.addAction("paste %d File%s Here"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
                 elif self.cut_folder != "":
                     contextMenu.addAction("paste Folder",self.__Action_paste_folder)
                 contextMenu.addAction("cut File%s"%('s' if len(self.selection) > 1 else ""),self.__Action_cut_file)
@@ -2267,7 +2267,7 @@ class TableFileExplorer(widgetTable.Table):
                 contextMenu.addAction("Rename Folder",self.__Action_Rename_Folder)
                 contextMenu.addAction("New Folder",self.__Action_NewFolder)
                 if len(self.cut_file) > 0:
-                    contextMenu.addAction("paste %d File%s"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
+                    contextMenu.addAction("paste %d File%s Here"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
                 elif self.cut_folder != "":
                     contextMenu.addAction("paste Folder",self.__Action_paste_folder)
                 if len(self.selection) == 1 :
@@ -2441,7 +2441,7 @@ class TableFileExplorer(widgetTable.Table):
         dialog = dialogRename("New Folder","Create Folder")
         
         if not dialog.exec_():
-            print "Folder Create Reject"
+            print "Folder Creation Reject"
             return;
 
         name = dialog.edit.displayText();
@@ -2664,9 +2664,40 @@ class TableFileExplorer(widgetTable.Table):
         print "%d files to paste"%len(self.cut_file)
         
     def __Action_paste_file(self):
+        """
+            take the selected files that were 'cut'
+            and paste them to the target folder
+        """
+    
+        dst = self.__act_dir2__
+        
+        for file,song in self.cut_file:
+            self._paste_one_file(file,dst,song);
+            
         self.cut_folder = ""
         self.cut_file = []
+        #self.FillTable();
+        self.__load_Directory__(self.currentPath);
+
+    def _paste_one_file(self,src,dst_folder,song=None):
+    
+        src_name = fileGetFileName(src)
+        src_dir  = fileGetPath(src)
         
+        if not comparePath(src_dir,dst_folder):
+        
+            dst = os.path.join(dst_folder,src_name);
+            
+            try:
+                os.rename(src,dst);
+                print dst
+                if song!=None:
+                    song[MpMusic.PATH] = dst
+            except:
+                print "could not move file"
+            else:
+                self.data.insert(0, [self.t_mp3,src_name, dst,song!=None,song] ) 
+    
     def __Action_cut_folder(self):
         """
             cutting a folder is as easy as saving the current selected folder
@@ -2682,6 +2713,28 @@ class TableFileExplorer(widgetTable.Table):
         print self.cut_folder
         
     def __Action_paste_folder(self):
+            
+        tar_dir  = self.__act_dir2__
+        cut_name = fileGetFileName(self.cut_folder)
+        cut_dir  = fileGetPath(self.cut_folder)
+               
+        if not comparePath(tar_dir,cut_dir) and \
+            not comparePathLength(self.cut_folder,tar_dir) : # paths are not identicle , and src folder is not parent of child folder
+            
+            new_dir = os.path.join(tar_dir,cut_name);
+            
+            print new_dir
+            
+            try:
+                os.rename(self.cut_folder,new_dir)
+            except:
+                print "could not move folder"
+            else:
+                self.data.insert(0, [self.t_dir,cut_name, new_dir,False,None] ) 
+                self.FillTable();
+        else:
+            print "paste error"
+        # clear the cut variables
         self.cut_folder = ""
         self.cut_file = []
     
