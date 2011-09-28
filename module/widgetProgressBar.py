@@ -1,10 +1,10 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
+print "getting things done"
 class ProgressBar(QProgressBar):
     
-    text = ""
+    _text = ""
     textHeight = 0
     
     def __init__(self,parent=None):
@@ -25,14 +25,18 @@ class ProgressBar(QProgressBar):
         super(ProgressBar, self).paintEvent(event)
         
         painter = QPainter(self)
-        painter.drawText(3,y-y_,w,y+y_,0,self.text)
+        painter.drawText(3,y-y_,w,y+y_,0,self._text)
     
     def setText(self,string):
         fm = QFontMetrics(self.font())
         self.textHeight = fm.height()
         
-        self.text = unicode(string)
+        self._text = unicode(string)
         self.update()
+        
+    def setValue(self,v):
+        super(ProgressBar, self).setValue(v);
+        
         
 if __name__ == '__main__':
 
