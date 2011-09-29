@@ -95,7 +95,7 @@ def firstTimeCheck():
     
     installPath = getInstallPath()
     
-    if not os.path.exists(installPath): # ask the user to reinstall
+    if not os.path.exists(installPath): # ask the user to (re)install
     
         installPath = getNewInstallLocation();
         
@@ -105,7 +105,17 @@ def firstTimeCheck():
         verifyInstallation(installPath)
     else:
         # perform a quick check that all needed files are there
-        quickVerifyCheck(installPath)
+        # TODO: evalutate, should i load settings here, renaming firsttimecheck to something better?
+        
+        sv = getSettingsVersion(installPath)
+        
+        # perform a check, if sv is to small compared to MpGlobal.VERSION
+        # then set quick to false
+        # then run MpAutoUpdate
+        quick = True
+        quickVerifyCheck(installPath,quick)
+        
+        # if quick equals false then run MpAutoUpdate
         
     MpGlobal.updatePaths(installPath) # update file locations to the new path
     
@@ -205,7 +215,7 @@ def verifyInstallation(dir,quick=False):
         
     progress.accept()
 
-def quickVerifyCheck(dir):
+def quickVerifyCheck(dir,quick=True):
     """
         Check that all the files exist
         if any are missing run a quick verify
@@ -222,9 +232,11 @@ def quickVerifyCheck(dir):
             break;
             
     if runVerify:
-        verifyInstallation(dir,True)
+        verifyInstallation(dir,quick)
         #verifyRemoveUnwanted(dir)
-        
+    return;
+
+    
 def verifyRemoveUnwanted(dir):
     # NOT USED CURRENTLY
     # RETHINK THIS
