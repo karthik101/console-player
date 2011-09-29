@@ -190,7 +190,6 @@ def verifyInstallation(dir,quick=False):
             # stall update the progress bar
             # smaller burts of sleep create a smoother update
             for i in range(stallCount):
-
                 _value += 1
                 progress.pbar.setValue(_value)
                 MpGlobal.Application.processEvents()

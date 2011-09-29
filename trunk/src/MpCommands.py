@@ -34,6 +34,7 @@ def initCommandList():
               "vol"       : cmd_volume,
 
               "append"   : cmd_append,
+              "backup"   : cmd_backup,
               "build"    : cmd_build,
               "clear"    : cmd_clear,
               "export"   : cmd_export,
@@ -212,6 +213,7 @@ def printHelp(input):
     #txt = MpGlobal.Window.txt_debug
         # move the cursor to the end of the text buffer
     #txt.moveCursor(QTextCursor.Start,QTextCursor.MoveAnchor)
+    return
     
 def setFeedBackColor(value):
     #value as ENUM COMMAND
@@ -225,12 +227,15 @@ def setFeedBackColor(value):
     #else:    
     #    
     #    setConsoleColor(D["prompt_error"],time)
+    return;
+
 #----------------------------------------------------------------- 
 # Commands   
 #----------------------------------------------------------------- 
 
 #----------------------------------------------------------------- 
 # test  
+
 def cmd_test(input):
     """
         DEV
@@ -272,8 +277,11 @@ def cmd_testbench(input):
         print "%s - %s : %4d %2d %s"%(song[MpMusic.ARTIST],song[MpMusic.TITLE],song[MpMusic.LENGTH],song[MpMusic.RATING],song[MpMusic.DATESTAMP]);
         
     testbench_search(lib)
+
+    
 #----------------------------------------------------------------- 
-# Player Specific       
+# Player Specific
+       
 def cmd_play(input):
     """
         Command: PLAY
@@ -430,6 +438,7 @@ def cmd_volume(input):
 
 #----------------------------------------------------------------- 
 # PlayList/Library   
+
 def cmd_append(input):
     # provides the ability of a default search
     """
@@ -446,6 +455,32 @@ def cmd_append(input):
     else:
         MpGlobal.SEARCH_AUTOAPPEND = "; .path !\"/japanese\""
         return COMMAND.SPECIAL
+def cmd_backup(input):
+    """
+        Command: BACKUP
+        Usage: backup [-enable|-disable]
+        
+        Force save a new back up tagged with todays date to:
+            ./InstallPath/backup
+            
+        If a backup has been saved already today it will be updated.    
+           
+        Note that saving of backups is turned off by default. It can be enabled in the settings.
+        
+        Alternatively to enable:
+            backup -enable
+        To Disable:
+            backup -disable
+            
+    """
+    if input.hasStrVal == 1:
+        if input.StrVal[0] == '-enable':
+            Settings.SAVE_BACKUP = True
+        if input.StrVal[0] == '-disable':
+            Settings.SAVE_BACKUP = False
+        debug("Backup Setting set to: %s"%Settings.SAVE_BACKUP);
+    else:    
+        musicBackup(True); # that was easy  
 def cmd_build(input):
     """
         Command: BUILD
@@ -458,7 +493,7 @@ def cmd_build(input):
     else:
         buildArtistList()
     return COMMAND.VALID
-def cmd_clear(input):   # update help
+def cmd_clear(input):   
     """
         Command: CLEAR
         Usage: clear [all]
@@ -476,7 +511,7 @@ def cmd_clear(input):   # update help
         if input.StrVal[0] == 'all':
             MpGlobal.Window.debugClear();
     return COMMAND.VALID
-def cmd_export(input):  # update help
+def cmd_export(input):
     """
         DEV
         Command: EXPORT
@@ -662,7 +697,7 @@ def cmd_sync(input):
     else:  
         print "Error Opening Sync Window"
         return COMMAND.ERROR
-def cmd_theme(input):   # update help
+def cmd_theme(input):  
     # ##----1----2----3----4----5----6----7----8----9----0----1----2----3----4----5----6
     """
         Command: THEME
@@ -857,10 +892,9 @@ def cmd_remove(input):
     else:
         return COMMAND.ERROR
 
-        
- 
 #----------------------------------------------------------------- 
-# DEV       
+# DEV   
+    
 def cmd_xx(input):
         # ##----1----2----3----4----5----6----7----8----9----0----1----2----3----4----5----6
     """

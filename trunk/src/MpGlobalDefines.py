@@ -68,7 +68,7 @@ class RecordContainer(object):
         self.SAVE_FORMAT=0
         #self.RELATIVE_DRIVE_PATH="%RELATIVE%" # any string or %RELATIVE%
         self.LOG_HISTORY = False
-        self.SAVE_BACKUP = True
+        self.SAVE_BACKUP = False
         self.SEARCH_STALL = 300;  # 175 is once every ms 2.6*175 = f*x
         self.KEYBOARD_PLAYPAUSE   = 179
         self.KEYBOARD_STOP        = 178

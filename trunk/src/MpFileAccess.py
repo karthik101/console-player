@@ -259,6 +259,7 @@ def musicBackup(force = False):
     name = 'music_backup-'
     fullname = name+date+'.library'
     h,m = time.split(':')
+        
     if (atoi(h) > 12) or force:  # save backups in the afternoon only
     
         R = []
@@ -271,11 +272,14 @@ def musicBackup(force = False):
         
         print len(R)
         
+        R.sort(reverse=True)
+        
         if len(R) > 0:
-            R.sort(reverse=True)
-            
+
             #remove old backups
-            while len(R) > 7:
+            # while there are more than 6, 
+            # and one has not been saved today
+            while len(R) > 6 and R[0] != fullname: 
                 delfile = R.pop()
                 print "Deleting %s"%delfile
                 os.remove(os.path.join(path,delfile))
@@ -497,7 +501,8 @@ def loadSettings():
         update_StrToDec_Dict();
         #for k,v in D.items():
         #    print k,"=>",v
- 
+    return;
+    
 def history_log(filepath,song,type): 
 
     #exec for song in MpGlobal.Window.tbl_library.data: print "%s %d %s\n"%(song.id,MpMusic.DATESTAMP,song[MpMusic.DATESTAMP])
