@@ -146,9 +146,11 @@ def musicLoad(filepath):
             # THEN ASSUME THE ALL SONGS EXIST ON THAT DRIVE
             for drive in drivelist:
                 try:
+
                     path =  os.path.join(drive , line2);
                     if isPosix: # attempt to fix the path on UNIX if it was saved incorrectly
                         path = UnixPathCorrect(path)
+                    debugPreboot("LIB Testing: %s"%path)
                     if os.path.exists( path ) and path != '':
                         useRelDrive = True
                         rpath = drive
@@ -346,17 +348,20 @@ def playListLoad(filepath,source):
         
         if lookForDrive:
              # determine which drive the song exists.
-            # THEN ASSUME THE ALL SONG EXIST ON THAT DRIVE
+            # THEN ASSUME THAT ALL SONG EXIST ON THAT DRIVE
             for drive in drivelist:
                 try:
-                    if os.path.exists( os.path.join(drive , path) ):
+                    p = os.path.join(drive , path)
+                    debugPreboot("PL Testing: %s"%p)
+                    
+                    if os.path.exists( p ):
                         useRelDrive = True
                         rpath = drive
                         break
                 except:
                     pass#debugPreboot("Music Not Found on Any Drive.")
             else:
-                debugPreboot("Error Loading Music. Assuming: %s:\\"%rpath)
+                debugPreboot("Error Loading Music. Assuming: %s"%rpath)
                 
             lookForDrive = False;
         
@@ -1432,7 +1437,11 @@ def stripDriveFromPath(driveList,filepath):
     filepath = unicode(filepath)
     for drive in driveList:
         if filepath.startswith(drive):
-            return filepath[len(drive): ]
+            filepath = filepath[len(drive): ]
+            break;
+    # huge errors on linux when the resulting path starts with a slash
+    if filepath[0] == '/' or filepath[0] == '\\':
+        return filepath[1:]
     return filepath
     
 if isPosix: # def systemDriveList
