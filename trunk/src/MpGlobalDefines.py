@@ -113,7 +113,7 @@ class GlobalContainer(object):
     # ###############################################
     VERSION = "0.0.0.0" # fourth value in version auto updates in init_Settings
     SAVED_VERSION = "0.0.0.0"
-    MINIMUM_VERSION = "0.4.1.0" # hardcoded valut to compare against,
+    MINIMUM_VERSION = "0.4.2.0" # hardcoded valut to compare against,
     NAME = "Console Player - v%s"%VERSION
     SONGDATASIZEV1=10; 
     SONGDATASIZEV2=16; # length of the song array for version two

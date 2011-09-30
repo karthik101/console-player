@@ -319,8 +319,13 @@ def songGetAlbumIndex(song):
         R = os.listdir(fileGetPath(filepath));
         filename = fileGetFileName(filepath).lower();
         
-        for j in range(len(R)):
-            item = R[j].lower()
+        S=[];
+        for item in R:
+            if pathMatchExt(item):
+                S.append(item);
+        
+        for j in range(len(S)):
+            item = S[j].lower()
             if item == filename:
                 i = j+1;
                 break;

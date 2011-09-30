@@ -1,7 +1,5 @@
 #!/usr/bin/python -O
-__VERSION__ = "0.4.1.258"           
-
-
+__VERSION__ = "0.4.2.2"             
 
 
 
