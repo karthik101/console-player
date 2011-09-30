@@ -34,10 +34,10 @@ class LibraryUpdateDialog(QDialog):
 
     def __init__(self,parent=None):
         super(LibraryUpdateDialog, self).__init__(parent)
-        self.setWindowTitle("Console Player Install")
+        self.setWindowTitle("Console Player Update")
         self.setFixedWidth(250)
         self.container = QVBoxLayout(self)
-        self.label = QLabel("Installing...")
+        self.label = QLabel("Updateing Library...")
         self.pbar = ProgressBar(self)
         self.pbar.setText("")
         self.container.addWidget(self.label)
@@ -62,11 +62,15 @@ def checkForUpdates(cversion):
     
     if update:
         print "updates are required"
-        #runUpdater(cversion);
+        runUpdater(cversion);
     
-def runUpdater(cversion):
+def runUpdater(cindex):
     """
-        cversion as a value read from settings file
+        cindex as index for which version updates to run
+        e.g. if the index is 1, run all updates that i have defined
+        to be greater than or equal to 1.
+        
+        the first index is 0
     """
     #-----------------------------------------------------  
     # create the widget
@@ -87,7 +91,7 @@ def runUpdater(cversion):
         value += 1;
         progress.pbar.setValue(value)
         MpGlobal.Application.processEvents()
-        QThread.msleep(stallTime)
+        #QThread.msleep(stallTime)
         
     #-----------------------------------------------------  
     # clean up, display done, wait a second then close 
@@ -105,7 +109,14 @@ def songUpdate(song,cindex):
         what needs to be done on a per song basis for the given version
         cindex as an integer level of updates to run, so version compare
         does not have to be calculated for each song
+        
+        cindex as index for which version updates to run
+        e.g. if the index is 1, run all updates that i have defined
+        to be greater than or equal to 1.
+        
+        the first index is 0
     """
-    
+    if cindex == 0:
+        song[MpMusic.SONGINDEX] = songGetAlbumIndex(song);
     return 0;
     

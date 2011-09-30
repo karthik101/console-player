@@ -946,14 +946,10 @@ def cmd_xx(input):
     
     if input.DecVal[0] == 6 : #xx 6
         
-        print versionCompare("0.4.5.1","0.4.5.1")
-        print versionCompare("0.3.5.1","0.4.5.1")
-        print versionCompare("0.5.5.1","0.4.5.1")
-        print "--"
-        print versionCompare("0.4.4.1","0.4.5.1")
-        print versionCompare("0.4.5.4","0.4.5.230")
-        print "--"
-        print versionCompare("1.2.3.4","0.3.2.1")
+        print "----------"
+        songGetAlbumIndex(MpGlobal.Player.libDisplay[0])
+        songGetAlbumIndex(MpGlobal.Player.libDisplay[10])
+        songGetAlbumIndex(MpGlobal.Player.libDisplay[20])
 
     if input.DecVal[0] == 7 : #xx 7
         s = "Time: %d"%getSecondsFromDateFormat(input.StrVal[1],input.DecVal[2])

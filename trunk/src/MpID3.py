@@ -17,9 +17,7 @@ from mutagen.flac import FLAC
 from MpFileAccess import createExif,createInternalExif,fileGetExt,fileGetSize
 from PyQt4.QtCore import Qt,SIGNAL     # for Qt constants
 
-from MpGlobalDefines import *
-from MpScripting import *
-from MpScriptingAdvanced import *
+
 
 ext_mp3  = ("mp3",)
 ext_mp4  = ('m4a', 'm4b', 'm4p', 'mpeg4', 'aac')
@@ -50,7 +48,7 @@ def id3_createSongFromPath(path):
     except Exception as e:
         print " *** Error [%s] Reading Tags for Type: %s"%(song, fext)
         for i in e:
-            debug("%s"%str(i)) 
+            print "%s"%str(i)
                     
         
     song[MpMusic.FILESIZE] = fileGetSize(path)
@@ -238,3 +236,10 @@ def atoi(a):
                 break;
         return int(i);
     return int(a);
+
+    
+from MpGlobalDefines import *
+from MpScripting import *
+from MpScriptingAdvanced import *    
+    
+    

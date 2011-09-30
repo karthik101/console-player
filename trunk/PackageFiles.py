@@ -1,11 +1,9 @@
 from BytePack import *
 
-folder = "C:\\Dropbox\\Scripting\\PyQt\\ConsolePlayer\\src"
+folder = "D:\\Dropbox\\Scripting\\PyQt\\console-player\\src"
 
 
 pack = Pack(folder+"\\user");
-
-
 pack.setClassName("MpUnPack")
 pack.setOutputFolder(folder)
 pack.addFile("./icon.png")
