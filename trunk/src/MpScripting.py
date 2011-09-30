@@ -944,6 +944,23 @@ def HTMLString_StyleHeader(html):
     html = html.replace("<br>","</font><br>",1);
     return "<font size=\"5\">"+html
 
+def versionCompare(ver,const):
+    """
+        Return negative if ver  < const
+        return  0       if ver == const
+        return positive if ver  > const
+    """
+    a,b,c,d = ver.split('.')
+    w,x,y,z = const.split('.')
+    
+    m = 1000 * cmp(int(a)-int(w),0) 
+    n = 100  * cmp(int(b)-int(x),0) 
+    o = 10   * cmp(int(c)-int(y),0) 
+    p = 1    * cmp(int(d)-int(z),0)
+    
+    return m+n+o+p
+    
+    
 def atoi(a):
     """
         converts string to int by taking only the first integer

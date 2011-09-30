@@ -12,14 +12,16 @@
 #   A verify dialog is shown as a progressbar indication the
 # progress as files are extracted.
 # #########################################################
-
+import os
+import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from MpGlobalDefines import *
 from widgetProgressBar import ProgressBar
 from MpFileAccess import *
-import os
-import sys
+from MpScripting import *
+
+
 
 isPosix = os.name == 'posix'
 __devmode = "-devmode" in sys.argv;
@@ -109,11 +111,13 @@ def firstTimeCheck():
         
         sv = getSettingsVersion(installPath)
         
-        # perform a check, if sv is to small compared to MpGlobal.VERSION
-        # then set quick to false
-        # then run MpAutoUpdate
-        quick = True
+        value = versionCompare(sv,MpGlobal.MINIMUM_VERSION)
+
+        quick = value >= 0
+        
         quickVerifyCheck(installPath,quick)
+        
+        MpGlobal.SAVED_VERSION = sv;
         
         # if quick equals false then run MpAutoUpdate
         

@@ -96,6 +96,11 @@ init_preMainWindow()
 
 if __debug: print "Player Components initialized"    
 
+import MpAutoUpdate; 
+MpAutoUpdate.checkForUpdates(MpGlobal.SAVED_VERSION);
+del MpAutoUpdate
+
+if __debug: print "Check for updates complete"   
 # ######################################
 # Create the Form
 # ######################################
