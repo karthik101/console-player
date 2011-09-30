@@ -1049,6 +1049,7 @@ class TableLibrary(widgetTable.Table):
               MpMusic.FILESIZE, \
               MpMusic.SKIPCOUNT, \
               MpMusic.COMMENT,\
+              MpMusic.SONGINDEX,\
               MpMusic.SONGID,
               MpMusic.PATH];
                                     
@@ -1064,6 +1065,7 @@ class TableLibrary(widgetTable.Table):
                  MpMusic.FILESIZE : "File Size", \
                  MpMusic.SKIPCOUNT: "Skip Count", \
                  MpMusic.COMMENT  : "Comment", \
+                 MpMusic.SONGINDEX: "Album Index", \
                  MpMusic.PATH     : "File Path", \
                  MpMusic.SONGID   : "ID"};          
        
@@ -1168,6 +1170,7 @@ class TableLibrary(widgetTable.Table):
         R[self.col_id.index(MpMusic.COMMENT)]   = self.data[index][MpMusic.COMMENT]
         R[self.col_id.index(MpMusic.PATH)]      = self.data[index][MpMusic.PATH]
         R[self.col_id.index(MpMusic.SONGID)]    = str(self.data[index].id)
+        R[self.col_id.index(MpMusic.SONGINDEX)] = self.data[index][MpMusic.SONGINDEX]
         return R
         
     def FillRowColor(self,index):

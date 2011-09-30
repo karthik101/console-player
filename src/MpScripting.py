@@ -266,7 +266,6 @@ def buildArtistList(minimum=2):
     MpGlobal.Player.quickList = R
     MpGlobal.Window.tbl_quicklist.UpdateTable(0,MpGlobal.Player.quickList)
     
-
 def getStatistics():
     c_ply=0 # total play count
     c_len=0 # total play time
@@ -284,7 +283,52 @@ def getStatistics():
     debug( "Play Count (AVG)  : %s"%(c_ply/count))
     debug( "Frequency         : %d"%(c_frq))
 
+# ##############################################
+# Music Operations
+# ##############################################     
 
+def songGetAlbumIndex(song):
+    """
+        aggregate function to determine the album index for a song.
+        this is used as part of the autoupdater for a push to version 0.4.2
+    """
+    
+    # first try to make a new song and steal the index from that
+    filepath = song[MpMusic.PATH]
+    
+    #print filepath
+    
+    # we can't do anything if the song does not exist
+    if not os.path.exists(filepath):
+        print "File Does Not Exist"
+        return 0;
+        
+    # if we already have it why get it again?    
+    if song[MpMusic.SONGINDEX] != 0:
+        return song[MpMusic.SONGINDEX]
+    
+    temp = id3_createSongFromPath(filepath)
+    
+    i = temp[MpMusic.SONGINDEX]
+    
+    if i==0:
+        # attempt to grab the index as the index in the sorted array
+        # we will assume the file is in it's album folder for this part
+        #print "PATH:"
+        #print filepath
+        R = os.listdir(fileGetPath(filepath));
+        filename = fileGetFileName(filepath).lower();
+        
+        for j in range(len(R)):
+            item = R[j].lower()
+            if item == filename:
+                i = j+1;
+                break;
+                
+    #print "%s -> %d"%(song,i);        
+    
+    return i
+    
 # ##############################################
 # time
 # ############################################## 
@@ -950,6 +994,9 @@ def versionCompare(ver,const):
         return  0       if ver == const
         return positive if ver  > const
     """
+    if not 3 == ver.count('.') == const.count('.'): # if an invalid version format
+        return -10000;
+        
     a,b,c,d = ver.split('.')
     w,x,y,z = const.split('.')
     
@@ -1105,5 +1152,10 @@ from dialogSettings import SettingsWindow
 from MpScreenSaver import *
 from MpFirstTime import verifyInstallation  
 from MpScriptingAdvanced import *
+from MpID3 import *
+
+
+
+
 
         
