@@ -20,11 +20,20 @@
         for example if the version be loaded is less than 4 do a get on md5 for all songs
         this will take a very long time to update
 """
+import os
+import sys
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from MpGlobalDefines import *
+from widgetProgressBar import ProgressBar
+from MpFileAccess import *
+from MpScripting import *
+from MpScriptingAdvanced import *
 
 class LibraryUpdateDialog(QDialog):
 
     def __init__(self,parent=None):
-        super(VerifyInstallDialog, self).__init__(parent)
+        super(LibraryUpdateDialog, self).__init__(parent)
         self.setWindowTitle("Console Player Install")
         self.setFixedWidth(250)
         self.container = QVBoxLayout(self)
@@ -33,19 +42,39 @@ class LibraryUpdateDialog(QDialog):
         self.pbar.setText("")
         self.container.addWidget(self.label)
         self.container.addWidget(self.pbar)
-        
-def checkForUpdates():
-    print "checking for updates"
+           
+def checkForUpdates(cversion):
+    """
+        cversion as a value read from settings file
+    """
+    
+    # set a list of constant versions
+    
+    if MpGlobal.SAVED_VERSION == "0.0.0.0" :
+        return;
+    
+    v1 = "0.4.2.0" # update songs in library to contain index values.
+    
+    # if any version compares are less than 0 then updates are required.
+    update = versionCompare(cversion,v1) < 0;
     
     
-def runUpdater():
+    
+    if update:
+        print "updates are required"
+        #runUpdater(cversion);
+    
+def runUpdater(cversion):
+    """
+        cversion as a value read from settings file
+    """
     #-----------------------------------------------------  
     # create the widget
-    progress = VerifyInstallDialog()
+    progress = LibraryUpdateDialog()
     
    
     # init values
-    stallTime=5
+    stallTime=1 #TODO: remove this when updater is live
     rangeHi = len(MpGlobal.Player.library)
     value   = 0
     
@@ -54,11 +83,11 @@ def runUpdater():
     #-----------------------------------------------------  
     # run updater
     for song in MpGlobal.Player.library:
-        songUpdate(song)
+        songUpdate(song,0)
         value += 1;
         progress.pbar.setValue(value)
         MpGlobal.Application.processEvents()
-        #QThread.msleep(stallTime)
+        QThread.msleep(stallTime)
         
     #-----------------------------------------------------  
     # clean up, display done, wait a second then close 
@@ -71,8 +100,12 @@ def runUpdater():
         
     progress.accept()
 
-def songUpdate(song):
-
+def songUpdate(song,cindex):
+    """
+        what needs to be done on a per song basis for the given version
+        cindex as an integer level of updates to run, so version compare
+        does not have to be calculated for each song
+    """
     
     return 0;
     

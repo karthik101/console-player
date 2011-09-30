@@ -945,8 +945,15 @@ def cmd_xx(input):
         print getNewDate()  
     
     if input.DecVal[0] == 6 : #xx 6
-        string = '$art-$tit-$alb::$id'
-        debug (MpMusic.expandExifMacro(string,'$',MpGlobal.Player.libDisplay[0]) )
+        
+        print versionCompare("0.4.5.1","0.4.5.1")
+        print versionCompare("0.3.5.1","0.4.5.1")
+        print versionCompare("0.5.5.1","0.4.5.1")
+        print "--"
+        print versionCompare("0.4.4.1","0.4.5.1")
+        print versionCompare("0.4.5.4","0.4.5.230")
+        print "--"
+        print versionCompare("1.2.3.4","0.3.2.1")
 
     if input.DecVal[0] == 7 : #xx 7
         s = "Time: %d"%getSecondsFromDateFormat(input.StrVal[1],input.DecVal[2])
