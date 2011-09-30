@@ -235,7 +235,7 @@ def quickVerifyCheck(dir,quick=True):
             print path
             break;
             
-    if runVerify:
+    if runVerify or quick == False:
         verifyInstallation(dir,quick)
         #verifyRemoveUnwanted(dir)
     return;
