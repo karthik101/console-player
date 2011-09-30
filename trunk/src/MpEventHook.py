@@ -6,6 +6,8 @@ isPosix = os.name == 'posix'
 
 if not isPosix:
     import pythoncom, pyHook
+#else:
+#    import mmkeys
 
 HOOK_SET = False
 
@@ -66,7 +68,10 @@ def hook_event_KeyPress(event):
 
 if isPosix:
     def initHook():
-            return False
+        """
+            initialize the ability of a keyboard hook
+        """
+        return False
 else:
     def initHook():
         """
