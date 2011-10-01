@@ -255,8 +255,6 @@ def musicBackup(force = False):
         
     date,time = getNewDate().split(' ')
     date = date.replace('/','-').replace('\\','-')
-    print date
-    print time
     
     name = 'music_backup-'
     fullname = name+date+'.library'
@@ -271,9 +269,7 @@ def musicBackup(force = False):
                 R.append(file);
                 
         newestbu = ""
-        
-        print len(R)
-        
+
         R.sort(reverse=True)
         
         if len(R) > 0:
@@ -291,6 +287,7 @@ def musicBackup(force = False):
             
         # save a new backup 
         if force or newestbu != fullname:
+            print "Saving %s"%fullname
             newbu = os.path.join(path,fullname)  
             musicSave(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
             

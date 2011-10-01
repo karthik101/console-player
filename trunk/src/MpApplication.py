@@ -267,6 +267,10 @@ class MainWindow(QMainWindow):
 
         self.btn_playstate = ButtonPlay()
         self.dsp_info = CurrentSongDisplay()
+        self.dsp_info.text_title = "Select a Song to Play"
+        self.dsp_info.text_album = "Drag and Drop music to Load"
+        self.dsp_info.stopScrolling()
+        self.dsp_info.update()
         
         self.btn_playstate.setToolTip("Play/Pause Current Song\nStop playback when current song finishes")
         # add button and vbox to the hbox
