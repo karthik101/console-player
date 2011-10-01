@@ -843,7 +843,7 @@ def info_UpdateDisplay(song):
         obj.text_playcount = ""
         obj.text_artist = ""
         obj.text_title = "Select a Song to Play"
-        obj.text_album = ""
+        obj.text_album = "Drag and Drop music to Load"
         obj.text_index = "-/-"
         obj.text_date = ""
         obj.int_rating = 0
