@@ -1337,7 +1337,7 @@ def createMiniPath( song ):
     
     t_art = t_art.replace(" ","_")
     t_abm = t_abm.replace(" ","_")
-    t_art = k[:25]
+    t_art = t_art[:25]
     t_abm = t_abm[:25]
     
     if t_abm == "" or re.match("[none|unknown]",t_abm,re.I) != None:
