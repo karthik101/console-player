@@ -493,11 +493,6 @@ def loadSettings():
                     elif dim == u"lst" and type(Settings.__dict__[key]) == list:
                         Settings.__dict__[key] = value.split(',')
                         i=0;
-                        print key
-                        print value
-                        print Settings.__dict__[key]
-                        print type(Settings.__dict__[key])
-                        print len(Settings.__dict__[key])
                         while i < len(Settings.__dict__[key]): # remove empty array indices
                             if len(Settings.__dict__[key][i]) == 0:
                                 Settings.__dict__[key].pop(i);
@@ -507,11 +502,6 @@ def loadSettings():
                     elif dim == u"csv" and type(Settings.__dict__[key]) == list:
                         Settings.__dict__[key] = unicode(value,'unicode-escape').split(',')
                         i=0;
-                        print key
-                        print value
-                        print Settings.__dict__[key]
-                        print type(Settings.__dict__[key])
-                        print len(Settings.__dict__[key])
                         while i < len(Settings.__dict__[key]): # remove empty array indices
                             if len(Settings.__dict__[key][i]) == 0:
                                 Settings.__dict__[key].pop(i);
