@@ -79,14 +79,14 @@ print MpGlobal.NAME
 if __debug: print "Player Version Set"      
   
 # ######################################
-# Check if required files need to be extracted
+# Look for the settings, Check if required files need to be extracted
 # ###################################### 
 startUpCheck(install=__install); # load the settings or install if never been run before
 
-if __debug: print "First Time Check Done"    
+if __debug: print "Set Up Check Done"    
 
 # ######################################
-# Import settings from a text file or use default
+# initialize other settings
 # ######################################
 init_Settings(not __devmode)
 

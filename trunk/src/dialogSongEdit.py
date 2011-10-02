@@ -21,8 +21,9 @@ class SongEditWindow(QDialog):
     pct = 6 # int
     sct = 7 # int
     frq = 8 # int
-    dte = 9 # string
-    pth =10 # string
+    ind = 9 # int
+    dte =10 # string
+    pth =11 # string
     
 
     def __init__(self,parent):
@@ -58,6 +59,7 @@ class SongEditWindow(QDialog):
         self.editList.append(self.newIntEdit("Play Count",-100,9999))
         self.editList.append(self.newIntEdit("Skip Count",-100,9999))
         self.editList.append(self.newIntEdit("Frequency",-100,9999))
+        self.editList.append(self.newIntEdit("Album Index",0,999))
         
         
         self.editList.append(self.newTextEdit("Last Played"))
@@ -138,6 +140,7 @@ class SongEditWindow(QDialog):
         self.editList[self.pct][1].setValue(data[0][MpMusic.PLAYCOUNT])
         self.editList[self.sct][1].setValue(data[0][MpMusic.SKIPCOUNT])
         self.editList[self.frq][1].setValue(data[0][MpMusic.FREQUENCY])
+        self.editList[self.ind][1].setValue(data[0][MpMusic.SONGINDEX])
         
         self.editList[self.pth][1].setText(data[0][MpMusic.PATH])
         self.editList[self.pth][1].setCursorPosition(0)
@@ -158,6 +161,7 @@ class SongEditWindow(QDialog):
         pct = 0 #data[0][MpMusic.PLAYCOUNT]
         sct = 0 #data[0][MpMusic.SKIPCOUNT]
         frq = 0 #data[0][MpMusic.FREQUENCY]
+        int = 0;
         
         pth = fileGetPath(data[0][MpMusic.PATH]).lower()
         
@@ -207,6 +211,7 @@ class SongEditWindow(QDialog):
         self.editList[self.pct][1].setValue(pct)
         self.editList[self.sct][1].setValue(sct)
         self.editList[self.frq][1].setValue(frq)
+        self.editList[self.ind][1].setValue(ind)
     
     def getData(self):
         MULTIDATA = len(self.data) > 1
@@ -268,6 +273,9 @@ class SongEditWindow(QDialog):
                     
                 if song[MpMusic.FREQUENCY] < 0:
                     song[MpMusic.FREQUENCY] = 0  
+                    
+            if self.editList[self.ind][2].isChecked():
+                song[MpMusic.SONGINDEX] = self.editList[self.ind][1].value()   
                     
             if self.editList[self.pth][2].isChecked():
                 song[MpMusic.PATH] = unicode(self.editList[self.pth][1].text())
@@ -338,7 +346,7 @@ class SongEditWindow(QDialog):
         check = QCheckBox("",self)
         spring = None
         edit  = QLineEdit(self)
-        label.setFixedWidth(70)
+        label.setFixedWidth(100)
         edit.setFixedWidth(220)
         edit.setDisabled(True)
         hbox.addWidget(label,0,Qt.AlignLeft)
@@ -358,7 +366,7 @@ class SongEditWindow(QDialog):
         check = QCheckBox("",self)
         spring = None
         edit  = ComboBox(self)#QLineEdit(self)
-        label.setFixedWidth(70)
+        label.setFixedWidth(100)
         edit.setFixedWidth(200)
         edit.setDisabled(True)
         hbox.addWidget(label,0,Qt.AlignLeft)
@@ -389,7 +397,7 @@ class SongEditWindow(QDialog):
         check = QCheckBox("",self)
         spring = None
         spinbox  = QSpinBox(self)
-        label.setFixedWidth(70)
+        label.setFixedWidth(100)
         spinbox.setFixedWidth(220)
         spinbox.setDisabled(True)
         spinbox.setRange(min,max)
