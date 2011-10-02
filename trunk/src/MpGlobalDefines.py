@@ -42,6 +42,8 @@ class RecordContainer(object):
         self.SEARCH_PRESET8 = ""
         self.SEARCH_PRESET9 = ""
         self.FAVORITE_ARTIST = []   # array of unicode artist names
+        self.LIB_COL_ID = []
+        self.LIB_COL_ACTIVE=-1;
         
         self.SEARCH_FIELD_ALBUM     = "alb"
         self.SEARCH_FIELD_ARTIST    = "art"

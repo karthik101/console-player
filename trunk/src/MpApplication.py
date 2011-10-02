@@ -170,7 +170,7 @@ class MainWindow(QMainWindow):
         self.spt_left = QSplitter(Qt.Vertical,self.vbox_library )
         
         self.splitter.addWidget(self.spt_left)
-        self.splitter.addWidget(self.vbox_playlist)
+        self.splitter.insertWidget(1,self.vbox_playlist) # for insertion to left or right use 0=left, 1=right
 
         self.tabMain = QTabWidget(self)
         self.tab_library = VPage(self.tabMain)
@@ -215,7 +215,7 @@ class MainWindow(QMainWindow):
     def init_DisplayTables(self):
         
         self.tbl_playlist = TablePlayList(self)
-        self.tbl_library = TableLibrary(self)
+        self.tbl_library = TableLibrary(Settings.LIB_COL_ID, Settings.LIB_COL_ACTIVE, parent=self)
  
         self.vbox_playlist.insertLayout(5,self.tbl_playlist.container)
         self.tab_library.addLayout(self.tbl_library.container)
@@ -1041,7 +1041,7 @@ class TableLibrary(widgetTable.Table):
 
     # the MpMusic Constant associated with each column
     
-    col_id = [MpMusic.PLAYCOUNT, \
+    col_id_template = [MpMusic.PLAYCOUNT, \
               MpMusic.ARTIST, \
               MpMusic.TITLE, \
               MpMusic.ALBUM, \
@@ -1056,6 +1056,8 @@ class TableLibrary(widgetTable.Table):
               MpMusic.SONGINDEX,\
               MpMusic.SONGID,
               MpMusic.PATH];
+              
+    col_id = col_id_template[:]
                                     
     col_title = {MpMusic.PLAYCOUNT: "#", \
                  MpMusic.ARTIST   : "Artist", \
@@ -1073,16 +1075,28 @@ class TableLibrary(widgetTable.Table):
                  MpMusic.PATH     : "File Path", \
                  MpMusic.SONGID   : "ID"};          
        
-    def __init__(self,parent):
+    def __init__(self,col_list=[],col_active=-1,parent=None):
       
         header = [];
-        for const in self.col_id:
-            header.append(self.col_title[const])
+        
 
+        if len(col_list) == len(self.col_id_template):
+            self.col_id = col_list[:]
+        for x in range(len(self.col_id)):
+            self.col_id[x] = atoi(self.col_id[x])
+            
+        if col_active < 0 or col_active > len(self.col_id):
+            col_active = len(self.col_id)
+            
+        for i in range(col_active):
+            header.append( self.col_title[ self.col_id[i] ] )    
+         
         super(TableLibrary,self).__init__(parent,header)
         self.table.setDragDropMode(QAbstractItemView.DragOnly)
         self.setDragType("dragFromLibrary")
         self.setDragReceiveType("None")
+        
+        print "init"
         
         h = self.table.horizontalHeader();
         h.setSortIndicatorShown(True)
