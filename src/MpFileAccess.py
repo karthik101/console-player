@@ -426,7 +426,7 @@ def saveSettings( ):
         if key != 'PLAYER_LAST_INDEX':
             newKey = "%s_%s"%(typeDict.get(str(type(value)),'???'),key)
             if (type(value) == list):
-                D[newKey] = unicode(','.join(value)).encode('unicode-escape')
+                D[newKey] = unicode(','.join( str(x) for x in value )).encode('unicode-escape')
             else:
                 D[newKey] = value
                 

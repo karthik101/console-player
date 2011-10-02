@@ -565,7 +565,8 @@ def settings_get_Update():
     if Settings.SCREEN_POSITION_Y < 0:
         Settings.SCREEN_POSITION_Y = 0
     # ----------------------------------------------------------------
-      
+    Settings.LIB_COL_ID     = MpGlobal.Window.tbl_library.col_id[:]
+    Settings.LIB_COL_ACTIVE = MpGlobal.Window.tbl_library.colCount
     # windows seven can dictate screen relestate without Qt realizing it has been resized
     # if the window is snapped to an edge or dragged from a snap, it is considered fullscreen
     # even when not

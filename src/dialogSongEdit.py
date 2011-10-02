@@ -161,7 +161,7 @@ class SongEditWindow(QDialog):
         pct = 0 #data[0][MpMusic.PLAYCOUNT]
         sct = 0 #data[0][MpMusic.SKIPCOUNT]
         frq = 0 #data[0][MpMusic.FREQUENCY]
-        int = 0;
+        ind = 0;
         
         pth = fileGetPath(data[0][MpMusic.PATH]).lower()
         
