@@ -425,8 +425,17 @@ def saveSettings( ):
         
         if key != 'PLAYER_LAST_INDEX':
             newKey = "%s_%s"%(typeDict.get(str(type(value)),'???'),key)
+            
+            
             if (type(value) == list):
-                D[newKey] = unicode(','.join( str(x) for x in value )).encode('unicode-escape')
+                if len(value) > 0: # don't save if it's empty?
+                    if type(value[0]) != str and type(value[0]) != unicode: # convert non-string types to string
+                        D["lst_%s"%key] = unicode(','.join( str(x) for x in value )).encode('unicode-escape')
+                    else:
+                        D[newKey] = unicode(','.join( value )).encode('unicode-escape')
+                else:
+                    D[newKey] = ""
+                    
             else:
                 D[newKey] = value
                 
@@ -481,18 +490,37 @@ def loadSettings():
                     elif dim == u"bin" and type(Settings.__dict__[key]) == bool:
                         Settings.__dict__[key] = (value.strip() == "True")
                         
-                    elif dim == u"csv" and type(Settings.__dict__[key]) == list:
-                        #TODO strip whitespace from resulting strings.
-                        Settings.__dict__[key] = unicode(value,'unicode-escape').split(',')
+                    elif dim == u"lst" and type(Settings.__dict__[key]) == list:
+                        Settings.__dict__[key] = value.split(',')
                         i=0;
-                        while i < len(Settings.__dict__[key]):
+                        print key
+                        print value
+                        print Settings.__dict__[key]
+                        print type(Settings.__dict__[key])
+                        print len(Settings.__dict__[key])
+                        while i < len(Settings.__dict__[key]): # remove empty array indices
                             if len(Settings.__dict__[key][i]) == 0:
                                 Settings.__dict__[key].pop(i);
                             else:
+                                Settings.__dict__[key][i] = atoi(Settings.__dict__[key][i])
+                                i += 1;
+                    elif dim == u"csv" and type(Settings.__dict__[key]) == list:
+                        Settings.__dict__[key] = unicode(value,'unicode-escape').split(',')
+                        i=0;
+                        print key
+                        print value
+                        print Settings.__dict__[key]
+                        print type(Settings.__dict__[key])
+                        print len(Settings.__dict__[key])
+                        while i < len(Settings.__dict__[key]): # remove empty array indices
+                            if len(Settings.__dict__[key][i]) == 0:
+                                Settings.__dict__[key].pop(i);
+                            else:
+                                Settings.__dict__[key] = Settings.__dict__[key][i].strip()
                                 i += 1;
                         
                     elif dim == u"str" and type(Settings.__dict__[key]) == str or type(Settings.__dict__[key]) == unicode:
-                        Settings.__dict__[key] = value
+                        Settings.__dict__[key] = unicode(value)
                     else:
                         print "Error Loading Setting: %s_%s = %s"%(dim,key,value)
                 else:
@@ -504,29 +532,6 @@ def loadSettings():
         #for k,v in D.items():
         #    print k,"=>",v
     return;
-  
-#   def getSettingsVersion(dir):    
-#       """
-#           this function reads the settings file and extracts the version string only
-#       """
-#       settings_path = os.path.join(dir,"settings.ini")
-#       print "---------------------------"
-#       print settings_path
-#       if os.path.exists(settings_path):
-#           rf = open(settings_path,"r")
-#           
-#           line = rf.readline()
-#           version = ""
-#           while (line):
-#               key,value = line.strip().split(':')
-#               if key == 'str_VERSION':
-#                   version = value
-#               line = rf.readline()
-#           rf.close();
-#       print version
-#       print MpGlobal.VERSION
-#       print "---------------------------"
-#       return version
   
 def history_log(filepath,song,type): 
 

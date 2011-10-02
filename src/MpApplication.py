@@ -1144,6 +1144,7 @@ class TableLibrary(widgetTable.Table):
                 self.model.setData(self.model.index(i,self.col_id.index(MpMusic.LENGTH   )),Qt.AlignRight,Qt.TextAlignmentRole)
                 self.model.setData(self.model.index(i,self.col_id.index(MpMusic.RATING   )),Qt.AlignRight,Qt.TextAlignmentRole)
                 self.model.setData(self.model.index(i,self.col_id.index(MpMusic.FREQUENCY)),Qt.AlignRight,Qt.TextAlignmentRole)
+                self.model.setData(self.model.index(i,self.col_id.index(MpMusic.SONGINDEX)),Qt.AlignRight,Qt.TextAlignmentRole)
 
                 datecol = self.col_id.index(MpMusic.DATESTAMP)
                 
@@ -1446,8 +1447,8 @@ class TableLibrary(widgetTable.Table):
         dialog = dialogColumnSelect.DialogColumnSelect(R,obj.colCount)
 
         if dialog.exec_():
-            print dialog.ResultList   
-            print dialog.ActiveCount
+            #print dialog.ResultList   
+            #print dialog.ActiveCount
             
             # retranslate to id numbers
             for i in range(len(R)):
