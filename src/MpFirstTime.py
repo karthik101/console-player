@@ -121,6 +121,7 @@ def startUpCheck(install=False):
         
         # compare the read settings value with the minimum required version
         value = versionCompare(MpGlobal.SAVED_VERSION,MpGlobal.MINIMUM_VERSION)
+        
         #extract any missing files
         quickVerifyCheck(installPath,value >= 0) # quick verify when >= 0, otherwise do a  full replace
 
