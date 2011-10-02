@@ -450,7 +450,7 @@ def loadSettings():
     file = MpGlobal.FILEPATH_SETTINGS
     if os.path.exists(file):
         rf = open(file,"r")
-        
+        print "Settings File exists"
         line = True 
 
         while line:
@@ -505,28 +505,28 @@ def loadSettings():
         #    print k,"=>",v
     return;
   
-def getSettingsVersion(dir):    
-    """
-        this function reads the settings file and extracts the version string only
-    """
-    settings_path = os.path.join(dir,"settings.ini")
-    print "---------------------------"
-    print settings_path
-    if os.path.exists(settings_path):
-        rf = open(settings_path,"r")
-        
-        line = rf.readline()
-        version = ""
-        while (line):
-            key,value = line.strip().split(':')
-            if key == 'str_VERSION':
-                version = value
-            line = rf.readline()
-        rf.close();
-    print version
-    print MpGlobal.VERSION
-    print "---------------------------"
-    return version
+#   def getSettingsVersion(dir):    
+#       """
+#           this function reads the settings file and extracts the version string only
+#       """
+#       settings_path = os.path.join(dir,"settings.ini")
+#       print "---------------------------"
+#       print settings_path
+#       if os.path.exists(settings_path):
+#           rf = open(settings_path,"r")
+#           
+#           line = rf.readline()
+#           version = ""
+#           while (line):
+#               key,value = line.strip().split(':')
+#               if key == 'str_VERSION':
+#                   version = value
+#               line = rf.readline()
+#           rf.close();
+#       print version
+#       print MpGlobal.VERSION
+#       print "---------------------------"
+#       return version
   
 def history_log(filepath,song,type): 
 

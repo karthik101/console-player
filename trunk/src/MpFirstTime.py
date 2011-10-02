@@ -91,37 +91,39 @@ class VerifyInstallDialog(QDialog):
         self.container.addWidget(self.label)
         self.container.addWidget(self.pbar)
 
-def firstTimeCheck():
+def startUpCheck(install=False):
     # check to make sure that the required files are installed
     # if not install them to the location the user gave.
     
     installPath = getInstallPath()
     
-    if not os.path.exists(installPath): # ask the user to (re)install
-    
+    if not os.path.exists(installPath) or install: # ask the user to (re)install
+        print "Running First Time Installation"
         installPath = getNewInstallLocation();
         
         if not os.path.exists(installPath):
             sys.exit(1) # quit because we were given a bad path
             
-        verifyInstallation(installPath)
-    else:
+        MpGlobal.updatePaths(installPath) # update file locations to the new path 
+        
+        verifyInstallation(installPath) # extract files
+        
+    else: # settings file already exists read it.
         # perform a quick check that all needed files are there
-        # TODO: evalutate, should i load settings here, renaming firsttimecheck to something better?
+        # TODO: evalutate, should i load settings here, renaming this functionto something better?
+        print "Running Start up Checks"
         
-        sv = getSettingsVersion(installPath)
+        MpGlobal.updatePaths(installPath) # update file locations to the new path
         
-        value = versionCompare(sv,MpGlobal.MINIMUM_VERSION)
+        loadSettings()
 
-        quick = value >= 0
+        MpGlobal.SAVED_VERSION = Settings.VERSION # store the version str for later
         
-        quickVerifyCheck(installPath,quick)
-        
-        MpGlobal.SAVED_VERSION = sv;
-        
-        # if quick equals false then run MpAutoUpdate
-        
-    MpGlobal.updatePaths(installPath) # update file locations to the new path
+        # compare the read settings value with the minimum required version
+        value = versionCompare(MpGlobal.SAVED_VERSION,MpGlobal.MINIMUM_VERSION)
+        #extract any missing files
+        quickVerifyCheck(installPath,value >= 0) # quick verify when >= 0, otherwise do a  full replace
+
     
 def getNewInstallLocation():
     """

@@ -19,7 +19,7 @@ isPosix = os.name =='posix'
  
 __debug   = "-debug" in sys.argv;
 __devmode = "-devmode" in sys.argv;
-
+__install = "-install" in sys.argv;  # launch with the -install flag to reinstall the application
 import sip
 
 if __devmode: # use API 2, when testing
@@ -53,7 +53,7 @@ from MpApplication import *
 if __debug: print "MpApplication Imported"    
 from MpScripting import *
 from MpThreading import MediaPlayerThread
-from MpFirstTime import firstTimeCheck
+from MpFirstTime import startUpCheck
 import MpEventHook
 if __debug: print "Remaining Required Files Imported"    
 
@@ -81,7 +81,7 @@ if __debug: print "Player Version Set"
 # ######################################
 # Check if required files need to be extracted
 # ###################################### 
-firstTimeCheck();
+startUpCheck(install=__install); # load the settings or install if never been run before
 
 if __debug: print "First Time Check Done"    
 
