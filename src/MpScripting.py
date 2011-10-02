@@ -471,6 +471,8 @@ def init_Settings(release):
         when created settings are set to dummy values
         if a setting needs to be initialized to some other value
         set that here
+        
+        it is assumed that loadSettings() was called before this function
     """
     
     Settings.RELEASE = release;
@@ -486,9 +488,7 @@ def init_Settings(release):
     if not release:
         #MpGlobal.NAME = "ConsolePlayer - Test"
         Settings.SCREENSAVER_ENABLE_CONTROL = False
-        
-    loadSettings()
-    
+
     if os.name != Settings.OS:
         debugPreboot("Last Save was on Different OS - %s Now %s"%(Settings.OS,os.name))
 
