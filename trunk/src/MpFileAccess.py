@@ -291,9 +291,6 @@ def musicBackup(force = False):
             newbu = os.path.join(path,fullname)  
             musicSave(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
             
-            
-    
-   
 def playListSave(filepath,data,relDrive=0,index=0):
     # index = MpGlobal.Player.CurrentIndex
     driveList = systemDriveList()
@@ -310,8 +307,13 @@ def playListLoad(filepath,source):
     
     if not os.path.exists(filepath):
         return [] # return empty array, then check status from that
-    rf = open(filepath,"r")
-
+        
+    try:
+        rf = open(filepath,"r")
+    except:
+        print "cannot open: %s"%filepath
+        return [];
+     
     array = []
     
     rpath = ''
@@ -327,63 +329,71 @@ def playListLoad(filepath,source):
 
     line = rf.readline().strip()
     count = 0;
+    
+
     while line:
     
-        if line[0] == '#':
-            R = line.split('=');
-            Settings.PLAYER_LAST_INDEX = atoi(R[1]);
-            line = rf.readline().strip()
-            continue;
-        elif line[:2] == '0x':
-            id,path = line.split(' ',1)
-            id = hex64(id)
-        else:
-            id = hex64(0)
-            path = line
-        
-        path = unicode(path.strip(),'unicode-escape')
-        
-        if lookForDrive:
-             # determine which drive the song exists.
-            # THEN ASSUME THAT ALL SONG EXIST ON THAT DRIVE
-            for drive in drivelist:
-                try:
-                    p = os.path.join(drive , path)
-                    debugPreboot("PL Testing: %s"%p)
-                    
-                    if os.path.exists( p ):
-                        useRelDrive = True
-                        rpath = drive
-                        break
-                except:
-                    pass#debugPreboot("Music Not Found on Any Drive.")
+        try:
+            
+            if line[0] == '#':
+                R = line.split('=');
+                Settings.PLAYER_LAST_INDEX = atoi(R[1]);
+                line = rf.readline().strip()
+                continue;
+            elif line[:2] == '0x':
+                id,path = line.split(' ',1)
+                id = hex64(id)
             else:
-                debugPreboot("Error Loading Music. Assuming: %s"%rpath)
-                
-            lookForDrive = False;
-        
-        
-        if rpath != '':
-            path = os.path.join(rpath,path);
-        
-        # Search for the song in the source library
-        # first compare the hex id. if this fails compare paths
-        # comparing paths is much slower than comparing ids
-        for x in range(len(source)):
-            if source[x].id == id:
-                array.append(source[x])
-                break
-        else:
+                id = hex64(0)
+                path = line
+            
+            path = unicode(path.strip(),'unicode-escape')
+            
+            if lookForDrive:
+                 # determine which drive the song exists.
+                # THEN ASSUME THAT ALL SONG EXIST ON THAT DRIVE
+                for drive in drivelist:
+                    try:
+                        p = os.path.join(drive , path)
+                        debugPreboot("PL Testing: %s"%p)
+                        
+                        if os.path.exists( p ):
+                            useRelDrive = True
+                            rpath = drive
+                            break
+                    except:
+                        pass#debugPreboot("Music Not Found on Any Drive.")
+                else:
+                    debugPreboot("Error Loading Music. Assuming: %s"%rpath)
+                    
+                lookForDrive = False;
+            
+            
+            if rpath != '':
+                path = os.path.join(rpath,path);
+            
+            # Search for the song in the source library
+            # first compare the hex id. if this fails compare paths
+            # comparing paths is much slower than comparing ids
             for x in range(len(source)):
-                if comparePath( source[x][MpMusic.PATH] ,path ):
+                if source[x].id == id:
                     array.append(source[x])
                     break
-                
-        line = rf.readline().strip()
-        count += 1;
+            else:
+                for x in range(len(source)):
+                    if comparePath( source[x][MpMusic.PATH] ,path ):
+                        array.append(source[x])
+                        break
+        except:
+            pass
+        finally:
+            
+            line = rf.readline().strip()
+            count += 1;
+            
+            if count%25 == 0: # was Settings.SEARCH_STALL, but even 100 was way to much (25 still is)
+                MpGlobal.Application.processEvents();
         
-        if count%25 == 0: # was Settings.SEARCH_STALL, but even 100 was way to much (25 still is)
-            MpGlobal.Application.processEvents();
     rf.close()
     return array
 
