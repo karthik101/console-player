@@ -516,7 +516,7 @@ def loadSettings():
                             if len(Settings.__dict__[key][i]) == 0:
                                 Settings.__dict__[key].pop(i);
                             else:
-                                Settings.__dict__[key] = Settings.__dict__[key][i].strip()
+                                Settings.__dict__[key][i] = Settings.__dict__[key][i].strip()
                                 i += 1;
                         
                     elif dim == u"str" and type(Settings.__dict__[key]) == str or type(Settings.__dict__[key]) == unicode:
