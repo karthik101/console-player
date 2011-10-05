@@ -296,6 +296,7 @@ def playListSave(filepath,data,relDrive=0,index=0):
     driveList = systemDriveList()
     wf = open(filepath,"w")
     wf.write("#index=%d\n"%index);
+    print "saving %d"%len(data)
     for x in range(len(data)):
         path = data[x][MpMusic.PATH]
         if type > 0:#alternate save formats remove the drive
@@ -327,27 +328,34 @@ def playListLoad(filepath,source):
     
     drivelist = systemDriveList();
 
-    line = rf.readline().strip()
+    line = rf.readline()
     count = 0;
     
 
     while line:
-    
+
         try:
             
             if line[0] == '#':
                 R = line.split('=');
                 Settings.PLAYER_LAST_INDEX = atoi(R[1]);
-                line = rf.readline().strip()
-                continue;
-            elif line[:2] == '0x':
+                line = rf.readline() # load the next line ( a file path?) 
+                
+            line = line.strip()
+            
+            if line[:2] == '0x':
                 id,path = line.split(' ',1)
                 id = hex64(id)
             else:
                 id = hex64(0)
                 path = line
             
-            path = unicode(path.strip(),'unicode-escape')
+            try:
+                _ = unicode(path.strip(),'unicode-escape')
+            except:
+                pass
+            else:
+                path = _;
             
             if lookForDrive:
                  # determine which drive the song exists.
@@ -372,6 +380,8 @@ def playListLoad(filepath,source):
             if rpath != '':
                 path = os.path.join(rpath,path);
             
+            print path[10:85]
+            
             # Search for the song in the source library
             # first compare the hex id. if this fails compare paths
             # comparing paths is much slower than comparing ids
@@ -385,16 +395,17 @@ def playListLoad(filepath,source):
                         array.append(source[x])
                         break
         except:
-            pass
+            print "\n\n\nerror\n\n\n"
         finally:
             
-            line = rf.readline().strip()
+            line = rf.readline()
             count += 1;
             
             if count%25 == 0: # was Settings.SEARCH_STALL, but even 100 was way to much (25 still is)
                 MpGlobal.Application.processEvents();
         
     rf.close()
+    print len(array)
     return array
 
 def saveSettings( ):
