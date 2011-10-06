@@ -1,4 +1,3 @@
-#Getting started with modifying Console Player
 
 = Introduction =
 
@@ -18,11 +17,4 @@ Console Player is programmed with Python 2.7 (32 bit) and PyQt version 4.8.5. VL
   * So far there are no linux specific files
 
 == Additional ==
-  * [http://www.videolan.org/ VLC] - The latest version will playback prevent issues
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * [http://www.videolan.org/ VLC] - Using the latest version will prevent playback  issues
