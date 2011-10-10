@@ -914,15 +914,24 @@ def cmd_xx(input):
         print RunTime_List_Operation_Int(MpGlobal.Player.libDisplay,input.DecVal[1])
         
     if input.DecVal[0] == 2 : #xx 2
-        temp = Song()
-        temp[MpMusic.ARTIST] = "Stone Temple Pilots"
-        temp[MpMusic.ALBUM]  = "Core"
-        temp[MpMusic.TITLE]  = "Crackerman"
-        temp[MpMusic.LENGTH] = 194
-        temp.update()
+        src="./user/test.libz"
+        dst="./user/test.txt"
         
-        print temp
-
+        tp=0;  # tp = 0 1 2 3 
+        bs = 128
+        if input.hasDecVal > 1:
+        
+            tp = input.DecVal[1]
+                
+            if input.DecVal[2] > 50:
+                bs = input.DecVal[2]
+        print "type  = %X"%tp
+        print "block = %d"%bs
+        print MpGlobal.Player.library[0].__repr__(systemDriveList());
+        musicSaveLZMA(src,MpGlobal.Player.library,tp,int(bs));
+        #LZMA_decompress_to_file(src,dst);
+        
+        
     if input.DecVal[0] == 3 : #xx 3
         #MpGlobal.Window.setWindowFlags(MpGlobal.Window.windowFlags() | Qt.WindowStaysOnTopHint)
         #MpGlobal.Window.setWindowFlags(Qt.WindowStaysOnTopHint)
