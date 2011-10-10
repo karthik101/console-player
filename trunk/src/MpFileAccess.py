@@ -256,10 +256,13 @@ def musicSaveLZMA(filepath,songList,type=0,block_size=128):
             the header ends when the first string 'SIZE' is found
             
         Frame
-            8 byte header
+            8 byte header, followed by SIZE bytes corresponding to X LZMA compressed song representations.
+            Frame Header:
                 4 bytes - the word 'SIZE'
                 4 bytes - unsigned integer, size of frame, excluding frame header
-            followed by bytes corresponding to X LZMA compressed song representations.
+            Frame Body:
+                SIZE bytes compressed using pyLZMA.compress()
+            
             
         each frame will compress
         
@@ -270,7 +273,7 @@ def musicSaveLZMA(filepath,songList,type=0,block_size=128):
                           :  2 - remove drie list from start of path ( multi os mode )
         LBLK - BLOCK SIZE : maximum number of songs per block, after decompression 
         LCNT - COUNT      : count of all songs saved to the file        
-         
+        LFMT - SNG FORMAT : number of lines per song record     
         
     """
     
@@ -279,6 +282,7 @@ def musicSaveLZMA(filepath,songList,type=0,block_size=128):
         FILE.write( struct.pack("4sI","LTYP",type) );          # 
         FILE.write( struct.pack("4sI","LBLK",block_size) );    # number of songs in each block
         FILE.write( struct.pack("4sI","LCNT",len(songList)) ); # 
+        FILE.write( struct.pack("4sI","LFMT",6 ) );
         _LZMA_write_songList(FILE,songList,type,block_size)
             
     
@@ -319,21 +323,85 @@ def _LZMA_write_songList(FILE,songList,type,block_size):
 
 def LZMA_decompress_to_file(src,dst):
 
+    header=""
     data=""
+    key =""
+    val =0
+    
     with open(src,"rb") as FILE:
+        # read the header
+        bin = FILE.read(8);
+        key,val = struct.unpack("4sI",bin)
+        while key != "SIZE" and bin:
+            header += "%s=%d\n"%(key,val);
+            
+            bin = FILE.read(8);
+            
+            if bin:
+                key,val = struct.unpack("4sI",bin)
+        # now  read the data from the file.         
+        bin = FILE.read(val);        
+        while bin:
+        
+            data += pylzma.decompress(bin);
+            
+            bin = FILE.read(8);
+            if bin:
+                key,val = struct.unpack("4sI",bin)
+                bin = FILE.read(val); # read val bytes from the frame   
         data += FILE.read();
     
     with open(dst,"w") as FILE:
-        FILE.write( pylzma.decompress(data) );
+        FILE.write( header );
+        FILE.write( data );
         
 def LZMA_compress_to_file(src,dst):
 
-    data=""
+    header=""   #the binary form of header data
+    data=""     # the binary form of text data ( may not be compressed )
+    block=""    # a single block of data
+    
+    
+    typ=0;
+    blk=128;
+    fmt=6;
+    
     with open(src,"r") as FILE:
+        line = FILE.readline()
+        while line[0]=='L' and line[4] == '=': #TODO: this should never be a band name right?
+            key,val= line.strip().split('=');
+            header += struct.pack("4sI",key,int(val.strip()))
+            if key == "LTYP": typ = int(val.strip());
+            if key == "LBLK": blk = int(val.strip());
+            if key == "LFMT": fmt = int(val.strip());
+            line = FILE.readline()
+            
+        m=(blk*fmt)-1 #minus one for first song's first line already read
+
+        while line:
+            # read blocks... the first line has already been read
+            
+            i=0
+            block="" # reset the block data
+            while i < m and line:
+                block += line
+                line = FILE.readline()
+                i+=1;
+                
+            bin=""
+            if typ&1==0:
+                bin=pylzma.compress(block)
+ 
+            data += struct.pack("4sI","SIZE",len(bin) );
+            data += bin;
+            
+            line = FILE.readline()
+            
         data += FILE.read();
     
     with open(dst,"wb") as FILE:
-        FILE.write( pylzma.compress(data) );
+        FILE.write( header );
+        FILE.write( data );
         
  
 def musicBackup(force = False):

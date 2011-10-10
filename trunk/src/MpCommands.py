@@ -916,6 +916,7 @@ def cmd_xx(input):
     if input.DecVal[0] == 2 : #xx 2
         src="./user/test.libz"
         dst="./user/test.txt"
+        ds2="./user/test.libz2"
         
         tp=0;  # tp = 0 1 2 3 
         bs = 128
@@ -925,11 +926,13 @@ def cmd_xx(input):
                 
             if input.DecVal[2] > 50:
                 bs = input.DecVal[2]
-        print "type  = %X"%tp
-        print "block = %d"%bs
-        print MpGlobal.Player.library[0].__repr__(systemDriveList());
+                
+        #print "type  = %X"%tp
+        #print "block = %d"%bs
+        #print MpGlobal.Player.library[0].__repr__(systemDriveList());
         musicSaveLZMA(src,MpGlobal.Player.library,tp,int(bs));
-        #LZMA_decompress_to_file(src,dst);
+        LZMA_decompress_to_file(src,dst);
+        LZMA_compress_to_file(dst,ds2);
         
         
     if input.DecVal[0] == 3 : #xx 3
