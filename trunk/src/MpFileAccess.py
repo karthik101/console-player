@@ -8,6 +8,8 @@
 import os
 import sys
 
+import pylzma
+
 isPosix = os.name == 'posix'
 __devmode = "-devmode" in sys.argv;
 
@@ -239,7 +241,101 @@ def musicSave(filepath,data,type=0):
         #    print str(data[x][PATH])
         
     wf.close() 
-   
+ 
+def musicSaveLZMA(filepath,songList,type=0,block_size=128):
+    """
+        save a new file, but first compress it using LZMA.
+        
+        file is saved as a binary file.
+       
+        HEADER:
+            several 8 byte frames in a 4:4 byte pattern
+            4 bytes describing the value in format 'LXXX'
+            4 byte integer
+         
+            the header ends when the first string 'SIZE' is found
+            
+        Frame
+            8 byte header
+                4 bytes - the word 'SIZE'
+                4 bytes - unsigned integer, size of frame, excluding frame header
+            followed by bytes corresponding to X LZMA compressed song representations.
+            
+        each frame will compress
+        
+        HEADERS:
+        LVER - VERSION    :outlines if any changes to reading will be needed (future proofing)
+        LTYP - TYPE       : bitwise or combination of save settings
+                          :  1 - no compression
+                          :  2 - remove drie list from start of path ( multi os mode )
+        LBLK - BLOCK SIZE : maximum number of songs per block, after decompression 
+        LCNT - COUNT      : count of all songs saved to the file        
+         
+        
+    """
+    
+    with open(filepath,"wb") as FILE:
+        FILE.write( struct.pack("4sI","LVER",1) );             # 
+        FILE.write( struct.pack("4sI","LTYP",type) );          # 
+        FILE.write( struct.pack("4sI","LBLK",block_size) );    # number of songs in each block
+        FILE.write( struct.pack("4sI","LCNT",len(songList)) ); # 
+        _LZMA_write_songList(FILE,songList,type,block_size)
+            
+    
+ 
+def _LZMA_write_songList(FILE,songList,type,block_size): 
+    """
+        type: bitwise or combination of flags.
+            1 - no compression
+            2 - remove drive
+    """
+    i=0;
+    l = len(songList);
+    
+    
+    
+    if type&2 == 2: 
+        drivelist=systemDriveList(); # fill this with values
+    else:
+        drivelist=[];
+    
+    print "%s"%drivelist
+    
+    while i < l:
+        block=""
+        for x in xrange(block_size):
+            if i < l:
+                block+= songList[i].__repr__(drivelist);
+            else: break;
+            i+=1;
+            
+        if type&1 == 0: # no compression for type|=1    
+            block = pylzma.compress(block);
+        # write a header for the block, SIZE=length of the block
+        FILE.write( struct.pack("4sI","SIZE",len(block)) );
+        FILE.write(block);
+        
+    print "Saved %d songs with block size = %d "%( i , block_size );
+
+def LZMA_decompress_to_file(src,dst):
+
+    data=""
+    with open(src,"rb") as FILE:
+        data += FILE.read();
+    
+    with open(dst,"w") as FILE:
+        FILE.write( pylzma.decompress(data) );
+        
+def LZMA_compress_to_file(src,dst):
+
+    data=""
+    with open(src,"r") as FILE:
+        data += FILE.read();
+    
+    with open(dst,"wb") as FILE:
+        FILE.write( pylzma.compress(data) );
+        
+ 
 def musicBackup(force = False):
     """
         save a copy of the current library to ./backup/
@@ -692,33 +788,7 @@ def __history_NewDate__(date,song):
 # ######################################################
 # Song Creation (from string)
 # ######################################################
-
-#def createBlankSong( path = "" ):
-#    """
-#        this is no longer used - songs are now of type Song in MpGlobalDefines
-#    """
-#    song = Song()#[[]]*MpGlobal.SONGDATASIZE
-#    song[MpMusic.PATH]       = unicode(path)
-#    song[MpMusic.ARTIST]      = u"Unknown Artist" 
-#    song[MpMusic.TITLE]      = u"Unknown Title" 
-#    song[MpMusic.ALBUM]      = u"Unknown Album" 
-#    song[MpMusic.GENRE]       = u"None" 
-#    song[MpMusic.DATESTAMP]  = "NEW"
-#    song[MpMusic.DATEVALUE]  = 0
-#    song[MpMusic.COMMENT]    = ""
-#    song[MpMusic.RATING]      = 0
-#    song[MpMusic.LENGTH]      = 64
-#    song[MpMusic.SONGINDEX]  = 0
-#    song[MpMusic.PLAYCOUNT]  = 0
-#    song[MpMusic.SKIPCOUNT]  = 0
-#    song[MpMusic.FILESIZE]   = 0
-#    song[MpMusic.FREQUENCY]  = 0
-#    song[MpMusic.BITRATE]    = 0
-#    song[MpMusic.SPECIAL]    = False
-#    song[MpMusic.SELECTED]   = False
-#    song[MpMusic.EXIF] = createInternalExif(song)
-#    return song
-  
+ 
 def createSong( song ):     # v1
     
     R = song[MpMusic.EXIF].split("|")
@@ -874,14 +944,17 @@ def createExifV4( song ) :
         unicode(song[MpMusic.TITLE]), \
         unicode(song[MpMusic.ALBUM]), \
         unicode(song[MpMusic.GENRE]), \
+        
         unicode(song[MpMusic.COMMENT]), \
         song[MpMusic.DATESTAMP], \
         song[MpMusic.LENGTH], \
         song[MpMusic.RATING], \
+        
         song[MpMusic.PLAYCOUNT], \
         song[MpMusic.SKIPCOUNT], \
         song[MpMusic.SONGINDEX], \
         song[MpMusic.FILESIZE], \
+        
         song[MpMusic.BITRATE], \
         song[MpMusic.FREQUENCY], \
         song.md5        );
@@ -1490,6 +1563,8 @@ if not isPosix:
     import win32con
     
 import hashlib
+
+import struct
 
 from MpGlobalDefines import *
 from MpScriptingAdvanced import *
