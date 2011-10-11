@@ -285,8 +285,6 @@ def musicSaveLZMA(filepath,songList,type=0,block_size=128):
         FILE.write( struct.pack("4sI","LFMT",6 ) );
         _LZMA_write_songList(FILE,songList,type,block_size)
             
-    
- 
 def _LZMA_write_songList(FILE,songList,type,block_size): 
     """
         type: bitwise or combination of flags.
@@ -1635,6 +1633,7 @@ import hashlib
 import struct
 
 from MpGlobalDefines import *
+from MpScripting import *;
 from MpScriptingAdvanced import *
 from MpScripting import *
 from PyQt4.QtCore import *

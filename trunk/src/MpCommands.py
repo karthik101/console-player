@@ -938,11 +938,18 @@ def cmd_xx(input):
     if input.DecVal[0] == 3 : #xx 3
         #MpGlobal.Window.setWindowFlags(MpGlobal.Window.windowFlags() | Qt.WindowStaysOnTopHint)
         #MpGlobal.Window.setWindowFlags(Qt.WindowStaysOnTopHint)
-        print convertStringToTime("90")
-        print convertStringToTime("1:30")
-        print convertStringToTime("1:1:1")
-        print convertStringToTime("1:1:1:1")
+        song = MpGlobal.Player.library[0];
+        
+        r = song.__repr__();
+        print r
+        t = Song(r);
+        print "%r"%t
 
+        for i in range(len(song)):
+            print "%d %s"%(i,unicode(song[i])[:50])
+            print "%d %s"%(i,unicode(   t[i])[:50])
+        
+        
     if input.DecVal[0] == 4 : #xx 4
         path = r"C:\Users\Nick\Downloads\torrent\000 Music\Semisonic\All About Chemistry\01 Chemistry.wma"
         #path = r"C:\Users\Nick\Downloads\torrent\000 Music\Mark Lanegan\(1990) The Winding Sheet\01-Mockingbirds.flac"
