@@ -1083,7 +1083,7 @@ class TableLibrary(widgetTable.Table):
         if len(col_list) == len(self.col_id_template):
             self.col_id = col_list[:]
         for x in range(len(self.col_id)):
-            self.col_id[x] = atoi(self.col_id[x])
+            self.col_id[x] = int(self.col_id[x])
             
         if col_active < 0 or col_active > len(self.col_id):
             col_active = len(self.col_id)
