@@ -675,14 +675,31 @@ class hex64(ctypes.c_ulonglong):
 import os
 
 class Song(list):
-
+    __repr_str__ = [ MusicContainer.ARTIST,
+                     MusicContainer.TITLE,
+                     MusicContainer.ALBUM,
+                     MusicContainer.GENRE,
+                     MusicContainer.DATESTAMP,
+                     MusicContainer.COMMENT,
+                   ];
+    __repr_num__ = [ MusicContainer.RATING,
+                     MusicContainer.LENGTH,
+                     MusicContainer.SONGINDEX,
+                     MusicContainer.PLAYCOUNT,
+                     MusicContainer.SKIPCOUNT,
+                     MusicContainer.FREQUENCY,
+                     MusicContainer.FILESIZE,
+                     MusicContainer.BITRATE
+                   ];        
+            
     def __init__(self,varient=""):
         super(Song,self).__init__([0]*GlobalContainer.SONGDATASIZE)
 
 
         if type(varient) == Song:
+            # produce a copy of the song.
             self.id = varient.id
-            self.md5 = ""
+            self.md5 = warient.md5
             self[MusicContainer.PATH]      = varient[MusicContainer.PATH]
             self[MusicContainer.ARTIST]    = varient[MusicContainer.ARTIST]
             self[MusicContainer.TITLE]     = varient[MusicContainer.TITLE]
@@ -701,30 +718,37 @@ class Song(list):
             self[MusicContainer.BITRATE]   = varient[MusicContainer.BITRATE]
             self[MusicContainer.SPECIAL]   = varient[MusicContainer.SPECIAL]
             self[MusicContainer.SELECTED]  = varient[MusicContainer.SELECTED]
-        else:
-            self.id = hex64(0)
-            self.md5 = ""
-            self[MusicContainer.PATH]      = unicode(varient)
-            self[MusicContainer.ARTIST]    = u"Unknown Artist"
-            self[MusicContainer.TITLE]     = u"Unknown Title"
-            self[MusicContainer.ALBUM]     = u"Unknown Album"
-            self[MusicContainer.GENRE]     = u"None"
-            self[MusicContainer.DATESTAMP] = "NEW"
-            self[MusicContainer.DATEVALUE] = 0
-            self[MusicContainer.COMMENT]   = ""
-            self[MusicContainer.RATING]    = 0
-            self[MusicContainer.LENGTH]    = 64
-            self[MusicContainer.SONGINDEX] = 0
-            self[MusicContainer.PLAYCOUNT] = 0
-            self[MusicContainer.SKIPCOUNT] = 0
-            self[MusicContainer.FILESIZE]  = 0
-            self[MusicContainer.FREQUENCY] = 0
-            self[MusicContainer.BITRATE]   = 0
-            self[MusicContainer.SPECIAL]   = False
-            self[MusicContainer.SELECTED]  = False
-
+            return;
+        elif type(varient) == str or type(varient) == unicode:
+            if varient.count('\n') > 0:
+                self.from_repr(varient);
+                return;
+        
+        self.id = hex64(0)
+        self.md5 = ""
+        self[MusicContainer.PATH]      = unicode(varient)
+        self[MusicContainer.ARTIST]    = u"Unknown Artist"
+        self[MusicContainer.TITLE]     = u"Unknown Title"
+        self[MusicContainer.ALBUM]     = u"Unknown Album"
+        self[MusicContainer.GENRE]     = u"None"
+        self[MusicContainer.DATESTAMP] = "NEW"
+        self[MusicContainer.DATEVALUE] = 0
+        self[MusicContainer.COMMENT]   = ""
+        self[MusicContainer.RATING]    = 0
+        self[MusicContainer.LENGTH]    = 64
+        self[MusicContainer.SONGINDEX] = 0
+        self[MusicContainer.PLAYCOUNT] = 0
+        self[MusicContainer.SKIPCOUNT] = 0
+        self[MusicContainer.FILESIZE]  = 0
+        self[MusicContainer.FREQUENCY] = 0
+        self[MusicContainer.BITRATE]   = 0
+        self[MusicContainer.SPECIAL]   = False
+        self[MusicContainer.SELECTED]  = False
 
     def __str__(self):
+        return "[%s] %s - %s"%(self.id)
+    
+    def __unicode__(self):
         return "[%s] %s - %s"%(self.id,self[MusicContainer.ARTIST],self[MusicContainer.TITLE])
 
     def update(self):
@@ -784,7 +808,7 @@ class Song(list):
 
     @staticmethod
     def __char_to_6bit__(c):
-        o = ord(c)
+        o = ord(c.upper())
         # 00 - 09 := 0-9
         # 0A      := ASCII 0 - 127, not ALPHANUMERIC
         # 0B - 24 := A-Z
@@ -819,10 +843,10 @@ class Song(list):
             return o - ord(u'0')
         elif ord(u'A') <= o <= ord(u'Z'):
             return o - ord(u'A') + 11
-        elif o <= 127:
+        elif o <= 0x7F:
             return 0x0A;
-        elif 0x0000 <= o <= 0x0000:
-            return 0x025;
+        elif o <= 0xFF:
+            return 0x25;
         elif 0x3040 <= o <= 0x306F:
             return 0x39
         elif 0x3070 <= o <= 0x309F:
@@ -851,7 +875,7 @@ class Song(list):
     def __repr__(self,drivelist=[]):
 
         """
-            repr produces the following:
+            repr produces the following 6 lines:
             "3 Doors Down","Kryptonite","The Better Life","Alternative Rock","2011/08/28 06:55",""
             5,233,1,12,0,92,3656,0
             D:\\Music\\discography\\discography - 3 doors down\\the better life\\01 kryptonite.mp3
@@ -859,31 +883,11 @@ class Song(list):
             c1:
             c2:
             
-            if drivelist is not empty, as in (song.__repr__([]) is called and not "%r" ) 
+            if drivelist is not empty, as in (song.__repr__([]) is called and not "%r"%song ) 
                 then the largest match from drivelist is stripped from the START of PATH
 
         """
-        
-        # all string values worth saving
-        s = [
-             MusicContainer.ARTIST,
-             MusicContainer.TITLE,
-             MusicContainer.ALBUM,
-             MusicContainer.GENRE,
-             MusicContainer.DATESTAMP,
-             MusicContainer.COMMENT,
-            ];
-        # all number values worth saving
-        n = [ MusicContainer.RATING,
-              MusicContainer.LENGTH,
-              MusicContainer.SONGINDEX,
-              MusicContainer.PLAYCOUNT,
-              MusicContainer.SKIPCOUNT,
-              MusicContainer.FREQUENCY,
-              MusicContainer.FILESIZE,
-              MusicContainer.BITRATE
-            ]
-            
+
         # ######################################
         # generate string and number values
         q = lambda x: x.replace("\"","\\\"");
@@ -891,10 +895,10 @@ class Song(list):
         sfmt = ""
         nfmt = ""
         
-        for field in s:
+        for field in Song.__repr_str__:
             sfmt += "\"%s\","%q(self[field])
             
-        for field in n:
+        for field in Song.__repr_num__:
             nfmt += "%d,"%self[field]
 
         # ######################################
@@ -915,8 +919,9 @@ class Song(list):
             
         # ###################################### 
         # store everything under one multiline string
+        # -1 strips final comma
         repr  = u"%s\n"%unicode(sfmt[:-1]).encode('unicode-escape')
-        repr += u"%s\n"%unicode(nfmt[:-1]).encode('unicode-escape')
+        repr += u"%s\n"%unicode(nfmt[:-1])
         repr += u"%s\n"%unicode(p).encode('unicode-escape');
         repr += u"md5:\n";  # md5 value
         repr += u"c1:\n";   # lo frequency information
@@ -924,6 +929,45 @@ class Song(list):
 
         return repr
 
+    def from_repr(self,string):
+        """
+            take the output from __repr__
+            and set the values of the current song.
+            
+        """
+        string = str(string) # cannot have an unicode object here
+        
+        R = string.split("\n") # split the 6 or more line string into multiple lines
+        R[0] = R[0][1:-1] # strip the beginning and ending quotes from the string field
+        
+        s = R[0].strip().split('","') # this is better than the old format of using |, 
+                                      # but still not the perfect way to do this
+                                      # ideally we would split this at any non-escaped quotes.
+                                      # !!!, in repr all " are changed to \" therefore any instance
+                                      # of "," in a song will be \",\" so this split cannot fail ever? yes.
+        n = R[1].split(',');
+        
+        # process each string value
+        for i in range(len(s)): # fix all escaped quotes
+            s[i] = unicode(s[i],'unicode-escape').replace("\\\"","\"");
+        
+        # s is now an array of unicode strings for all text information stored
+        # n is now an array of integers for all text information stored
+        
+        for i in range(len(Song.__repr_str__)):
+            self[Song.__repr_str__[i]] = s[i]
+            
+        for i in range(len(Song.__repr_num__)):
+            self[Song.__repr_num__[i]] = int(n[i])
+        
+        
+        self[MusicContainer.PATH] = unicode(R[2].strip(),'unicode-escape')
+        
+        
+        R[3] = R[3][3:] # R3 = md5
+        R[4] = R[4][3:] # R4 = lo frequency info
+        R[5] = R[5][3:] # R5 = hi frequency info
+        
 # ###################################################################
 # Instantiate
 # ###################################################################
