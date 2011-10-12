@@ -3074,7 +3074,7 @@ def init_preMainWindow():
      
     getApplicationIcons()
     
-    MpGlobal.Player.library = musicLoad(MpGlobal.FILEPATH_LIBRARY)
+    MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
     MpGlobal.Player.playList = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
     
     #(MpGlobal.Hiragana,MpGlobal.Katakana) = init_KanaTables()

@@ -106,7 +106,7 @@ def musicLoad(filepath):
     # these variables enable not knowing the location of music at boot
     lookForDrive = False;
     drivelist = systemDriveList();
-    #Settings.SAVE_FORMAT = False
+
     print drivelist
     while line1:
     
@@ -122,9 +122,6 @@ def musicLoad(filepath):
                 rpath = os.getcwd()[0]+":\\"
                 debugPreboot("Music Found on %s:\\ Drive."%rpath)
                 Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_CWD
-            elif s == "%UNKNOWN%":
-                Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_UNKNOWN
-                lookForDrive = True;
             else:
                 rpath = s
                 debugPreboot("Music Found on %s:\\ Drive."%rpath)
@@ -211,7 +208,7 @@ def musicSave(filepath,data,type=0):
         _create_exif_ = createExifV3
     elif MpGlobal.FILESAVE_VERSIONID == 4:
         _create_exif_ = createExifV4
-    #self.SAVE_FORMAT=False
+
     #self.RELATIVE_DRIVE_PATH="%RELATIVE%" # any string or %RELATIVE%
 
     if type==1:
@@ -241,8 +238,9 @@ def musicSave(filepath,data,type=0):
         #    print str(data[x][PATH])
         
     wf.close() 
- 
-def musicSaveLZMA(filepath,songList,type=0,block_size=128):
+
+    
+def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
     """
         save a new file, but first compress it using LZMA.
         
@@ -279,15 +277,15 @@ def musicSaveLZMA(filepath,songList,type=0,block_size=128):
     
     with open(filepath,"wb") as FILE:
         FILE.write( struct.pack("4sI","LVER",1) );             # 
-        FILE.write( struct.pack("4sI","LTYP",type) );          # 
+        FILE.write( struct.pack("4sI","LTYP",typ) );          # 
         FILE.write( struct.pack("4sI","LBLK",block_size) );    # number of songs in each block
         FILE.write( struct.pack("4sI","LCNT",len(songList)) ); # 
         FILE.write( struct.pack("4sI","LFMT",6 ) );
-        _LZMA_write_songList(FILE,songList,type,block_size)
+        LIBZ_write_songList(FILE,songList,typ,block_size)
             
-def _LZMA_write_songList(FILE,songList,type,block_size): 
+def LIBZ_write_songList(FILE,songList,typ,block_size): 
     """
-        type: bitwise or combination of flags.
+        typ: bitwise or combination of flags.
             1 - no compression
             2 - remove drive
     """
@@ -296,12 +294,13 @@ def _LZMA_write_songList(FILE,songList,type,block_size):
     
     
     
-    if type&2 == 2: 
+    if typ&2 == 2: 
         drivelist=systemDriveList(); # fill this with values
+        print "save using drive list: %s"%drivelist
     else:
         drivelist=[];
     
-    print "%s"%drivelist
+    
     
     while i < l:
         block=""
@@ -311,7 +310,7 @@ def _LZMA_write_songList(FILE,songList,type,block_size):
             else: break;
             i+=1;
             
-        if type&1 == 0: # no compression for type|=1    
+        if typ&1 == 0: # no compression for typ|=1    
             block = pylzma.compress(block);
         # write a header for the block, SIZE=length of the block
         FILE.write( struct.pack("4sI","SIZE",len(block)) );
@@ -319,7 +318,7 @@ def _LZMA_write_songList(FILE,songList,type,block_size):
         
     print "Saved %d songs with block size = %d "%( i , block_size );
 
-def LZMA_decompress_to_file(src,dst):
+def LIBZ_decompress_to_file(src,dst):
 
     header=""
     data=""
@@ -353,7 +352,7 @@ def LZMA_decompress_to_file(src,dst):
         FILE.write( header );
         FILE.write( data );
         
-def LZMA_compress_to_file(src,dst):
+def LIBZ_compress_to_file(src,dst):
 
     header=""   #the binary form of header data
     data=""     # the binary form of text data ( may not be compressed )
@@ -400,8 +399,107 @@ def LZMA_compress_to_file(src,dst):
     with open(dst,"wb") as FILE:
         FILE.write( header );
         FILE.write( data );
+   
+def musicLoad_LIBZ(filepath):
+    """
+        load the specified .libz file and return an array of songs.
+    """
+    
+
+    if not os.path.exists(filepath):
+    
+        # temporary code:
+        path = fileGetPath(filepath)
+        file = fileGetName(filepath) + ".library"
+        print "\n\n%s\n\n"%file
+        fp = os.path.join(path,file)
+        if os.path.exists(fp):
+            return musicLoad(fp)
+        # end temporary code    
+        return [];
+    
+    R=[];
+    drivelist = [];
+    
+    with open(filepath,"rb") as FILE:
+        # ##################################
+        # read the header
+        header={};
+        bin = FILE.read(8);
+        key,val = struct.unpack("4sI",bin)
+        while key != "SIZE" and bin:
+            header[key] = val;
+            bin = FILE.read(8);
+            if bin:
+                key,val = struct.unpack("4sI",bin)
+                
+        # ##################################
+        # process the header dictionary
+        typ = header.get("LTYP",0)      # needed for restoring file paths
+        blk = header.get("LBLK",128)    # not really needed
+        fmt = header.get("LFMT",6)      # needed to restore each song record.
         
- 
+        if typ&2 == 2: 
+            drivelist=systemDriveList(); 
+            
+        # ##################################
+        # now  read the data from the file.         
+        bin = FILE.read(val);        
+        while bin:
+        
+            if typ&1 == 0: #compression is only used when typ&1 == 0.
+                bin = pylzma.decompress(bin);
+            
+            R += LIBZ_process_block( bin , typ, fmt, drivelist );
+
+            bin = FILE.read(8);
+            if bin:
+                key,size = struct.unpack("4sI",bin)
+                bin = FILE.read(size); # read val bytes from the frame  
+    print "Loaded %d songs from libz container"%len(R)                
+    return R;
+   
+def LIBZ_process_block(data,typ,fmt, drivelist):
+    """
+        given a decompressed block of songs return a list of songs.
+    """
+    R = [];
+    
+    i=0;
+    j=0;
+    l = len(R);
+    
+    s=0;
+    e=0;
+    for j in range(fmt):
+        e = data.find("\n",e+1);
+        if e==-1: # both negative one or the index of a \n, will return a slice without a newline
+            break;
+
+    while e != -1:  # this block of  code is skippped when the data only contains one song.
+        repr = data[s:e]
+        if len(repr) > 0:
+            R.append( Song( repr,DRIVELIST=drivelist ) );
+        
+        # get the next song representation
+        e+=1; # skip the new line
+        s=e; 
+        for j in range(fmt):
+            e = data.find("\n",e+1);
+            if e==-1:
+                break;
+                
+    # restore the last song in the block.        
+    
+    repr = data[s:e]
+    
+    
+    if len(repr) > 0:   
+        R.append( Song( repr ) );
+    
+    return R;
+   
+    
 def musicBackup(force = False):
     """
         save a copy of the current library to ./backup/
@@ -453,7 +551,7 @@ def musicBackup(force = False):
             newbu = os.path.join(path,fullname)  
             musicSave(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
             
-def playListSave(filepath,data,relDrive=0,index=0):
+def playListSave(filepath,data,typ=0,index=0):
     # index = MpGlobal.Player.CurrentIndex
     driveList = systemDriveList()
     wf = open(filepath,"w")
@@ -461,7 +559,7 @@ def playListSave(filepath,data,relDrive=0,index=0):
     print "saving %d"%len(data)
     for x in range(len(data)):
         path = data[x][MpMusic.PATH]
-        if type > 0:#alternate save formats remove the drive
+        if typ > 0:#alternate save formats remove the drive
             path = stripDriveFromPath(driveList,path)
         wf.write( "%s %s\n"%(data[x].id, unicode(path).encode('unicode-escape') ) )
     wf.close()
@@ -484,8 +582,6 @@ def playListLoad(filepath,source):
     
     if Settings.SAVE_FORMAT == MpGlobal.SAVE_FORMAT_CWD:
         rpath = os.getcwd()[0]
-    elif Settings.SAVE_FORMAT == MpGlobal.SAVE_FORMAT_UNKNOWN:
-        lookForDrive = True
 
     
     drivelist = systemDriveList();
@@ -542,7 +638,7 @@ def playListLoad(filepath,source):
             if rpath != '':
                 path = os.path.join(rpath,path);
             
-            print path[10:85]
+            #print path[10:85]
             
             # Search for the song in the source library
             # first compare the hex id. if this fails compare paths
@@ -706,7 +802,7 @@ def loadSettings():
         #    print k,"=>",v
     return;
   
-def history_log(filepath,song,type): 
+def history_log(filepath,song,typ): 
 
     #exec for song in MpGlobal.Window.tbl_library.data: print "%s %d %s\n"%(song.id,MpMusic.DATESTAMP,song[MpMusic.DATESTAMP])
 
@@ -721,12 +817,12 @@ def history_log(filepath,song,type):
     
     data = "None"
     
-    if (type == MpMusic.RATING):
+    if (typ == MpMusic.RATING):
         data = "%d"%song[MpMusic.RATING]
         path = createMiniPath(song)
-    else: #if (type == MpMusic.DATESTAMP)
+    else: #if (typ == MpMusic.DATESTAMP)
         data = time.strftime("%Y/%m/%d %H:%M",datetime)
-        type = MpMusic.DATESTAMP
+        typ = MpMusic.DATESTAMP
 
     art = song[MpMusic.ARTIST].encode('unicode-escape') 
     tit = song[MpMusic.TITLE].encode('unicode-escape')
@@ -803,7 +899,7 @@ def history_load(filepath,lib):
     
     #MpGlobal.Window.debugMsg("\nUpdated %d Songs -- %d Error(s)"%(success,error))                    
                 
-def __history_NewSongEntry(lib,type,data,id):
+def __history_NewSongEntry(lib,typ,data,id):
     # fom file:
     #   item > path
     # last path prevents updating the same songs playcount twice
@@ -812,7 +908,7 @@ def __history_NewSongEntry(lib,type,data,id):
                         
         if song.id == id:
 
-            if (type == MpMusic.RATING):
+            if (typ == MpMusic.RATING):
                 song[MpMusic.RATING] = atoi(data)
                 song[MpMusic.SPECIAL] = True 
                 song[MpMusic.EXIF] = createInternalExif(song) 

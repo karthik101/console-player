@@ -350,7 +350,7 @@ def getEpochTime( date ):
     return 0
 
 def getFormatDate( unixTime ):
-    datetime = None
+    
     try:
         return time.strftime("%Y/%m/%d %H:%M", time.localtime(int(unixTime))) 
     except:
@@ -358,7 +358,6 @@ def getFormatDate( unixTime ):
         
     return "1970/01/01 00:00"
         
-
 def getCurrentTime():
     """return seconds since epoch"""
     return timegm(time.localtime(time.time()))
@@ -599,7 +598,7 @@ def On_Close_Save_Data(force = False):
     if MpGlobal.UNSAVED_DATA or force == True:
         
         
-        musicSave(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+        musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
         playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT,MpGlobal.Player.CurrentIndex);
         
         MpGlobal.UNSAVED_DATA = False
@@ -1032,6 +1031,19 @@ def atoi(a):
     except:
         return 0;
  
+def bitSet(value,bit):
+    """
+        returns the value with bit or'd in
+       
+    """
+    return value|bit;
+    
+def bitClear(value,bit):
+    """
+        returns the value with bit cleared
+       
+    """
+    return value&(~bit);    
 
 # ##############################################
 # testbench
