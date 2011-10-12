@@ -504,7 +504,7 @@ class SyncFiles(QThread):
         player_path = os.path.join(self.dir[:2]+"\\","Player","user","");
 
         if (os.path.exists(player_path)):
-            musicSave(player_path+MpGlobal.FILEPATH_LIBRARY_SYNC_NAME,lib,type=MpGlobal.SAVE_FORMAT_CWD)
+            musicSave_LIBZ(player_path+MpGlobal.FILEPATH_LIBRARY_SYNC_NAME,lib,type=MpGlobal.SAVE_FORMAT_CWD)
     
     def run(self): 
         # ###########################################################

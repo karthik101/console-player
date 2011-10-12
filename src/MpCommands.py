@@ -43,6 +43,7 @@ def initCommandList():
               "keyhook"  : cmd_keyhook,
               "libsave"  : cmd_libsave,
               "libload"  : cmd_libload,
+              "libz"     : cmd_libz, 
               "load"     : cmd_load, 
               "lut"      : cmd_lut,
               "plsave"   : cmd_plsave,
@@ -576,7 +577,7 @@ def cmd_load(input):
 
     # reload the library
     if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
-        MpGlobal.Player.library = musicLoad(MpGlobal.FILEPATH_LIBRARY);
+        MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
         print  "Found %d Songs."%len(MpGlobal.Player.library)
         # trash playlist editors
         # TODO CLOSE ALL PL EDITORS
@@ -593,7 +594,26 @@ def cmd_load(input):
     MpGlobal.Player.loadSong( Settings.PLAYER_LAST_INDEX );
     
     loadSettings()
+    return COMMAND.VALID
+def cmd_libz(input):
+    """
+        Comman: LIBZ
+        usage: libz -d|-c
+        
+        use -d to decompress the current library file to a text file ~/music.txt
+        use -c to compress the ~/music.txt file back into a libz format
+        
+        Remember to use the command 'save' before decompressing
+        Then use 'load' to get any changes you make.
+    """
+    src = MpGlobal.FILEPATH_LIBRARY
+    dst = src+".txt"
     
+    if "d" in input.Switch:
+        LIBZ_decompress_to_file(src,dst);
+    elif "c" in input.Switch:
+        LIBZ_compress_to_file(dst,src);
+    return COMMAND.VALID        
 def cmd_lut(input):
     """
         DEV
@@ -930,10 +950,15 @@ def cmd_xx(input):
         #print "type  = %X"%tp
         #print "block = %d"%bs
         #print MpGlobal.Player.library[0].__repr__(systemDriveList());
-        musicSaveLZMA(src,MpGlobal.Player.library,tp,int(bs));
-        LZMA_decompress_to_file(src,dst);
-        LZMA_compress_to_file(dst,ds2);
         
+        musicSave_LIBZ(src,MpGlobal.Player.library);
+        #R=musicLoad_LIBZ(src);
+        #LIBZ_decompress_to_file(src,dst);
+        #LIBZ_compress_to_file(dst,ds2);
+        
+        R=musicLoad_LIBZ(src);
+        musicSave_LIBZ("./user/test-load.libz",R);
+        LIBZ_decompress_to_file("./user/test-load.libz","./user/test-load.txt");
         
     if input.DecVal[0] == 3 : #xx 3
         #MpGlobal.Window.setWindowFlags(MpGlobal.Window.windowFlags() | Qt.WindowStaysOnTopHint)
@@ -1267,7 +1292,7 @@ def cmd_libsave(input):
         the location and format is dependant on several settings.
     """
     type=0;
-    musicSave(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+    musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
     debug( len(MpGlobal.Player.library))
     return COMMAND.VALID
 def cmd_libload(input):
@@ -1289,7 +1314,7 @@ def cmd_libload(input):
         
     """
     if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
-        MpGlobal.Player.library = musicLoad(MpGlobal.FILEPATH_LIBRARY);
+        MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
         print  "Found %d Songs."%len(MpGlobal.Player.library)
         # trash playlist editors
         # TODO CLOSE ALL PL EDITORS

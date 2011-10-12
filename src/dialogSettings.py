@@ -293,7 +293,7 @@ class SettingsWindow(QDialog):
         if (Settings.MEDIAKEYS_ENABLE):    
             self.chk_Mediakeys.setCheckState(Qt.Checked)
             
-        if (Settings.SAVE_FORMAT==MpGlobal.SAVE_FORMAT_UNKNOWN):
+        if (Settings.SAVE_FORMAT&MpGlobal.SAVE_FORMAT_CWD):
             self.chk_multiOS.setChecked(True)
         else:
             self.chk_normal.setChecked(True)   
@@ -301,9 +301,7 @@ class SettingsWindow(QDialog):
         if (Settings.FILE_LOCATION_LIBRARY != ''):    
             self.chk_liblocal.setChecked(True)
             self.edit_liblocal.setText(Settings.FILE_LOCATION_LIBRARY);
-        #elif (Settings.SAVE_FORMAT==MpGlobal.SAVE_FORMAT_CWD):
-        #    self.chk_relDrive.setChecked(True)
-            
+           
             
         if (Settings.LOG_HISTORY):
             self.chk_history.setCheckState(Qt.Checked)   
@@ -368,11 +366,11 @@ class SettingsWindow(QDialog):
         Settings.MEDIAKEYS_ENABLE = self.chk_Mediakeys.checkState() == Qt.Checked
  
         #if self.chk_relDrive.isChecked():
-        #    Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_CWD
+
         if  self.chk_multiOS.isChecked():
-            Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_UNKNOWN           
+            Settings.SAVE_FORMAT = bitSet(Settings.SAVE_FORMAT,MpGlobal.SAVE_FORMAT_CWD)          
         else:
-            Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_NORMAL
+            Settings.SAVE_FORMAT = bitClear(Settings.SAVE_FORMAT,MpGlobal.SAVE_FORMAT_CWD)        
         
         if self.chk_liblocal.checkState() == Qt.Checked:    
             Settings.FILE_LOCATION_LIBRARY = self.edit_liblocal.displayText()

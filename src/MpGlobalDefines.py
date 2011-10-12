@@ -178,8 +178,8 @@ class GlobalContainer(object):
     # search prompt
     SEARCH_PROMPT = u"Search Library <Ctrl+L>"
 
-    FILEPATH_LIBRARY_SYNC_NAME = "sync.library"
-    FILEPATH_LIBRARY_NAME      = "music.library"
+    FILEPATH_LIBRARY_SYNC_NAME = "sync.libz"
+    FILEPATH_LIBRARY_NAME      = "music.libz"
 
     FILEPATH_PLAYLIST_CURRENT  = "" # "playlist/current.playlist"
     FILEPATH_LIBRARY           = "" # "music.library"
@@ -199,9 +199,8 @@ class GlobalContainer(object):
 
     last_gui_newplaylist_string = ""
 
-    SAVE_FORMAT_NORMAL  = 0 # drive will always be the same
-    SAVE_FORMAT_CWD     = 1 # drive will always be CWD
-    SAVE_FORMAT_UNKNOWN = 2 # drive will be unkown at start
+    SAVE_FORMAT_NOCOMP  = 1  # no compression
+    SAVE_FORMAT_CWD     = 2  # drive will always be CWD
 
     def updatePaths(self,newPath=''):
         # example use
@@ -673,17 +672,18 @@ class hex64(ctypes.c_ulonglong):
 
 
 import os
+import time
 
 class Song(list):
     __repr_str__ = [ MusicContainer.ARTIST,
                      MusicContainer.TITLE,
                      MusicContainer.ALBUM,
                      MusicContainer.GENRE,
-                     MusicContainer.DATESTAMP,
                      MusicContainer.COMMENT,
                    ];
     __repr_num__ = [ MusicContainer.RATING,
                      MusicContainer.LENGTH,
+                     MusicContainer.DATEVALUE,
                      MusicContainer.SONGINDEX,
                      MusicContainer.PLAYCOUNT,
                      MusicContainer.SKIPCOUNT,
@@ -692,7 +692,15 @@ class Song(list):
                      MusicContainer.BITRATE
                    ];        
             
-    def __init__(self,varient=""):
+    def __init__(self,varient="",DRIVELIST=[],DATEFMT="%Y/%m/%d %H:%M"):
+        """
+            Provides 34 different ways to make a new song
+            the default, provide only a path and a container will be created with dummy values
+            
+            pass a repr string and a date format to reconstruct a saved song.
+            
+            of pass in a Song, and an exact copy will be made.
+        """
         super(Song,self).__init__([0]*GlobalContainer.SONGDATASIZE)
 
 
@@ -721,7 +729,7 @@ class Song(list):
             return;
         elif type(varient) == str or type(varient) == unicode:
             if varient.count('\n') > 0:
-                self.from_repr(varient);
+                self.from_repr(varient,DRIVELIST,DATEFMT);
                 return;
         
         self.id = hex64(0)
@@ -746,7 +754,7 @@ class Song(list):
         self[MusicContainer.SELECTED]  = False
 
     def __str__(self):
-        return "[%s] %s - %s"%(self.id)
+        return "[%s]"%(self.id)
     
     def __unicode__(self):
         return "[%s] %s - %s"%(self.id,self[MusicContainer.ARTIST],self[MusicContainer.TITLE])
@@ -871,7 +879,24 @@ class Song(list):
     def __int_to_Xbit__(s,b=12):
         m = (1<<b) - 1; # max int
         return s if s<=m else m
-
+    @staticmethod
+    def repr_length():
+        return 6; # return the number of lines of text retunred by __repr__.
+    
+    def __format_exif__(self):
+        """
+            returns a formatted exif string.
+            ExIf stands for EXtra InFo
+            this frame contains information from all text frames,
+            this makes it possible to search all text fields, at once, in an easier way
+        """
+        return "%s %s %s %s %s"%( \
+            unicode(self[MusicContainer.ARTIST]), \
+            unicode(self[MusicContainer.TITLE]), \
+            unicode(self[MusicContainer.ALBUM]), \
+            unicode(self[MusicContainer.GENRE]), \
+            unicode(self[MusicContainer.COMMENT]) );
+            
     def __repr__(self,drivelist=[]):
 
         """
@@ -924,15 +949,21 @@ class Song(list):
         repr += u"%s\n"%unicode(nfmt[:-1])
         repr += u"%s\n"%unicode(p).encode('unicode-escape');
         repr += u"md5:\n";  # md5 value
-        repr += u"c1:\n";   # lo frequency information
-        repr += u"c2:\n";   # hi frequency information
+        repr += u"lo:\n";   # lo frequency information
+        repr += u"hi:\n";   # hi frequency information
+        
+        # A NEW LINE MUST BE THE LAST CHARACTER IN REPR
+        # BUT IS NOT REQUIRED IN RESTORING FROM A REPR
 
         return repr
 
-    def from_repr(self,string):
+    def from_repr(self,string,DRIVELIST,FMT):
         """
             take the output from __repr__
             and set the values of the current song.
+            
+            FMT allows the date to be formatted an way a user wants, as only the UNIX time stamp
+            is saved, as an integer
             
         """
         string = str(string) # cannot have an unicode object here
@@ -940,11 +971,9 @@ class Song(list):
         R = string.split("\n") # split the 6 or more line string into multiple lines
         R[0] = R[0][1:-1] # strip the beginning and ending quotes from the string field
         
-        s = R[0].strip().split('","') # this is better than the old format of using |, 
-                                      # but still not the perfect way to do this
-                                      # ideally we would split this at any non-escaped quotes.
-                                      # !!!, in repr all " are changed to \" therefore any instance
-                                      # of "," in a song will be \",\" so this split cannot fail ever? yes.
+        s = R[0].strip().split('","') # in repr all " are changed to \" therefore any instance
+                                      # of "," in a song field will be \",\". this split cannot fail.
+
         n = R[1].split(',');
         
         # process each string value
@@ -954,19 +983,50 @@ class Song(list):
         # s is now an array of unicode strings for all text information stored
         # n is now an array of integers for all text information stored
         
-        for i in range(len(Song.__repr_str__)):
+        # by keying off the length of 's' and 'n', i can tack on
+        # new save values to the END of the __repr_str__ and __repr__num__
+        # lists, then the next time the user saves these values will be saved
+        # and automatically loaded later.
+        for i in range(len(s)):
             self[Song.__repr_str__[i]] = s[i]
             
-        for i in range(len(Song.__repr_num__)):
+        for i in range(len(n)):
             self[Song.__repr_num__[i]] = int(n[i])
+            
+        # ################################################################
+        # other infomation
+        path = unicode(R[2].strip(),'unicode-escape')
+        if len(DRIVELIST) > 0:
+            for drive in DRIVELIST:
+                p = os.path.join(drive,path)
+                if os.path.exists(p):
+                    path = p;
+                    break;
+
+            
+        self[MusicContainer.PATH] = path
         
+        # use the time library to format the date
+        try:
+            ds = time.strftime(FMT, time.localtime(self[MusicContainer.DATEVALUE])) 
+        except:
+            ds = "1970/01/01 00:00"
+        finally:
+            #print ds
+            self[MusicContainer.DATESTAMP] = ds 
         
-        self[MusicContainer.PATH] = unicode(R[2].strip(),'unicode-escape')
-        
+        # ################################################################
+        # special data
         
         R[3] = R[3][3:] # R3 = md5
         R[4] = R[4][3:] # R4 = lo frequency info
         R[5] = R[5][3:] # R5 = hi frequency info
+
+        self[MusicContainer.EXIF]      = self.__format_exif__();
+        self[MusicContainer.SPECIAL]   = False
+        self[MusicContainer.SELECTED]  = False 
+        
+        self.update();
         
 # ###################################################################
 # Instantiate
