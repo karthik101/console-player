@@ -575,26 +575,23 @@ def cmd_load(input):
         
     """
 
-    # reload the library
-    if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
-        MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
-        print  "Found %d Songs."%len(MpGlobal.Player.library)
-        # trash playlist editors
-        # TODO CLOSE ALL PL EDITORS
-        # reload playlist
-        processTextInput('plload')
-        # update tables
-        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.library)
-    
-    #reload the playlist
-    fname = MpGlobal.FILEPATH_PLAYLIST_CURRENT
-    MpGlobal.Player.playList = playListLoad(fname,MpGlobal.Player.library)
-    MpGlobal.Window.tbl_playlist.UpdateTable(0,MpGlobal.Player.playList)
+    #if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
+    #TODO CHECK IF ANYPLAYLIST TABS ARE OPEN AND ISSUE WARNING TO CLOSE
+    MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
 
-    MpGlobal.Player.loadSong( Settings.PLAYER_LAST_INDEX );
+
+    processTextInput('plload')
+    # update tables
+
+    MpGlobal.Window.txt_searchBox.setText("")
+    sortLibraryInplace(MpMusic.ARTIST)
+    MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.library)
+    
     
     loadSettings()
+    
     return COMMAND.VALID
+    
 def cmd_libz(input):
     """
         Comman: LIBZ

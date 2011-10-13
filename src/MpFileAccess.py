@@ -522,7 +522,7 @@ def musicBackup(force = False):
     date = date.replace('/','-').replace('\\','-')
     
     name = 'music_backup-'
-    fullname = name+date+'.library'
+    fullname = name+date+'.libz'
     h,m = time.split(':')
         
     if (atoi(h) > 12) or force:  # save backups in the afternoon only
@@ -554,7 +554,7 @@ def musicBackup(force = False):
         if force or newestbu != fullname:
             print "Saving %s"%fullname
             newbu = os.path.join(path,fullname)  
-            musicSave(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+            musicSave_LIBZ(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
             
 def playListSave(filepath,data,typ=0,index=0):
     # index = MpGlobal.Player.CurrentIndex
@@ -668,7 +668,6 @@ def playListLoad(filepath,source):
                 MpGlobal.Application.processEvents();
         
     rf.close()
-    print len(array)
     return array
 
 def saveSettings( ):
@@ -743,7 +742,6 @@ def loadSettings():
     file = MpGlobal.FILEPATH_SETTINGS
     if os.path.exists(file):
         rf = open(file,"r")
-        print "Settings File exists"
         line = True 
 
         while line:
