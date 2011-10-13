@@ -163,7 +163,7 @@ def musicLoad(filepath):
             lookForDrive = False;
             
         if useRelDrive:
-            line2 = os.path.join(drive , line2)
+            line2 = os.path.join("D:\\" , line2)
         
             
         array[index] = Song()#[[]]*MpGlobal.SONGDATASIZE
@@ -275,6 +275,8 @@ def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
         
     """
     
+    s = datetime.datetime.now()
+    
     with open(filepath,"wb") as FILE:
         FILE.write( struct.pack("4sI","LVER",1) );             # 
         FILE.write( struct.pack("4sI","LTYP",typ) );          # 
@@ -282,7 +284,10 @@ def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
         FILE.write( struct.pack("4sI","LCNT",len(songList)) ); # 
         FILE.write( struct.pack("4sI","LFMT",6 ) );
         LIBZ_write_songList(FILE,songList,typ,block_size)
-            
+        
+    e = datetime.datetime.now()
+    print "Saved %d songs to libz container in %s"%( len(songList), (e-s))
+    
 def LIBZ_write_songList(FILE,songList,typ,block_size): 
     """
         typ: bitwise or combination of flags.
@@ -323,6 +328,7 @@ def LIBZ_decompress_to_file(src,dst):
     header=""
     data=""
     key =""
+    H={};
     val =0
     
     with open(src,"rb") as FILE:
@@ -331,22 +337,24 @@ def LIBZ_decompress_to_file(src,dst):
         key,val = struct.unpack("4sI",bin)
         while key != "SIZE" and bin:
             header += "%s=%d\n"%(key,val);
-            
+            H [key] = val;
             bin = FILE.read(8);
-            
             if bin:
                 key,val = struct.unpack("4sI",bin)
         # now  read the data from the file.         
+        typ = H.get("LTYP",0)      # needed to restore each song record.
         bin = FILE.read(val);        
         while bin:
         
-            data += pylzma.decompress(bin);
-            
+            if typ&1 == 0:
+                data += pylzma.decompress(bin);
+            else:
+                data += bin;
             bin = FILE.read(8);
             if bin:
                 key,val = struct.unpack("4sI",bin)
                 bin = FILE.read(val); # read val bytes from the frame   
-        data += FILE.read();
+        #data += FILE.read();
     
     with open(dst,"w") as FILE:
         FILE.write( header );
@@ -373,32 +381,31 @@ def LIBZ_compress_to_file(src,dst):
             if key == "LFMT": fmt = int(val.strip());
             line = FILE.readline()
             
-        m=(blk*fmt)-1 #minus one for first song's first line already read
-
+        m=(blk*fmt)-1
+        i=-1;   # arrived at this by trial and error, but i guess it makes sense
         while line:
             # read blocks... the first line has already been read
             
-            i=0
             block="" # reset the block data
             while i < m and line:
                 block += line
                 line = FILE.readline()
                 i+=1;
-                
-            bin=""
+            i=0
+
             if typ&1==0:
-                bin=pylzma.compress(block)
+                block=pylzma.compress(block)
  
-            data += struct.pack("4sI","SIZE",len(bin) );
-            data += bin;
+            data += struct.pack("4sI","SIZE",len(block) );
+            data += block;
             
             line = FILE.readline()
-            
+
         data += FILE.read();
     
-    with open(dst,"wb") as FILE:
-        FILE.write( header );
-        FILE.write( data );
+    #with open(dst,"wb") as FILE:
+    #    FILE.write( header );
+    #    FILE.write( data );
    
 def musicLoad_LIBZ(filepath):
     """
@@ -420,6 +427,8 @@ def musicLoad_LIBZ(filepath):
     
     R=[];
     drivelist = [];
+    
+    s = datetime.datetime.now()
     
     with open(filepath,"rb") as FILE:
         # ##################################
@@ -449,14 +458,16 @@ def musicLoad_LIBZ(filepath):
         
             if typ&1 == 0: #compression is only used when typ&1 == 0.
                 bin = pylzma.decompress(bin);
-            
+            print bin[-8:]
             R += LIBZ_process_block( bin , typ, fmt, drivelist );
 
             bin = FILE.read(8);
             if bin:
                 key,size = struct.unpack("4sI",bin)
                 bin = FILE.read(size); # read val bytes from the frame  
-    print "Loaded %d songs from libz container"%len(R)                
+   
+    e = datetime.datetime.now()
+    print "Loaded %d songs from libz container in %s"%(len(R),(e-s))
     return R;
    
 def LIBZ_process_block(data,typ,fmt, drivelist):
@@ -1736,6 +1747,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import time
+import datetime
 from calendar import timegm
 from shutil import copy        
         
