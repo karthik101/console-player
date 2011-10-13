@@ -612,6 +612,8 @@ def cmd_libz(input):
     if "d" in input.Switch:
         LIBZ_decompress_to_file(src,dst);
     elif "c" in input.Switch:
+        MpGlobal.t1 = input.DecVal[0]
+        MpGlobal.t2 = input.DecVal[1]
         LIBZ_compress_to_file(dst,src);
     return COMMAND.VALID        
 def cmd_lut(input):

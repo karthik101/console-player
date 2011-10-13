@@ -104,6 +104,8 @@ class GlobalContainer(object):
     SSService = None # screen saver service object
     #QOUTPUT  = None
 
+    t1=0;
+    t2=0;
     PrintFrame = False #: # TODO: Remove, debug of search frame only
 
     installPath = "";
@@ -976,6 +978,7 @@ class Song(list):
 
         n = R[1].split(',');
         
+        assert len(R) == 6, "REPR ERROR <%s>"%string
         # process each string value
         for i in range(len(s)): # fix all escaped quotes
             s[i] = unicode(s[i],'unicode-escape').replace("\\\"","\"");
