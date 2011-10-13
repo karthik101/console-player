@@ -704,7 +704,8 @@ class Song(list):
             of pass in a Song, and an exact copy will be made.
         """
         super(Song,self).__init__([0]*GlobalContainer.SONGDATASIZE)
-
+        self.id = hex64(0);
+        self.md5 = "";
 
         if type(varient) == Song:
             # produce a copy of the song.
@@ -730,12 +731,11 @@ class Song(list):
             self[MusicContainer.SELECTED]  = varient[MusicContainer.SELECTED]
             return;
         elif type(varient) == str or type(varient) == unicode:
-            if varient.count('\n') > 0:
+            
+            if varient.strip().count('\n') > 0:
                 self.from_repr(varient,DRIVELIST,DATEFMT);
                 return;
         
-        self.id = hex64(0)
-        self.md5 = ""
         self[MusicContainer.PATH]      = unicode(varient)
         self[MusicContainer.ARTIST]    = u"Unknown Artist"
         self[MusicContainer.TITLE]     = u"Unknown Title"
@@ -950,7 +950,7 @@ class Song(list):
         repr  = u"%s\n"%unicode(sfmt[:-1]).encode('unicode-escape')
         repr += u"%s\n"%unicode(nfmt[:-1])
         repr += u"%s\n"%unicode(p).encode('unicode-escape');
-        repr += u"md5:\n";  # md5 value
+        repr += u"md5:%s\n"%self.md5;
         repr += u"lo:\n";   # lo frequency information
         repr += u"hi:\n";   # hi frequency information
         
@@ -1021,7 +1021,7 @@ class Song(list):
         # ################################################################
         # special data
         
-        R[3] = R[3][3:] # R3 = md5
+        R[3] = R[3][4:] # R3 = md5
         R[4] = R[4][3:] # R4 = lo frequency info
         R[5] = R[5][3:] # R5 = hi frequency info
 
