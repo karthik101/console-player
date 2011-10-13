@@ -304,9 +304,7 @@ def LIBZ_write_songList(FILE,songList,typ,block_size):
         print "save using drive list: %s"%drivelist
     else:
         drivelist=[];
-    
-    
-    
+
     while i < l:
         block=""
         for x in xrange(block_size):
@@ -320,8 +318,6 @@ def LIBZ_write_songList(FILE,songList,typ,block_size):
         # write a header for the block, SIZE=length of the block
         FILE.write( struct.pack("4sI","SIZE",len(block)) );
         FILE.write(block);
-        
-    print "Saved %d songs with block size = %d "%( i , block_size );
 
 def LIBZ_decompress_to_file(src,dst):
 
@@ -381,8 +377,8 @@ def LIBZ_compress_to_file(src,dst):
             if key == "LFMT": fmt = int(val.strip());
             line = FILE.readline()
             
-        m=(blk*fmt)-1
-        i=-1;   # arrived at this by trial and error, but i guess it makes sense
+        m=(blk*fmt)
+        i=0;
         while line:
             # read blocks... the first line has already been read
             
@@ -393,19 +389,17 @@ def LIBZ_compress_to_file(src,dst):
                 i+=1;
             i=0
 
+            print ("%s...%s"%(block[:8],block[-8:])).replace('\n','<>')
             if typ&1==0:
                 block=pylzma.compress(block)
  
             data += struct.pack("4sI","SIZE",len(block) );
             data += block;
-            
-            line = FILE.readline()
 
-        data += FILE.read();
     
-    #with open(dst,"wb") as FILE:
-    #    FILE.write( header );
-    #    FILE.write( data );
+    with open(dst,"wb") as FILE:
+        FILE.write( header );
+        FILE.write( data );
    
 def musicLoad_LIBZ(filepath):
     """
@@ -458,7 +452,7 @@ def musicLoad_LIBZ(filepath):
         
             if typ&1 == 0: #compression is only used when typ&1 == 0.
                 bin = pylzma.decompress(bin);
-            print bin[-8:]
+            
             R += LIBZ_process_block( bin , typ, fmt, drivelist );
 
             bin = FILE.read(8);
@@ -567,7 +561,7 @@ def playListSave(filepath,data,typ=0,index=0):
     driveList = systemDriveList()
     wf = open(filepath,"w")
     wf.write("#index=%d\n"%index);
-    print "saving %d"%len(data)
+    print "Playlist Saving %d songs"%len(data)
     for x in range(len(data)):
         path = data[x][MpMusic.PATH]
         if typ > 0:#alternate save formats remove the drive
