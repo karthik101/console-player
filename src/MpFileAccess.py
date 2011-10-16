@@ -238,7 +238,6 @@ def musicSave(filepath,data,type=0):
         #    print str(data[x][PATH])
         
     wf.close() 
-
     
 def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
     """
@@ -273,16 +272,43 @@ def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
         LCNT - COUNT      : count of all songs saved to the file        
         LFMT - SNG FORMAT : number of lines per song record     
         
+        Based off of the following two docstrings. there is no reason to store the parameters used for saving.
+        
+        compress(string, 
+             dictionary=23, 
+             fastBytes=128, 
+             literalContextBits=3, 
+             literalPosBits=0, 
+             posBits=2, 
+             algorithm=2, 
+             eos=1, 
+             multithreading=1, 
+             matchfinder='bt4') 
+
+            Compress the data in string using the given parameters, returning a string containing 
+            the compressed data.
+
+
+        decompress(data[, maxlength]) 
+            Decompress the data, returning a string containing the decompressed data. 
+            If the string has been compressed without an EOS marker,
+            you must provide the maximum length as keyword parameter.
+
+
+        decompress(data, bufsize[, maxlength])
+            Decompress the data using an initial output buffer of size bufsize.
+            If the string has been compressed without an EOS marker, 
+            you must provide the maximum length as keyword parameter.
     """
     
     s = datetime.datetime.now()
     
     with open(filepath,"wb") as FILE:
         FILE.write( struct.pack("4sI","LVER",1) );             # 
-        FILE.write( struct.pack("4sI","LTYP",typ) );          # 
+        FILE.write( struct.pack("4sI","LTYP",typ) );           # 
         FILE.write( struct.pack("4sI","LBLK",block_size) );    # number of songs in each block
         FILE.write( struct.pack("4sI","LCNT",len(songList)) ); # 
-        FILE.write( struct.pack("4sI","LFMT",6 ) );
+        FILE.write( struct.pack("4sI","LFMT",Song.repr_length() ) );
         LIBZ_write_songList(FILE,songList,typ,block_size)
         
     e = datetime.datetime.now()
@@ -298,23 +324,26 @@ def LIBZ_write_songList(FILE,songList,typ,block_size):
     l = len(songList);
     
     
-    
+    drivelist=[];
     if typ&2 == 2: 
         drivelist=systemDriveList(); # fill this with values
         print "save using drive list: %s"%drivelist
-    else:
-        drivelist=[];
+        
 
     while i < l:
         block=""
         for x in xrange(block_size):
             if i < l:
-                block+= songList[i].__repr__(drivelist);
+                block += songList[i].__repr__(drivelist);
             else: break;
             i+=1;
             
-        if typ&1 == 0: # no compression for typ|=1    
+        if typ&1 == 0 and pylzma != None: # no compression for typ|=1 
+            # exec MpGlobal.t1=23;MpGlobal.t2=128;
+            #dictionary=MpGlobal.t1,fastBytes=MpGlobal.t2
             block = pylzma.compress(block);
+
+            
         # write a header for the block, SIZE=length of the block
         FILE.write( struct.pack("4sI","SIZE",len(block)) );
         FILE.write(block);
@@ -342,7 +371,7 @@ def LIBZ_decompress_to_file(src,dst):
         bin = FILE.read(val);        
         while bin:
         
-            if typ&1 == 0:
+            if typ&1 == 0 and pylzma != None:
                 data += pylzma.decompress(bin);
             else:
                 data += bin;
@@ -390,7 +419,7 @@ def LIBZ_compress_to_file(src,dst):
             i=0
 
             print ("%s...%s"%(block[:8],block[-8:])).replace('\n','<>')
-            if typ&1==0:
+            if typ&1==0 and pylzma != None:
                 block=pylzma.compress(block)
  
             data += struct.pack("4sI","SIZE",len(block) );
@@ -421,7 +450,7 @@ def musicLoad_LIBZ(filepath):
     
     R=[];
     drivelist = [];
-    
+    cnt = 0
     s = datetime.datetime.now()
     
     with open(filepath,"rb") as FILE:
@@ -440,7 +469,8 @@ def musicLoad_LIBZ(filepath):
         # process the header dictionary
         typ = header.get("LTYP",0)      # needed for restoring file paths
         blk = header.get("LBLK",128)    # not really needed
-        fmt = header.get("LFMT",6)      # needed to restore each song record.
+        fmt = header.get("LFMT",Song.repr_length()) # needed to restore each song record.
+        cnt = header.get("LCNT",0)
         
         if typ&2 == 2: 
             drivelist=systemDriveList(); 
@@ -448,7 +478,7 @@ def musicLoad_LIBZ(filepath):
         # ##################################
         # now  read the data from the file.         
         bin = FILE.read(val);        
-        while bin:
+        while bin and pylzma != None:
         
             if typ&1 == 0: #compression is only used when typ&1 == 0.
                 bin = pylzma.decompress(bin);
@@ -461,7 +491,7 @@ def musicLoad_LIBZ(filepath):
                 bin = FILE.read(size); # read val bytes from the frame  
    
     e = datetime.datetime.now()
-    print "Loaded %d songs from libz container in %s"%(len(R),(e-s))
+    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,(e-s))
     return R;
    
 def LIBZ_process_block(data,typ,fmt, drivelist):
@@ -525,36 +555,36 @@ def musicBackup(force = False):
     fullname = name+date+'.libz'
     h,m = time.split(':')
         
-    if (atoi(h) > 12) or force:  # save backups in the afternoon only
+    #if (atoi(h) > 12) or force:  # save backups in the afternoon only
     
-        R = []
-        dir = os.listdir(path)
-        for file in dir:
-            if file.startswith(name):
-                R.append(file);
-                
-        newestbu = ""
-
-        R.sort(reverse=True)
-        
-        if len(R) > 0:
-
-            #remove old backups
-            # while there are more than 6, 
-            # and one has not been saved today
-            while len(R) > 6 and R[0] != fullname: 
-                delfile = R.pop()
-                print "Deleting %s"%delfile
-                os.remove(os.path.join(path,delfile))
-                
-            # record name of most recent backup, one backup per day unless forced    
-            newestbu = R[0]
+    R = []
+    dir = os.listdir(path)
+    for file in dir:
+        if file.startswith(name) and fileGetExt(file) == "libz":
+            R.append(file);
             
-        # save a new backup 
-        if force or newestbu != fullname:
-            print "Saving %s"%fullname
-            newbu = os.path.join(path,fullname)  
-            musicSave_LIBZ(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+    newestbu = ""
+
+    R.sort(reverse=True)
+    
+    if len(R) > 0:
+
+        #remove old backups
+        # while there are more than 6, 
+        # and one has not been saved today
+        while len(R) > 6 and R[0] != fullname: 
+            delfile = R.pop()
+            print "Deleting %s"%delfile
+            os.remove(os.path.join(path,delfile))
+            
+        # record name of most recent backup, one backup per day unless forced    
+        newestbu = R[0]
+        
+    # save a new backup 
+    if force or newestbu != fullname:
+        print "Saving %s"%fullname
+        newbu = os.path.join(path,fullname)  
+        musicSave_LIBZ(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
             
 def playListSave(filepath,data,typ=0,index=0):
     # index = MpGlobal.Player.CurrentIndex
@@ -741,6 +771,8 @@ def loadSettings():
     # dictionary of values to returns
     file = MpGlobal.FILEPATH_SETTINGS
     if os.path.exists(file):
+    
+        init_Settings_default(); # set some values to defaults in case they are not in the file
         rf = open(file,"r")
         line = True 
 

@@ -463,6 +463,20 @@ def setSearchTime():
 # ##############################################
 # Settings
 # ##############################################
+def init_Settings_default():
+    """
+        some values need default values incase they do not exist in the settings file that is laoded
+    """
+    geometry = QDesktopWidget().screenGeometry()
+    print "x:%d"%Settings.SCREEN_POSITION_X
+    print "y:%d"%Settings.SCREEN_POSITION_Y
+    print "w:%d"%Settings.SCREEN_POSITION_W
+    print "h:%d"%Settings.SCREEN_POSITION_H
+    Settings.SCREEN_POSITION_X = geometry.width()/4
+    Settings.SCREEN_POSITION_Y = geometry.height()/4
+    Settings.SCREEN_POSITION_W = geometry.width()/2
+    Settings.SCREEN_POSITION_H = geometry.height()/2
+    Settings.OS =os.name;
     
 def init_Settings(release):
     """
@@ -478,11 +492,7 @@ def init_Settings(release):
     
     setSearchTime()
 
-    geometry = QDesktopWidget().screenGeometry()
-    Settings.SCREEN_POSITION_X = geometry.width()/4
-    Settings.SCREEN_POSITION_Y = geometry.height()/4
-    Settings.SCREEN_POSITION_W = geometry.width()/2
-    Settings.SCREEN_POSITION_H = geometry.height()/2
+    
 
     if not release:
         #MpGlobal.NAME = "ConsolePlayer - Test"
@@ -490,8 +500,6 @@ def init_Settings(release):
 
     if os.name != Settings.OS:
         debugPreboot("Last Save was on Different OS - %s Now %s"%(Settings.OS,os.name))
-
-    Settings.OS =os.name;
 
     if not release:
         # calculate the new build number

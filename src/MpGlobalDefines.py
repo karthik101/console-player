@@ -1010,10 +1010,16 @@ class Song(list):
         self[MusicContainer.PATH] = path
         
         # use the time library to format the date
+        ds = ""
         try:
-            ds = time.strftime(FMT, time.localtime(self[MusicContainer.DATEVALUE])) 
+            if MusicContainer.DATEVALUE > 0:
+                ds = time.strftime(FMT, time.localtime(self[MusicContainer.DATEVALUE])) 
+            #TODO -V0.5.0.0 : remove this code.
+            if ds == "1969/12/31 19:00":
+                ds = ""
+                self[MusicContainer.DATEVALUE] = 0;
         except:
-            ds = "1970/01/01 00:00"
+            pass
         finally:
             #print ds
             self[MusicContainer.DATESTAMP] = ds 

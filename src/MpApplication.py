@@ -114,7 +114,12 @@ class MainWindow(QMainWindow):
         self.init_Ui()
         
         self.setWindowIcon(QIcon(MpGlobal.FILEPATH_ICON))
-
+        
+        print "x:%d"%Settings.SCREEN_POSITION_X
+        print "y:%d"%Settings.SCREEN_POSITION_Y
+        print "w:%d"%Settings.SCREEN_POSITION_W
+        print "h:%d"%Settings.SCREEN_POSITION_H
+        
         self.move  ( Settings.SCREEN_POSITION_X ,Settings.SCREEN_POSITION_Y )
         
         if Settings.WINDOW_MAXIMIZED :
@@ -1133,9 +1138,14 @@ class TableLibrary(widgetTable.Table):
                 brush = self.FillRowColor(k)
                 
                 # set a color for the current song
+                qFG_text_color = self.brush_text_default;
+                if self.data[k] == MpGlobal.Player.CurrentSong:
+                    qFG_text_color = self.brush_text_recent;
+                
                 
                 for j in range(self.colCount):
                     self.model.setData(self.model.index(i,j),R[j])
+                    self.model.setData(self.model.index(i,j),qFG_text_color,Qt.ForegroundRole)   
                     self.model.setData(self.model.index(i,j),brush,Qt.BackgroundRole)
  
                 date = self.data[k][MpMusic.DATEVALUE]
@@ -1162,10 +1172,8 @@ class TableLibrary(widgetTable.Table):
                     
         self.event_proc = False
         #highlight the current song
-        #qFG_text_color = self.brush_text_default;
-        #if self.data[k] == MpGlobal.Player.CurrentSong:
-        #    qFG_text_color = self.brush_text_recent;
-        #self.model.setData(self.model.index(i,j),qFG_text_color,Qt.ForegroundRole)                        
+        
+                             
                     
         #self.table.setModel(self.model);
         # TODO REMOVE THIS
@@ -1449,7 +1457,11 @@ class TableLibrary(widgetTable.Table):
         if dialog.exec_():
             #print dialog.ResultList   
             #print dialog.ActiveCount
-            
+            # clear colors for the dat col, in case the date col has moved
+            j=self.col_id_template.index(MpMusic.DATESTAMP);
+            for i in range(self.rowCount):
+                self.model.setData(self.model.index(i,j),self.brush_text_default,Qt.ForegroundRole)   
+                    
             # retranslate to id numbers
             for i in range(len(R)):
                 R[i] = MpMusic.stringToExif(dialog.ResultList[i])
