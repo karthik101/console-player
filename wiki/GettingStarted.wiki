@@ -1,4 +1,3 @@
-
 = Introduction =
 
 Console Player is programmed with Python 2.7 (32 bit) and PyQt version 4.8.5. VLC is not required for playback, when not installed The application will fall back to a default media player installed on you system.
@@ -9,9 +8,12 @@ Console Player is programmed with Python 2.7 (32 bit) and PyQt version 4.8.5. VL
   * [http://www.python.org/getit/releases/2.7/ Python 2.7 32bit]
   * [http://www.riverbankcomputing.co.uk/software/pyqt/intro PyQt]
   * [http://code.google.com/p/mutagen/ Mutagen] - Audio Tagging library 
+  * PyLZMA
+ 
 
 == Windows ==
   * [http://sourceforge.net/apps/mediawiki/pyhook/index.php?title=Main_Page pyHook] - for media keys
+  * [http://www.lfd.uci.edu/~gohlke/pythonlibs/#pymedia PyMedia Binaries]
 
 == Linux ==
   * So far there are no linux specific files
