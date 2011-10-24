@@ -22,9 +22,10 @@ class SongEditWindow(QDialog):
     sct = 7 # int
     frq = 8 # int
     ind = 9 # int
-    dte =10 # string
-    pth =11 # string
-    
+    yer =10
+    dte =11 # string
+    pth =12 # string
+    add =13
 
     def __init__(self,parent):
 
@@ -60,10 +61,13 @@ class SongEditWindow(QDialog):
         self.editList.append(self.newIntEdit("Skip Count",-100,9999))
         self.editList.append(self.newIntEdit("Frequency",-100,9999))
         self.editList.append(self.newIntEdit("Album Index",0,999))
+        self.editList.append(self.newIntEdit("Year",0,9999)) # Y10K bug
         
         
         self.editList.append(self.newTextEdit("Last Played"))
         self.editList.append(self.newTextEdit("Path"))
+        
+        self.editList.append(self.newTextEdit("Date Added"))
 
         self.hbox_btn   = QHBoxLayout()
         self.btn_accept = QPushButton("Accept",self)
@@ -141,10 +145,13 @@ class SongEditWindow(QDialog):
         self.editList[self.sct][1].setValue(data[0][MpMusic.SKIPCOUNT])
         self.editList[self.frq][1].setValue(data[0][MpMusic.FREQUENCY])
         self.editList[self.ind][1].setValue(data[0][MpMusic.SONGINDEX])
+        self.editList[self.yer][1].setValue(data[0][MpMusic.YEAR])
         
         self.editList[self.pth][1].setText(data[0][MpMusic.PATH])
         self.editList[self.pth][1].setCursorPosition(0)
+        
         self.editList[self.dte][1].setText(data[0][MpMusic.DATESTAMP])
+        self.editList[self.add][1].setText(str(data[0][MpMusic.DATEADDEDS]))
         
     def setMultiData(self,data):
         #print self.editList[0]
@@ -162,7 +169,8 @@ class SongEditWindow(QDialog):
         sct = 0 #data[0][MpMusic.SKIPCOUNT]
         frq = 0 #data[0][MpMusic.FREQUENCY]
         ind = 0;
-        
+        yer=0;
+        add=data[0][MpMusic.DATEADDEDS];
         pth = fileGetPath(data[0][MpMusic.PATH]).lower()
         
         for x in range(1,len(data)):
@@ -180,6 +188,8 @@ class SongEditWindow(QDialog):
                 pth = "<Multiple Values>"
             if dte != data[x][MpMusic.DATESTAMP]:
                 dte = "<Multiple Values>"   
+            if add != data[x][MpMusic.DATEADDED]:
+                add = "<Multiple Values>"   
             
         if len(art) > 1:
             art = ["<Multiple Values>",] + art
@@ -206,12 +216,16 @@ class SongEditWindow(QDialog):
         
         self.editList[self.pth][1].setText(pth)
         self.editList[self.dte][1].setText(dte)
+        self.editList[self.add][1].setText(add)
+        
         
         self.editList[self.rte][1].setValue(rte)
         self.editList[self.pct][1].setValue(pct)
         self.editList[self.sct][1].setValue(sct)
         self.editList[self.frq][1].setValue(frq)
         self.editList[self.ind][1].setValue(ind)
+        self.editList[self.yer][1].setValue(yer)
+        
     
     def getData(self):
         MULTIDATA = len(self.data) > 1
@@ -275,8 +289,11 @@ class SongEditWindow(QDialog):
                     song[MpMusic.FREQUENCY] = 0  
                     
             if self.editList[self.ind][2].isChecked():
-                song[MpMusic.SONGINDEX] = self.editList[self.ind][1].value()   
-                    
+                song[MpMusic.SONGINDEX] = self.editList[self.ind][1].value()  
+                
+            if self.editList[self.yer][2].isChecked():
+                song[MpMusic.YEAR] = self.editList[self.yer][1].value()   
+                
             if self.editList[self.pth][2].isChecked():
                 song[MpMusic.PATH] = unicode(self.editList[self.pth][1].text())
 
@@ -286,6 +303,14 @@ class SongEditWindow(QDialog):
                 if t != 0:
                     song[MpMusic.DATESTAMP] = date
                     song[MpMusic.DATESTAMP] = t
+                    
+            if self.editList[self.add][2].isChecked():
+                date = str(self.editList[self.add][1].text())
+                t = getEpochTime(date)
+                if t != 0:
+                    song[MpMusic.DATEADDEDS] = date
+                    song[MpMusic.DATEADDED]  = t
+            
             
             if OPERATION == 4:
                 t = getEpochTime(song[MpMusic.DATESTAMP])
