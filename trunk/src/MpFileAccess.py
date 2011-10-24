@@ -1192,23 +1192,41 @@ def get_md5(filepath):
 # ######################################################     
 def load_css(style_name,object,dict=None,secondary=False):
 
-    fpath = MpGlobal.installPath+"style/"+style_name+"/"
+    fpath = os.path.join( MpGlobal.installPath,"style",style_name,""); 
 
     if not os.path.exists(fpath):
         #object.setStyleSheet("")  # clear the style sheet
         return None;
 
-    dict = read_css_dict(style_name,"theme",dict)
-    if secondary:
-        # when secondary is set to true
-        # update the main dictionary with user defined values
-        dict = read_css_dict(style_name,"user",dict)
+    dict = read_css_dict(fpath+"theme.dict",dict)
+    # when secondary is set to true update the main dictionary with user defined values
+    if secondary:  
+        dict = read_css_dict(fpath+"user.dict",dict)
+        
+    # provide the list of default variables.
+    # image is the location for custom images for the theme
+    dict["IMAGE"       ] = os.path.join(  MpGlobal.installPath,"style",style_name,"images","");
+    # global image provides a way of accessing the images directory
+    dict["IMAGE_GLOBAL"] = os.path.join(  MpGlobal.installPath,"images","");
+    #image blank is the location of a blank image
+    dict["IMAGE_BLANK" ] = os.path.join(  MpGlobal.installPath,"images","blank.png");
+    # style is the location of the directory containing the style
+    dict["STYLE"       ] = os.path.join( MpGlobal.installPath,"style",style_name,"");
+
+    # URLS are funny in that they require foward slashes, even on windows
+    dict["IMAGE"       ] = dict["IMAGE"       ].replace("\\","/");
+    dict["IMAGE_GLOBAL"] = dict["IMAGE_GLOBAL"].replace("\\","/");
+    dict["IMAGE_BLANK" ] = dict["IMAGE_BLANK" ].replace("\\","/");
+    dict["STYLE"       ] = dict["STYLE"       ].replace("\\","/");
+    
     # after loading the dictionary, check for any definitions which contain
     # other definitions
-    for key in dict: # replace all %key% in the text with value
-        for sub in dict: # replace all %key% in the text with value
-            dict[key] = dict[key].replace("%%%s%%"%sub,dict[sub])
-     
+    
+    # the following replace is now done while the dict is being read
+    #for key in dict: # replace all %key% in the text with value
+    #    for sub in dict: # replace all %key% in the text with value
+    #        dict[key] = dict[key].replace("%%%s%%"%sub,dict[sub])
+    
     R = os.listdir(fpath)
 
     css = ""
@@ -1232,7 +1250,7 @@ def load_css(style_name,object,dict=None,secondary=False):
 
     return dict
 
-def read_css_dict(style_name,fname="default",dict=None):
+def read_css_dict(fpath,dict=None):
     """
        reads a css theme color dictionary
        a color dictionary stores color information for the theme    
@@ -1245,7 +1263,7 @@ def read_css_dict(style_name,fname="default",dict=None):
     if dict == None:
         dict = {}
     
-    fpath = os.path.join( MpGlobal.installPath,"style",style_name,fname+".dict")
+    
     
     if os.path.exists(fpath):
         l = " "
@@ -1258,30 +1276,29 @@ def read_css_dict(style_name,fname="default",dict=None):
             try:
                 if len(e) > 0: # not empty
                     if e[0] != "#": # not a comment
+
+                        # allow continuation to a new line by having the last character in a line
+                        # a back slash '\'
+                        while e[-1] == '\\':
+                            l = rf.readline().strip();
+                            e = e[:-1]+" "+l
+                            
                         (k,v) = e.split('=>')
                         k = k.strip()
                         v = v.strip()
+                        # replace variables that have already been defined in the new variables
+                        # as they are read. this allows among other features, the ability to define
+                        # one variable use it to expand into others, then redefine it to expand into other
+                        # variables. , also the construct, a=red; a=%a%,%a%,%a%; 
+                        #   a now equals "red,red,red"
+                        for key in dict:
+                            v = v.replace("%%%s%%"%key,dict[key]);
                         dict[k] = v
             except:
                 pass
             
         rf.close()
 
-    # add extra variables 
-    # image is the location for custom images for the theme
-    dict["IMAGE"] = os.path.join(  MpGlobal.installPath,"style",style_name,"images","");
-    # global image provides a way of accessing the images directory
-    dict["IMAGE_GLOBAL"] = os.path.join(  MpGlobal.installPath,"images","");
-    #image blank is the location of a blank image
-    dict["IMAGE_BLANK"] = os.path.join(  MpGlobal.installPath,"images","blank.png");
-    # style is the location of the directory containing the style
-    dict["STYLE"] = os.path.join( MpGlobal.installPath,"style",style_name,"");
-
-    # URLS are funny in that they require foward slashes, even on windows
-    dict["IMAGE"]        = dict["IMAGE"].replace("\\","/");
-    dict["IMAGE_GLOBAL"] = dict["IMAGE_GLOBAL"].replace("\\","/");
-    dict["IMAGE_BLANK"]  = dict["IMAGE_BLANK"].replace("\\","/");
-    dict["STYLE"]        = dict["STYLE"].replace("\\","/");
     
     return dict
     
