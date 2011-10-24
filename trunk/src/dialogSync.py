@@ -429,8 +429,8 @@ class SyncFiles(QThread):
         self.index = 0
         rTime = 0
         byteAvg = 0
-        time_str = ""
-        stime = datetime.datetime.now()
+        time_remaining=0
+        stime = None
         while self.alive and self.index < len(self.listc):
 
             free = driveGetFreeSpace(self.dir)
@@ -444,7 +444,7 @@ class SyncFiles(QThread):
             
             # ----------------------------------------------
             s = "Copying %d/%d - %s - %d MB free"
-            p = (self.index,len(self.listc),time_str,MBfree)
+            p = (self.index,len(self.listc),convertTimeToString(time_remaining),MBfree)
             self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,s%p)
                         
             # ----------------------------------------------
@@ -461,10 +461,10 @@ class SyncFiles(QThread):
                 print newPath
                 
             # get the end time right before the next update
-            etime = datetime.datetime.now()    
             
+            etime = datetime.datetime.now()    
             try:
-                if bytes > 0:
+                if bytes > 0 and stime != None:
                     delta = (etime - stime).microseconds
                     #print delta, float(delta)/bytes, bytes/delta
                     delta = float(delta)/float(bytes)
@@ -475,12 +475,15 @@ class SyncFiles(QThread):
                     time_remaining = byteAvg*rTime #average microseconds per song
                     time_remaining *= (r-self.index) # songs remaining
                     time_remaining /= 1000.0*1000.0 # to seconds
-                    time_str = "%.2f"%time_remaining#convertTimeToString(time_remaining)
             except:
                 pass
+            finally:
+                stime = datetime.datetime.now()
+                
+                
             self.parent.emit(SIGNAL("UPDATE_SYNC_DIALOG"),self.parent,self.index)
             # get the next start time immediatley after updating.
-            stime = datetime.datetime.now()
+            
             
             self.index += 1  
             

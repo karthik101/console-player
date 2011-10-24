@@ -1085,10 +1085,19 @@ class TableLibrary(widgetTable.Table):
         header = [];
         
 
-        if len(col_list) == len(self.col_id_template):
-            self.col_id = col_list[:]
-        for x in range(len(self.col_id)):
-            self.col_id[x] = int(self.col_id[x])
+        try: 
+            # TODO this code just looks bad,
+            # however the col_ir comes from user input, and needs to be of type integer.
+            if len(col_list) == len(self.col_id_template):
+                self.col_id = col_list[:]
+            for x in range(len(self.col_id)):
+                if self.col_id[x] in self.col_id_template:
+                    self.col_id[x] = int(self.col_id[x])
+                else:
+                    raise Exception("Users are always right!")
+        except:
+            self.col_id = self.col_id_template[:]
+          
             
         if col_active < 0 or col_active > len(self.col_id):
             col_active = len(self.col_id)

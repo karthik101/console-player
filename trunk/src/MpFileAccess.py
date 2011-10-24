@@ -1268,13 +1268,21 @@ def read_css_dict(style_name,fname="default",dict=None):
         rf.close()
 
     # add extra variables 
-
+    # image is the location for custom images for the theme
     dict["IMAGE"] = os.path.join(  MpGlobal.installPath,"style",style_name,"images","");
+    # global image provides a way of accessing the images directory
+    dict["IMAGE_GLOBAL"] = os.path.join(  MpGlobal.installPath,"images","");
+    #image blank is the location of a blank image
+    dict["IMAGE_BLANK"] = os.path.join(  MpGlobal.installPath,"images","blank.png");
+    # style is the location of the directory containing the style
     dict["STYLE"] = os.path.join( MpGlobal.installPath,"style",style_name,"");
+
+    # URLS are funny in that they require foward slashes, even on windows
+    dict["IMAGE"]        = dict["IMAGE"].replace("\\","/");
+    dict["IMAGE_GLOBAL"] = dict["IMAGE_GLOBAL"].replace("\\","/");
+    dict["IMAGE_BLANK"]  = dict["IMAGE_BLANK"].replace("\\","/");
+    dict["STYLE"]        = dict["STYLE"].replace("\\","/");
     
-    # URLS are funny in that they require foward slashes
-    dict["IMAGE"] = dict["IMAGE"].replace("\\","/");
-    dict["STYLE"] = dict["STYLE"].replace("\\","/");
     return dict
     
 def read_css_file(dict,fpath,name):
@@ -1296,13 +1304,23 @@ def read_css_file(dict,fpath,name):
         # allow for comments, ignore empty lines
         if len(e) > 0: # not empty
             if e[:2] != "/*": # not a comment
+                # intelligently replace the image url's
+                # with the path to a known image
+                if "%IMAGE%" in e:
+                    image = e[e.find("%IMAGE%")+7:e.rfind('.')+4]
+                    if os.path.exists( os.path.join(dict["IMAGE"],image)  ):
+                        e = e.replace("%IMAGE%",dict["IMAGE"]);
+                    elif os.path.exists( os.path.join(dict["IMAGE_GLOBAL"],image) ):  
+                        e = e.replace("%IMAGE%",dict["IMAGE_GLOBAL"])
+                    else:
+                        e = e.replace("%IMAGE%"+image,dict["IMAGE_BLANK"]);
                 for key in dict: # replace all %key% in the text with value
                     e = e.replace("%%%s%%"%key,dict[key])
                 lc += 1    
                 css += e+"\n"
     #print "lc: %d"%lc;            
     rf.close()
-    
+
     return css
 
 def css_dict_value(key,cdict,rdict):

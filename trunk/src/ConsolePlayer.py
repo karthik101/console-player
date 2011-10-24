@@ -3,6 +3,18 @@
 #  ConsolePlayer.py
 #----------------------------------------------------------
    
+   
+# todo
+#
+#   themes
+#       the %IMAGE% tag should get thefile name supplied.
+#       it should then test for the existance of that file in the themes location
+#       failing that, it should test for location in ./images/
+#       failing that, it should be given blank.png instead
+#
+#
+#   
+   
 import sys
 import os   
 

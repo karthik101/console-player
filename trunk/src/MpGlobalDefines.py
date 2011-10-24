@@ -60,6 +60,8 @@ class RecordContainer(object):
         self.SEARCH_FIELD_DATEEU    = "dateeu"
         self.SEARCH_FIELD_DATEUS    = "dateus"
         self.SEARCH_FIELD_DATESTD   = "date"
+        self.SEARCH_FIELD_YEAR      = "year"
+        self.SEARCH_FIELD_DATEADDED = "added"
 
         self.POSIX_VLC_MODULE_PATH='/usr/lib/vlc'
         self.DRIVE_ALTERNATE_LOCATIONS=[] #'/home/nick/windows/D_DRIVE'
@@ -118,12 +120,10 @@ class GlobalContainer(object):
     VERSION = "0.0.0.0" # fourth value in version auto updates in init_Settings
     SAVED_VERSION = "0.0.0.0"
     MINIMUM_VERSION = "0.4.2.0" # hardcoded valut to compare against,
-    NAME = "Console Player - v%s"%VERSION
-    SONGDATASIZEV1=10;
-    SONGDATASIZEV2=16; # length of the song array for version two
-    SONGDATASIZEV3=19; # length of the song array for version three
-    SONGDATASIZE  = SONGDATASIZEV3; #length of array to use
-    FILESAVE_VERSIONID = 4
+    NAME = "Console Player"
+
+    SONGDATASIZE  = 22#MusicContainer.NUMTERM; #length of array to use
+    FILESAVE_VERSIONID = 4      # deprecated
 
 
     PLAYLIST_ARTIST_HASH_SIZE = 0
@@ -245,24 +245,29 @@ class MusicContainer(object):
     ALBUM     =  4;    # Song Album
     GENRE     =  5;    # Song Genre
     DATESTAMP =  6;    # Stamp in passive order from the last time this was played. YYYY/MM/DD HH:MM
-    COMMENT   =  7;
-    RATING    =  8;    # Song Rating
-    LENGTH    =  9;    # total length of the song in -M:SS
-    SONGINDEX = 10;    # Album Index
-
-    PLAYCOUNT = 11;    # Total count of the number of times this song has played
-    SKIPCOUNT = 12;    # Number of times user has clicked next for this song.
-    FILESIZE  = 13;    # File Size in KB
-    BITRATE   = 14; # Kb per s
-    FREQUENCY = 15; # running waited average of play frequency ( a avg value of time between playings
-    DATEVALUE = 16  # DATESTAMP, but as INT value ( determined while loading songs
-    SONGID    = 99  # 64bit hex song id
+    COMMENT   =  7;    # user given comment
+    DATEADDEDS=  8;    # string form date the song was added to the library
+    
+    RATING    =  9;    # Song Rating
+    LENGTH    = 10;    # total length of the song in -M:SS
+    SONGINDEX = 11;    # Album Index
+    PLAYCOUNT = 12;    # Total count of the number of times this song has played
+    SKIPCOUNT = 13;    # Number of times user has clicked next for this song.
+    FILESIZE  = 14;    # File Size in KB
+    BITRATE   = 15;    # Kb per s
+    FREQUENCY = 16;    # running waited average of play frequency ( a avg value of time between playings
+    DATEVALUE = 17;    # DATESTAMP, but as INT value ( determined while loading songs
+    DATEADDED = 18
+    YEAR      = 19;    # year the song was made.
+  
     # #####
-    SPECIAL   = 17; # true when any error makes this file unuseable ever
-    SELECTED  = 18; # Boolean, selected or not
+    SPECIAL   = 20; # true when any error makes this file unuseable ever
+    SELECTED  = 21; # Boolean, selected or not
+    
+    SONGID    = 99  # 64bit hex song id
     # ########################################
-    STRINGTERM = 8; # if a value is less than this, we have a string
-    NUMTERM = 19;   # if less than this, greater than strterm, we have a numerical value
+    STRINGTERM = RATING; # if a value is less than this, we have a string
+    NUMTERM = SELECTED+1;   # if less than this, greater than strterm, we have a numerical value
     SPEC_WEEK  = 101 # searching by week count ( similar to search by .day)
     SPEC_MONTH = 102 # searching by month count ( similar to search by .day)
     SPEC_DATEEU  = 103 # search by formated date DD/MM/YYYY
@@ -308,6 +313,7 @@ class MusicContainer(object):
     # this will be the official abreviation list
     D_StrToDec = {   'alb'           : ALBUM, \
                      'abm'           : ALBUM, \
+                     'added'         : DATEADDED, \
                      'album'         : ALBUM, \
                      'art'           : ARTIST, \
                      'artist'        : ARTIST, \
@@ -340,7 +346,8 @@ class MusicContainer(object):
                      "week"          : SPEC_WEEK, \
                      'ttl'           : TITLE, \
                      'tit'           : TITLE, \
-                     'title'         : TITLE
+                     'title'         : TITLE, \
+                     'year'         : YEAR
                     }
 
     def exifToString(self,exif):
@@ -365,6 +372,9 @@ class MusicContainer(object):
         elif exif == MusicContainer.SPECIAL   : return "SPECIAL";
         elif exif == MusicContainer.SELECTED  : return "SELECTED";
         elif exif == MusicContainer.SONGID    : return "ID#";
+        
+        elif exif == MusicContainer.DATEADDEDS: return "DATEADDED";
+        elif exif == MusicContainer.YEAR      : return "YEAR";
         return "UNKOWN TAG:%d"%exif
 
     def stringToExif(self,exif):
@@ -389,6 +399,9 @@ class MusicContainer(object):
         elif exif == "SPECIAL"   : return MusicContainer.SPECIAL
         elif exif == "SELECTED"  : return MusicContainer.SELECTED
         elif exif == "ID#"       : return MusicContainer.SONGID
+        
+        elif exif == "DATEADDED" : return MusicContainer.DATEADDEDS
+        elif exif == "YEAR"      : return MusicContainer.YEAR
         return 0
 
     def expandExifMacro(self,string,sigil,song):
@@ -691,7 +704,9 @@ class Song(list):
                      MusicContainer.SKIPCOUNT,
                      MusicContainer.FREQUENCY,
                      MusicContainer.FILESIZE,
-                     MusicContainer.BITRATE
+                     MusicContainer.BITRATE,
+                     MusicContainer.DATEADDED,
+                     MusicContainer.YEAR
                    ];        
             
     def __init__(self,varient="",DRIVELIST=[],DATEFMT="%Y/%m/%d %H:%M"):
@@ -710,7 +725,7 @@ class Song(list):
         if type(varient) == Song:
             # produce a copy of the song.
             self.id = varient.id
-            self.md5 = warient.md5
+            self.md5 = varient.md5
             self[MusicContainer.PATH]      = varient[MusicContainer.PATH]
             self[MusicContainer.ARTIST]    = varient[MusicContainer.ARTIST]
             self[MusicContainer.TITLE]     = varient[MusicContainer.TITLE]
@@ -729,8 +744,12 @@ class Song(list):
             self[MusicContainer.BITRATE]   = varient[MusicContainer.BITRATE]
             self[MusicContainer.SPECIAL]   = varient[MusicContainer.SPECIAL]
             self[MusicContainer.SELECTED]  = varient[MusicContainer.SELECTED]
+            
+            self[MusicContainer.DATEADDEDS]= varient[MusicContainer.DATEADDEDS]
+            self[MusicContainer.DATEADDED] = varient[MusicContainer.DATEADDED]
+            self[MusicContainer.YEAR ]     = varient[MusicContainer.YEAR]
             return;
-        elif type(varient) == str or type(varient) == unicode:
+        elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
             
             if varient.strip().count('\n') > 0:
                 self.from_repr(varient,DRIVELIST,DATEFMT);
@@ -742,6 +761,7 @@ class Song(list):
         self[MusicContainer.ALBUM]     = u"Unknown Album"
         self[MusicContainer.GENRE]     = u"None"
         self[MusicContainer.DATESTAMP] = "NEW"
+        self[MusicContainer.DATEADDEDS]= ""
         self[MusicContainer.DATEVALUE] = 0
         self[MusicContainer.COMMENT]   = ""
         self[MusicContainer.RATING]    = 0
@@ -754,6 +774,11 @@ class Song(list):
         self[MusicContainer.BITRATE]   = 0
         self[MusicContainer.SPECIAL]   = False
         self[MusicContainer.SELECTED]  = False
+        
+        self[MusicContainer.DATEADDEDS]= ""
+        self[MusicContainer.DATEADDED] = 0
+        self[MusicContainer.YEAR ]     = 0
+        
 
     def __str__(self):
         return "[%s]"%(self.id)
@@ -990,6 +1015,9 @@ class Song(list):
         # new save values to the END of the __repr_str__ and __repr__num__
         # lists, then the next time the user saves these values will be saved
         # and automatically loaded later.
+        for i in Song.__repr_str__:
+            self[i] = ""
+            
         for i in range(len(s)):
             self[Song.__repr_str__[i]] = s[i]
             
@@ -1034,6 +1062,7 @@ class Song(list):
         self[MusicContainer.EXIF]      = self.__format_exif__();
         self[MusicContainer.SPECIAL]   = False
         self[MusicContainer.SELECTED]  = False 
+        self[MusicContainer.DATEADDEDS]=""
         
         self.update();
         
