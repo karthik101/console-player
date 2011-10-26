@@ -1,5 +1,7 @@
 from BytePack import *
 
+# This program auto generates MpUnPack.py, by copying all files in
+
 folder = "D:\\Dropbox\\Scripting\\PyQt\\console-player\\src"
 
 
