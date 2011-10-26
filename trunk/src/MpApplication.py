@@ -114,12 +114,7 @@ class MainWindow(QMainWindow):
         self.init_Ui()
         
         self.setWindowIcon(QIcon(MpGlobal.FILEPATH_ICON))
-        
-        print "x:%d"%Settings.SCREEN_POSITION_X
-        print "y:%d"%Settings.SCREEN_POSITION_Y
-        print "w:%d"%Settings.SCREEN_POSITION_W
-        print "h:%d"%Settings.SCREEN_POSITION_H
-        
+
         self.move  ( Settings.SCREEN_POSITION_X ,Settings.SCREEN_POSITION_Y )
         
         if Settings.WINDOW_MAXIMIZED :
@@ -1087,7 +1082,7 @@ class TableLibrary(widgetTable.Table):
 
         try: 
             # TODO this code just looks bad,
-            # however the col_ir comes from user input, and needs to be of type integer.
+            # however the col_id comes from user input, and needs to be of type integer.
             if len(col_list) == len(self.col_id_template):
                 self.col_id = col_list[:]
             for x in range(len(self.col_id)):
@@ -1109,8 +1104,6 @@ class TableLibrary(widgetTable.Table):
         self.table.setDragDropMode(QAbstractItemView.DragOnly)
         self.setDragType("dragFromLibrary")
         self.setDragReceiveType("None")
-        
-        print "init"
         
         h = self.table.horizontalHeader();
         h.setSortIndicatorShown(True)

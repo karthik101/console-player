@@ -989,11 +989,11 @@ def cmd_xx(input):
     
     if input.DecVal[0] == 6 : #xx 6
         
-        print "----------"
-        songGetAlbumIndex(MpGlobal.Player.libDisplay[0])
-        songGetAlbumIndex(MpGlobal.Player.libDisplay[10])
-        songGetAlbumIndex(MpGlobal.Player.libDisplay[20])
-
+        R = xml_open("./library.xml");
+        print len(R);
+        MpGlobal.Player.library = MpGlobal.Player.library + R
+        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.library)
+        
     if input.DecVal[0] == 7 : #xx 7
         s = "Time: %d"%getSecondsFromDateFormat(input.StrVal[1],input.DecVal[2])
         debug (s)
