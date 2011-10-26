@@ -56,6 +56,8 @@ def id3_createSongFromPath(path):
     
     if song[MpMusic.LENGTH] > 2000: # 2k seconds = 32 minutes. is that a good break point?
         song[MpMusic.LENGTH] /= 1000 # assume that th time measured was in milliseconds
+        
+    song.update();
     
     return song # return the blank song instead
     

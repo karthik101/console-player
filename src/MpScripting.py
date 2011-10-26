@@ -468,10 +468,7 @@ def init_Settings_default():
         some values need default values incase they do not exist in the settings file that is laoded
     """
     geometry = QDesktopWidget().screenGeometry()
-    print "x:%d"%Settings.SCREEN_POSITION_X
-    print "y:%d"%Settings.SCREEN_POSITION_Y
-    print "w:%d"%Settings.SCREEN_POSITION_W
-    print "h:%d"%Settings.SCREEN_POSITION_H
+
     Settings.SCREEN_POSITION_X = geometry.width()/4
     Settings.SCREEN_POSITION_Y = geometry.height()/4
     Settings.SCREEN_POSITION_W = geometry.width()/2
