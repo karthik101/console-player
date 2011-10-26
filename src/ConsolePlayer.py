@@ -4,13 +4,20 @@
 #----------------------------------------------------------
    
    
-
-import sys
 import os   
+import sys
+
 
 if __name__ != "__main__":
     print "Console Player must be started as the main script"
     sys.exit(1)
+
+# use os.getpid()
+# check  ~/session.lock for pid.
+# close out if pid in ~/session.lcok still exists 
+# otherwise overwrite it and continue launching this program.
+# if sys.args could be considered 'empty' ( no file in it's path ) then ask if it's ok to open a new copy.
+# if there is data in sys.args. send it over to the pid in ~/session.lock
  
 isPosix = os.name =='posix'
 
