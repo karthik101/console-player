@@ -20,7 +20,7 @@ from MpGlobalDefines import *
 from widgetProgressBar import ProgressBar
 from MpFileAccess import *
 from MpScripting import *
-
+from MpSocket import *
 
 
 isPosix = os.name == 'posix'
@@ -114,6 +114,23 @@ def startUpCheck(install=False):
         print "Running Start up Checks"
         
         MpGlobal.updatePaths(installPath) # update file locations to the new path
+        
+        # ######################################
+        # Check Session Lock
+        # ######################################
+        # we now have the install path, and this is the earliest we can check it.
+        port = session_lock_exists();
+        if port >= 0:
+            if len(sys.argv) == 1:
+                pass # do something?
+            else:
+                session_send_arguments(port);
+                exit(0);
+        else:
+            # start the socket thread
+            MpGlobal.SocketThread = LocalSocket_Thread();
+            MpGlobal.SocketThread.start();
+    
         
         loadSettings()
 

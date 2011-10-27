@@ -1051,6 +1051,47 @@ def bitClear(value,bit):
     return value&(~bit);    
 
 # ##############################################
+# Session
+# ##############################################        
+def session_send_arguments(port):    
+# create copy two
+    print "Creating Secondary Socket"
+    sock = LocalSocket_send(port);
+    msg = ""
+    
+    if len(sys.argv) == 2:
+        # send just a file path
+        sock.send(sys.argv[1])
+    elif len(sys.argv) > 2:
+        # send all command line options
+        R= sys.argv[1:]
+        msg = ""
+        for string in R:
+            msg += string+" "    
+        if msg != "":    
+            sock.send(msg) 
+
+def session_receive_argument(message):
+    # so formats.
+    # support passing a file path
+    # support passing a 
+    
+    message = message.strip();
+    if message[:2] == '-c':
+        cmd = message[2:].strip();
+        print "COMMAND: %s"%message
+        processTextInput(cmd)
+        
+    else:
+        print "PLAY: %s"%message
+        if os.path.isfile(message) and pathMatchExt(message):
+            song = id3_createSongFromPath(message)
+            MpGlobal.Player.playState = MpMusic.PL_NO_PLAYLIST
+            if MpGlobal.Player.load(song) :
+                MpGlobal.Player.play()  
+        
+
+# ##############################################
 # testbench
 # ##############################################        
         
@@ -1178,6 +1219,7 @@ from MpScreenSaver import *
 from MpFirstTime import verifyInstallation  
 from MpScriptingAdvanced import *
 from MpID3 import *
+from MpSocket import *
 
 
 
