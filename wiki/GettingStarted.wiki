@@ -12,8 +12,7 @@ Console Player is programmed with Python 2.7 (32 bit) and PyQt version 4.8.5. VL
  
 
 == Windows ==
-  * [http://sourceforge.net/apps/mediawiki/pyhook/index.php?title=Main_Page pyHook] - for media keys
-  * [http://www.lfd.uci.edu/~gohlke/pythonlibs/#pymedia PyMedia Binaries]
+  * [http://sourceforge.net/apps/mediawiki/pyhook
 
 == Linux ==
   * So far there are no linux specific files
