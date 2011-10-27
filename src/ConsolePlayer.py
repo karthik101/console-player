@@ -7,7 +7,6 @@
 import os   
 import sys
 
-
 if __name__ != "__main__":
     print "Console Player must be started as the main script"
     sys.exit(1)
@@ -20,6 +19,8 @@ if __name__ != "__main__":
 # if there is data in sys.args. send it over to the pid in ~/session.lock
  
 isPosix = os.name =='posix'
+
+
 
 # add the path to the global modules to the import path list
 #path = os.getcwd().replace('\\','/');
@@ -65,6 +66,7 @@ from MpThreading import MediaPlayerThread
 from MpFirstTime import startUpCheck
 import MpEventHook
 if __debug: print "Remaining Required Files Imported"    
+
 
 # ######################################
 # Create the Qt Application
@@ -146,6 +148,13 @@ init_postMainWindow()
 
 if __debug: print "Post Main Window initilizers done"    
 
+if len(sys.argv) > 1:
+    R= sys.argv[1:]
+    msg = ""
+    for string in R:
+        msg += string+" "    
+    if msg != "":   
+        session_receive_argument(msg)
 # ######################################
 # Start the Main Loop
 # ######################################

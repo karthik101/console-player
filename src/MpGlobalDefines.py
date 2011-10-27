@@ -103,6 +103,7 @@ class GlobalContainer(object):
     PlayerThread = None
     LoadThread = None
     HookManager = None
+    SocketThread = None     # used for session lock and socket communication
     SSService = None # screen saver service object
     #QOUTPUT  = None
 

@@ -26,7 +26,10 @@ def getInstallPath():
     _localname_ = "user"   
     _appdataname_ = "ConsolePlayer"
     
-    path = os.path.join(os.getcwd(),_localname_,"");
+    arg0path = fileGetPath(sys.argv[0])
+    
+    #path = os.path.join(os.getcwd(),_localname_,"");
+    path = os.path.join(arg0path,_localname_,"");
     file = os.path.join(path,"settings.ini");
     if os.path.exists(file):
         debugPreboot("Install Path: %s"%path)

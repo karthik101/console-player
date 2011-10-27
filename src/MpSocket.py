@@ -20,6 +20,8 @@ import os
 import sys
 import socket
 
+from PyQt4.QtCore import *
+
 isPosix = os.name=="posix"
 
 if not isPosix:
@@ -27,7 +29,12 @@ if not isPosix:
 
 class SystemPID(object):
     """
-        object for using the current platform's PID
+        wrapper object for using the current platform's PID
+        
+        provides three methods
+        getPID - returns the current PID
+        getPIDlist - returns a list of PID,NAME for all running processes, volatile
+        check_pid_isActive - checks a pid against getPIDlist, returns true if it exists and is of the sae executable type
     """
     @staticmethod
     def getPID():
@@ -90,43 +97,49 @@ class SystemPID(object):
                     return True;
         return False;
  
-
 class LocalSocket_send(object):
+    """
+        provides a way of sending messages to a given port on localhost
+    """
     def __init__(self,port):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect(("127.0.0.1", port))
-        self.sock.settimeout(2.0);
+        
+        self.port = port;
         
     def send(self,msg):
-        self.sock.send("Hello friend\n")
-        try:
-            msg = self.sock.recv(1024);
-        except:
-            msg = ""
-        else:
-            print msg # msg == "accept"
+    
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(("127.0.0.1", self.port))
+        package = "[%d]%s\n"%(len(msg)+1,msg)
+        print self.sock.send(package), "bytes sent"
+        
+        #try:
+        #    msg = self.sock.recv(1024);
+        #except:
+        #    msg = ""
+        #else:
+        #    # we could test msg here, if it is not <accept> the other side had an issue.
+        #    pass
             
-    def close():
         self.sock.close();
+        return 
         
 class LocalSocket_listen(object):
+    """
+        create a listener object.
+        
+        use recv to see if there is a connection, and return data on that connection
+    """
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       
         self.sock.bind( ('localhost',0) ) # bind a new socket, to a random unused port.
         self.sock.listen(5)               # set number of messages to queue.
-        self.sock.settimeout(2.0);
-        print "accept"
-        self.conn, addr = self.sock.accept()
-        print "conn"
-        self.conn.setblocking(0)
-        
         self.addr,self.port = self.sock.getsockname() # == 127.0.0.1 and a random port number
         print "Socket: %s - %d"%(self.addr,self.port)
+        self.sock.settimeout(0);
+        
         """
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.bind( ('localhost',0) )
-            sock.listen(5)  
+            import socket; sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM); sock.bind( ('localhost',0) ); sock.listen(5); print sock.getsockname()
             con,add = sock.accept()
         """
         return
@@ -139,20 +152,34 @@ class LocalSocket_listen(object):
             return any message text or an empty string. 
         """
         msg = "";
-        try: 
-            msg = self.conn.recv(4096);
-        except: 
-            msg = "";
-        else:
-            self.conn.send("<accept>")
+        try:
+
+            conn, addr = self.sock.accept()
+            conn.settimeout(0);
+            #print conn;
             
+        except:
+            pass
+        else:
+
+            try: 
+                msg = conn.recv(4096);
+            except: 
+                msg = "";
+            else:
+                pass
+                #conn.send("<accept>\n")
+            
+            conn.close();
+            #print "close"
+        
         return msg;
         
     def close(self):
         #self.sock.shutdown(socket.SHUT_RDWR)
         self.conn.close()
         self.sock.close()
-
+    
 def session_lock_exists():
     """
         return whether the contents of the current session lock are still valid
@@ -181,9 +208,7 @@ def session_create_lock(port=-1):
     with open(lock_path,"w") as FILE:
         FILE.write("%d\n"%SystemPID.getPID());
         FILE.write("%d\n"%port)
-            
-            
-            
+                   
 if __name__ == "__main__":
     import time
     global MpGlobal
@@ -191,9 +216,29 @@ if __name__ == "__main__":
     class GlobalDummy(object):
         Socket = None
         installPath = "./"
-        
+     
+          
     MpGlobal = GlobalDummy()
 
+    
+    class LocalSocket_Thread_test(QThread):     
+    
+        def run(self):
+            self.setPriority(QThread.LowestPriority);
+            print "Creating Primary Socket"
+            sock = LocalSocket_listen()
+            print "NEW PORT: %d"%sock.getport() 
+            session_create_lock( sock.getport() )
+            
+            msg = ""
+            while msg != "quit":
+                #print ">"
+                msg = sock.recv();
+                if msg != "":
+                    print msg.strip()
+                    
+                QThread.msleep(125);
+                
     """
         Run two copies of this script
         the first will set up a socket for listening, and then create a session lock
@@ -215,22 +260,49 @@ if __name__ == "__main__":
         while msg != "accept":
             input = raw_input("Send Message:");
             if input != "":
-                sock.send(input+"\n")
-                msg = sock.recv();
+                sock.send(input)
+                #msg = sock.recv();
             
     else:
+        thread = LocalSocket_Thread_test();
+        thread.start();
+        x = raw_input();
         # create copy one
-        print "Creating Primary Socket"
-        sock = LocalSocket_listen()
-        print "NEW PORT: %d"%sock.getport() 
-        session_create_lock( sock.getport() )
         
-        msg = ""
-        while msg != "quit":
-            msg = sock.recv();
-            if msg != "":
-                print msg
-            time.sleep(1)
+            #time.sleep(1/8)
 else:
     # all the normal imports
     from MpGlobalDefines import *
+    from MpCommands import *
+    from MpScripting import session_receive_argument
+    class LocalSocket_Thread(QThread):     
+    
+        def run(self):
+        
+            self.setPriority(QThread.LowestPriority);
+
+            sock = LocalSocket_listen()
+            
+            print "creating session lock. PID: %d PORT: %d"%(SystemPID.getPID(),sock.getport())
+            session_create_lock( sock.getport() )
+            
+            msg = ""
+            
+            while QThread:
+                #print ">"
+                msg = sock.recv();
+                if msg != "":
+                    msg = msg.strip();
+                    size = msg[1:msg.find(']')]
+                    body = msg[msg.find(']')+1:]
+                    
+                    size = int(size)
+
+                    session_receive_argument(body);
+                    
+                    #print "Received: %s"%msg
+                    
+                QThread.msleep(125);
+                
+            print "Socket Thread Ended Unexpectedly."
+                
