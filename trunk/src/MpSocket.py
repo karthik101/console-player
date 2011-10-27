@@ -33,16 +33,22 @@ class SystemPID(object):
         
         provides three methods
         getPID - returns the current PID
-        getPIDlist - returns a list of PID,NAME for all running processes, volatile
-        check_pid_isActive - checks a pid against getPIDlist, returns true if it exists and is of the sae executable type
+        getName - returns the name of the current executable
+        getProclist - returns a list of PID,NAME for all running processes, volatile
+        check_pid_isActive - checks a pid against getProclist, returns true if it exists and is of the sae executable type
     """
     @staticmethod
     def getPID():
         return os.getpid();
         
+    @staticmethod
+    def getName():
+        s = lambda s: s[s.rfind('/')+1:]
+        return s(sys.executable.replace("\\",'/'))
+        
     if isPosix:    
         @staticmethod
-        def getPIDlist():
+        def getProclist():
             """
                 Return the list of process ID's available
                 
@@ -64,7 +70,7 @@ class SystemPID(object):
             return R;
     else:
         @staticmethod
-        def getPIDlist():
+        def getProclist():
             """
                 Return the list of process ID's available
                 
@@ -80,20 +86,21 @@ class SystemPID(object):
     @staticmethod     
     def check_pid_isActive(test_pid):
         """
-            get the pid list.
-            find all pid that match MY executable name
-            
+
             test_pid is the pid we are looking to see if it is active
         """
-        s = lambda s: s[s.rfind('/')+1:]
-        myname = s(sys.executable.replace("\\",'/'))
-        mypid = os.getpid();
         
-        pidlist = SystemPID.getPIDlist();
+        myname = SystemPID.getName();
+        #mypid = SystemPID.getPID()
         
-        for pid,name in pidlist:
-            if name == myname:
-                if pid == test_pid:
+        test_proc = (test_pid,myname)
+        
+        proclist = SystemPID.getProclist();
+        
+        # todo can i form a tuple, pid,name, and compare only that?
+
+        for proc in proclist:
+            if proc == test_proc:
                     return True;
         return False;
  
@@ -204,10 +211,18 @@ def session_lock_exists():
 def session_create_lock(port=-1):
 
     lock_path = os.path.join(MpGlobal.installPath,"session.lock");
-    
+    # session lock file contains three parameters:
+    # the current PID
+    # current listening port
+    # installpath
+    # process name
+    # 
     with open(lock_path,"w") as FILE:
         FILE.write("%d\n"%SystemPID.getPID());
         FILE.write("%d\n"%port)
+        FILE.write("%s\n"%MpGlobal.installPath);
+        FILE.write("%s\n"%MSystemPID.getName());
+        
                    
 if __name__ == "__main__":
     import time
