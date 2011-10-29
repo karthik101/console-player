@@ -214,14 +214,14 @@ def session_create_lock(port=-1):
     # session lock file contains three parameters:
     # the current PID
     # current listening port
-    # installpath
-    # process name
+    # executable name
+    # path to executable (including name)
     # 
     with open(lock_path,"w") as FILE:
-        FILE.write("%d\n"%SystemPID.getPID());
-        FILE.write("%d\n"%port)
-        FILE.write("%s\n"%MpGlobal.installPath);
-        FILE.write("%s\n"%MSystemPID.getName());
+        FILE.write("%d\n"%SystemPID.getPID());      # my process id
+        FILE.write("%d\n"%port)                     # port i am listening to
+        FILE.write("%s\n"%SystemPID.getName());    # executable name
+        FILE.write("%s\n"%sys.argv[0]);             # path to executable that wrote the lock
         
                    
 if __name__ == "__main__":
