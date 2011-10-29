@@ -99,7 +99,11 @@ def startUpCheck(install=False):
     
     if not os.path.exists(installPath) or install: # ask the user to (re)install
         print "Running First Time Installation"
-        installPath = getNewInstallLocation();
+        
+        if "--install=home" in sys.argv:
+            installPath = createInstallLocation();
+        else:        
+            installPath = getNewInstallLocation();
         
         if not os.path.exists(installPath):
             sys.exit(1) # quit because we were given a bad path
@@ -169,6 +173,7 @@ def getNewInstallLocation():
         elif checkState == PathAppData:
 
             # getenv('USERPROFILE') returns C:/Users/Nick/ or /home/nick/
+            return createInstallLocation();
             if isPosix: # get a global directory to save to
                 home = os.getenv("HOME")
             else:
@@ -181,7 +186,20 @@ def getNewInstallLocation():
                     os.mkdir(root)
                 return root
     return ""
-        
+def createInstallLocation():
+    if isPosix: # get a global directory to save to
+        home = os.getenv("HOME")
+    else:
+        home = os.getenv("APPDATA")
+
+    if home != None:
+        root = os.path.join(home,_appdataname_,"")
+        #create the directory if it 
+        if not os.path.exists(root):
+            os.mkdir(root)
+        return root
+    return ""
+
 def verifyInstallation(dir,quick=False):
     """
         extracts all files from MpUnpack to the directory 'dir'

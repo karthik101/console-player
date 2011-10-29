@@ -13,7 +13,7 @@ import pylzma
 isPosix = os.name == 'posix'
 __devmode = "-devmode" in sys.argv;
 
-def getInstallPath():
+def getInstallPath(forcehome=False):
     """
         Return the path that the application is installed in
         Assume first that it is installed localled
@@ -42,7 +42,7 @@ def getInstallPath():
         home = os.getenv("APPDATA")
     
     
-    if home != None and not __devmode: #only use global install path when not developing
+    if home != None and (not __devmode or "--install=home" in sys.argv): #only use global install path when not developing
         path = os.path.join(home,_appdataname_,"");
         file = os.path.join(path,"settings.ini");
         if os.path.exists(file):

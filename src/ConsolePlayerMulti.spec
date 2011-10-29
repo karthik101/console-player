@@ -44,11 +44,13 @@ pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=1,
-          name=os.path.join('..','bin', FULL_NAME),
+          name=os.path.join('..','bin','release', FULL_NAME),
           debug=False,
           strip=False,
           upx=True,
-          console=False )
+          console=False,
+         icon= PATH_TO_DEV_ROOT+'icon'+ICOEXT 
+         )
           
 coll = COLLECT( exe,
                a.binaries,
