@@ -7,37 +7,46 @@
 typedef struct session_t {
 	int proc;
 	int port;
-	char * fname[256];
-	char * fpath[1024];
+	char fname[256];
+	char fpath[1024];
 } Session;
 
 int get_session_lock(Session * s, const char * lockpath);
 int IsProcessRunning(DWORD pid);
+int cstr_rindex(const char * cstr, const char * fmt);
 
 int main(int argc, char **argv)
 {
 
 	Session s;
 	int success;
-    char args[1024];//* args = (char *) malloc(1024);
-    char msg[1024];//* msg  = (char *) malloc(1024); // todo why couldnt i reuse args
-	
+	int ind;
+    char args[1024];
+    char msg[1024];// todo why couldnt i reuse args
+	char fpath[1024];
+	char file[1024];
 
-	ExpandEnvironmentStrings("%APPDATA%",msg,256);
-
-	sprintf(msg,"%s\\ConsolePlayer\\session.lock",msg);
-	
-	
-	printf("hey\r\n");
+	/*
+		get the path to the current directory
+	*/
+	ind=cstr_rindex(argv[0],"\\/");
+	strncpy(fpath,argv[0],ind+1);
+    fpath[ind+1]='\0';
+	/*
+		Find a session.lock file to open
+	*/
 	success = get_session_lock(&s,".\\user\\session.lock");
-	printf("hey\r\n");
 	if (!success) {
+		ExpandEnvironmentStrings("%APPDATA%",msg,1024);
+		sprintf(msg,"%s\\ConsolePlayer\\session.lock",msg);
 		success = get_session_lock(&s,msg);
 	}
-	
-	//return 0;
-	
-	if ( get_session_lock(&s,"D:\\Dropbox\\ConsolePlayer\\user\\session.lock") ) {
+
+	/*
+		with an open sessio.lock
+		check for the process and send any argv values to the open process
+	*/
+	if ( success ) {
 	
 		//printf("%d\r\n",s.proc);
 		//printf("%d\r\n",s.port);
@@ -45,7 +54,6 @@ int main(int argc, char **argv)
 		//printf("%s\r\n",s.fpath);
 		
 		if (IsProcessRunning(s.proc) && argc > 1) {
-			
         
 			// collect all arguments into a single string
 			sprintf(args,"%s",argv[1]);			
@@ -63,17 +71,21 @@ int main(int argc, char **argv)
 			
 			exit(0);
 			
-		} else {
-		
-			ShellExecute(NULL, "open", (char *)(s.fpath), "", "c:\\", 0);
-		
-		}
-		
-		
-		
+		} 
+		/*
+			launch the program using the name it gave itself in the session.lock
+		*/
+
+		WinExec(s.fpath,SW_NORMAL);
+		exit(0);
+
 	}
-	
-	ShellExecute(NULL, "open", "./ConsolePlayer.exe", "a b c d", "c:\\", 0);
+	// Launch an executable in the current directory under the name ConsolePlayer
+	// launch it forcing the installation in the home directory.
+	strcpy(file,fpath);
+	strcat(file,"ConsolePlayer.exe --install=home");
+
+	WinExec(file,SW_NORMAL);
 
 }
 
@@ -106,4 +118,29 @@ int IsProcessRunning(DWORD pid)
 
 
 
+int cstr_rindex(const char * cstr, const char * fmt){
+	/*
+		return the last index of character in fmt
+		fmt can be a string with multiple characters
+		in this case the index of the last character will be returned.
+		
+		-1 is returned when no values are found
+		
+	*/
+	
+	int i=0;
+	int j=0;
+	int index=-1;
+	while (cstr[i] != '\0') {
+		j=0;
+		
+		while (fmt[j] != '\0') {
+			if (cstr[i] == fmt[j])
+				index = i;
+			j++;
+		}
 
+		i++;
+	}
+	return index;
+}

@@ -30,6 +30,7 @@ isPosix = os.name =='posix'
 __debug   = "-debug" in sys.argv;
 __devmode = "-devmode" in sys.argv;
 __install = "-install" in sys.argv;  # launch with the -install flag to reinstall the application
+__install_home = "--install=home" in sys.argv; # force install to home directort.
 import sip
 
 if __devmode: # use API 2, when testing
