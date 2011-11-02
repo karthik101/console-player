@@ -241,7 +241,8 @@ def atoi(a):
 
     
 from MpGlobalDefines import *
-from MpScripting import *
-from MpScriptingAdvanced import *    
+from MpScripting import *  
+from MpSort import *
+from MpSearch import *
     
     

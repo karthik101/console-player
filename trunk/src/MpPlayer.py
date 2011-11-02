@@ -33,7 +33,6 @@ from PyQt4.QtCore import *
 #from MpApplication import *
 from MpFileAccess import *
 from MpScripting import *
-from MpScriptingAdvanced import *
 from MpID3 import *
 from MpGlobalDefines import *
 

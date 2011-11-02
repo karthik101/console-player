@@ -12,7 +12,6 @@ from MpGlobalDefines import *
 
 import widgetTable
 from MpScripting import *
-from MpScriptingAdvanced import *
 from MpCommands import *
  
 class TableFileExplorer(widgetTable.Table):

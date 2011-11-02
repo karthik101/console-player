@@ -28,7 +28,8 @@ from MpGlobalDefines import *
 from widgetProgressBar import ProgressBar
 from MpFileAccess import *
 from MpScripting import *
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 
 class LibraryUpdateDialog(QDialog):
 

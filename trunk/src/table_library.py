@@ -12,7 +12,8 @@ from PyQt4.QtGui import *
 from MpGlobalDefines import *
 
 from MpScripting import *
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 from MpCommands import *
 
 
