@@ -10,6 +10,36 @@
 # -All imports are at the bottom of this doc-
 # #########################################################
 
+def debug(string):
+    """
+        convenience function
+        display a message to the user
+    """
+    MpGlobal.Window.debugMsg("\n%s"%string)    
+
+def debugRetail(string):
+    """
+        convenience function
+        display a message to the user
+        open the debug box if it is hidden
+    """
+    MpGlobal.Window.debugMsg("\n%s"%string,True)   
+    
+def diagMessage(display,Message):
+    # diagMessage(MpGlobal.DIAG_PLAYBACK,);
+    if display:
+        MpGlobal.Window.emit(SIGNAL("DIAG_MESSAGE"),Message)
+
+def RetailMessage(string):
+    point = MpGlobal.Window.txt_main.pos()
+    point.setY( point.y() + MpGlobal.Window.txt_main.height() + 4 )
+    
+    #tip = QToolTip();
+    
+    #tip.showText(point,string)
+    return;
+ 
+
 # ##############################################
 # Create PlayList
 # ##############################################
@@ -578,6 +608,27 @@ def settings_get_Update():
     if Settings.SCREEN_POSITION_W < 0.90*geometry.width():
         Settings.WINDOW_MAXIMIZED = False
 
+def update_StrToDec_Dict(): #TODO this function does no belong here
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_ALBUM     ] = MpMusic.ALBUM;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_ARTIST    ] = MpMusic.ARTIST;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_COMMENT   ] = MpMusic.COMMENT;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_DAY       ] = MpMusic.DATESTAMP;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_FREQ      ] = MpMusic.FREQUENCY;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_GENRE     ] = MpMusic.GENRE;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_LENGTH    ] = MpMusic.LENGTH;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_PLAYCOUNT ] = MpMusic.PLAYCOUNT;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_PATH      ] = MpMusic.PATH;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_RATING    ] = MpMusic.RATING;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_SKIPCOUNT ] = MpMusic.SKIPCOUNT;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_TITLE     ] = MpMusic.TITLE;
+
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_DATEEU ] = MpMusic.SPEC_DATEEU;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_DATEUS ] = MpMusic.SPEC_DATEUS;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_DATESTD] = MpMusic.SPEC_DATESTD;
+    
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_YEAR]      = MpMusic.YEAR;
+    MpMusic.D_StrToDec[Settings.SEARCH_FIELD_DATEADDED] = MpMusic.DATEADDED;        
+        
 def UpdateStatusWidget(index,varient):
     """ update the widget on the status bar at index
         value may not be text
@@ -1217,7 +1268,8 @@ from MpEventHook import initHook,disableHook
 from dialogSettings import SettingsWindow
 from MpScreenSaver import *
 from MpFirstTime import verifyInstallation  
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 from MpID3 import *
 from MpSocket import *
 

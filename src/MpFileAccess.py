@@ -2031,7 +2031,8 @@ import struct
 
 from MpGlobalDefines import *
 from MpScripting import *;
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 from MpScripting import *
 from MpID3 import *
 

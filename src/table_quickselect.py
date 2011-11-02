@@ -12,7 +12,8 @@ from MpGlobalDefines import *
 
 import widgetTable
 from MpScripting import *
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 from MpCommands import *
 
         

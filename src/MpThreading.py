@@ -10,7 +10,8 @@ from PyQt4.QtCore import *
 
 from MpGlobalDefines import *
 from MpScripting import *
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 from MpPlayer import *
 
 class MpThread(QThread):

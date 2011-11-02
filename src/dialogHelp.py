@@ -7,7 +7,8 @@ from widgetTree import *
 # i am getting bizarre import errors,
 # from MpApplication import MainWindow Fails. for no obvious reason
 import MpApplication
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 import MpScripting
 import MpCommands
 

@@ -1444,7 +1444,8 @@ from dialogHelp import *
 from MpScreenSaver import *
 from MpFirstTime import verifyInstallation
 from MpScripting import *      
-from MpScriptingAdvanced import *      
+from MpSort import *
+from MpSearch import *     
 import dialogSync       
      
 StringParse.D_StrToDec = MpMusic.D_StrToDec     

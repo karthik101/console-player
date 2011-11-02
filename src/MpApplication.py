@@ -1477,7 +1477,8 @@ def menu_open_Settings():
         On_Close_Save_Data()
         
 from MpScripting import *
-from MpScriptingAdvanced import *
+from MpSort import *
+from MpSearch import *
 from MpCommands import *
 from MpFileAccess import *
 from MpPlayer import *
