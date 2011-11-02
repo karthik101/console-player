@@ -26,6 +26,14 @@ int main(int argc, char **argv)
 	char fpath[1024];
 	char file[1024];
 
+	// collect all arguments into a single string
+	if (argc > 1) {
+		sprintf(args," %s",argv[1]);			
+		for (int i=2;i < argc;i++){
+			sprintf(args,"%s %s",args,argv[i]);
+		}
+	}
+			
 	/*
 		get the path to the current directory
 	*/
@@ -54,12 +62,7 @@ int main(int argc, char **argv)
 		//printf("%s\r\n",s.fpath);
 		
 		if (IsProcessRunning(s.proc) && argc > 1) {
-        
-			// collect all arguments into a single string
-			sprintf(args,"%s",argv[1]);			
-			for (int i=2;i < argc;i++){
-				sprintf(args,"%s %s",args,argv[i]);
-			}
+
 			// create the message to send
 			sprintf(msg,"[%d]%s\r\n",strlen(args),args);
         
@@ -75,17 +78,22 @@ int main(int argc, char **argv)
 		/*
 			launch the program using the name it gave itself in the session.lock
 		*/
-
+		if (argc > 1)
+			strcat(fpath,args);
 		WinExec(s.fpath,SW_NORMAL);
 		exit(0);
 
 	}
 	// Launch an executable in the current directory under the name ConsolePlayer
 	// launch it forcing the installation in the home directory.
-	strcpy(file,fpath);
-	strcat(file,"ConsolePlayer.exe --install=home");
+	if (argc > 1) {
+		strcat(fpath,"ConsolePlayer.exe");
+		strcat(fpath,args);
+	}
+	else
+		strcat(fpath,"ConsolePlayer.exe --install=home");
 
-	WinExec(file,SW_NORMAL);
+	WinExec(fpath,SW_NORMAL);
 
 }
 

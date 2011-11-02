@@ -286,11 +286,18 @@ def cmd_testbench(input):
 def cmd_play(input):
     """
         Command: PLAY
-        Usage: play
+        Usage: play [int]
+        
+        option parameter, specify the index of a song in the current playlist to begin playing that song.
 
         play the current song
     """
-    MpGlobal.Player.play()
+    if input.hasDecVal:
+        i = inpue.DecVal[0];
+        if i > 1 and i <= len(MpGlobal.Player.playList):
+            MpGlobal.Player.playSong(i-1);
+    else:
+        MpGlobal.Player.play()
     return COMMAND.VALID
 def cmd_pause(input):
     """
