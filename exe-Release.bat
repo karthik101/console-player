@@ -9,7 +9,7 @@ cd %~dp0
 :: build using pyInstaller
 
 
-"C:\Python27\python.exe" "C:\Python27\Lib\site-packages\pyInstaller\Build.py" "./src/ConsolePlayerMulti.spec"
+"C:\Python27\python.exe" "C:\Python27\Lib\site-packages\pyInstaller\Build.py" "./src/ConsolePlayerRelease.spec"
 cd %~dp0
 copy ".\\launcher\\ConsoleLauncher.exe" ".\\src\\dist\\ConsolePlayer\\ConsoleLauncher.exe"
 

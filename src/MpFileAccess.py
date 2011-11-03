@@ -8,8 +8,12 @@
 import os
 import sys
 
-import pylzma
-
+try:
+    import pylzma
+except:
+    print "cannot import pylzma"
+    pylzma = None
+    
 isPosix = os.name == 'posix'
 __devmode = "-devmode" in sys.argv;
 

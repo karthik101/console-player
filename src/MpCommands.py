@@ -63,6 +63,7 @@ def initCommandList():
               "xx"       : cmd_xx,
               "eval"     : cmd_eval,
               "exec"     : cmd_exec,
+              "explorer" : cmd_explorer,
               "repl"     : cmd_repl,
               "repack"   : cmd_repack,
               "import"   : cmd_import,
@@ -426,7 +427,6 @@ def cmd_state(input):
         "PAUSED", "STOPPED", "ENDED", "ERROR", "UNKOWN")[MpGlobal.Player.mp.mediaState()];
     debugRetail ( "Current State: %s"%string );
     return COMMAND.VALID
-    
 def cmd_volume(input):
     """
         Command: VOLUME
@@ -1114,6 +1114,19 @@ def cmd_exec(input):
     except Exception as e:
         #debug("EXEC ERROR: %s"%e.args)
         print e.args
+def cmd_explorer(input):
+    """
+        COMMAND: EXPLORER
+        Usage: explorer
+        
+        opens the folder where save data is located
+
+    """
+    
+    print MpGlobal.installPath
+    
+    os.startfile(MpGlobal.installPath)
+    
 def cmd_repl(input):
     """
         DEV
@@ -1391,6 +1404,7 @@ def cmd_settings(input):
     print MpGlobal.FILEPATH_SETTINGS
     
     os.startfile(MpGlobal.FILEPATH_SETTINGS)
+ 
     
 def cmd_setsave(input):
     """
