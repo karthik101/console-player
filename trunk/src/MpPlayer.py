@@ -408,9 +408,11 @@ class MediaManager(object):
             value = 100
         if value < 0 :
             value = 0
-        Settings.PLAYER_VOLUME  = value
         self.mp.setVolume(value)
-     
+        
+    def getVolume(self):
+        return self.mp.getVolume()
+        
     def setStopNext(self,value):
         self.stopNext = value
         MpGlobal.Window.emit(SIGNAL("SET_CONTBUTTON_ICON"),self.stopNext)

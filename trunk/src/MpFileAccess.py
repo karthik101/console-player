@@ -65,183 +65,9 @@ def getStyleImagePath(filename):
         else:
             return newpath
     return path
-    
-def musicLoad(filepath):
-
-    if not os.path.exists(filepath):
-        return [] # return empty array, then check status from that
-    rf = open(filepath,"r")
-    line1 = not None # this actually kind of hurts
-    line2 = not None 
-    song = None
-    
-    count = 0
-    _create_Song_ = createSongV2
-    
-    line1 = rf.readline()
-    
-    if line1:   # not None
-        line1 = line1.strip()
-        if line1 == "#VERSION: 2":
-            print "found v2"
-            # count is stored on the next line
-            count = int(rf.readline())
-        elif line1 == "#VERSION: 3":
-            #print "found v3"
-            _create_Song_ = createSongV3
-            # count is stored on the next line
-            count = int(rf.readline())
-        elif line1 == "#VERSION: 4":
-            #print "found v3"
-            _create_Song_ = createSongV4
-            # count is stored on the next line
-            count = int(rf.readline()[1:])
-        else:   # no version id number ( v1 or older )
-            print "no version"
-            count = int(line1)
-    
-    
-    array = [[]]*count # number of songs to read
-    index = 0;
-    # read in song data
-    rpath = ""
-    useRelDrive = False;
-    # these variables enable not knowing the location of music at boot
-    lookForDrive = False;
-    drivelist = systemDriveList();
-
-    print drivelist
-    while line1:
-    
-
-        line1 = rf.readline().strip()
-        if line1 == "": break;  # error checking
-        
-        # look for setting decorators
-        if line1[:4] == r'#~D:':
-            s = line1[4:]
-            if s == "%CWD%":
-                #TODO WINDOWS ONLY
-                rpath = os.getcwd()[0]+":\\"
-                debugPreboot("Music Found on %s:\\ Drive."%rpath)
-                Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_CWD
-            else:
-                rpath = s
-                debugPreboot("Music Found on %s:\\ Drive."%rpath)
-            useRelDrive = True
-            
-            continue;
-        
-        # line loaded was a song line
-        
-        line2 = rf.readline().strip()
-        line2 = unicode(line2,'unicode-escape')
-        if line2 == "": break;  # error checking
-        
-        if isPosix: # perform a slash path correct fix for the current OS
-            line2 = line2.replace('\\','/')     
-        else:
-            line2 = line2.replace('/','\\')
-            
-        if lookForDrive:
-            # determine which drive the song exists.
-            # THEN ASSUME THE ALL SONGS EXIST ON THAT DRIVE
-            for drive in drivelist:
-                try:
-
-                    path =  os.path.join(drive , line2);
-                    if isPosix: # attempt to fix the path on UNIX if it was saved incorrectly
-                        path = UnixPathCorrect(path)
-                    debugPreboot("LIB Testing: %s"%path)
-                    if os.path.exists( path ) and path != '':
-                        useRelDrive = True
-                        rpath = drive
-                        break
-                except:
-                    pass #debugPreboot("Music Not Found on Any Drive.")
-                  
-            else:
-                print "Error Loading Music. Assuming: %s:\\"%rpath
-                
-            lookForDrive = False;
-            
-        if useRelDrive:
-            line2 = os.path.join("D:\\" , line2)
-        
-            
-        array[index] = Song()
-        
-        array[index][MpMusic.EXIF] = unicode(line1,'unicode-escape')
-                        
-        array[index][MpMusic.PATH] = line2
-
-        _create_Song_(array[index]);
-        
-        index += 1
-        
-    rf.close()    
-
-    if count != index:
-        print "READ %d != %d"%(count,index)
-        print "encoding error"
-        return array[:index]
-    #assert count == index, "Count Does note match index %d != %d"(count,index)
-    
-    return array
-    
-def musicSave(filepath,data,type=0):
-    """save the given array of songs to the destination file path
-        Final version of this function, 
-        now saves a version id string to the first line of the file
-    """
-    if len(data) == 0:
-        print "No Data to Save: %s"%filepath
-        return;
-    wf = open(filepath,"w")
-    
-    wf.write( "#VERSION: %d\n"%MpGlobal.FILESAVE_VERSIONID )
-    
-    if MpGlobal.FILESAVE_VERSIONID == 4:
-        wf.write( "#%d\n"%len(data) )
-    else:
-        wf.write( "%d\n"%len(data) )
-    # version control
-    _create_exif_ = createExifV2
-    if MpGlobal.FILESAVE_VERSIONID == 3:
-        _create_exif_ = createExifV3
-    elif MpGlobal.FILESAVE_VERSIONID == 4:
-        _create_exif_ = createExifV4
-
-    #self.RELATIVE_DRIVE_PATH="%RELATIVE%" # any string or %RELATIVE%
-
-    if type==1:
-        wf.write( "#~D:%CWD%\n")
-    elif type==2:
-        wf.write( "#~D:%UNKNOWN%\n")
-
-    driveList = systemDriveList()
-    
-    for song in data:
-        #try:
-        exif = _create_exif_(song)
-        string1 = unicode( exif ).encode('unicode-escape')
-        string2 = unicode( song[MpMusic.PATH] )
-        
-        if type > 0:#alternate save formats remove the drive
-            string2 = stripDriveFromPath(driveList,string2)
-            
-        string2 = string2.encode('unicode-escape')
-        
-        wf.write( "%s\n"%string1 )
-
-        wf.write( "%s\n"%string2 )
-        #except Exception as e:
-        #    print "Error: %s"%(e.args)
-        #    break
-        #    print str(data[x][PATH])
-        
-    wf.close() 
-    
+ 
+# ##############################
+#  Library save formats
 def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
     """
         save a new file, but first compress it using LZMA.
@@ -536,8 +362,184 @@ def LIBZ_process_block(data,typ,fmt, drivelist):
         R.append( Song( repr ) );
     
     return R;
-   
+
+# MusicLoad and MusicSave are old functions.    
+def musicLoad(filepath):
+
+    if not os.path.exists(filepath):
+        return [] # return empty array, then check status from that
+    rf = open(filepath,"r")
+    line1 = not None # this actually kind of hurts
+    line2 = not None 
+    song = None
     
+    count = 0
+    _create_Song_ = createSongV2
+    
+    line1 = rf.readline()
+    
+    if line1:   # not None
+        line1 = line1.strip()
+        if line1 == "#VERSION: 2":
+            print "found v2"
+            # count is stored on the next line
+            count = int(rf.readline())
+        elif line1 == "#VERSION: 3":
+            #print "found v3"
+            _create_Song_ = createSongV3
+            # count is stored on the next line
+            count = int(rf.readline())
+        elif line1 == "#VERSION: 4":
+            #print "found v3"
+            _create_Song_ = createSongV4
+            # count is stored on the next line
+            count = int(rf.readline()[1:])
+        else:   # no version id number ( v1 or older )
+            print "no version"
+            count = int(line1)
+    
+    
+    array = [[]]*count # number of songs to read
+    index = 0;
+    # read in song data
+    rpath = ""
+    useRelDrive = False;
+    # these variables enable not knowing the location of music at boot
+    lookForDrive = False;
+    drivelist = systemDriveList();
+
+    print drivelist
+    while line1:
+    
+
+        line1 = rf.readline().strip()
+        if line1 == "": break;  # error checking
+        
+        # look for setting decorators
+        if line1[:4] == r'#~D:':
+            s = line1[4:]
+            if s == "%CWD%":
+                #TODO WINDOWS ONLY
+                rpath = os.getcwd()[0]+":\\"
+                debugPreboot("Music Found on %s:\\ Drive."%rpath)
+                Settings.SAVE_FORMAT = MpGlobal.SAVE_FORMAT_CWD
+            else:
+                rpath = s
+                debugPreboot("Music Found on %s:\\ Drive."%rpath)
+            useRelDrive = True
+            
+            continue;
+        
+        # line loaded was a song line
+        
+        line2 = rf.readline().strip()
+        line2 = unicode(line2,'unicode-escape')
+        if line2 == "": break;  # error checking
+        
+        if isPosix: # perform a slash path correct fix for the current OS
+            line2 = line2.replace('\\','/')     
+        else:
+            line2 = line2.replace('/','\\')
+            
+        if lookForDrive:
+            # determine which drive the song exists.
+            # THEN ASSUME THE ALL SONGS EXIST ON THAT DRIVE
+            for drive in drivelist:
+                try:
+
+                    path =  os.path.join(drive , line2);
+                    if isPosix: # attempt to fix the path on UNIX if it was saved incorrectly
+                        path = UnixPathCorrect(path)
+                    debugPreboot("LIB Testing: %s"%path)
+                    if os.path.exists( path ) and path != '':
+                        useRelDrive = True
+                        rpath = drive
+                        break
+                except:
+                    pass #debugPreboot("Music Not Found on Any Drive.")
+                  
+            else:
+                print "Error Loading Music. Assuming: %s:\\"%rpath
+                
+            lookForDrive = False;
+            
+        if useRelDrive:
+            line2 = os.path.join("D:\\" , line2)
+        
+            
+        array[index] = Song()
+        
+        array[index][MpMusic.EXIF] = unicode(line1,'unicode-escape')
+                        
+        array[index][MpMusic.PATH] = line2
+
+        _create_Song_(array[index]);
+        
+        index += 1
+        
+    rf.close()    
+
+    if count != index:
+        print "READ %d != %d"%(count,index)
+        print "encoding error"
+        return array[:index]
+    #assert count == index, "Count Does note match index %d != %d"(count,index)
+    
+    return array
+    
+def musicSave(filepath,data,type=0):
+    """save the given array of songs to the destination file path
+        Final version of this function, 
+        now saves a version id string to the first line of the file
+    """
+    if len(data) == 0:
+        print "No Data to Save: %s"%filepath
+        return;
+    wf = open(filepath,"w")
+    
+    wf.write( "#VERSION: %d\n"%MpGlobal.FILESAVE_VERSIONID )
+    
+    if MpGlobal.FILESAVE_VERSIONID == 4:
+        wf.write( "#%d\n"%len(data) )
+    else:
+        wf.write( "%d\n"%len(data) )
+    # version control
+    _create_exif_ = createExifV2
+    if MpGlobal.FILESAVE_VERSIONID == 3:
+        _create_exif_ = createExifV3
+    elif MpGlobal.FILESAVE_VERSIONID == 4:
+        _create_exif_ = createExifV4
+
+    #self.RELATIVE_DRIVE_PATH="%RELATIVE%" # any string or %RELATIVE%
+
+    if type==1:
+        wf.write( "#~D:%CWD%\n")
+    elif type==2:
+        wf.write( "#~D:%UNKNOWN%\n")
+
+    driveList = systemDriveList()
+    
+    for song in data:
+        #try:
+        exif = _create_exif_(song)
+        string1 = unicode( exif ).encode('unicode-escape')
+        string2 = unicode( song[MpMusic.PATH] )
+        
+        if type > 0:#alternate save formats remove the drive
+            string2 = stripDriveFromPath(driveList,string2)
+            
+        string2 = string2.encode('unicode-escape')
+        
+        wf.write( "%s\n"%string1 )
+
+        wf.write( "%s\n"%string2 )
+        #except Exception as e:
+        #    print "Error: %s"%(e.args)
+        #    break
+        #    print str(data[x][PATH])
+        
+    wf.close() 
+
 def musicBackup(force = False):
     """
         save a copy of the current library to ./backup/
@@ -588,7 +590,10 @@ def musicBackup(force = False):
         print "Saving %s"%fullname
         newbu = os.path.join(path,fullname)  
         musicSave_LIBZ(newbu,MpGlobal.Player.library,Settings.SAVE_FORMAT);
-            
+     
+# ##########################
+# custom playlist formats
+     
 def playListSave(filepath,data,typ=0,index=0):
     # index = MpGlobal.Player.CurrentIndex
     driveList = systemDriveList()
@@ -703,6 +708,10 @@ def playListLoad(filepath,source):
     rf.close()
     return array
 
+    
+# #########################
+# read settings
+    
 def saveSettings( ):
     """
         using the data found in D, a dictionary
@@ -839,6 +848,8 @@ def loadSettings():
         #for k,v in D.items():
         #    print k,"=>",v
     return;
+  
+# #########################  
   
 def history_log(filepath,song,typ): 
 
@@ -986,7 +997,7 @@ def __history_NewDate__(date,song):
     
 
 # ######################################################
-# Song Creation (from string)
+# Song Creation (from string) - TODO these can all be removed at 0.5.0.0
 # ######################################################
  
 def createSong( song ):     # v1
@@ -1173,8 +1184,7 @@ def createInternalExif (song):
         unicode(song[MpMusic.ALBUM]), \
         unicode(song[MpMusic.GENRE]), \
         unicode(song[MpMusic.COMMENT]) );
-        
-        
+            
 def get_md5(filepath):
         block_size=(1<<12);
         if os.path.exists( filepath ):
@@ -1190,232 +1200,10 @@ def get_md5(filepath):
         else:
             return ""     
      
-# ######################################################
-# Style Theme CSS
-# ######################################################     
-def load_css(style_name,object,dict=None,secondary=False):
+     
+     
 
-    fpath = os.path.join( MpGlobal.installPath,"style",style_name,""); 
 
-    if not os.path.exists(fpath):
-        #object.setStyleSheet("")  # clear the style sheet
-        return None;
-
-    dict = read_css_dict(fpath+"theme.dict",dict)
-    # when secondary is set to true update the main dictionary with user defined values
-    if secondary:  
-        dict = read_css_dict(fpath+"user.dict",dict)
-        
-    # provide the list of default variables.
-    # image is the location for custom images for the theme
-    dict["IMAGE"       ] =  os.path.join( MpGlobal.installPath,"style",style_name,"images","");
-    # default image provides a way of accessing the default texture pack
-    dict["IMAGE_DEFAULT"] = os.path.join( MpGlobal.installPath,"style","default", "images","");
-    # global image provides a way of accessing the images directory
-    dict["IMAGE_GLOBAL"] = os.path.join(  MpGlobal.installPath,"images","");
-    #image blank is the location of a blank image
-    dict["IMAGE_BLANK" ] = os.path.join(  MpGlobal.installPath,"images","blank.png");
-    # style is the location of the directory containing the style
-    dict["STYLE"       ] = os.path.join( MpGlobal.installPath,"style",style_name,"");
-
-    # URLS are funny in that they require foward slashes, even on windows
-    dict["IMAGE"       ] = dict["IMAGE"       ].replace("\\","/");
-    dict["IMAGE_GLOBAL"] = dict["IMAGE_GLOBAL"].replace("\\","/");
-    dict["IMAGE_BLANK" ] = dict["IMAGE_BLANK" ].replace("\\","/");
-    dict["STYLE"       ] = dict["STYLE"       ].replace("\\","/");
-    
-    # after loading the dictionary, check for any definitions which contain
-    # other definitions
-    
-    # the following replace is now done while the dict is being read
-    #for key in dict: # replace all %key% in the text with value
-    #    for sub in dict: # replace all %key% in the text with value
-    #        dict[key] = dict[key].replace("%%%s%%"%sub,dict[sub])
-    
-    R = os.listdir(fpath)
-
-    css = ""
-
-    # load the main css file first, if one exists
-    
-    if "Main.css" in R:
-        css += read_css_file(dict, fpath,"Main") 
-        R.remove("Main.css")
-    # load all remaining css files    
-    for file in R:
-        if fileGetExt(file) == "css":
-            fname = fileGetName(file)
-            if fname[:1] != 'x':
-                css += read_css_file(dict, fpath,fname) 
-
-    debugPreboot("Style Sheet: %s Size: %d bytes"%(style_name,len(css)))
-
-    if object != None:
-        object.setStyleSheet(css)
-
-    return dict
-
-def read_css_dict(fpath,dict=None):
-    """
-       reads a css theme color dictionary
-       a color dictionary stores color information for the theme    
-
-       a dictionary can be passed to this function with initial values
-       that will be overwritten if they exist in the file
-    """
-    #TODO: redo how dict key values are replaced
-    # replace valuesa as they are read in, and prevent infinite loops
-    if dict == None:
-        dict = {}
-    
-    
-    
-    if os.path.exists(fpath):
-        l = " "
-
-        rf = open(fpath,"r")
-        
-        while len(l) != 0:
-            l  = rf.readline()
-            e = l.strip()
-            try:
-                if len(e) > 0: # not empty
-                    if e[0] != "#": # not a comment
-
-                        # allow continuation to a new line by having the last character in a line
-                        # a back slash '\'
-                        while e[-1] == '\\':
-                            l = rf.readline().strip();
-                            e = e[:-1]+" "+l
-                            
-                        (k,v) = e.split('=>')
-                        k = k.strip()
-                        v = v.strip()
-                        # replace variables that have already been defined in the new variables
-                        # as they are read. this allows among other features, the ability to define
-                        # one variable use it to expand into others, then redefine it to expand into other
-                        # variables. , also the construct, a=red; a=%a%,%a%,%a%; 
-                        #   a now equals "red,red,red"
-                        for key in dict:
-                            v = v.replace("%%%s%%"%key,dict[key]);
-                        dict[k] = v
-            except:
-                pass
-            
-        rf.close()
-
-    
-    return dict
-    
-def read_css_file(dict,fpath,name):
-    """
-        reads in a css file into a string buffer
-        comments ( /* ... */ ) are removed, as well
-        as empty lines
-    """
-    fname = name + ".css"
-    
-    css = ""    
-    l = " "
-
-    rf = open(os.path.join(fpath,fname),"r")
-    lc = 0
-    while len(l) != 0:
-        l  = rf.readline()
-        e = l.strip()
-        # allow for comments, ignore empty lines
-        if len(e) > 0: # not empty
-            if e[:2] != "/*": # not a comment
-                # intelligently replace the image url's
-                # with the path to a known image
-                
-                if "%IMAGE%" in e:
-                    image = e[e.find("%IMAGE%")+7:e.rfind('.')+4]   # with this, only 3 letter extensions are allowed
-                    
-                    if image[0] == '/' or image[0] == '\\': # a slash following %IMAGE% is optional
-                        image=image[1:]
-                        
-                    url="%IMAGE%"+image
-                    
-                    a = (dict["IMAGE"        ]+image).replace('\\','/')  # do i need UnixPathCorrect?           
-                    b = (dict["IMAGE_DEFAULT"]+image).replace('\\','/')  # only if the user does not type the resource with  
-                    c = (dict["IMAGE_GLOBAL" ]+image).replace('\\','/')  # the corrct case    
-
-                    newurl=dict["IMAGE_BLANK"]                 # default option if none of the next three exist
-                    if   os.path.exists( a ): newurl = a       # the resource file from the current style
-                    elif os.path.exists( b ): newurl = b       # resource from default stylr
-                    elif os.path.exists( c ): newurl = c       # resource from global image folder
-                        
-                    e = e.replace(url,newurl.replace('\\','/'));
-                        
-                for key in dict: # replace all %key% in the text with value
-                    e = e.replace("%%%s%%"%key,dict[key])
-                lc += 1    
-                css += e+"\n"
-    #print "lc: %d"%lc;            
-    rf.close()
-
-    return css
-
-def css_dict_value(key,cdict,rdict):
-    """
-        rdict: dictionary loaded from a styles dictionary file
-        cdcit: a new dictionary
-        key:   key to test against
-        if rdict contains the key, set convert that value to a QColor
-        and store in cdict
-    """
-    #TODO this lloks like a oneliner that can be inlined somewhere
-    if key in rdict:
-        cdict[key] = color_stringToQColor(rdict[key])
-    return cdict
-
-def color_stringToQColor(string):
-    #TODO this function looks un-neccessary
-    hex = {'0':0, '1':1, '2':2, '3':3, '4':4,
-           '5':5, '6':6, '7':7, '8':8, '9':9,   
-           'A':10, 'B':11,'C':12, 'D':13, 'E':14, 'F':15,
-           'a':10, 'b':11,'c':12, 'd':13, 'e':14, 'f':15 }
-    hex_template = "#XXXXXX" 
-    r=0;
-    g=0;
-    b=0;
-    a=1;
-    if len(string) == len(hex_template):
-        r = hex[string[1]]*16 + hex[string[2]]
-        g = hex[string[3]]*16 + hex[string[4]]
-        b = hex[string[5]]*16 + hex[string[6]] 
-    elif string[:4] == 'rgba':   #rgb(YYX,YYX,YYX)
-        # for css alpha is in range 0 to 1.
-        (i,j,k,a) = string[5:-1].split(',')
-        r = int(i)
-        g = int(j)
-        b = int(k)
-        a = float(a)
-    elif string[:3] == 'rgb':   #rgb(YYX,YYX,YYX)
-        (i,j,k) = string[4:-1].split(',')
-        r = int(i)
-        g = int(j)
-        b = int(k)
-        #string is now YYX,YYX,YYX
-    return QColor(r,g,b,255*a);   
-
-def css_save_dict(style_name,fname,dict):
-    """
-        save a color dictionary 
-        sort the values for user convenience
-        it is not recommeneded to use this for theme.dict
-        the default themes may contain values beyond the standard set
-    """
-    fpath = os.path.join(MpGlobal.installPath,"style",style_name,fname+".dict")
-    
-    k = lambda x: x[0]
-    R = sorted(dict.items(), key = k)
-    
-    wf = open(fpath,"w")
-    for key,value in R :
-        wf.write( "%-20s=> %s\n"%(key,value) )
-    wf.close()
 # ######################################################
 # Misc system file access
 # ######################################################
@@ -1513,7 +1301,7 @@ def fileGetSize(path):
     
 if isPosix:
     def driveGetFreeSpace(path):
-        return 0; #TODO return freespace of given device /media/device/<dont care/
+        return (0,0,0,0); #TODO return freespace of given device /media/device/<dont care/
 else: 
     def driveGetFreeSpace(path):
         import ctypes
@@ -1709,13 +1497,14 @@ def URICreatePath(path):
 def OS_FileName_Correct(filename):
     """
         filename as filename, from output fileGetName
-        so, no extension and no complete path.
+        so, no extension and no complete path. e.g. for the file C:\File.txt
+        filename should equal "File"
         
         this function will make sure that that no illegal characters are in the name
         example '/' wil be removed
-        some illegal characters could still get thru.
+
         unicode is allowed under certain locales of isalpha
-        that may pose problems for some people.
+        that may pose problems for some systems
         
     """
     
@@ -1724,10 +1513,7 @@ def OS_FileName_Correct(filename):
     s = unicode(filename)
     #print "".join([x for x in s if x.isalpha() or x.isdigit() or x in "+=-_.()[]{}`~@#$%^&"])
     return "".join([x for x in s if x.isalpha() or x.isdigit() or x in white])
-    
-    
 
-   
 def UnixPathCorrect(path):
     """
         If the path is not found, assume there is a case error
@@ -1797,217 +1583,6 @@ else:
     def systemDriveList():
         return Settings.DRIVE_ALTERNATE_LOCATIONS + ['%s:\\' % d for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists('%s:' % d)]
   
-
-
-
-
-ufr = lambda FILE:  unicode( FILE.readline().strip() ,"utf-8");
-
-def xml_open(file):
-
-    D={}
-    lol=[]
-    
-    with open(file,"r") as FILE:
-        # first line of an xml file is:
-        # <?xml version="1.0" encoding="UTF-8"?>
-            
-        xml_format = xml_read_until_line_startswith(FILE,"<?xml");
-        
-        print xml_format
-        xml_read_until_line_startswith(FILE,"<dict>");
-        xml_read_until_line_startswith(FILE,"<key>Tracks");
-        FILE.readline(); # = dict
-        song = True
-        
-        while song != None:
-            id,song,valid = xml_itunes_read_song(FILE)
-            if song != None:
-                temp = xml_itunes_create_song(song);
-                if temp != None:
-                    D[id] = temp;
-        print len(D);    
-        xml_read_until_line_startswith(FILE,"<key>Playlists");
-        
-        FILE.readline(); # == array
-        valid=True
-        
-         # list of lists
-        while valid==True:
-            name,newList,valid = xml_itunes_read_playlist(FILE);
-            if valid and len(newList) > 0:
-                lol.append( [name,newList] )
-                print name.encode("unicode-escape"),"-",len(name),"-",len(newList)
-        # playlists follow here, starting with <dict>
-        
-    xml_itunes_save_playlists(D,lol);    
-    
-    R = [None]*len(D);
-    i=0;
-    for id,song in D.items():
-        R[i] = song
-        i += 1;
-        
-    return R;
-    
-def xml_itunes_create_song(D):
-
-    #<key>Name</key><string>From Yesterday</string>
-    #<key>Artist</key><string>30 Seconds to Mars</string>
-    #<key>Album</key><string>A Beautiful Lie</string>
-    #<key>Genre</key><string>Indie Rock</string>
-    #<key>Size</key><integer>4010037</integer>
-    #<key>Total Time</key><integer>250007</integer>
-    #<key>Track Number</key><integer>14</integer>
-    #<key>Bit Rate</key><integer>128</integer>
-    #<key>Location</key><string>file://localhost/C:/Users/Ryan/Music/iTunes/iTunes%20Music/30%20Seconds%20to%20Mars/A%20Beautiful%20Lie/14%20From%20Yesterday.m4a</string>
-    
-    path = D.get("Location","")
-    
-    if path == "":
-        print "not a path"
-        return None;
-        
-    if path.startswith("file://localhost/"):
-        path = path.replace("file://localhost/","")
-        
-    path = urllib.unquote(path)
-    
-    if not os.path.exists(path):
-        print "not an thing"
-        return None;
-
-    song = id3_createSongFromPath(path);
-        
-    # so we have a song but it is not reliable    
-    return song;
-    
-def xml_itunes_save_playlists(songDict,playListList):
-    # pass a song Dictionary where an itunes id number corresponds to a song.
-    # and a list of playlists, with name,list, and each item is an id to a song.
-    # create the playlist as a list of songs, and then save as a real playlist
-    
-    for name,list in playListList:
-
-        R=[]
-        for item in list:
-            temp = songDict.get(item,None)
-            if temp != None:
-                R.append(temp)
-
-        print name.encode("unicode-escape"),len(R)
-        name=  OS_FileName_Correct ( name.encode("unicode-escape") )
-        
-        fullpath=os.path.join(MpGlobal.installPath,"playlist","itunes_%s.playlist"%(name))
-        playListSave( fullpath, R )
-        # save list to playlist folder using itunes_name.encode("unicode-escape")     
-    return            
-  
-def xml_read_until_line_startswith(FILE,string):
-
-    line = ufr(FILE);
-    while line.startswith(string) == False and line :
-        line = ufr(FILE);
-    return line;
-  
-def xml_split_keyval(string):
-    """
-        given a string return a tuple with the first key value pair
-        
-        <key>KEYNAME</key><TYPE>TYPEVALUE</TYPE>
-        type is integer, string, etc
-    """
-    key = u"None"
-    val = None
-    typ = u"None" # type of the value
-    ind = 0  # ending index in the str.
-    
-    R = string.strip().split("<");
-    # R = ['', 'key>key', '/key>', 'value>value', '/value>']
-    if len(R) > 1:
-        _a,key = R[1].split(">")
-        if len(R) > 3:
-            typ,val = R[3].split(">")
-        
-        
-        return (key,val,typ);
-    return ("","","");
-def xml_itunes_read_song(FILE):
-    
-    line = ufr(FILE)
-    
-    if line == u"</dict>": # end of songs section
-        return (0,None,False)
-        
-    _id = xml_split_keyval( line  )[0] 
-    
-    FILE.readline() # should equal <dict>
-    line = ufr(FILE)
-    
-    song = {};
-    
-    # song key value pairs
-    while line != u"</dict>":
-        key,val,typ = xml_split_keyval(line)
-        song[key] = val;
-        line = ufr(FILE)
-
-    valid = True;    # if item is a valid song file
-        
-    return (_id,song,valid);
-
-def xml_itunes_read_playlist(FILE):
-
-    line = FILE.readline().strip(); # read the word <dict>,   start of a playlist
-    if line != "<dict>":
-        return "",[],False;
-    
-    header = {};
-    R = [];
-    
-    
-    # read the playlist header, extract the Name
-    line = ufr(FILE);
-    while line != u"<array>":
-        if line.startswith(u"<key>"):
-            k,v,t = xml_split_keyval(line);
-            header[k] = v;
-        line = ufr(FILE);
-
-        
-        
-    line = ufr(FILE)
-
-    # read the playlist index values
-    while line != u"</array>":
-        line = FILE.readline().strip(); 
-        k,v,t = xml_split_keyval(line); # TRACKID, IDNUMBER, integer
-        R.append(v)
-        FILE.readline() # skip </dict>
-        line = ufr(FILE)
-        
-    FILE.readline() # skip </dict>
-    
-    valid = True;
-    
-    return header.get(u"Name",u"NONE"),R,valid
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   
 # ###################################################################

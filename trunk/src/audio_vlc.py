@@ -26,9 +26,7 @@ else:
         # i have everything wrapped up in control statements so
         # that even if the player does not work the application will
         # not crash
-        instance  = None
-        __player__= None
-        __media__ = None
+
         def __init__(self):
             self.invoke();
         
@@ -56,6 +54,7 @@ else:
                     self.__player__ = self.__instance__.media_player_new()
                 except Exception as e:
                     print "VLC Player Error: %s"%(e.args)
+                    
         def isValid(self):
             return self.__instance__ != None;
         
@@ -191,7 +190,10 @@ else:
         def setVolume(self,value):
             if self.__player__ != None:
                 self.__player__.audio_set_volume(value)
-      
+                self.volume = value
+        def getVolume(self):
+            # return the current volume as a value from 0 (off or mute) to 100 (full on)
+            return self.volume
          
 
       
