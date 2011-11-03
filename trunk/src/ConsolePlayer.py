@@ -59,6 +59,8 @@ from PyQt4.QtGui import *
 if __debug: print "Qt Imports"    
 #Modules needed to start the player
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 if __debug: print "MpGlobalDefines Imported"    
 from MpApplication import *
 if __debug: print "MpApplication Imported"    

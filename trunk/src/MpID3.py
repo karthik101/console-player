@@ -241,6 +241,8 @@ def atoi(a):
 
     
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 from MpScripting import *  
 from MpSort import *
 from MpSearch import *

@@ -1261,6 +1261,8 @@ import subprocess
 import ctypes
 
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 from MpFileAccess import *
 from MpID3 import *
 from UnicodeTranslate import Translate

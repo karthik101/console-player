@@ -9,6 +9,8 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 import widgetInfoDisplay
 
 class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
