@@ -35,20 +35,17 @@ from MpFileAccess import *
 from MpScripting import *
 from MpID3 import *
 from MpGlobalDefines import *
-
+from MpSong import Song
+from datatype_hex64 import *
 
 #__IMPORT_VLC__    = False
 #__IMPORT_PHONON__ = False
         
 
         
-PATH      = MpMusic.PATH     
-EXIF      = MpMusic.EXIF     
-ARTIST    = MpMusic.ARTIST   
-TITLE     = MpMusic.TITLE    
-ALBUM     = MpMusic.ALBUM    
-GENRE     = MpMusic.GENRE    
-DATESTAMP = MpMusic.DATESTAMP
+    
+   
+
 COMMENT   = MpMusic.COMMENT  
 RATING    = MpMusic.RATING   
 LENGTH    = MpMusic.LENGTH   
@@ -163,16 +160,16 @@ class MediaManager(object):
 
         if type(self.CurrentSong) == Song:
         
-            path = self.CurrentSong[PATH]
+            path = self.CurrentSong[MpMusic.PATH]
         
             if not os.path.exists(path) and isPosix: 
                     path = UnixPathCorrect(path)
                     if path != '': # if the returned path exists
-                        self.CurrentSong[PATH] = path
+                        self.CurrentSong[MpMusic.PATH] = path
             #if isPosix: print "   > load"
             if self.mp.mediaLoad(path) and path != '':
                 # if the load was successful update the display info
-                MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEBARMAXVAL"),self.CurrentSong[LENGTH])    
+                MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEBARMAXVAL"),self.CurrentSong[MpMusic.LENGTH])    
                 self.updateDisplayIndex()
                 self.updateTimeDisplay(0)
                 MpGlobal.Window.emit(SIGNAL("ON_SONG_LOAD_FILLTABlE")) 
@@ -313,7 +310,7 @@ class MediaManager(object):
         
         #if isPosix: print "   > LOG HISTORY"
         if Settings.LOG_HISTORY:
-            history_log(MpGlobal.FILEPATH_HISTORY,song,DATESTAMP)
+            history_log(MpGlobal.FILEPATH_HISTORY,song,MpMusic.DATESTAMP)
         #if isPosix: print "   < LOG HISTORY"   
         
         if self.CurrentIndex == self.stopIndex:
@@ -381,7 +378,7 @@ class MediaManager(object):
         """        
         pos = self.getTime()
         if self.CurrentSong != None:
-            length = self.CurrentSong[LENGTH]
+            length = self.CurrentSong[MpMusic.LENGTH]
             if float(pos)/length > 0.9 :
                 self.updateSongRecord(self.CurrentSong)
                 self.autonext()
@@ -458,16 +455,16 @@ class MediaManager(object):
         """
         s = 0
         for song in self.playList:
-            s += song[LENGTH]
+            s += song[MpMusic.LENGTH]
             
         return convertTimeToString(s)
     
     def updateTimeDisplay(self,time):
         if self.CurrentSong != None:
             a = convertTimeToString(time)
-            b = convertTimeToString(self.CurrentSong[LENGTH])
-            c = convertTimeToString(self.CurrentSong[LENGTH] - time)
-            if time > self.CurrentSong[LENGTH] :
+            b = convertTimeToString(self.CurrentSong[MpMusic.LENGTH])
+            c = convertTimeToString(self.CurrentSong[MpMusic.LENGTH] - time)
+            if time > self.CurrentSong[MpMusic.LENGTH] :
                 MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEINFO"),"%s/%s"%(a,b)) 
             else:
                 MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEINFO"),"%s/%s - %s"%(a,b,c))    

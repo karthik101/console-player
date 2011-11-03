@@ -290,7 +290,7 @@ class SearchObject(object):
 
         index = 0
         
-        #time = datetime.datetime.now()
+        time = datetime.datetime.now()
         
         self.a=0; # the only way to debug match() effectivley
         self.b=0; # is to increment these counters, one each for C O N X
@@ -313,8 +313,9 @@ class SearchObject(object):
             print "B: %d"%self.b
             print "C: %d"%self.c
             print "D: %d\n"%self.d
-        #end = datetime.datetime.now()
-        #debug( "Search Time: %s"%(end-time) )
+            
+        end = datetime.datetime.now()
+        diagMessage( MpGlobal.DIAG_SEARCH, "Search Time: %s\n"%(end-time) )
         return S[:index]
 
     def _expand_preset(self,string,preset):
@@ -625,6 +626,9 @@ class SearchObject(object):
             i+=1;
         return string
     
+    def __str__(self):
+        return "<SearchObject>"
+    
     def debug(self):
         print self._searchC
         print self._searchO
@@ -666,7 +670,10 @@ import ctypes
  
 from StringQuoter import *    
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 from MpFileAccess import *
+from MpScripting import *
     
     
     

@@ -169,7 +169,7 @@ def musicLoad(filepath):
             line2 = os.path.join("D:\\" , line2)
         
             
-        array[index] = Song()#[[]]*MpGlobal.SONGDATASIZE
+        array[index] = Song()
         
         array[index][MpMusic.EXIF] = unicode(line1,'unicode-escape')
                         
@@ -2030,6 +2030,8 @@ from PyQt4.QtGui import *
 import struct
 
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 from MpScripting import *;
 from MpSort import *
 from MpSearch import *

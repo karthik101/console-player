@@ -16,6 +16,8 @@
 #           in the RecordContainter
 # #########################################################
 
+from MpSong import *  
+
 class RecordContainer(object):
     def __init__(self):
         self.DEVMODE = False
@@ -236,44 +238,13 @@ class GlobalContainer(object):
         self.FILEPATH_HISTORY          = os.path.join(self.installPath,"history.log")
 
         self.FILEPATH_ICON = os.path.join(self.installPath,"icon.png")
-
-class MusicContainer(object):
-# ########################################
-    PATH      =  1;    # Song Path
-    EXIF      =  0;    # FullSongData also bad attempt at abrv EXtInF:EXTra INFo Used for all info minus file path
-    ARTIST    =  2;    # Song Artist
-    TITLE     =  3;    # Song Title
-    ALBUM     =  4;    # Song Album
-    GENRE     =  5;    # Song Genre
-    DATESTAMP =  6;    # Stamp in passive order from the last time this was played. YYYY/MM/DD HH:MM
-    COMMENT   =  7;    # user given comment
-    DATEADDEDS=  8;    # string form date the song was added to the library
-    
-    RATING    =  9;    # Song Rating
-    LENGTH    = 10;    # total length of the song in -M:SS
-    SONGINDEX = 11;    # Album Index
-    PLAYCOUNT = 12;    # Total count of the number of times this song has played
-    SKIPCOUNT = 13;    # Number of times user has clicked next for this song.
-    FILESIZE  = 14;    # File Size in KB
-    BITRATE   = 15;    # Kb per s
-    FREQUENCY = 16;    # running waited average of play frequency ( a avg value of time between playings
-    DATEVALUE = 17;    # DATESTAMP, but as INT value ( determined while loading songs
-    DATEADDED = 18
-    YEAR      = 19;    # year the song was made.
-  
-    # #####
-    SPECIAL   = 20; # true when any error makes this file unuseable ever
-    SELECTED  = 21; # Boolean, selected or not
-    
-    SONGID    = 99  # 64bit hex song id
-    # ########################################
-    STRINGTERM = RATING; # if a value is less than this, we have a string
-    NUMTERM = SELECTED+1;   # if less than this, greater than strterm, we have a numerical value
-    SPEC_WEEK  = 101 # searching by week count ( similar to search by .day)
-    SPEC_MONTH = 102 # searching by month count ( similar to search by .day)
-    SPEC_DATEEU  = 103 # search by formated date DD/MM/YYYY
-    SPEC_DATEUS  = 104 # search by formated date MM/DD/YYYY
-    SPEC_DATESTD = 105 # search by formated date YYYY/MM/DD
+     
+class MusicContainer(EnumSong):
+    """
+        This class extends EnumSong to provide more functionality with working with song info.
+        
+        it also provides some enumaeration for playing songs, searching for songs, etc.
+    """
 
     # #############################
     # Direction Modifiers
@@ -306,103 +277,102 @@ class MusicContainer(object):
     PL_PLAYLIST_CONSECUTIVE = 1
     PL_PLAYLIST_RANDOM = 2
     PL_NO_PLAYLIST = 4
-
     AUTO_SIGNAL_ISSUED = False; # solves a bug with threads/queueing in phonon
 
     #define a dictionary for converting str types to integers
     # TODO in the future, allow the user to modify this list
-    # this will be the official abreviation list
-    D_StrToDec = {   'alb'           : ALBUM, \
-                     'abm'           : ALBUM, \
-                     'added'         : DATEADDED, \
-                     'album'         : ALBUM, \
-                     'art'           : ARTIST, \
-                     'artist'        : ARTIST, \
-                     'bitrate'       : BITRATE, \
-                     'comm'          : COMMENT, \
-                     'comment'       : COMMENT, \
-                     'day'           : DATESTAMP, \
-                     'dateval'       : DATEVALUE, \
-                     'exif'          : EXIF, \
-                     'size'          : FILESIZE, \
-                     'freq'          : FREQUENCY, \
-                     'gen'           : GENRE, \
-                     'len'           : LENGTH, \
-                     'path'          : PATH, \
-                     'pcnt'          : PLAYCOUNT, \
-                     'playcount'     : PLAYCOUNT, \
-                     'rte'           : RATING, \
-                     'rate'          : RATING, \
-                     'rating'        : RATING, \
-                     'sel'           : SELECTED, \
-                     'scnt'          : SKIPCOUNT, \
-                     'skipcount'     : SKIPCOUNT, \
-                     'id'            : SONGID, \
-                     'index'         : SONGINDEX, \
-                     'spec'          : SPECIAL, \
-                     'dateeu'        : SPEC_DATEEU, \
-                     'dateus'        : SPEC_DATEUS, \
-                     'date'          : SPEC_DATESTD, \
-                     "month"         : SPEC_MONTH, \
-                     "week"          : SPEC_WEEK, \
-                     'ttl'           : TITLE, \
-                     'tit'           : TITLE, \
-                     'title'         : TITLE, \
-                     'year'         : YEAR
+    # this is the official abreviation list
+    D_StrToDec = {   'alb'           : EnumSong.ALBUM, \
+                     'abm'           : EnumSong.ALBUM, \
+                     'added'         : EnumSong.DATEADDED, \
+                     'album'         : EnumSong.ALBUM, \
+                     'art'           : EnumSong.ARTIST, \
+                     'artist'        : EnumSong.ARTIST, \
+                     'bitrate'       : EnumSong.BITRATE, \
+                     'comm'          : EnumSong.COMMENT, \
+                     'comment'       : EnumSong.COMMENT, \
+                     'day'           : EnumSong.DATESTAMP, \
+                     'dateval'       : EnumSong.DATEVALUE, \
+                     'exif'          : EnumSong.EXIF, \
+                     'size'          : EnumSong.FILESIZE, \
+                     'freq'          : EnumSong.FREQUENCY, \
+                     'gen'           : EnumSong.GENRE, \
+                     'len'           : EnumSong.LENGTH, \
+                     'path'          : EnumSong.PATH, \
+                     'pcnt'          : EnumSong.PLAYCOUNT, \
+                     'playcount'     : EnumSong.PLAYCOUNT, \
+                     'rte'           : EnumSong.RATING, \
+                     'rate'          : EnumSong.RATING, \
+                     'rating'        : EnumSong.RATING, \
+                     'sel'           : EnumSong.SELECTED, \
+                     'scnt'          : EnumSong.SKIPCOUNT, \
+                     'skipcount'     : EnumSong.SKIPCOUNT, \
+                     'id'            : EnumSong.SONGID, \
+                     'index'         : EnumSong.SONGINDEX, \
+                     'spec'          : EnumSong.SPECIAL, \
+                     'dateeu'        : EnumSong.SPEC_DATEEU, \
+                     'dateus'        : EnumSong.SPEC_DATEUS, \
+                     'date'          : EnumSong.SPEC_DATESTD, \
+                     "month"         : EnumSong.SPEC_MONTH, \
+                     "week"          : EnumSong.SPEC_WEEK, \
+                     'ttl'           : EnumSong.TITLE, \
+                     'tit'           : EnumSong.TITLE, \
+                     'title'         : EnumSong.TITLE, \
+                     'year'          : EnumSong.YEAR
                     }
 
     def exifToString(self,exif):
 
-        if   exif == MusicContainer.PATH      : return "PATH";
-        elif exif == MusicContainer.EXIF      : return "EXIF";
-        elif exif == MusicContainer.ARTIST    : return "ARTIST";
-        elif exif == MusicContainer.TITLE     : return "TITLE";
-        elif exif == MusicContainer.ALBUM     : return "ALBUM";
-        elif exif == MusicContainer.GENRE     : return "GENRE";
-        elif exif == MusicContainer.DATESTAMP : return "DATESTAMP";
-        elif exif == MusicContainer.COMMENT   : return "COMMENT";
-        elif exif == MusicContainer.RATING    : return "RATING";
-        elif exif == MusicContainer.LENGTH    : return "LENGTH";
-        elif exif == MusicContainer.SONGINDEX : return "SONGINDEX";
-        elif exif == MusicContainer.PLAYCOUNT : return "PLAYCOUNT";
-        elif exif == MusicContainer.SKIPCOUNT : return "SKIPCOUNT";
-        elif exif == MusicContainer.FILESIZE  : return "FILESIZE";
-        elif exif == MusicContainer.BITRATE   : return "BITRATE";
-        elif exif == MusicContainer.FREQUENCY : return "FREQUENCY";
-        elif exif == MusicContainer.DATEVALUE : return "DATEVALUE";
-        elif exif == MusicContainer.SPECIAL   : return "SPECIAL";
-        elif exif == MusicContainer.SELECTED  : return "SELECTED";
-        elif exif == MusicContainer.SONGID    : return "ID#";
+        if   exif == EnumAong.PATH      : return "PATH";
+        elif exif == EnumAong.EXIF      : return "EXIF";
+        elif exif == EnumAong.ARTIST    : return "ARTIST";
+        elif exif == EnumAong.TITLE     : return "TITLE";
+        elif exif == EnumAong.ALBUM     : return "ALBUM";
+        elif exif == EnumAong.GENRE     : return "GENRE";
+        elif exif == EnumAong.DATESTAMP : return "DATESTAMP";
+        elif exif == EnumAong.COMMENT   : return "COMMENT";
+        elif exif == EnumAong.RATING    : return "RATING";
+        elif exif == EnumAong.LENGTH    : return "LENGTH";
+        elif exif == EnumAong.SONGINDEX : return "SONGINDEX";
+        elif exif == EnumAong.PLAYCOUNT : return "PLAYCOUNT";
+        elif exif == EnumAong.SKIPCOUNT : return "SKIPCOUNT";
+        elif exif == EnumAong.FILESIZE  : return "FILESIZE";
+        elif exif == EnumAong.BITRATE   : return "BITRATE";
+        elif exif == EnumAong.FREQUENCY : return "FREQUENCY";
+        elif exif == EnumAong.DATEVALUE : return "DATEVALUE";
+        elif exif == EnumAong.SPECIAL   : return "SPECIAL";
+        elif exif == EnumAong.SELECTED  : return "SELECTED";
+        elif exif == EnumAong.SONGID    : return "ID#";
         
-        elif exif == MusicContainer.DATEADDEDS: return "DATEADDED";
-        elif exif == MusicContainer.YEAR      : return "YEAR";
+        elif exif == EnumSong.DATEADDEDS: return "DATEADDED";
+        elif exif == EnumSong.YEAR      : return "YEAR";
         return "UNKOWN TAG:%d"%exif
 
     def stringToExif(self,exif):
 
-        if   exif == "PATH"      : return MusicContainer.PATH
-        elif exif == "EXIF"      : return MusicContainer.EXIF
-        elif exif == "ARTIST"    : return MusicContainer.ARTIST
-        elif exif == "TITLE"     : return MusicContainer.TITLE
-        elif exif == "ALBUM"     : return MusicContainer.ALBUM
-        elif exif == "GENRE"     : return MusicContainer.GENRE
-        elif exif == "DATESTAMP" : return MusicContainer.DATESTAMP
-        elif exif == "COMMENT"   : return MusicContainer.COMMENT
-        elif exif == "RATING"    : return MusicContainer.RATING
-        elif exif == "LENGTH"    : return MusicContainer.LENGTH
-        elif exif == "SONGINDEX" : return MusicContainer.SONGINDEX
-        elif exif == "PLAYCOUNT" : return MusicContainer.PLAYCOUNT
-        elif exif == "SKIPCOUNT" : return MusicContainer.SKIPCOUNT
-        elif exif == "FILESIZE"  : return MusicContainer.FILESIZE
-        elif exif == "BITRATE"   : return MusicContainer.BITRATE
-        elif exif == "FREQUENCY" : return MusicContainer.FREQUENCY
-        elif exif == "DATEVALUE" : return MusicContainer.DATEVALUE
-        elif exif == "SPECIAL"   : return MusicContainer.SPECIAL
-        elif exif == "SELECTED"  : return MusicContainer.SELECTED
-        elif exif == "ID#"       : return MusicContainer.SONGID
-        
-        elif exif == "DATEADDED" : return MusicContainer.DATEADDEDS
-        elif exif == "YEAR"      : return MusicContainer.YEAR
+        if   exif == "PATH"      : return EnumSong.PATH
+        elif exif == "EXIF"      : return EnumSong.EXIF
+        elif exif == "ARTIST"    : return EnumSong.ARTIST
+        elif exif == "TITLE"     : return EnumSong.TITLE
+        elif exif == "ALBUM"     : return EnumSong.ALBUM
+        elif exif == "GENRE"     : return EnumSong.GENRE
+        elif exif == "DATESTAMP" : return EnumSong.DATESTAMP
+        elif exif == "COMMENT"   : return EnumSong.COMMENT
+        elif exif == "RATING"    : return EnumSong.RATING
+        elif exif == "LENGTH"    : return EnumSong.LENGTH
+        elif exif == "SONGINDEX" : return EnumSong.SONGINDEX
+        elif exif == "PLAYCOUNT" : return EnumSong.PLAYCOUNT
+        elif exif == "SKIPCOUNT" : return EnumSong.SKIPCOUNT
+        elif exif == "FILESIZE"  : return EnumSong.FILESIZE
+        elif exif == "BITRATE"   : return EnumSong.BITRATE
+        elif exif == "FREQUENCY" : return EnumSong.FREQUENCY
+        elif exif == "DATEVALUE" : return EnumSong.DATEVALUE
+        elif exif == "SPECIAL"   : return EnumSong.SPECIAL
+        elif exif == "SELECTED"  : return EnumSong.SELECTED
+        elif exif == "ID#"       : return EnumSong.SONGID
+                                         
+        elif exif == "DATEADDED" : return EnumSong.DATEADDEDS
+        elif exif == "YEAR"      : return EnumSong.YEAR
         return 0
 
     def expandExifMacro(self,string,sigil,song):
@@ -478,595 +448,7 @@ class SEARCH(object):
         return "_%s__"%s
     def __unicode__(self):
         return unicode(self.__str__())
-# ###################################################################
-#
-# ###################################################################
 
-# ###################################################################
-# Custom Data Types
-# ###################################################################
-class hex(int):
-    """
-        Sublcass pythons integer object
-        to print as a hexadecimal number
-        the function len() returns a hex
-        number that is count characters long
-        # use:
-        # hex(-4).len(4) # prints 0xFFFC
-    """
-    def len(self,value):
-        if value > 8: value = 8;
-        if value < 1: value = 8;
-        return "0x"+("%08X"%(self&0xFFFFFFFF))[-value:]
-    def __repr__(self):
-        return "hex(0x%08X)"%self
-    def __str__(self):
-        return "0x%X"%(self&0xFFFFFFFF)
-    def __unicode__(self):
-        return u"0x%X"%(self&0xFFFFFFFF)
-
-import ctypes
-
-class hex64(ctypes.c_ulonglong):
-
-    def __init__(self,lower,upper=0):
-        """
-            USE:
-            hex64(2)       # returns 00000000_00000002
-            hex64(2,4)     # returns 00000004_00000002
-            hex64( hex64 ) # returns a copy of hex64
-            lower can take any integer data type, byte, int, long, long long
-            if upper is non zero, its value is logical-ORed into the upper
-            32 bit position of the unsigned 64 bit long long
-        """
-        if type(lower) == hex64:
-            lower = lower.value
-        if (type(lower) == str):
-            lower = lower[2:]
-            lower = lower.replace('_','')
-            upper = long(lower[:-8],16)
-            lower = long(lower[-8:],16)
-
-        super(hex64,self).__init__(lower);
-
-        self.value = lower | (upper<<32)
-
-    def __repr__(self):
-        s1 = "0x%08X"%ctypes.c_ulong(self.value>>32).value
-        s2 = "0x%08X"%ctypes.c_ulong(self.value    ).value
-        return "hex64(%s,%s)"%(s2,s1)
-    def __str__(self):
-        s1 = "%08X"%ctypes.c_ulong(self.value>>32).value
-        s2 = "%08X"%ctypes.c_ulong(self.value    ).value
-        return "0x%s_%s"%(s1,s2)
-    def __unicode__(self):
-        s1 = u"%08X"%ctypes.c_ulong(self.value>>32).value
-        s2 = u"%08X"%ctypes.c_ulong(self.value    ).value
-        return u"0x%s_%s"%(s1,s2)
-    def __int__(self):
-        return int(self.value&0x00000000FFFFFFFFL)
-    def __long__(self):
-        return long(self.value)
-
-    def __eq__(self,b):
-        assert type(b) == hex64,\
-            "\n*** ERROR INCOMPATABLE TYPES FOR COMPARE __EQ__ HEX64. FOUND %s"%(type(b))
-
-        return self.value == b.value
-    def __ne__(self,b):
-        assert type(b) == hex64,\
-            "\n*** ERROR INCOMPATABLE TYPES FOR COMPARE __NE__ HEX64. FOUND %s"%(type(b))
-
-        return self.value != b.value
-    def __lt__(self,b):
-        assert type(b) == hex64,\
-            "\n*** ERROR INCOMPATABLE TYPES FOR COMPARE __LT__ HEX64. FOUND %s"%(type(b))
-
-        return self.value < b.value
-    def __le__(self,b):
-        assert type(b) == hex64,\
-            "\n*** ERROR INCOMPATABLE TYPES FOR COMPARE __LE__ HEX64. FOUND %s"%(type(b))
-
-        return self.value <= b.value
-    def __gt__(self,b):
-        assert type(b) == hex64,\
-            "\n*** ERROR INCOMPATABLE TYPES FOR COMPARE __GT__ HEX64. FOUND %s"%(type(b))
-
-        return self.value > b.value
-    def __ge__(self,b):
-        assert type(b) == hex64,\
-            "\n*** ERROR INCOMPATABLE TYPES FOR COMPARE __GE__ HEX64. FOUND %s"%(type(b))
-
-        return self.value >= b.value
-
-    def truth(self):
-        return self.value > 0
-
-    def __add__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value+b)
-    def __iadd__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value += b
-        return self
-    def __sub__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value-b)
-    def __isub__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value -= b
-        return self
-    def __mul__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value*b)
-    def __imul__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value *= b
-        return self
-    def __div__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value/b)
-    def __idiv__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value /= b
-        return self
-    def __mod__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value%b)
-    def __imod__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value %= b
-        return self
-    def __pow__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value**b)
-    def __ipow__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value **= b
-        return self
-
-    def __rshift__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value>>b)
-    def __irshift__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value >>= b
-        return self
-    def __lshift__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value<<b)
-    def __ilshift__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value <<= b
-        return self
-    def __or__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value|b)
-    def __ior__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value |= b
-        return self
-    def __and__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value&b)
-    def __iand__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value &= b
-        return self
-    def __xor__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        return hex64(self.value^b)
-    def __ixor__(self,b):
-        if type(b) == hex64:
-            b = b.value
-        self.value ^= b
-        return self
-    def __inv__(self):
-        return hex64(~self.value)
-    __invert__ = __inv__
-
-
-import os
-import time
-
-class Song(list):
-    __repr_str__ = [ MusicContainer.ARTIST,
-                     MusicContainer.TITLE,
-                     MusicContainer.ALBUM,
-                     MusicContainer.GENRE,
-                     MusicContainer.COMMENT,
-                   ];
-    __repr_num__ = [ MusicContainer.RATING,
-                     MusicContainer.LENGTH,
-                     MusicContainer.DATEVALUE,
-                     MusicContainer.SONGINDEX,
-                     MusicContainer.PLAYCOUNT,
-                     MusicContainer.SKIPCOUNT,
-                     MusicContainer.FREQUENCY,
-                     MusicContainer.FILESIZE,
-                     MusicContainer.BITRATE,
-                     MusicContainer.DATEADDED,
-                     MusicContainer.YEAR
-                   ];        
-            
-    def __init__(self,varient="",DRIVELIST=[],DATEFMT="%Y/%m/%d %H:%M"):
-        """
-            Provides 34 different ways to make a new song
-            the default, provide only a path and a container will be created with dummy values
-            
-            pass a repr string and a date format to reconstruct a saved song.
-            
-            of pass in a Song, and an exact copy will be made.
-        """
-        super(Song,self).__init__([0]*GlobalContainer.SONGDATASIZE)
-        self.id = hex64(0);
-        self.md5 = "";
-
-        if type(varient) == Song:
-            # produce a copy of the song.
-            self.id = varient.id
-            self.md5 = varient.md5
-            self[MusicContainer.PATH]      = varient[MusicContainer.PATH]
-            self[MusicContainer.ARTIST]    = varient[MusicContainer.ARTIST]
-            self[MusicContainer.TITLE]     = varient[MusicContainer.TITLE]
-            self[MusicContainer.ALBUM]     = varient[MusicContainer.ALBUM]
-            self[MusicContainer.GENRE]     = varient[MusicContainer.GENRE]
-            self[MusicContainer.DATESTAMP] = varient[MusicContainer.DATESTAMP]
-            self[MusicContainer.DATEVALUE] = varient[MusicContainer.DATEVALUE]
-            self[MusicContainer.COMMENT]   = varient[MusicContainer.COMMENT]
-            self[MusicContainer.RATING]    = varient[MusicContainer.RATING]
-            self[MusicContainer.LENGTH]    = varient[MusicContainer.LENGTH]
-            self[MusicContainer.SONGINDEX] = varient[MusicContainer.SONGINDEX]
-            self[MusicContainer.PLAYCOUNT] = varient[MusicContainer.PLAYCOUNT]
-            self[MusicContainer.SKIPCOUNT] = varient[MusicContainer.SKIPCOUNT]
-            self[MusicContainer.FILESIZE]  = varient[MusicContainer.FILESIZE]
-            self[MusicContainer.FREQUENCY] = varient[MusicContainer.FREQUENCY]
-            self[MusicContainer.BITRATE]   = varient[MusicContainer.BITRATE]
-            self[MusicContainer.SPECIAL]   = varient[MusicContainer.SPECIAL]
-            self[MusicContainer.SELECTED]  = varient[MusicContainer.SELECTED]
-            
-            self[MusicContainer.DATEADDEDS]= varient[MusicContainer.DATEADDEDS]
-            self[MusicContainer.DATEADDED] = varient[MusicContainer.DATEADDED]
-            self[MusicContainer.YEAR ]     = varient[MusicContainer.YEAR]
-            return;
-        elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
-            
-            if varient.strip().count('\n') > 0:
-                self.from_repr(varient,DRIVELIST,DATEFMT);
-                return;
-        
-        self[MusicContainer.PATH]      = unicode(varient)
-        self[MusicContainer.ARTIST]    = u"Unknown Artist"
-        self[MusicContainer.TITLE]     = u"Unknown Title"
-        self[MusicContainer.ALBUM]     = u"Unknown Album"
-        self[MusicContainer.GENRE]     = u"None"
-        self[MusicContainer.DATESTAMP] = "NEW"
-        self[MusicContainer.DATEADDEDS]= ""
-        self[MusicContainer.DATEVALUE] = 0
-        self[MusicContainer.COMMENT]   = ""
-        self[MusicContainer.RATING]    = 0
-        self[MusicContainer.LENGTH]    = 64
-        self[MusicContainer.SONGINDEX] = 0
-        self[MusicContainer.PLAYCOUNT] = 0
-        self[MusicContainer.SKIPCOUNT] = 0
-        self[MusicContainer.FILESIZE]  = 0
-        self[MusicContainer.FREQUENCY] = 0
-        self[MusicContainer.BITRATE]   = 0
-        self[MusicContainer.SPECIAL]   = False
-        self[MusicContainer.SELECTED]  = False
-        
-        self[MusicContainer.DATEADDEDS]= ""
-        self[MusicContainer.DATEADDED] = 0
-        self[MusicContainer.YEAR ]     = 0
-        
-
-    def __str__(self):
-        return "[%s]"%(self.id)
-    
-    def __unicode__(self):
-        return "[%s] %s - %s"%(self.id,self[MusicContainer.ARTIST],self[MusicContainer.TITLE])
-
-    def update(self):
-        """
-            set id to a 64 bit unsigned integer with format:
-            upper 32 = [A1-6,A2-6,LA-7|B1-6,LB-7]
-            lower 32 = [T1-6,T2-6,LT-8| LEN-12  ]
-            Where A = Artist, B = Album, T = Title, Len is SONG LENGTH
-            and A1 indicates the first character of ARTIST
-            and -6 indicates to format that charcter into 6 bits (resp. 7,8,12)
-
-            This is ingeneral a very weak way of encoding a song into the minimum number of bits
-            This will only work for US-ASCII and even then will only work well
-            with ALPHA-NUMERIC data. I will assume that 90% of songs fit in that pattern
-
-            This number should be mostly unique. ASSUME that it is ALWAYS unique
-
-            If one sorts by this number songs will appear in order of Artist,
-            and internally sorted by album then title, then song length
-
-            Only the first 2 charactes are considered (1 for album)
-            if two text entries contain the same first charactereds
-            then the comparison uses the length of the word taking the shorter first
-            This will take care of edge cases such as "ITEM - I", "ITEM - IV" etc (for small sets)
-
-            slots 0x26 - 0x3E can be defined to anything to help extend uniqueness
-
-            special case to whatch: Tsubasa
-            4 albums all hash to the same 32 bit hi values TS and TS
-            lower 32 bits are always different, so this is success
-        """
-        art = self[MusicContainer.ARTIST].upper()
-        if art[:4] == "THE ":
-            art = art[4:]
-
-        a = u"%- 2s"%art[:2]
-        b = u"%s"   %self[MusicContainer.ALBUM ][:1].upper()
-        t = u"%- 2s"%self[MusicContainer.TITLE ][:2].upper()
-        l = self[MusicContainer.LENGTH ]
-        _a = (Song.__char_to_6bit__(a[0])<<6)|Song.__char_to_6bit__(a[1])
-        _a = (_a<<7)|Song.__str_to_Xbit__(self[MusicContainer.ARTIST])
-        _b =  Song.__char_to_6bit__(b)
-        _b = (_b<<7)|Song.__str_to_Xbit__(self[MusicContainer.ALBUM])
-        _t = (Song.__char_to_6bit__(t[0])<<6)|Song.__char_to_6bit__(t[1])
-        _t = (_t<<8)|Song.__str_to_Xbit__(self[MusicContainer.TITLE])
-        _l = Song.__int_to_Xbit__(l)
-
-        _x = (_a<<13)|_b
-        _y = (_t<<12)|_l
-
-        self.id = hex64(_y,_x)
-
-        #print self.id
-        #print "[%-2s] [%-2s] [%-2s] [%-d]"%(a,b,t,l)
-        #print "[%03X] [%03X] [%03X] [%03X]"%(_a,_b,_t,_l)
-        return
-
-    @staticmethod
-    def __char_to_6bit__(c):
-        o = ord(c.upper())
-        # 00 - 09 := 0-9
-        # 0A      := ASCII 0 - 127, not ALPHANUMERIC
-        # 0B - 24 := A-Z
-        # 25      := ASCII 127 - 256
-        # 26      :=
-        # 27      :=
-        # 28      :=
-        # 29      :=
-        # 2A      :=
-        # 2B      :=
-        # 2C      :=
-        # 2D      :=
-        # 2E      :=
-        # 2F      :=
-        # 30      :=
-        # 31      :=
-        # 32      :=
-        # 33      :=
-        # 34      :=
-        # 35      :=
-        # 36      :=
-        # 37      :=
-        # 38      :=
-        # 39      := Hiragana lower half
-        # 3A      := Hiragana upper half
-        # 3B      := Katakana lower half
-        # 3C      := Katakana upper half
-        # 3D      := kanjii lower half 4E00 - 76DF mostly useless
-        # 3E      := Kanjii upper half 76F0 - 9FBF
-        # 3F      := else
-        if ord(u'0') <= o <= ord(u'9'):
-            return o - ord(u'0')
-        elif ord(u'A') <= o <= ord(u'Z'):
-            return o - ord(u'A') + 11
-        elif o <= 0x7F:
-            return 0x0A;
-        elif o <= 0xFF:
-            return 0x25;
-        elif 0x3040 <= o <= 0x306F:
-            return 0x39
-        elif 0x3070 <= o <= 0x309F:
-            return 0x3A
-        elif 0x30A0 <= o <= 0x30CF:
-            return 0x3B
-        elif 0x30D0 <= o <= 0x30FF:
-            return 0x3C
-        elif 0x4E00 <= o <= 0x76DF:
-            return 0x3D
-        elif 0x76F0 <= o <= 0x9FBF:
-            return 0x3E
-
-
-        return 0x3F
-    @staticmethod
-    def __str_to_Xbit__(s,b=7):
-        l = len(s)
-        m = (1<<b) - 1; # max int
-        return l if l<=m else m
-    @staticmethod
-    def __int_to_Xbit__(s,b=12):
-        m = (1<<b) - 1; # max int
-        return s if s<=m else m
-    @staticmethod
-    def repr_length():
-        return 6; # return the number of lines of text retunred by __repr__.
-    
-    def __format_exif__(self):
-        """
-            returns a formatted exif string.
-            ExIf stands for EXtra InFo
-            this frame contains information from all text frames,
-            this makes it possible to search all text fields, at once, in an easier way
-        """
-        return "%s %s %s %s %s"%( \
-            unicode(self[MusicContainer.ARTIST]), \
-            unicode(self[MusicContainer.TITLE]), \
-            unicode(self[MusicContainer.ALBUM]), \
-            unicode(self[MusicContainer.GENRE]), \
-            unicode(self[MusicContainer.COMMENT]) );
-            
-    def __repr__(self,drivelist=[]):
-
-        """
-            repr produces the following 6 lines:
-            "3 Doors Down","Kryptonite","The Better Life","Alternative Rock","2011/08/28 06:55",""
-            5,233,1,12,0,92,3656,0
-            D:\\Music\\discography\\discography - 3 doors down\\the better life\\01 kryptonite.mp3
-            md5:
-            c1:
-            c2:
-            
-            if drivelist is not empty, as in (song.__repr__([]) is called and not "%r"%song ) 
-                then the largest match from drivelist is stripped from the START of PATH
-
-        """
-
-        # ######################################
-        # generate string and number values
-        q = lambda x: x.replace("\"","\\\"");
-
-        sfmt = ""
-        nfmt = ""
-        
-        for field in Song.__repr_str__:
-            sfmt += "\"%s\","%q(self[field])
-            
-        for field in Song.__repr_num__:
-            nfmt += "%d,"%self[field]
-
-        # ######################################
-        # determine what to save from the path
-        p = self[MusicContainer.PATH]
-        lp = p.lower().replace("\\",'/');
-        lmatch = 0
-        
-        for part in drivelist:
-            part = part.lower().replace("\\",'/');
-            if lp.startswith(part):
-                lmatch = len(part);
-                
-        p = p[lmatch:]     
-        
-        if p[0] == '\\' or p[0] == '/': # unix bug fix for path restoration
-            p = p[1:]
-            
-        # ###################################### 
-        # store everything under one multiline string
-        # -1 strips final comma
-        repr  = u"%s\n"%unicode(sfmt[:-1]).encode('unicode-escape')
-        repr += u"%s\n"%unicode(nfmt[:-1])
-        repr += u"%s\n"%unicode(p).encode('unicode-escape');
-        repr += u"md5:%s\n"%self.md5;
-        repr += u"lo:\n";   # lo frequency information
-        repr += u"hi:\n";   # hi frequency information
-        
-        # A NEW LINE MUST BE THE LAST CHARACTER IN REPR
-        # BUT IS NOT REQUIRED IN RESTORING FROM A REPR
-
-        return repr
-
-    def from_repr(self,string,DRIVELIST,FMT):
-        """
-            take the output from __repr__
-            and set the values of the current song.
-            
-            FMT allows the date to be formatted an way a user wants, as only the UNIX time stamp
-            is saved, as an integer
-            
-        """
-        string = str(string) # cannot have an unicode object here
-        
-        R = string.split("\n") # split the 6 or more line string into multiple lines
-        R[0] = R[0][1:-1] # strip the beginning and ending quotes from the string field
-        
-        s = R[0].strip().split('","') # in repr all " are changed to \" therefore any instance
-                                      # of "," in a song field will be \",\". this split cannot fail.
-
-        n = R[1].split(',');
-        
-        assert len(R) == 6, "REPR ERROR <%s>"%string
-        # process each string value
-        for i in range(len(s)): # fix all escaped quotes
-            s[i] = unicode(s[i],'unicode-escape').replace("\\\"","\"");
-        
-        # s is now an array of unicode strings for all text information stored
-        # n is now an array of integers for all text information stored
-        
-        # by keying off the length of 's' and 'n', i can tack on
-        # new save values to the END of the __repr_str__ and __repr__num__
-        # lists, then the next time the user saves these values will be saved
-        # and automatically loaded later.
-        for i in Song.__repr_str__:
-            self[i] = ""
-            
-        for i in range(len(s)):
-            self[Song.__repr_str__[i]] = s[i]
-            
-        for i in range(len(n)):
-            self[Song.__repr_num__[i]] = int(n[i])
-            
-        # ################################################################
-        # other infomation
-        path = unicode(R[2].strip(),'unicode-escape')
-        if len(DRIVELIST) > 0:
-            for drive in DRIVELIST:
-                p = os.path.join(drive,path)
-                if os.path.exists(p):
-                    path = p;
-                    break;
-
-            
-        self[MusicContainer.PATH] = path
-        
-        # use the time library to format the date
-        ds = ""
-        try:
-            if MusicContainer.DATEVALUE > 0:
-                ds = time.strftime(FMT, time.localtime(self[MusicContainer.DATEVALUE])) 
-            #TODO -V0.5.0.0 : remove this code.
-            if ds == "1969/12/31 19:00":
-                ds = ""
-                self[MusicContainer.DATEVALUE] = 0;
-        except:
-            pass
-        finally:
-            #print ds
-            self[MusicContainer.DATESTAMP] = ds 
-        
-        # ################################################################
-        # special data
-        
-        R[3] = R[3][4:] # R3 = md5
-        R[4] = R[4][3:] # R4 = lo frequency info
-        R[5] = R[5][3:] # R5 = hi frequency info
-
-        self[MusicContainer.EXIF]      = self.__format_exif__();
-        self[MusicContainer.SPECIAL]   = False
-        self[MusicContainer.SELECTED]  = False 
-        self[MusicContainer.DATEADDEDS]=""
-        
-        self.update();
-        
 # ###################################################################
 # Instantiate
 # ###################################################################
@@ -1077,7 +459,7 @@ Settings = RecordContainer()
 
 # ###################################################################
 # Import C DLL
-# currently highly experimental
+# currently highly experimental - and not included in the project
 # ###################################################################
 
 import os

@@ -32,6 +32,8 @@ from widgetLineEdit import LineEdit
 import widgetLineEdit
 
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 
 from table_playlist import *
 from table_library import *

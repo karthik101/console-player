@@ -146,4 +146,7 @@ import ctypes
    
 from StringQuoter import *    
 from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
 from MpFileAccess import * 
+from MpScripting import *
