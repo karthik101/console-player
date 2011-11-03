@@ -20,9 +20,6 @@ else:
 
 
     class PhononObject(GenericMediaObject):
-        #instance  = None
-        #__player__= None
-        __media__ = None
 
         audioOutput = None
         mediaObject = None
@@ -147,6 +144,11 @@ else:
 
         def setVolume(self,value):
             self.audioOutput.setVolume(value/100.0)
+            self.volume = value
+            
+        def getVolume(self):
+            # return the current volume as a value from 0 (off or mute) to 100 (full on)
+            return self.volume
             
     def __finished__(arg=None):
         """

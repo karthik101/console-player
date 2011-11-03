@@ -46,6 +46,8 @@ from widget_playbutton import *
 from widget_currentSongDisplay import *
 from widget_currentTimeDisplay import *
 
+from Qt_CustomStyle import *
+
 _STATUS_BAR_VISIBLE = True; #ach! hans, run! a global.
 # ######################################
 # Main Window Class

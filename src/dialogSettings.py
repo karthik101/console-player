@@ -5,7 +5,7 @@ from MpGlobalDefines import *
 from MpSong import Song
 from datatype_hex64 import *
 from MpFileAccess import fileGetPath,load_css,css_save_dict
-
+from Qt_CustomStyle import *
 
 #from widgetDialog import *
 

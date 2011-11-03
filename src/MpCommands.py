@@ -426,6 +426,7 @@ def cmd_state(input):
         "PAUSED", "STOPPED", "ENDED", "ERROR", "UNKOWN")[MpGlobal.Player.mp.mediaState()];
     debugRetail ( "Current State: %s"%string );
     return COMMAND.VALID
+    
 def cmd_volume(input):
     """
         Command: VOLUME
@@ -441,7 +442,7 @@ def cmd_volume(input):
         MpGlobal.Player.setVolume(input.DecVal[0])
         MpGlobal.Window.volumeBar.setValue(input.DecVal[0])
         
-    debugRetail( "Volume: %d"%Settings.PLAYER_VOLUME )
+    debugRetail( "Volume: %d"%MpGlobal.Player.getVolume() )
     return COMMAND.VALID
 
 #----------------------------------------------------------------- 
@@ -1447,7 +1448,8 @@ from MpScreenSaver import *
 from MpFirstTime import verifyInstallation
 from MpScripting import *      
 from MpSort import *
-from MpSearch import *     
+from MpSearch import *   
+from xml_parser import *  
 import dialogSync       
      
 StringParse.D_StrToDec = MpMusic.D_StrToDec     
