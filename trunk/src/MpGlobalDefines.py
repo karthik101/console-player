@@ -323,26 +323,26 @@ class MusicContainer(EnumSong):
 
     def exifToString(self,exif):
 
-        if   exif == EnumAong.PATH      : return "PATH";
-        elif exif == EnumAong.EXIF      : return "EXIF";
-        elif exif == EnumAong.ARTIST    : return "ARTIST";
-        elif exif == EnumAong.TITLE     : return "TITLE";
-        elif exif == EnumAong.ALBUM     : return "ALBUM";
-        elif exif == EnumAong.GENRE     : return "GENRE";
-        elif exif == EnumAong.DATESTAMP : return "DATESTAMP";
-        elif exif == EnumAong.COMMENT   : return "COMMENT";
-        elif exif == EnumAong.RATING    : return "RATING";
-        elif exif == EnumAong.LENGTH    : return "LENGTH";
-        elif exif == EnumAong.SONGINDEX : return "SONGINDEX";
-        elif exif == EnumAong.PLAYCOUNT : return "PLAYCOUNT";
-        elif exif == EnumAong.SKIPCOUNT : return "SKIPCOUNT";
-        elif exif == EnumAong.FILESIZE  : return "FILESIZE";
-        elif exif == EnumAong.BITRATE   : return "BITRATE";
-        elif exif == EnumAong.FREQUENCY : return "FREQUENCY";
-        elif exif == EnumAong.DATEVALUE : return "DATEVALUE";
-        elif exif == EnumAong.SPECIAL   : return "SPECIAL";
-        elif exif == EnumAong.SELECTED  : return "SELECTED";
-        elif exif == EnumAong.SONGID    : return "ID#";
+        if   exif == EnumSong.PATH      : return "PATH";
+        elif exif == EnumSong.EXIF      : return "EXIF";
+        elif exif == EnumSong.ARTIST    : return "ARTIST";
+        elif exif == EnumSong.TITLE     : return "TITLE";
+        elif exif == EnumSong.ALBUM     : return "ALBUM";
+        elif exif == EnumSong.GENRE     : return "GENRE";
+        elif exif == EnumSong.DATESTAMP : return "DATESTAMP";
+        elif exif == EnumSong.COMMENT   : return "COMMENT";
+        elif exif == EnumSong.RATING    : return "RATING";
+        elif exif == EnumSong.LENGTH    : return "LENGTH";
+        elif exif == EnumSong.SONGINDEX : return "SONGINDEX";
+        elif exif == EnumSong.PLAYCOUNT : return "PLAYCOUNT";
+        elif exif == EnumSong.SKIPCOUNT : return "SKIPCOUNT";
+        elif exif == EnumSong.FILESIZE  : return "FILESIZE";
+        elif exif == EnumSong.BITRATE   : return "BITRATE";
+        elif exif == EnumSong.FREQUENCY : return "FREQUENCY";
+        elif exif == EnumSong.DATEVALUE : return "DATEVALUE";
+        elif exif == EnumSong.SPECIAL   : return "SPECIAL";
+        elif exif == EnumSong.SELECTED  : return "SELECTED";
+        elif exif == EnumSong.SONGID    : return "ID#";
         
         elif exif == EnumSong.DATEADDEDS: return "DATEADDED";
         elif exif == EnumSong.YEAR      : return "YEAR";

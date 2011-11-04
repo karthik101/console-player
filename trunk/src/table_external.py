@@ -1,23 +1,10 @@
-      
-# this file is no longer used
-	  
 import math 
 import sys
-import os    
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-
-
-from MpGlobalDefines import *
-from MpSong import Song
-from datatype_hex64 import *
+import os  
 
 import widgetTable
-from MpScripting import *
-from MpSort import *
-from MpSearch import *
-from MpCommands import *
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
    
 class TableExternal(widgetTable.Table):
     def __init__(self,parent):
@@ -49,3 +36,15 @@ class TableExternal(widgetTable.Table):
         w2 = self.table.width()
         self.table.setColumnWidth(0,w2-1) 
   
+  
+  
+from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
+
+from MpScripting import *
+from MpSort import *
+from MpSearch import *
+from MpCommands import *
+
+from MpApplication import *

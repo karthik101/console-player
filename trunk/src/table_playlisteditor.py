@@ -1,23 +1,13 @@
 
-
 import math 
 import sys
-import os    
+import os  
 
+import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
 from MpGlobalDefines import *
-from MpSong import Song
-from datatype_hex64 import *
-
-import widgetTable
-from MpScripting import *
-from MpSort import *
-from MpSearch import *
-from MpCommands import *
-
 
 class TablePLEditor(widgetTable.HPageTable):
     """ a table element that is linked with another similar table"""
@@ -277,4 +267,16 @@ class TablePLEditor(widgetTable.HPageTable):
                 song[MpMusic.SELECTED] = True
         UpdateStatusWidget(0,MpGlobal.Player.selCount)    
         registerNewListAsPlayList(self.objectList[3].DataSrc,autoLoad = True)
-  
+
+
+
+
+from MpSong import Song
+from datatype_hex64 import *
+
+from MpScripting import *
+from MpSort import *
+from MpSearch import *
+from MpCommands import *
+
+from MpApplication import *        

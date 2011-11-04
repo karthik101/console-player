@@ -6,7 +6,8 @@ from widgetTree import *
 
 # i am getting bizarre import errors,
 # from MpApplication import MainWindow Fails. for no obvious reason
-import MpApplication
+
+
 from MpSort import *
 from MpSearch import *
 import MpScripting
@@ -44,8 +45,8 @@ class helpDialog(QDialog):
 
         
         prompt_start = self.docToHtml(ReadableDocs(MpApplication.MainWindow))
-        prompt_quick = self.docToHtml(ReadableDocs(MpApplication.TableGui))
-        prompt_list = self.docToHtml(ReadableDocs(MpApplication.TablePlayList))
+        prompt_quick = self.docToHtml(ReadableDocs(table_quickselect.TableQuickSelect))
+        prompt_list = self.docToHtml(ReadableDocs(table_playlist.TablePlayList))
         
         prompt_search = self.docToHtml(ReadableDocs(SearchObject))
          
@@ -107,7 +108,7 @@ class dialogAbout(QDialog):
         self.setWindowTitle("About")
         string ="<font size=\"5\">Console Player</font><br>"
         string+="Author: Nick Setzer<br>"
-        string+="A music player and library manager for Windows Xp, Vista and 7<br><br>"
+        string+="A music player and library manager for Windows Xp, Vista and 7 as well as linux (Ubuntu) and Mac (maybe?)<br><br>"
         string+="Console Player is written in Python using PyQt, and VLC for media playback.<br><br>"
         string+="Audio tag detection is done with the Mutagen library."
 
@@ -166,6 +167,10 @@ from MpCommands import *
 from MpScripting import *
 
  
+import  MpApplication
+import  table_playlist 
+import  table_library 
+import  table_quickselect  
   
   
 if __name__ == "__main__":
