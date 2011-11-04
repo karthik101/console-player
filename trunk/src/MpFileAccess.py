@@ -313,9 +313,9 @@ def musicLoad_LIBZ(filepath):
         # ##################################
         # now  read the data from the file.         
         bin = FILE.read(val);        
-        while bin and pylzma != None:
+        while bin:
         
-            if typ&1 == 0: #compression is only used when typ&1 == 0.
+            if typ&1 == 0 and pylzma != None: #compression is only used when typ&1 == 0.
                 bin = pylzma.decompress(bin);
             
             R += LIBZ_process_block( bin , typ, fmt, drivelist );
@@ -881,7 +881,7 @@ def history_log(filepath,song,typ):
 
     art = song[MpMusic.ARTIST].encode('unicode-escape') 
     tit = song[MpMusic.TITLE].encode('unicode-escape')
-    wf.write("%s %d %-20s # %-30.30s - %-30.30s\n"%(song.id,type,data,art,tit))
+    wf.write("%s %d %-20s # %-30.30s - %-30.30s\n"%(song.id,typ,data,art,tit))
     
     wf.close()
     #except:

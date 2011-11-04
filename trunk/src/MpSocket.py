@@ -62,7 +62,7 @@ class SystemPID(object):
             pids= [int(pid) for pid in os.listdir('/proc') if pid.isdigit()]
             
             for pid in pids:
-                proc = proc
+                #proc = proc
                 cmd = s(open("/proc/%d/cmdline"%pid,"r").read())
                 cmd = cmd[cmd.rfind("/")+1:]
                 # cmd is now the name of an executable, 

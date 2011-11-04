@@ -1,3 +1,15 @@
+# #########################################################
+# #########################################################
+# File: audio_phonon
+#
+# Description:
+#       Implements an audio player by inheriting audio_baseController
+#   and then implementing each of the functions
+#   
+#   Phonon is distributed as part of Qt, and uses a generic
+# audio decoder from the OS to play WAV and mp3 files on Windows.
+# 
+# #########################################################
 
 from audio_baseController import *
 
@@ -5,7 +17,8 @@ try:
     from PyQt4.phonon import Phonon
     __IMPORT_PHONON__ = True
 except:
-    debugPreboot("No Phonon Object")
+    #debugPreboot("No Phonon Object")
+    pass
 else:
 
     MP_NOTHINGSPECIAL = 0
