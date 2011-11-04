@@ -8,16 +8,11 @@ import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
 from MpGlobalDefines import *
-from MpSong import Song
-from datatype_hex64 import *
+from MpApplication import *
 
-from MpScripting import *
-from MpSort import *
-from MpSearch import *
-from MpCommands import *
-
+import dialogSongEdit
+import dialogColumnSelect
 
 class TableLibrary(widgetTable.Table):
     widthA = 100; #On Resize check these for percents, auto scaling of these regions
@@ -462,4 +457,44 @@ class TableLibrary(widgetTable.Table):
             self.setColumnIDList(R,dialog.ActiveCount)
             
             self.resizeColumn()
+        
+        
+def txtSearch_OnTextChange(text):
+    
+    
+    text = MpGlobal.Window.txt_searchBox.textUpdate(text)
+    text += MpGlobal.SEARCH_AUTOAPPEND
+    MpGlobal.Window.tbl_library.selection = set() 
+    
+    if text == "" :
+        MpGlobal.Player.libDisplay = MpGlobal.Player.library[:]
+        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.libDisplay)
+        MpGlobal.Window.statusWidgets[2].setToolTip(u"No Search Terms")
+        UpdateStatusWidget(2,0)
+    else:
+        #time = datetime.datetime.now()
+        #try:
+        so = SearchObject(text)
+        MpGlobal.Window.statusWidgets[2].setToolTip(unicode(so))
+        MpGlobal.Player.libDisplay = so.search(MpGlobal.Player.library)
+        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.libDisplay)
+        UpdateStatusWidget(2,so.termCount)
+        #except Exception as e:
+        #    debug("EVAL ERROR: %s"%e.args)
+            
+        #end = datetime.datetime.now()
+        #debug( "Search Time: %s"%(end-time) )
+        
+    #MpGlobal.Window.tabMain.setTabText(0,"Library (%d)"%len(MpGlobal.Player.libDisplay))
+    MpGlobal.Window.search_label.setText("Found: %d"%len(MpGlobal.Player.libDisplay))
+        
+        
+from MpSong import Song
+from datatype_hex64 import *
+
+from MpScripting import *
+from MpSort import *
+from MpSearch import *
+from MpCommands import *
+
         

@@ -1,21 +1,13 @@
-     
-
 import math 
 import sys
-import os    
+import os  
 
+import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
 from MpGlobalDefines import *
-from MpSong import Song
-from datatype_hex64 import *
 
-import widgetTable
-from MpScripting import *
-from MpCommands import *
- 
 class TableFileExplorer(widgetTable.Table):
     """
         Main controller for a File System Explorer tab
@@ -176,15 +168,15 @@ class TableFileExplorer(widgetTable.Table):
     def DoubleClick(self,item):
         offset = self.getDisplayOffset()
         index = offset+item.row()
-        
-        path = self.data[index][self.path]
-        
-        if os.path.isdir(path):
-            #self.parentFolderName = self.data[index][self.name]
-            self.__load_Directory__(path)
+        if index < len(self.data):
+            path = self.data[index][self.path]
             
-        elif pathMatchExt(path):
-            self.__Action_play_song__(path)
+            if os.path.isdir(path):
+                #self.parentFolderName = self.data[index][self.name]
+                self.__load_Directory__(path)
+                
+            elif pathMatchExt(path):
+                self.__Action_play_song__(path)
         
     def resizeEvent(self,event):
         self.resize_Column()
@@ -702,3 +694,18 @@ class dialogRename(QDialog):
         self.edit.returnPressed.connect(self.accept)
         
         self.edit.setText(text)
+        
+        
+        
+        
+        
+from MpGlobalDefines import *
+from MpSong import Song
+from datatype_hex64 import *
+
+from MpScripting import *
+from MpSort import *
+from MpSearch import *
+from MpCommands import *
+
+from MpApplication import *

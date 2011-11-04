@@ -21,8 +21,9 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 import dialogSongEdit
-import dialogSync
 import dialogColumnSelect
+import dialogSync
+
 
 from widgetPage import *
 import widgetTable
@@ -1193,34 +1194,7 @@ def newFileExplorerTab(self,path="C:\\"):
         pbtn.clicked.connect(self.tbl_explorer.__Goto_ParentDir__)
         pbtn_go.clicked.connect(self.tbl_explorer.__Goto_NewDir__)
   
-def txtSearch_OnTextChange(text):
-    
-    
-    text = MpGlobal.Window.txt_searchBox.textUpdate(text)
-    text += MpGlobal.SEARCH_AUTOAPPEND
-    MpGlobal.Window.tbl_library.selection = set() 
-    
-    if text == "" :
-        MpGlobal.Player.libDisplay = MpGlobal.Player.library[:]
-        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.libDisplay)
-        MpGlobal.Window.statusWidgets[2].setToolTip(u"No Search Terms")
-        UpdateStatusWidget(2,0)
-    else:
-        #time = datetime.datetime.now()
-        #try:
-        so = SearchObject(text)
-        MpGlobal.Window.statusWidgets[2].setToolTip(unicode(so))
-        MpGlobal.Player.libDisplay = so.search(MpGlobal.Player.library)
-        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.libDisplay)
-        UpdateStatusWidget(2,so.termCount)
-        #except Exception as e:
-        #    debug("EVAL ERROR: %s"%e.args)
-            
-        #end = datetime.datetime.now()
-        #debug( "Search Time: %s"%(end-time) )
-        
-    #MpGlobal.Window.tabMain.setTabText(0,"Library (%d)"%len(MpGlobal.Player.libDisplay))
-    MpGlobal.Window.search_label.setText("Found: %d"%len(MpGlobal.Player.libDisplay))
+
     
 def txtSearch_KeyBoardRelease(event=None):
     super(QLineEdit,MpGlobal.Window.txt_searchBox).keyPressEvent(event)

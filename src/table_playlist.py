@@ -1,17 +1,12 @@
+import math 
+import sys
+import os  
 
 import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-
 from MpGlobalDefines import *
-from MpSong import Song
-from datatype_hex64 import *
-
-from MpScripting import *
-from MpSort import *
-from MpSearch import *
-from MpCommands import *
 
 class TablePlayList(widgetTable.Table):
     """
@@ -255,3 +250,18 @@ class TablePlayList(widgetTable.Table):
             self.UpdateTable(-1);       
     def minimumSize(self):
         return QtCore.QSize(200, 200)
+        
+        
+        
+from MpSong import Song
+from datatype_hex64 import *
+
+from MpScripting import *
+from MpSort import *
+from MpSearch import *
+from MpCommands import *
+
+from MpFileAccess import *
+from SystemPathMethods import *
+
+from MpApplication import *        
