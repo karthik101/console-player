@@ -88,7 +88,7 @@ class MediaPlayerThread(MpThread):
                         #   from being running again until a new song is loaded in some way
                         # this code can only be run if we are in playlist playback mode "CONSECUTIVE", and a song has finished playing
                         song = p.CurrentSong
-                        diagMessage(MpGlobal.DIAG_PLAYBACK,"\n%s->N:%d O:%d;"%(song[TITLE],time,song[LENGTH]) );
+                        diagMessage(MpGlobal.DIAG_PLAYBACK,"\n%s->N:%d O:%d;"%(song[MpMusic.TITLE],time,song[MpMusic.LENGTH]) );
                         # delaying autonext solves a Phonon Bug (Multi-Threading, registration)
                         MpMusic.AUTO_SIGNAL_ISSUED = True   # prevent multiple queueings of auto next
 
@@ -104,7 +104,7 @@ class MediaPlayerThread(MpThread):
                         song = p.CurrentSong
                         MpMusic.AUTO_SIGNAL_ISSUED = True
                         MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Player.autonext)
-                        MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Thread Starting - %s - %s"%(song[ARTIST],song[TITLE]))
+                        MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Thread Starting - %s - %s"%(song[MpMusic.ARTIST],song[MpMusic.TITLE]))
                     elif state == MP_ENDED:
                         p.setTime(0)
                         p.updateTimeDisplay(0)

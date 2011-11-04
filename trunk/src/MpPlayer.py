@@ -32,6 +32,7 @@ import os.path
 from PyQt4.QtCore import *
 #from MpApplication import *
 from MpFileAccess import *
+from SystemPathMethods import *
 from MpScripting import *
 from MpID3 import *
 from MpGlobalDefines import *
@@ -40,24 +41,6 @@ from datatype_hex64 import *
 
 #__IMPORT_VLC__    = False
 #__IMPORT_PHONON__ = False
-        
-
-        
-    
-   
-
-COMMENT   = MpMusic.COMMENT  
-RATING    = MpMusic.RATING   
-LENGTH    = MpMusic.LENGTH   
-SONGINDEX = MpMusic.SONGINDEX
-PLAYCOUNT = MpMusic.PLAYCOUNT
-SKIPCOUNT = MpMusic.SKIPCOUNT
-FILESIZE  = MpMusic.FILESIZE 
-BITRATE   = MpMusic.BITRATE  
-FREQUENCY = MpMusic.FREQUENCY
-DATEVALUE = MpMusic.DATEVALUE
-SPECIAL   = MpMusic.SPECIAL  
-SELECTED  = MpMusic.SELECTED 
 
 MP_NOTHINGSPECIAL = 0
 MP_OPENING = 1

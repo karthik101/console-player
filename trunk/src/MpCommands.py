@@ -294,7 +294,7 @@ def cmd_play(input):
         play the current song
     """
     if input.hasDecVal:
-        i = inpue.DecVal[0];
+        i = input.DecVal[0];
         if i > 1 and i <= len(MpGlobal.Player.playList):
             MpGlobal.Player.playSong(i-1);
     else:
@@ -1453,6 +1453,7 @@ from MpGlobalDefines import *
 from MpSong import Song
 from datatype_hex64 import *
 from MpFileAccess import *
+from SystemPathMethods import *
 from MpID3 import *
 from UnicodeTranslate import Translate
 from MpEventHook import initHook,disableHook

@@ -3,7 +3,8 @@ from PyQt4.QtGui import *
 from MpGlobalDefines import *
 from MpSong import Song
 from datatype_hex64 import *
-from MpFileAccess import fileGetPath,createInternalExif
+from MpFileAccess import *
+from SystemPathMethods import *
 from widgetLineEdit import *
 import time
 from calendar import timegm

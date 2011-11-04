@@ -14,7 +14,8 @@ from mutagen.mp4 import MP4
 from mutagen.asf import ASF # *.wma
 from mutagen.flac import FLAC
 
-from MpFileAccess import createExif,createInternalExif,fileGetExt,fileGetSize
+from MpFileAccess import *
+from SystemPathMethods import *
 from PyQt4.QtCore import Qt,SIGNAL     # for Qt constants
 
 

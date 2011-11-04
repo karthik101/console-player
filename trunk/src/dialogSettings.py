@@ -4,7 +4,8 @@ from PyQt4.QtGui import *
 from MpGlobalDefines import *
 from MpSong import Song
 from datatype_hex64 import *
-from MpFileAccess import fileGetPath
+from MpFileAccess import *
+from SystemPathMethods import *
 from Qt_CustomStyle import *
 
 #from widgetDialog import *
