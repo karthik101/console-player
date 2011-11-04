@@ -1485,6 +1485,7 @@ from MpSort import *
 from MpSearch import *
 from MpCommands import *
 from MpFileAccess import *
+from SystemPathMethods import *
 from MpPlayer import *
 from MpEventHook import disableHook
 from UnicodeTranslate import Translate
