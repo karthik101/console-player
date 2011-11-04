@@ -1411,12 +1411,7 @@ def show_NewPlayList_Dialog():
 def window_hide_show_library():
     pass
         
-def external_Load_Start():
 
-    if MpGlobal.ENABLE_MUSIC_LOAD == False and len(MpGlobal.Player.external) > 0:
-        MpGlobal.ENABLE_MUSIC_LOAD = True
-        MpGlobal.LoadThread = Thread_LoadMedia(MpGlobal.Window)
-        MpGlobal.LoadThread.start()
 
 def external_Load_Finish():  
     if MpGlobal.LoadThread.isRunning():

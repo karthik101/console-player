@@ -8,6 +8,8 @@ from PyQt4.QtGui import *
 
 from MpGlobalDefines import *
 
+isPosix = os.name == 'posix'
+
 class TableFileExplorer(widgetTable.Table):
     """
         Main controller for a File System Explorer tab
@@ -29,6 +31,7 @@ class TableFileExplorer(widgetTable.Table):
     __act_dir2__ = ""
     __act_row__ = 0
     
+    
     currentPath = "C:\\"
     textEditor = None
     icon_dir = None
@@ -44,6 +47,13 @@ class TableFileExplorer(widgetTable.Table):
     cut_folder = "" # the path to the folder that will be moved on paste
     
     def __init__(self,parent,textEdit):
+    
+        if isPosix:
+            self.currentPath = '/'
+        else:
+            self.currentPath = 'C:\\'
+        
+    
         header = ("   ","Path")
         super(TableFileExplorer,self).__init__(parent,header)
         self.textEditor = textEdit
@@ -60,6 +70,8 @@ class TableFileExplorer(widgetTable.Table):
         
         self.manageDriveList()
         self.textEditor.activated.connect(self.__index_Change__)
+        
+        
         
     def FillTable(self,offset=-1):    
         """fill the table with data, starting at index offset, from the Display Array"""
@@ -124,30 +136,31 @@ class TableFileExplorer(widgetTable.Table):
             self.__act_dir1__ = self.data[row][self.path]
             self.__act_dir2__ = self.currentPath
             self.__act_row__  = row;
+            
             if t == self.t_mp3:
                 contextMenu.addAction("Play Song",self.__Action_play_song__)
                 contextMenu.addAction("Add to Library",self.__Action_load_song__)
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename File",self.__Action_Rename_File)
-                if len(self.cut_file) > 0:
-                    contextMenu.addAction("paste %d File%s Here"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
-                elif self.cut_folder != "":
-                    contextMenu.addAction("paste Folder",self.__Action_paste_folder)
-                contextMenu.addAction("cut File%s"%('s' if len(self.selection) > 1 else ""),self.__Action_cut_file)
-                
                 contextMenu.addAction("New Folder",self.__Action_NewFolder)
+                
             else:
                 contextMenu.addAction("Open "+self.data[row][self.name],self.__Action_open_dir__)
                 contextMenu.addSeparator()    
                 contextMenu.addAction("Rename Folder",self.__Action_Rename_Folder)
                 contextMenu.addAction("New Folder",self.__Action_NewFolder)
-                if len(self.cut_file) > 0:
-                    contextMenu.addAction("paste %d File%s Here"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
-                elif self.cut_folder != "":
-                    contextMenu.addAction("paste Folder",self.__Action_paste_folder)
-                if len(self.selection) == 1 :
-                    contextMenu.addAction("cut Folder",self.__Action_cut_folder)
-                    
+                
+            contextMenu.addSeparator() 
+            if len(self.cut_file) > 0:
+                contextMenu.addAction("paste %d Item%s"%(len(self.cut_file),'s' if len(self.cut_file)>1 else ""),self.__Action_paste_file)
+            elif self.cut_folder != "":
+                contextMenu.addAction("paste Item",self.__Action_paste_folder)
+                
+            if len(self.selection) > 1:
+                contextMenu.addAction("cut Items (%d)"%len(self.selection),self.__Action_cut_file)
+            else:
+                contextMenu.addAction("cut Item",self.__Action_cut_folder)
+                     
                 
                 
             contextMenu.addSeparator()
@@ -641,11 +654,11 @@ class TableFileExplorer(widgetTable.Table):
         if self.textEditor != None:
             # add some custom paths to the default list of drives
             # most of these are convenient for me, no one else has my file system
-            sub = ['%smusic\\' % d for d in drives if os.path.exists('%s/music/' % d)]
-            sub += ['%splayer\\' % d for d in drives if os.path.exists('%s/player/' % d)]
-            sub += ['%sdiscography\\' % d for d in drives if os.path.exists('%s/discography/' % d)]
-            sub += ['%sjapanese\\' % d for d in drives if os.path.exists('%s/japanese/' % d)]
-            sub += ['%smisc\\' % d for d in drives if os.path.exists('%s/misc/' % d)]
+            sub =  [os.path.join(d,'music'      ,'') for d in drives if os.path.exists(os.path.join(d,'music'      ,''))]
+            sub += [os.path.join(d,'Player'     ,'') for d in drives if os.path.exists(os.path.join(d,'Player'     ,''))]
+            sub += [os.path.join(d,'Discography','') for d in drives if os.path.exists(os.path.join(d,'Discography',''))]
+            sub += [os.path.join(d,'Japanese'   ,'') for d in drives if os.path.exists(os.path.join(d,'Japanese'   ,''))]
+            sub += [os.path.join(d,'Misc'       ,'') for d in drives if os.path.exists(os.path.join(d,'Misc'       ,''))]
         
         
             R = drives+sub
@@ -696,7 +709,12 @@ class dialogRename(QDialog):
         self.edit.setText(text)
         
         
-        
+def external_Load_Start():
+
+    if MpGlobal.ENABLE_MUSIC_LOAD == False and len(MpGlobal.Player.external) > 0:
+        MpGlobal.ENABLE_MUSIC_LOAD = True
+        MpGlobal.LoadThread = Thread_LoadMedia(MpGlobal.Window)
+        MpGlobal.LoadThread.start()        
         
         
 from MpGlobalDefines import *
@@ -707,5 +725,6 @@ from MpScripting import *
 from MpSort import *
 from MpSearch import *
 from MpCommands import *
+from MpThreading import *
 
 from MpApplication import *
