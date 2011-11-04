@@ -1,6 +1,6 @@
 # #########################################################
 # #########################################################
-# File: MpThreading
+# File: MpPlayer
 # Description:
 #       Main player object can be found here
 # #########################################################
@@ -282,7 +282,7 @@ class MediaManager(object):
             However increase skipcount for current song
         """
         if self.CurrentSong != None: 
-            self.CurrentSong[SKIPCOUNT] += 1
+            self.CurrentSong[MpMusic.SKIPCOUNT] += 1
         self.next()
     def autonext(self):
         """advance to the next song in the playlist, Called automatically on song End"""

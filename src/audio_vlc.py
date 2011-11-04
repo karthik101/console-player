@@ -1,4 +1,16 @@
-
+# #########################################################
+# #########################################################
+# File: audio_vlc
+#
+# Description:
+#       Implements an audio player by inheriting audio_baseController
+#   and then implementing each of the functions
+#   
+#   VLC is the default audio player for this application
+#   libvlc is loaded by vlc.py, and functions are made to interact with it 
+# through python. VLC needs to be installed under a standard installation.
+# 
+# #########################################################
 
 from audio_baseController import *
 import os.path
@@ -9,7 +21,8 @@ try:
     import vlc
     __IMPORT_VLC__ = True
 except:
-    debugPreboot("No VLC Object")
+    #debugPreboot("No VLC Object")
+    pass
 else: 
     MP_NOTHINGSPECIAL = 0
     MP_OPENING = 1
