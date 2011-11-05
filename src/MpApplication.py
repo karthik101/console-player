@@ -98,8 +98,7 @@ class MainWindow(QMainWindow):
         
         if Settings.DEVMODE == True or retail:
             MpGlobal.Window.txt_debug.show()
-            
-            
+               
     def debugMsgReturn(self,string=None):
         """
             Erase the last line of the debug text box
@@ -150,6 +149,8 @@ class MainWindow(QMainWindow):
         self.init_ConnectSignals() # do this last, after creating all objects
         
         init_MenuBar(self)
+        
+        self.setAcceptDrops(True);
         #<WORK> REMOVE MIN WIDTH
         #self.setMinimumWidth(MpGlobal.SplitterWidthMin+20)
         
@@ -509,27 +510,38 @@ class MainWindow(QMainWindow):
         event.accept() # enable drops by accepting event
     
     def dropEvent(self,event):
+        """
+            drops are processed in the main thread, any files that could be loaded are kicked added to a list_* variable in MpPlayer
+            external_load_start() begins a thread processing any valid files dropped onto the player
+        """
+        print "received drop from <%s>"%event.source()
         if event.source() == None: # event comes from outside the application
             mdata = event.mimeData()
             #print list(mdata.formats())
             if mdata.hasUrls() :
                 event.accept() # accept before processinf or explorer will hang
                 url_list = mdata.urls()
-                D = []
                 for x in range(len(url_list)):
                     if not url_list[x].isRelative() :
-                        fpath = url_list[x].toString().replace("file:///","") 
+                        # usrl_list  is alist of urls, but they are not URI-escaped for some reason on both windows and ubuntu Natty Narwhal
+                        # the file:// needs to be removed, and on windows there are 3 slashes not 2
+                        # on linux the third slash is also the first slash of the file path
+                        if isPosix:
+                            fpath = url_list[x].toString().replace("file://","") 
+                        else:
+                            fpath = url_list[x].toString().replace("file:///","") 
+                        #print fpath
                         fext = fileGetExt(fpath)
-                        if pathMatchExt(fpath) and pathIsUnicodeFree(fpath):
-                            MpGlobal.Player.external.append(fpath)
-                        if os.path.isdir(fpath):
-                            D.append(fpath);
-                        if fext == 'log':
+                        # now accept unicode filepaths
+                        if pathMatchExt(fpath): #and pathIsUnicodeFree(fpath):
+                            MpGlobal.Player.list_LoadSongs.append(fpath)
+                        elif os.path.isdir(fpath):
+                            MpGlobal.Player.list_LoadFolder.append(fpath);
+                        #elif XML file drop
+                        #elif M3U file drop # ask whether to load songs into library or play
+                        #elif playlist file drop (and etc) # play this list
+                        elif fext == 'log':
                             history_load(fpath,MpGlobal.Player.library)
-            
-                if len(D) > 0:
-                    for dir in D:
-                        load_music_from_dir(unicode(dir))
             
                 external_Load_Start()
                 Player_set_unsaved();
@@ -1414,10 +1426,13 @@ def window_hide_show_library():
 
 
 def external_Load_Finish():  
+    # TODO: i once had a strange error here, cam back to this code much later
+    # and obviously did not document what that error was.
+    # spend some time working on this function, the if is running should NOT be needed
     if MpGlobal.LoadThread.isRunning():
         # once got a thread destryoed while running error
-        MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED"))
-        debug(" *** Thread Ended while still Running.")
+        MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED")) # calls this function again
+        debug(" *** Load Thread Ended while still Running.")
     else:
         MpGlobal.LoadThread = None
         MpGlobal.Window.txt_searchBox.setText(".pcnt =0")

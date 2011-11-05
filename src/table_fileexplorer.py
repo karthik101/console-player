@@ -258,8 +258,8 @@ class TableFileExplorer(widgetTable.Table):
                         break;
                 #TODO NOT REALLY SURE THIS APPIES ANYMORE:
                 # i used to pend songs then load them later, but no longer
-                if tempsong == None and len(MpGlobal.Player.external) > 0:
-                    for ex_path in MpGlobal.Player.external:
+                if tempsong == None and len(MpGlobal.Player.list_LoadSongs) > 0:
+                    for ex_path in MpGlobal.Player.list_LoadSongs:
                         if comparePath(ex_path,temppath) :
                             value = self.f_pending
                             break;
@@ -306,7 +306,7 @@ class TableFileExplorer(widgetTable.Table):
             f = self.data[i][self.flag]
             if f != self.f_exists and f != self.f_invalid and f != self.f_pending and self.data[i][self.type] == self.t_mp3:
                 self.data[i][self.flag] = self.f_pending
-                MpGlobal.Player.external.append(self.data[i][self.path])
+                MpGlobal.Player.list_LoadSongs.append(self.data[i][self.path])
                 
         external_Load_Start()
         Player_set_unsaved();
@@ -319,7 +319,7 @@ class TableFileExplorer(widgetTable.Table):
             act is special variable set when a context menu is opened
         """
         try:
-            os.startfile(self.__act_dir2__)
+            explorerOpen(self.__act_dir2__)
         except:
             pass
 
@@ -711,7 +711,7 @@ class dialogRename(QDialog):
         
 def external_Load_Start():
 
-    if MpGlobal.ENABLE_MUSIC_LOAD == False and len(MpGlobal.Player.external) > 0:
+    if MpGlobal.ENABLE_MUSIC_LOAD == False and (len(MpGlobal.Player.list_LoadSongs) > 0 or len(MpGlobal.Player.list_LoadFolder) > 0 ):
         MpGlobal.ENABLE_MUSIC_LOAD = True
         MpGlobal.LoadThread = Thread_LoadMedia(MpGlobal.Window)
         MpGlobal.LoadThread.start()        

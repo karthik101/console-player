@@ -1125,7 +1125,7 @@ def cmd_explorer(input):
     
     print MpGlobal.installPath
     
-    os.startfile(MpGlobal.installPath)
+    explorerOpen(MpGlobal.installPath)
     
 def cmd_repl(input):
     """
@@ -1403,7 +1403,7 @@ def cmd_settings(input):
     
     print MpGlobal.FILEPATH_SETTINGS
     
-    os.startfile(MpGlobal.FILEPATH_SETTINGS)
+    explorerOpen(MpGlobal.FILEPATH_SETTINGS)
  
     
 def cmd_setsave(input):
