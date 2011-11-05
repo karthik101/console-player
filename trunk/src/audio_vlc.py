@@ -40,7 +40,10 @@ else:
         # i have everything wrapped up in control statements so
         # that even if the player does not work the application will
         # not crash
-
+        instance  = None    # instance of the audio driveer 
+        __player__= None    # instance of object that performs playback
+        __media__ = None    # instance of the current song beling played
+            
         def __init__(self):
             self.invoke();
         
