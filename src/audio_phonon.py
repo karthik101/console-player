@@ -36,6 +36,11 @@ else:
 
         audioOutput = None
         mediaObject = None
+        
+        instance  = None    # instance of the audio driveer 
+        __player__= None    # instance of object that performs playback
+        __media__ = None    # instance of the current song beling played
+    
         def __init__(self):
 
             self.audioOutput = Phonon.AudioOutput(Phonon.MusicCategory, None )

@@ -86,7 +86,9 @@ def getNewAudioPlayer():
     #   --vlc : force vlc
     #   --phonon : force phonon
     #  --noaudio : force creatyion of base audio player instead of vlc or phonon
-
+    
+    #return GenericMediaObject();
+    
     if __IMPORT_VLC__:
         debugPreboot("VLC   : Initalizing");
         return VLCObject();
