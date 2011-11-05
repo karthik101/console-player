@@ -82,6 +82,10 @@ def getNewAudioPlayer():
 
     #__IMPORT_VLC__   = False
     #__IMPORT_PHONON__ = False
+    #TODO: allow sys.argv:
+    #   --vlc : force vlc
+    #   --phonon : force phonon
+    #  --noaudio : force creatyion of base audio player instead of vlc or phonon
 
     if __IMPORT_VLC__:
         debugPreboot("VLC   : Initalizing");
@@ -105,7 +109,8 @@ class MediaManager(object):
     libDelete = []
     playList = []
     selCount = 0
-    external = []       # list of paths to load
+    list_LoadSongs = [] # list of paths to load
+    list_LoadFolder= []  # list of folders to load songs from
     quickList = []
     isPlaying = False;
     CurrentIndex=0  # current index in the playlist to play

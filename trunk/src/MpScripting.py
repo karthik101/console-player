@@ -737,19 +737,16 @@ def load_music_from_dir(dir):
     """
         recursively open directorys and load all valid songs
     """
-    D = []
+
     if os.path.isdir(dir):
         R = os.listdir(dir)
         for file in R:
             path = os.path.join(dir,file)
-            if pathMatchExt(path) and pathIsUnicodeFree(path):
-                MpGlobal.Player.external.append(path)
-            if os.path.isdir(path):
-                D.append(path)
-    if len(D) > 0:
-        MpGlobal.Application.processEvents()    #prevents hanging
-        for dir in D:
-            load_music_from_dir(dir)
+            if pathMatchExt(path): # and pathIsUnicodeFree(path):
+                MpGlobal.Player.list_LoadSongs.append(path)
+            elif os.path.isdir(path):
+                MpGlobal.Player.list_LoadFolder.append(path)
+
 
 def stringSplit(string,deliminator=" "):
     """

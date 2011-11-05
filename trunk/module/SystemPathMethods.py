@@ -293,7 +293,17 @@ def stripDriveFromPath(driveList,filepath):
     if filepath[0] == '/' or filepath[0] == '\\':
         return filepath[1:]
     return filepath
-    
+  
+
+if isPosix: # def explorerOpen
+    def explorerOpen(filepath): # filepath or directory
+        print "TODO: implement os.startfile on linux"
+        return;
+else:
+    def explorerOpen(filepath): # filepath or directory
+        os.startfile(filepath);
+
+  
 if isPosix: # def fileGetDrive
     def fileGetDrive(filepath):
         R = filepath.split('/')

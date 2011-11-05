@@ -9,6 +9,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from MpGlobalDefines import *
+from SystemPathMethods import *
 from MpSong import Song
 from datatype_hex64 import *
 import widgetInfoDisplay
@@ -43,12 +44,12 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
     def __Action__GoTo_Wiki__(self):
         s = "http://en.wikipedia.org/w/index.php?search="
         s += MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:].replace(" ","+")
-        os.startfile(s)
+        explorerOpen(s)
     def __Action__GoTo_Lyrics__(self):
         s = "http://www.songmeanings.net/query/?q="
         s += MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:].replace(" ","+")
         s += "&type=artists"
-        os.startfile(s)
+        explorerOpen(s)
     def __Action__EXPLORE__(self):
         if MpGlobal.Player.CurrentSong != None:
             path = fileGetPath(MpGlobal.Player.CurrentSong[MpMusic.PATH])

@@ -134,9 +134,18 @@ class MediaPlayerThread(MpThread):
             
 class Thread_LoadMedia(MpThread):
     def run(self): 
+    
+    
+        
         while MpGlobal.ENABLE_MUSIC_LOAD :
-            if len(MpGlobal.Player.external) > 0:
-                file = MpGlobal.Player.external.pop(0)
+            #print "%d-%d"%(len(MpGlobal.Player.list_LoadFolder),len(MpGlobal.Player.list_LoadSongs) )
+            if len(MpGlobal.Player.list_LoadFolder) > 0:
+                dir = MpGlobal.Player.list_LoadFolder.pop(0)
+                load_music_from_dir(unicode(dir))   # add music in this folder to the load song list, and any folders to the load folder list
+        
+            #elif anything to load other than songs
+            elif len(MpGlobal.Player.list_LoadSongs) > 0:
+                file = MpGlobal.Player.list_LoadSongs.pop(0)
                 
                 for song in MpGlobal.Player.library:
                     if song[MpMusic.PATH] == file :
@@ -151,6 +160,8 @@ class Thread_LoadMedia(MpThread):
                     
             else:
                 MpGlobal.ENABLE_MUSIC_LOAD = False
+                MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED"))
+                return;
                 
         MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED"))
         

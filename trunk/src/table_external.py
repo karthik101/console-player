@@ -24,9 +24,9 @@ class TableExternal(widgetTable.Table):
             R.sort(reverse = True)
             cindex_flag = False
             for x in R:
-                MpGlobal.Player.external.pop(x)
+                MpGlobal.Player.list_LoadSongs.pop(x)
             self.selection = set()
-            self.UpdateTable(self.getDisplayOffset(),MpGlobal.Player.external)
+            self.UpdateTable(self.getDisplayOffset(),MpGlobal.Player.list_LoadSongs)
 
     def resizeEvent(self,event):
         self.resize_Column()
