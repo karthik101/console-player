@@ -595,8 +595,9 @@ def cmd_load(input):
     sortLibraryInplace(MpMusic.ARTIST)
     MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.library)
     
-    
-    loadSettings()
+    init_Settings_default(Settings);
+    loadSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+    update_StrToDec_Dict();
     
     return COMMAND.VALID
     
@@ -1415,7 +1416,7 @@ def cmd_setsave(input):
         undocumented
     """
     #D = settings_To_Dictionary()
-    saveSettings()
+    saveSettings(MpGlobal.FILEPATH_SETTINGS, Settings)
     return COMMAND.VALID
 def cmd_setload(input):
     """
@@ -1425,7 +1426,9 @@ def cmd_setload(input):
         
         load settings from settings.ini
     """
-    loadSettings()
+    init_Settings_default(Settings);
+    loadSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+    update_StrToDec_Dict();
     return COMMAND.VALID
   
 
@@ -1450,6 +1453,7 @@ import subprocess
 import ctypes
 
 from MpGlobalDefines import *
+from MpSettings import *
 from MpSong import Song
 from datatype_hex64 import *
 from MpFileAccess import *

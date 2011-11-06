@@ -222,26 +222,9 @@ def getTag_TupleOfInt(song,audio,key,tag):
 
     if tag in audio:    
         song[key] = atoi(audio[tag][0][0])
-
-        
-def atoi(a):
-    """
-        converts string to int by taking only the first integer
-        in the string.
-    """
-    if type(a) == str or type(a) == unicode:
-        i = "";
-        R = ('0','1','2','3','4','5','6','7','8','9');
-        for j in range(len(a)):
-            if a[j] in R:
-                i += a[j];
-            else:
-                break;
-        return int(i);
-    return int(a);
-
     
 from MpGlobalDefines import *
+from SystemPathMethods import *
 from MpSong import Song
 from datatype_hex64 import *
 from MpScripting import *  

@@ -490,21 +490,24 @@ def setSearchTime():
     MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60)
     MpGlobal.RecentEpochTime -= (24*60*60)
 
+    
 # ##############################################
-# Settings
+# Initialize settings values
 # ##############################################
-def init_Settings_default():
+def init_Settings_default(settingsObject):
     """
-        some values need default values incase they do not exist in the settings file that is laoded
+        this is called before calling loadSettings
+        this way the dimensions (or other values) are preset
+        to meaningful value for the user, other than hardcoded values
     """
     geometry = QDesktopWidget().screenGeometry()
 
-    Settings.SCREEN_POSITION_X = geometry.width()/4
-    Settings.SCREEN_POSITION_Y = geometry.height()/4
-    Settings.SCREEN_POSITION_W = geometry.width()/2
-    Settings.SCREEN_POSITION_H = geometry.height()/2
-    Settings.OS =os.name;
-    
+    settingsObject.SCREEN_POSITION_X = geometry.width()/4
+    settingsObject.SCREEN_POSITION_Y = geometry.height()/4
+    settingsObject.SCREEN_POSITION_W = geometry.width()/2
+    settingsObject.SCREEN_POSITION_H = geometry.height()/2
+    settingsObject.OS=os.name;
+  
 def init_Settings(release):
     """
         Create the settings object,
@@ -518,8 +521,6 @@ def init_Settings(release):
     Settings.RELEASE = release;
     
     setSearchTime()
-
-    
 
     if not release:
         #MpGlobal.NAME = "ConsolePlayer - Test"
@@ -543,7 +544,7 @@ def init_Settings(release):
         # version controller has already had the value incremented by one, and saved
         # it must nowbne saved again in the settings for other use.
         Settings.VERSION = MpGlobal.VERSION    
-        saveSettings()
+        saveSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
         pass
     else:
         MpGlobal.DIAG_PLAYBACK = False
@@ -559,7 +560,11 @@ def init_Settings(release):
     MpGlobal.debug_preboot_string = "   Version %s Platform %s PyQt: %s Sip: %s \n%s" % \
         (Settings.VERSION,Settings.OS.upper(),PYQT_VERSION_STR,sip.SIP_VERSION_STR,MpGlobal.debug_preboot_string) 
     del sip
-   
+    
+# ##############################################
+# Settings Update
+# ##############################################
+
 def settings_get_Update():
     """
         certain values in the settings object may not be updated
@@ -609,8 +614,12 @@ def settings_get_Update():
     Settings.WINDOW_MAXIMIZED = MpGlobal.Window.isMaximized()
     if Settings.SCREEN_POSITION_W < 0.90*geometry.width():
         Settings.WINDOW_MAXIMIZED = False
-
-def update_StrToDec_Dict(): #TODO this function does no belong here
+ 
+def update_StrToDec_Dict():
+    """
+        This is called after loading the settings
+        this allows the user to reset the .words for searching.
+    """
     MpMusic.D_StrToDec[Settings.SEARCH_FIELD_ALBUM     ] = MpMusic.ALBUM;
     MpMusic.D_StrToDec[Settings.SEARCH_FIELD_ARTIST    ] = MpMusic.ARTIST;
     MpMusic.D_StrToDec[Settings.SEARCH_FIELD_COMMENT   ] = MpMusic.COMMENT;
@@ -630,7 +639,11 @@ def update_StrToDec_Dict(): #TODO this function does no belong here
     
     MpMusic.D_StrToDec[Settings.SEARCH_FIELD_YEAR]      = MpMusic.YEAR;
     MpMusic.D_StrToDec[Settings.SEARCH_FIELD_DATEADDED] = MpMusic.DATEADDED;        
-        
+      
+# ##############################################
+# 
+# ##############################################
+    
 def UpdateStatusWidget(index,varient):
     """ update the widget on the status bar at index
         value may not be text
@@ -651,7 +664,7 @@ def UpdateStatusWidget(index,varient):
 def On_Close_Save_Data(force = False):
     settings_get_Update()   # any last minute changes to the settings
     
-    saveSettings()
+    saveSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
     
     if MpGlobal.UNSAVED_DATA or force == True:
         
@@ -1067,25 +1080,7 @@ def versionCompare(ver,const):
     
     return m+n+o+p
     
-    
-def atoi(a):
-    """
-        converts string to int by taking only the first integer
-        in the string.
-    """
-    i = "";
-    R = ('0','1','2','3','4','5','6','7','8','9');
-    #a = str(a)
-    for j in range(len(a)):
-        if a[j] in R:
-            i += a[j];
-        else:
-            break;
-    try:
-        return int(i);
-    except:
-        return 0;
- 
+
 def bitSet(value,bit):
     """
         returns the value with bit or'd in
@@ -1101,7 +1096,7 @@ def bitClear(value,bit):
     return value&(~bit);    
 
 # ##############################################
-# Session
+# Session Arguments
 # ##############################################        
 def session_send_arguments(port):    
 # create copy two
@@ -1127,12 +1122,13 @@ def session_receive_argument(message):
     # support passing a 
     
     message = message.strip();
+    
     if message[:2] == '-c':
         cmd = message[2:].strip();
         print "COMMAND: %s"%message
         processTextInput(cmd)
         
-    else:
+    elif message[0] != '-': # should be a file path not a command option
         print "PLAY: %s"%message
         if os.path.isfile(message) and pathMatchExt(message):
             song = id3_createSongFromPath(message)
@@ -1260,9 +1256,11 @@ import subprocess
 import ctypes
 
 from MpGlobalDefines import *
+
 from MpSong import Song
 from datatype_hex64 import *
 from MpFileAccess import *
+from MpSettings import *
 from SystemPathMethods import *
 from MpID3 import *
 from UnicodeTranslate import Translate

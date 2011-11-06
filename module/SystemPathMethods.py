@@ -294,7 +294,27 @@ def stripDriveFromPath(driveList,filepath):
         return filepath[1:]
     return filepath
   
-
+def atoi(a):
+    """
+        converts string to int by taking only the first integer
+        in the string.
+        
+        int fails on "12A" when i sometimes want it to be 12.
+    """
+    i = "";
+    R = ('0','1','2','3','4','5','6','7','8','9');
+    #a = str(a)
+    for j in range(len(a)):
+        if a[j] in R:
+            i += a[j];
+        else:
+            break;
+    try:
+        return int(i);
+    except:
+        return 0;
+  
+  
 if isPosix: # def explorerOpen
     def explorerOpen(filepath): # filepath or directory
         print "TODO: implement os.startfile on linux"

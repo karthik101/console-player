@@ -9,7 +9,7 @@
 #   These are the global containers for variables pertaining
 #   to the media player.
 #   There are three groups of containers:
-#    1. Settings are found in the RecordContainer
+#    1. Settings are found in the SettingsContainer
 #    2. Music, and playback related variables
 #           are found in the MusicContainer
 #    3. Misc enumerations, and global objects are found
@@ -18,7 +18,7 @@
 
 from MpSong import *  
 
-class RecordContainer(object):
+class SettingsContainer(object):
     def __init__(self):
         self.DEVMODE = False
         self.RELEASE = False
@@ -453,9 +453,11 @@ class SEARCH(object):
 # Instantiate
 # ###################################################################
 
+
+
 MpGlobal = GlobalContainer()
 MpMusic  = MusicContainer()
-Settings = RecordContainer()
+Settings = SettingsContainer()
 
 # ###################################################################
 # Import C DLL
