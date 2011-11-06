@@ -2,7 +2,12 @@
 #----------------------------------------------------------
 #  ConsolePlayer.py
 #----------------------------------------------------------
-   
+ 
+# TODO:
+# imports should be fixed accross all files
+# in general, i would  like all standard lib imports first
+# then all Qt / non other imports ( including all imports in ./module/ )
+# then all imports specific to this project should be found at the end of the file.
    
 import os   
 import sys
@@ -19,8 +24,6 @@ if __name__ != "__main__":
 # if there is data in sys.args. send it over to the pid in ~/session.lock
  
 isPosix = os.name =='posix'
-
-
 
 # add the path to the global modules to the import path list
 #path = os.getcwd().replace('\\','/');
@@ -152,10 +155,7 @@ init_postMainWindow()
 if __debug: print "Post Main Window initilizers done"    
 
 if len(sys.argv) > 1:
-    R= sys.argv[1:]
-    msg = ""
-    for string in R:
-        msg += string+" "    
+    msg = " ".join(sys.argv[1:])
     if msg != "":   
         session_receive_argument(msg)
 # ######################################

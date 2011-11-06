@@ -714,147 +714,6 @@ def playListLoad(filepath,source):
     rf.close()
     return array
 
-    
-# #########################
-# read settings
-    
-def saveSettings( ):
-    """
-        using the data found in D, a dictionary
-        store that data in a file in the format:
-        key:value
-        sort the keys for readability
-        the format intent of a Settings dictionary is as follows:
-        keys are in the form of 'type_Attribute'
-        values are of type 'type'
-        example 
-            int_Width:600
-            str_Title:MP3Player
-        This way parseing and forming of the dictionary can be automatic  
-    """
-    #k = lambda x: x[0]
-    #R = sorted(D.items(), key = k)
-    #
-    wf = open(MpGlobal.FILEPATH_SETTINGS,"w")
-    #for key,value in R :
-    #    wf.write( "%s:%s\n"%(key,value) )
-    #for k,v in D.items():
-    #    print k,"=>",v    
-    typeDict = {str(int):'int',
-            str(long):'int',
-            str(str):'str',
-            str(unicode):'str',
-            str(bool):'bin',
-            str(list):'csv'}
-
-    # from the settings dictionary build a typed dictionary for a human readable save format.
-    D = {}
-    for key,value in Settings.__dict__.items():
-        #TODO: create a list of banned key names
-        # for example, PLAYER_LAST_INDEX is saved as the first line of a playlist file
-        # instead of in the settings file, despite being a setting key name.
-        
-        if key != 'PLAYER_LAST_INDEX':
-            newKey = "%s_%s"%(typeDict.get(str(type(value)),'???'),key)
-            
-            
-            if (type(value) == list):
-                if len(value) > 0: # don't save if it's empty?
-                    if type(value[0]) != str and type(value[0]) != unicode: # convert non-string types to string
-                        D["lst_%s"%key] = unicode(','.join( str(x) for x in value )).encode('unicode-escape')
-                    else:
-                        D[newKey] = unicode(','.join( value )).encode('unicode-escape')
-                else:
-                    D[newKey] = ""
-                    
-            else:
-                D[newKey] = value
-                
-    k = lambda x: x[0]
-    R = sorted(D.items(), key = k)
-
-    for key,value in R:
-        wf.write( "%s:%s\n"%(key,value) )
-    wf.close()
-
-def loadSettings():
-    """
-        read in and set the data from the settings file
-        D is the dictionary of values to set
-        the intent is to create a default dictionary
-        then check if the settings file exists
-        if it does override the entry in the dictionary
-        with the value in the dictionary
-    """
-    # dictionary of values to returns
-    file = MpGlobal.FILEPATH_SETTINGS
-    if os.path.exists(file):
-    
-        init_Settings_default(); # set some values to defaults in case they are not in the file
-        rf = open(file,"r")
-        line = True 
-
-        while line:
-            line = rf.readline().strip()
-            if line != "":
-            
-                i = line.index(":") # first index of a colon
-                
-                key,value = ( line[:i], line[i+1:])
-                
-                dim = key[:3]
-                key = key[4:]
-               
-                # check if the key exists in the Settings
-                # therefore deprecaed values are not loaded, and user fat finger values are not laoded
-                if key in Settings.__dict__:
-                    # load the setting only if it passes basic type checking, only load ints into ints
-                    # this way a user cannot attempt to change the basic data type
-                    # bad values will still make it crash (string in int) and should be fixed.
-                    if dim == u"int" and (type(Settings.__dict__[key]) == int or type(Settings.__dict__[key]) == long):
-                        temp = 0;
-                        try:
-                            temp = int(value)
-                        except:
-                            print "Not Integral Value: %s_%s = %s"%(dim,key,value)
-                        else:
-                            Settings.__dict__[key] = temp
-                    elif dim == u"bin" and type(Settings.__dict__[key]) == bool:
-                        Settings.__dict__[key] = (value.strip() == "True")
-                        
-                    elif dim == u"lst" and type(Settings.__dict__[key]) == list:
-                        Settings.__dict__[key] = value.split(',')
-                        i=0;
-                        while i < len(Settings.__dict__[key]): # remove empty array indices
-                            if len(Settings.__dict__[key][i]) == 0:
-                                Settings.__dict__[key].pop(i);
-                            else:
-                                Settings.__dict__[key][i] = atoi(Settings.__dict__[key][i])
-                                i += 1;
-                    elif dim == u"csv" and type(Settings.__dict__[key]) == list:
-                        Settings.__dict__[key] = unicode(value,'unicode-escape').split(',')
-                        i=0;
-                        while i < len(Settings.__dict__[key]): # remove empty array indices
-                            if len(Settings.__dict__[key][i]) == 0:
-                                Settings.__dict__[key].pop(i);
-                            else:
-                                Settings.__dict__[key][i] = Settings.__dict__[key][i].strip()
-                                i += 1;
-                        
-                    elif dim == u"str" and type(Settings.__dict__[key]) == str or type(Settings.__dict__[key]) == unicode:
-                        Settings.__dict__[key] = unicode(value)
-                    else:
-                        print "Error Loading Setting: %s_%s = %s"%(dim,key,value)
-                else:
-                    print "No Setting Named: %s_%s = %s"%(dim,key,value)
-            
-        rf.close()
-
-        update_StrToDec_Dict();
-        #for k,v in D.items():
-        #    print k,"=>",v
-    return;
-  
 # #########################  
   
 def history_log(filepath,song,typ): 
@@ -1206,7 +1065,6 @@ def get_md5(filepath):
         else:
             return ""     
      
-  
 def createMiniPath( song ):
     from UnicodeTranslate import Translate
     """
@@ -1248,10 +1106,6 @@ def createMiniPath( song ):
     
     return path
 
-  
-
-
-   
 if isPosix: # def systemDriveList
     """
         there are no 'drives' in linux/Ubuntu
@@ -1293,7 +1147,6 @@ import struct
 from MpGlobalDefines import *
 from MpSong import Song
 from datatype_hex64 import *
-from MpScripting import *;
 from MpSort import *
 from MpSearch import *
 from MpScripting import *

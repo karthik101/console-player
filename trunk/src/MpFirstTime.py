@@ -16,14 +16,19 @@ import os
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
+                    
 from MpGlobalDefines import *
+from MpSettings import *
 from MpSong import Song
 from datatype_hex64 import *
 from widgetProgressBar import ProgressBar
 from MpFileAccess import *
 from SystemPathMethods import *
 from MpScripting import *
-from MpSocket import *
+from MpSocket import *                   
+                    
+
 
 
 isPosix = os.name == 'posix'
@@ -139,7 +144,9 @@ def startUpCheck(install=False):
             MpGlobal.SocketThread.start();
     
         
-        loadSettings()
+        init_Settings_default(Settings);
+        loadSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+        update_StrToDec_Dict();
 
         MpGlobal.SAVED_VERSION = Settings.VERSION # store the version str for later
         
@@ -149,7 +156,6 @@ def startUpCheck(install=False):
         #extract any missing files
         quickVerifyCheck(installPath,value >= 0) # quick verify when >= 0, otherwise do a  full replace
 
-    
 def getNewInstallLocation():
     """
         display a dialog and let the user
@@ -306,3 +312,8 @@ def verifyRemoveUnwanted(dir):
                 if path not in files:
                     print "DEL:"+path
                     #os.remove(path)
+                    
+                    
+                    
+
+                    
