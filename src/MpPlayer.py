@@ -510,7 +510,7 @@ class MediaManager(object):
 
         song[MpMusic.PLAYCOUNT] += 1 
         
-        song[MpMusic.EXIF] = createInternalExif(song)
+        song.update();
         # refill the library, if it was in view, its text needs to be updated
         #Player_set_unsaved()
         MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),Player_set_unsaved)

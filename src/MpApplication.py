@@ -516,7 +516,7 @@ class MainWindow(QMainWindow):
             drops are processed in the main thread, any files that could be loaded are kicked added to a list_* variable in MpPlayer
             external_load_start() begins a thread processing any valid files dropped onto the player
         """
-        print "received drop from <%s>"%event.source()
+        #print "received drop from <%s>"%event.source()
         if event.source() == None: # event comes from outside the application
             mdata = event.mimeData()
             #print list(mdata.formats())

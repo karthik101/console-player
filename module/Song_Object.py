@@ -200,6 +200,7 @@ class Song(list):
 
         self.id = hex64(_y,_x)
 
+        self.__format_exif__()
         #print self.id
         #print "[%-2s] [%-2s] [%-2s] [%-d]"%(a,b,t,l)
         #print "[%03X] [%03X] [%03X] [%03X]"%(_a,_b,_t,_l)
