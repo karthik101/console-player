@@ -357,7 +357,7 @@ class Song(list):
             is saved, as an integer
             
         """
-        string = str(string) # cannot have an unicode object here
+        string = str(string).strip() # cannot have an unicode object here
         
         R = string.split("\n") # split the 6 or more line string into multiple lines
         R[0] = R[0][1:-1] # strip the beginning and ending quotes from the string field
@@ -367,7 +367,6 @@ class Song(list):
 
         n = R[1].split(',');
         
-        assert len(R) == 6, "REPR ERROR <%s>"%string
         # process each string value
         for i in range(len(s)): # fix all escaped quotes
             s[i] = unicode(s[i],'unicode-escape').replace("\\\"","\"");
