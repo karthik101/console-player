@@ -322,7 +322,6 @@ if isPosix: # def explorerOpen
 else:
     def explorerOpen(filepath): # filepath or directory
         os.startfile(filepath);
-
   
 if isPosix: # def fileGetDrive
     def fileGetDrive(filepath):
@@ -367,7 +366,24 @@ else:
         """
         return (win32file.GetFileAttributes(path) == win32con.FILE_ATTRIBUTE_DIRECTORY)     
 
-#
+if isPosix: # def systemDriveList
+    """
+        there are no 'drives' in linux/Ubuntu
+        i will therefore return a list of mounted devices found in media
+        this will unfortunatley list umounted devices as well.
+        # extraLocations = Settings.DRIVE_ALTERNATE_LOCATIONS
+    """
+    def systemDriveList(extraLocations=[]):
+        R = os.listdir('/media/');
+        S = [];
+        for path in R:
+            fpath = os.path.join('/media',path,''); # full file path to drive list
+            if os.path.isdir(fpath):
+                S.append(fpath);    # append the directo
+        return extraLocations + S + ['/home/','/home/Music/','/']
+else:
+    def systemDriveList(extraLocations=[]):
+        return  extraLocations + ['%s:\\' % d for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists('%s:' % d)]
 
         
                 

@@ -16,7 +16,7 @@
 #           in the RecordContainter
 # #########################################################
 
-from MpSong import *  
+from Song_Object import *  
 
 class SettingsContainer(object):
     def __init__(self):

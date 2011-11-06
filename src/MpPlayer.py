@@ -36,7 +36,8 @@ from SystemPathMethods import *
 from MpScripting import *
 from MpID3 import *
 from MpGlobalDefines import *
-from MpSong import Song
+from Song_Object import Song
+from Song_LibraryFormat import *
 from datatype_hex64 import *
 
 #__IMPORT_VLC__    = False

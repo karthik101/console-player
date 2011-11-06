@@ -1454,7 +1454,8 @@ import ctypes
 
 from MpGlobalDefines import *
 from MpSettings import *
-from MpSong import Song
+from Song_Object import Song
+from Song_LibraryFormat import *
 from datatype_hex64 import *
 from MpFileAccess import *
 from SystemPathMethods import *

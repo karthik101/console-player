@@ -10,7 +10,7 @@ from PyQt4.QtGui import *
 
 from MpGlobalDefines import *
 from SystemPathMethods import *
-from MpSong import Song
+from Song_Object import Song
 from datatype_hex64 import *
 import widgetInfoDisplay
 

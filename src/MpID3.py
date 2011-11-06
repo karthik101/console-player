@@ -225,7 +225,7 @@ def getTag_TupleOfInt(song,audio,key,tag):
     
 from MpGlobalDefines import *
 from SystemPathMethods import *
-from MpSong import Song
+from Song_Object import Song
 from datatype_hex64 import *
 from MpScripting import *  
 from MpSort import *
