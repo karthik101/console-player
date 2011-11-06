@@ -742,6 +742,116 @@ def getApplicationIcons():
     MpGlobal.icon_note        = QIcon(getStyleImagePath("app_note.png"))  
     MpGlobal.icon_favpage     = QIcon(getStyleImagePath("app_favpage.png"))  
 
+def get_md5(filepath):
+        block_size=(1<<12);
+        if os.path.exists( filepath ):
+            md5 = hashlib.md5()
+            rf = open(filepath ,"rb")
+            while True:
+                data = rf.read(block_size)
+                if not data:
+                    break
+                md5.update(data)
+            rf.close();
+            return "%s"%md5.hexdigest()
+        else:
+            return ""     
+     
+def createMiniPath( song ):
+    from UnicodeTranslate import Translate
+    """
+        given a song create a path like string like the following:
+            ex: Artist\Album\filename.ext
+        if artist fails, return "Unknown"
+            ex: Unknown\Album\filename.ext
+        if album fails, return none
+            ex: Artist\filename.ext
+            ex: Unknown\filename.ext
+        this 'mini' path can then be appended to a base path
+    """
+    t_art = Translate(song[MpMusic.ARTIST]).rstring
+    t_abm = Translate(song[MpMusic.ALBUM]).rstring
+    
+    nonascii = re.compile(ur"[^a-zA-z0-9()-+_ ]")
+    #extraspace = re.compile(ur"\s+")
+    
+    t_art = nonascii.sub("",t_art) # remove certain characters that
+    t_abm = nonascii.sub("",t_abm) # don't fit standard windows filepath types
+
+    t_art = t_art.strip()   # strip whitespace
+    t_abm = t_abm.strip()
+    
+    if t_art == "":
+        t_art = "Unknown"
+    
+    t_art = t_art.replace(" ","_")
+    t_abm = t_abm.replace(" ","_")
+    t_art = t_art[:25]
+    t_abm = t_abm[:25]
+    
+    if t_abm == "" or re.match("[none|unknown]",t_abm,re.I) != None:
+        path = os.path.join(t_art,fileGetFileName(song[MpMusic.PATH]));
+    else:
+        path = os.path.join(t_art,t_abm,fileGetFileName(song[MpMusic.PATH]));
+    
+    #path = extraspace.sub(" ",path) # would make a good edition
+    
+    return path
+
+def getInstallPath(forcehome=False):
+    """
+        Return the path that the application is installed in
+        Assume first that it is installed localled
+        Then assume it is installed to the appdata folder
+        
+        application is installed if a settings.ini file exists
+        if that file does not exist then return no path
+    """
+    
+    _localname_ = "user"   
+    _appdataname_ = "ConsolePlayer"
+    
+    arg0path = fileGetPath(sys.argv[0])
+    
+    #path = os.path.join(os.getcwd(),_localname_,"");
+    path = os.path.join(arg0path,_localname_,"");
+    file = os.path.join(path,"settings.ini");
+    if os.path.exists(file):
+        debugPreboot("Install Path: %s"%path)
+        return path
+    
+    # getenv('USERPROFILE') returns C:/Users/Nick/ or /home/nick/
+    if isPosix: # get a global directory to save to
+        home = os.getenv("HOME")
+    else:
+        home = os.getenv("APPDATA")
+    
+    
+    if home != None and ((not "-devmode" in sys.argv) or "--install=home" in sys.argv): #only use global install path when not developing
+        path = os.path.join(home,_appdataname_,"");
+        file = os.path.join(path,"settings.ini");
+        if os.path.exists(file):
+            debugPreboot("Install Path: %s"%path)
+            return path
+        
+    return "";
+
+def getStyleImagePath(filename):
+    """
+        returns the path to the named image
+        if it is not found in the current style
+        then use the default image icon from /images instead
+    """
+    path = os.path.join(MpGlobal.installPath,"style",Settings.THEME,"images",filename);
+    if not os.path.exists(path):
+        newpath = os.path.join(MpGlobal.installPath,"images",filename);
+        if not os.path.exists(newpath):
+            return os.path.join(MpGlobal.installPath,"images","blank.png");
+        else:
+            return newpath
+    return path
+     
+    
 # ##############################################
 # Others
 # ##############################################
@@ -1165,7 +1275,7 @@ def testbench_build_library():
         song[MpMusic.SELECTED]  = False
         
         song.update()
-        song[MpMusic.EXIF] = createInternalExif(song);
+
         library.append(song)
     return library;
     

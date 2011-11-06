@@ -324,7 +324,7 @@ class SongEditWindow(QDialog):
                 song[MpMusic.PLAYCOUNT] -= 1
                 #song[MpMusic.FREQUENCY] = 0
             
-            song[MpMusic.EXIF] = createInternalExif(song)
+            song.update()
     
     def setHidden(self,row,value):
         self.editList[row][1].setHidden(value)
