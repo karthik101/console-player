@@ -1,5 +1,5 @@
 from MpGlobalDefines import *
-from MpSong import Song
+from Song_Object import Song
 from datatype_hex64 import *
 #from MpScripting import *
 #from PyQt4.QtCore import *

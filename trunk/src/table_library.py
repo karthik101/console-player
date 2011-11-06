@@ -489,7 +489,7 @@ def txtSearch_OnTextChange(text):
     MpGlobal.Window.search_label.setText("Found: %d"%len(MpGlobal.Player.libDisplay))
         
         
-from MpSong import Song
+from Song_Object import Song
 from datatype_hex64 import *
 
 from MpScripting import *
