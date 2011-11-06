@@ -23,6 +23,8 @@ if not isPosix:
     import win32file
     import win32con
 
+    
+    
 def fileGetExt(file):
     """ return the extension part of the file"""
     file = unicode(file)
@@ -371,19 +373,20 @@ if isPosix: # def systemDriveList
         there are no 'drives' in linux/Ubuntu
         i will therefore return a list of mounted devices found in media
         this will unfortunatley list umounted devices as well.
+        
         # extraLocations = Settings.DRIVE_ALTERNATE_LOCATIONS
     """
-    def systemDriveList(extraLocations=[]):
+    def systemDriveList():
         R = os.listdir('/media/');
         S = [];
         for path in R:
             fpath = os.path.join('/media',path,''); # full file path to drive list
             if os.path.isdir(fpath):
                 S.append(fpath);    # append the directo
-        return extraLocations + S + ['/home/','/home/Music/','/']
+        return S + ['/home/','/home/Music/','/']
 else:
-    def systemDriveList(extraLocations=[]):
-        return  extraLocations + ['%s:\\' % d for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists('%s:' % d)]
+    def systemDriveList():
+        return  ['%s:\\' % d for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists('%s:' % d)]
 
         
                 

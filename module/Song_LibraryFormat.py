@@ -1,4 +1,11 @@
-
+# #########################################################
+# #########################################################
+# File: MpFileAccess
+# Description:
+#   Save/Load .libz files
+#   These methods return a list of Songs, as defined in 
+#       Song_Object.py
+# #########################################################
 import os
 import sys
 import time
@@ -92,6 +99,61 @@ def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
     e = datetime.datetime.now()
     print "Saved %d songs to libz container in %s"%( len(songList), (e-s))
     
+def musicLoad_LIBZ(filepath):
+    """
+        load the specified .libz file and return an array of songs.
+    """
+    
+
+    if not os.path.exists(filepath):
+        return [];
+    
+    R=[];
+    drivelist = [];
+    cnt = 0
+    s = datetime.datetime.now()
+    
+    with open(filepath,"rb") as FILE:
+        # ##################################
+        # read the header
+        header={};
+        bin = FILE.read(8);
+        key,val = struct.unpack("4sI",bin)
+        while key != "SIZE" and bin:
+            header[key] = val;
+            bin = FILE.read(8);
+            if bin:
+                key,val = struct.unpack("4sI",bin)
+                
+        # ##################################
+        # process the header dictionary
+        typ = header.get("LTYP",0)      # needed for restoring file paths
+        blk = header.get("LBLK",128)    # not really needed
+        fmt = header.get("LFMT",Song.repr_length()) # needed to restore each song record.
+        cnt = header.get("LCNT",0)
+        
+        if typ&2 == 2: 
+            drivelist=systemDriveList(); 
+            
+        # ##################################
+        # now  read the data from the file.         
+        bin = FILE.read(val);        
+        while bin:
+        
+            if typ&1 == 0 and pylzma != None: #compression is only used when typ&1 == 0.
+                bin = pylzma.decompress(bin);
+            
+            R += LIBZ_process_block( bin , typ, fmt, drivelist );
+
+            bin = FILE.read(8);
+            if bin:
+                key,size = struct.unpack("4sI",bin)
+                bin = FILE.read(size); # read val bytes from the frame  
+   
+    e = datetime.datetime.now()
+    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,(e-s))
+    return R;
+      
 def LIBZ_write_songList(FILE,songList,typ,block_size): 
     """
         typ: bitwise or combination of flags.
@@ -112,7 +174,8 @@ def LIBZ_write_songList(FILE,songList,typ,block_size):
         block=""
         for x in xrange(block_size):
             if i < l:
-                block += songList[i].__repr__(drivelist);
+                block += "<Song>\n%s</Song>\n"%(songList[i].__repr__(drivelist))
+                #block += "%s"%(songList[i].__repr__(drivelist))
             else: break;
             i+=1;
             
@@ -183,20 +246,20 @@ def LIBZ_compress_to_file(src,dst):
             if key == "LBLK": blk = int(val.strip());
             if key == "LFMT": fmt = int(val.strip());
             line = FILE.readline()
-            
-        m=(blk*fmt)
-        i=0;
+
         while line:
             # read blocks... the first line has already been read
             
             block="" # reset the block data
-            while i < m and line:
-                block += line
-                line = FILE.readline()
-                i+=1;
             i=0
-
-            print ("%s...%s"%(block[:8],block[-8:])).replace('\n','<>')
+            while i < blk and line:
+                block += line
+                line = FILE.readline()  
+                if line == "</Song>":
+                    i+=1;
+            block += line # add the last </Song> or empty string if at end of file
+            
+            #print ("%s...%s"%(block[:8],block[-8:])).replace('\n','<>')
             if typ&1==0 and pylzma != None:
                 block=pylzma.compress(block)
  
@@ -208,69 +271,7 @@ def LIBZ_compress_to_file(src,dst):
         FILE.write( header );
         FILE.write( data );
    
-def musicLoad_LIBZ(filepath):
-    """
-        load the specified .libz file and return an array of songs.
-    """
-    
-
-    if not os.path.exists(filepath):
-    
-        # temporary code:
-        path = fileGetPath(filepath)
-        file = fileGetName(filepath) + ".library"
-        print "\n\n%s\n\n"%file
-        fp = os.path.join(path,file)
-        if os.path.exists(fp):
-            return musicLoad(fp)
-        # end temporary code    
-        return [];
-    
-    R=[];
-    drivelist = [];
-    cnt = 0
-    s = datetime.datetime.now()
-    
-    with open(filepath,"rb") as FILE:
-        # ##################################
-        # read the header
-        header={};
-        bin = FILE.read(8);
-        key,val = struct.unpack("4sI",bin)
-        while key != "SIZE" and bin:
-            header[key] = val;
-            bin = FILE.read(8);
-            if bin:
-                key,val = struct.unpack("4sI",bin)
-                
-        # ##################################
-        # process the header dictionary
-        typ = header.get("LTYP",0)      # needed for restoring file paths
-        blk = header.get("LBLK",128)    # not really needed
-        fmt = header.get("LFMT",Song.repr_length()) # needed to restore each song record.
-        cnt = header.get("LCNT",0)
-        
-        if typ&2 == 2: 
-            drivelist=systemDriveList(); 
-            
-        # ##################################
-        # now  read the data from the file.         
-        bin = FILE.read(val);        
-        while bin:
-        
-            if typ&1 == 0 and pylzma != None: #compression is only used when typ&1 == 0.
-                bin = pylzma.decompress(bin);
-            
-            R += LIBZ_process_block( bin , typ, fmt, drivelist );
-
-            bin = FILE.read(8);
-            if bin:
-                key,size = struct.unpack("4sI",bin)
-                bin = FILE.read(size); # read val bytes from the frame  
-   
-    e = datetime.datetime.now()
-    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,(e-s))
-    return R;
+# ###########################   
    
 def LIBZ_process_block(data,typ,fmt, drivelist):
     """
@@ -281,32 +282,23 @@ def LIBZ_process_block(data,typ,fmt, drivelist):
     i=0;
     j=0;
     l = len(R);
-    
-    s=0;
-    e=0;
-    for j in range(fmt):
-        e = data.find("\n",e+1);
-        if e==-1: # both negative one or the index of a \n, will return a slice without a newline
-            break;
 
+    s=len("<Song>")+1   # +1 fr newline
+    e=data.find("</Song>")
+    end_tag_len=len("</Song>")
+    
     while e != -1:  # this block of  code is skippped when the data only contains one song.
-        repr = data[s:e]
+        repr = data[s:e-1]
         if len(repr) > 0:
             R.append( Song( repr,DRIVELIST=drivelist ) );
-        
-        # get the next song representation
-        e+=1; # skip the new line
-        s=e; 
-        for j in range(fmt):
-            e = data.find("\n",e+1);
-            if e==-1:
-                break;
-                
+            
+        data=data[e+end_tag_len:]
+        #s=len("<Song>")
+        e=data.find("</Song>")
     # restore the last song in the block.        
     
     repr = data[s:e]
-    
-    
+
     if len(repr) > 0:   
         R.append( Song( repr ) );
     

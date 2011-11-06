@@ -8,7 +8,6 @@
 import os
 import sys
 
-
 isPosix = os.name == 'posix'
 
 __devmode = "-devmode" in sys.argv;
