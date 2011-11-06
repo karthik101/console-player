@@ -1,16 +1,34 @@
-
+# #########################################################
+# #########################################################
+# File: ReadableDictionary_FileFormat
+# Description:
+#   this file provides 2 methods for saving/loading data
+# from any object to a text file that can easily be read
+# and modified by anyone.
+# it uses the __dict__ value of an object to save all variables
+# to the text file using a "type_VARIABLE=VALUE" format.
+# by giving the type anyone can quickly identify the kind of
+# legal values, and aids in reading back the values
+#
+# This file is used to save Global Settings for the ConsolePlayer application
+#
+# limitations:
+#   any lists must be of uniform type,
+#       i.e. lists of all integers or all string values 
+#       ( no floats supported currently)
+#   strings are always read back as unicode objects
+# #########################################################
 import os
 import sys
 
-#from PyQt4.QtCore import *
-#from PyQt4.QtGui import *
+from SystemPathMethods import *
 
 isPosix = os.name == 'posix'
 
 #TODO: rename these functions and then send this file to ./modules/
 # this is generic enough to be used anywhere
          
-def saveSettings(file, object):
+def ReadableDict_Save(file, object):
     """
         using the data found in D, a dictionary
         store that data in a file in the format:
@@ -24,28 +42,19 @@ def saveSettings(file, object):
             str_Title:MP3Player
         This way parseing and forming of the dictionary can be automatic  
     """
-    #k = lambda x: x[0]
-    #R = sorted(D.items(), key = k)
-    #
     
-    wf = open(file,"w")
-    #for key,value in R :
-    #    wf.write( "%s:%s\n"%(key,value) )
-    #for k,v in D.items():
-    #    print k,"=>",v    
+    
+    
     typeDict = {str(int):'int',
             str(long):'int',
             str(str):'str',
             str(unicode):'str',
             str(bool):'bin',
-            str(list):'csv'}
+            str(list):'csv'} # and lst for integer values
 
     # from the settings dictionary build a typed dictionary i a human readable save format.
-    D = {}
+    D = {} # dictionary of key values to save
     for key,value in object.__dict__.items():
-        #TODO: create a list of banned key names
-        # for example, PLAYER_LAST_INDEX is saved as the first line of a playlist file
-        # instead of in the settings file, despite being a setting key name.
 
         newKey = "%s_%s"%(typeDict.get(str(type(value)),'???'),key)
 
@@ -57,16 +66,18 @@ def saveSettings(file, object):
                     D[newKey] = unicode(','.join( value )).encode('unicode-escape')
             else:
                 D[newKey] = ""
-                
         else:
             D[newKey] = value
-
+            
+    # create a sorted 2d list of values
+    
     R = sorted(D.items(), key = lambda x: x[0])
+    wf = open(file,"w")
     for key,value in R:
         wf.write( "%s:%s\n"%(key,value) )
     wf.close()
 
-def loadSettings(file, object):
+def ReadableDict_Load(file, object):
     """
         read in and set the data from the settings file
         D is the dictionary of values to set
@@ -142,4 +153,4 @@ def loadSettings(file, object):
         #    print k,"=>",v
     return;
     
-from SystemPathMethods import *
+

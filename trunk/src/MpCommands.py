@@ -596,7 +596,7 @@ def cmd_load(input):
     MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.library)
     
     init_Settings_default(Settings);
-    loadSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+    ReadableDict_Load(MpGlobal.FILEPATH_SETTINGS,Settings)
     update_StrToDec_Dict();
     
     return COMMAND.VALID
@@ -1416,7 +1416,7 @@ def cmd_setsave(input):
         undocumented
     """
     #D = settings_To_Dictionary()
-    saveSettings(MpGlobal.FILEPATH_SETTINGS, Settings)
+    ReadableDict_Save(MpGlobal.FILEPATH_SETTINGS, Settings)
     return COMMAND.VALID
 def cmd_setload(input):
     """
@@ -1427,7 +1427,7 @@ def cmd_setload(input):
         load settings from settings.ini
     """
     init_Settings_default(Settings);
-    loadSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+    ReadableDict_Load(MpGlobal.FILEPATH_SETTINGS,Settings)
     update_StrToDec_Dict();
     return COMMAND.VALID
   
@@ -1453,7 +1453,7 @@ import subprocess
 import ctypes
 
 from MpGlobalDefines import *
-from MpSettings import *
+from ReadableDictionary_FileFormat import *
 from Song_Object import Song
 from Song_LibraryFormat import *
 from datatype_hex64 import *

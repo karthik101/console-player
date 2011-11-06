@@ -19,7 +19,7 @@ from PyQt4.QtGui import *
 
                     
 from MpGlobalDefines import *
-from MpSettings import *
+from ReadableDictionary_FileFormat import *
 from Song_Object import Song
 from datatype_hex64 import *
 from widgetProgressBar import ProgressBar
@@ -145,7 +145,7 @@ def startUpCheck(install=False):
     
         
         init_Settings_default(Settings);
-        loadSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+        ReadableDict_Load(MpGlobal.FILEPATH_SETTINGS,Settings)
         update_StrToDec_Dict();
 
         MpGlobal.SAVED_VERSION = Settings.VERSION # store the version str for later
