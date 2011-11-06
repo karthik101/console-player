@@ -496,7 +496,7 @@ def setSearchTime():
 # ##############################################
 def init_Settings_default(settingsObject):
     """
-        this is called before calling loadSettings
+        this is called before calling ReadableDict_Load
         this way the dimensions (or other values) are preset
         to meaningful value for the user, other than hardcoded values
     """
@@ -515,7 +515,7 @@ def init_Settings(release):
         if a setting needs to be initialized to some other value
         set that here
         
-        it is assumed that loadSettings() was called before this function
+        it is assumed that ReadableDict_Load() was called before this function
     """
     
     Settings.RELEASE = release;
@@ -544,7 +544,7 @@ def init_Settings(release):
         # version controller has already had the value incremented by one, and saved
         # it must nowbne saved again in the settings for other use.
         Settings.VERSION = MpGlobal.VERSION    
-        saveSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+        ReadableDict_Save(MpGlobal.FILEPATH_SETTINGS,Settings)
         pass
     else:
         MpGlobal.DIAG_PLAYBACK = False
@@ -664,7 +664,7 @@ def UpdateStatusWidget(index,varient):
 def On_Close_Save_Data(force = False):
     settings_get_Update()   # any last minute changes to the settings
     
-    saveSettings(MpGlobal.FILEPATH_SETTINGS,Settings)
+    ReadableDict_Save(MpGlobal.FILEPATH_SETTINGS,Settings)
     
     if MpGlobal.UNSAVED_DATA or force == True:
         
@@ -1261,7 +1261,7 @@ from Song_Object import Song
 from Song_LibraryFormat import *
 from datatype_hex64 import *
 from MpFileAccess import *
-from MpSettings import *
+from ReadableDictionary_FileFormat import *
 from SystemPathMethods import *
 from MpID3 import *
 from UnicodeTranslate import Translate
