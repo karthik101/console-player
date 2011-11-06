@@ -473,8 +473,8 @@ class SettingsWindow(QDialog):
             MpGlobal.Window.txt_main.setMinimumHeight(size+8)
             Settings.USE_CUSTOM_THEME_COLORS = True
             Settings.THEME = self.cbox_theme.currentText()
-            css_save_dict(Settings.THEME,"user",D)
-            D = load_css(Settings.THEME,MpGlobal.Application,D,True)
+            style_save_dictionary(MpGlobal.installPath,Settings.THEME,"user",D)
+            D = style_set_custom_theme(MpGlobal.installPath,Settings.THEME,MpGlobal.Application,D,True)
             MpGlobal.Window.set_colorFromCssDict(D)
                  
     def accept(self):       
@@ -490,7 +490,7 @@ class SettingsWindow(QDialog):
     def button_theme_setDefault(self):
         Settings.USE_CUSTOM_THEME_COLORS = False
         Settings.THEME = self.cbox_theme.currentText()
-        D = load_css(Settings.THEME,MpGlobal.Application)
+        D = style_set_custom_theme(MpGlobal.installPath,Settings.THEME,MpGlobal.Application)
         MpGlobal.Window.set_colorFromCssDict(D)
         self.setData_style()
      
@@ -502,7 +502,7 @@ class SettingsWindow(QDialog):
             
             D = {}
             
-            D = load_css(Settings.THEME,MpGlobal.Application,D,Settings.USE_CUSTOM_THEME_COLORS)
+            D = style_set_custom_theme(MpGlobal.installPath,Settings.THEME,MpGlobal.Application,D,Settings.USE_CUSTOM_THEME_COLORS)
         
             MpGlobal.Window.set_colorFromCssDict(D)
         

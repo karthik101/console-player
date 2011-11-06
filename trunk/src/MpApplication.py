@@ -169,7 +169,7 @@ class MainWindow(QMainWindow):
         D = self.get_defaultColorDict()
 
         if Settings.THEME != "none":
-            D = load_css(Settings.THEME,MpGlobal.Application,D,Settings.USE_CUSTOM_THEME_COLORS)
+            D = style_set_custom_theme(MpGlobal.installPath,Settings.THEME,MpGlobal.Application,D,Settings.USE_CUSTOM_THEME_COLORS)
         
         self.set_colorFromCssDict(D)
             
@@ -607,7 +607,7 @@ class MainWindow(QMainWindow):
         #c_rte=0 # combined rating
         #c_rct=0 # count of songs rated
     def setTheme(self,name='default'):
-        D = load_css(name,MpGlobal.Application)
+        D = style_set_custom_theme(MpGlobal.installPath,name,MpGlobal.Application)
         self.set_colorFromCssDict(D)
 
         return (D != None)
