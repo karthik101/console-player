@@ -10,60 +10,7 @@ import sys
 
 isPosix = os.name == 'posix'
 
-
-def musicBackup(force = False):
-    """
-        save a copy of the current library to ./backup/
-        only save if one has not been made today,
-        delete old backups
-        
-        adding new music, deleting music, are good reasons to force backup
-    """
-    path = os.path.join(MpGlobal.installPath,'backup')
-    songList = MpGlobal.Player.library
-    
-    if not os.path.exists(path):
-        os.mkdir(path)
-        print "backup directory created"
-        
-    date,time = getNewDate().split(' ')
-    date = date.replace('/','-').replace('\\','-')
-    
-    name = 'music_backup-'
-    fullname = name+date+'.libz'
-    h,m = time.split(':')
-        
-    #if (atoi(h) > 12) or force:  # save backups in the afternoon only
-    
-    R = []
-    dir = os.listdir(path)
-    for file in dir:
-        if file.startswith(name) and fileGetExt(file) == "libz":
-            R.append(file);
-            
-    newestbu = ""
-
-    R.sort(reverse=True)
-    
-    if len(R) > 0:
-
-        #remove old backups
-        # while there are more than 6, 
-        # and one has not been saved today
-        while len(R) > 6 and R[0] != fullname: 
-            delfile = R.pop()
-            print "Deleting %s"%delfile
-            os.remove(os.path.join(path,delfile))
-            
-        # record name of most recent backup, one backup per day unless forced    
-        newestbu = R[0]
-        
-    # save a new backup 
-    if force or newestbu != fullname:
-        print "Saving %s"%fullname
-        newbu = os.path.join(path,fullname)  
-        musicSave_LIBZ(newbu,songList,Settings.SAVE_FORMAT);
-     
+# TODO move remaining functions
 # ##########################
 # custom playlist formats
      
