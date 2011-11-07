@@ -84,7 +84,7 @@ def registerNewListAsPlayList(songList,autoLoad = False, autoStart = False):
     
     playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT)
     if Settings.SAVE_BACKUP:
-        musicBackup(MpGlobal.Force_Backup);
+        musicBackup(MpGlobal.FOLDERPATH_BACKUP,MpGlobal.Player.library,Settings.SAVE_FORMAT,MpGlobal.Force_Backup);
     
 def createPlayListFromSongSet(songSet,size,hashValue = 0):
     """

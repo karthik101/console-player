@@ -489,7 +489,7 @@ def cmd_backup(input):
             Settings.SAVE_BACKUP = False
         debug("Backup Setting set to: %s"%Settings.SAVE_BACKUP);
     else:    
-        musicBackup(True); # that was easy  
+        musicBackup(MpGlobal.FOLDERPATH_BACKUP,MpGlobal.Player.library,Settings.SAVE_FORMAT,True); # that was easy  
 def cmd_build(input):
     """
         Command: BUILD

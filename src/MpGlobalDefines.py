@@ -192,7 +192,7 @@ class GlobalContainer(object):
     FILEPATH_ICON              = "" # 'icon.png'
     FILEPATH_VOLUMEICON        = "" # app_volume_icon.png
     FILEPATH_HISTORY           = "" # "history.log"
-
+    FOLDERPATH_BACKUP          = ""
     # diag messages, set to true to see diag feedback from the named
     # areas of the application
     DIAG_PLAYBACK  = True
@@ -238,6 +238,8 @@ class GlobalContainer(object):
         self.FILEPATH_HISTORY          = os.path.join(self.installPath,"history.log")
 
         self.FILEPATH_ICON = os.path.join(self.installPath,"icon.png")
+        
+        self.FOLDERPATH_BACKUP = os.path.join(self.installPath,"backup")
      
 class MusicContainer(EnumSong):
     """
