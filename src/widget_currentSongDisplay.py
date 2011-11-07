@@ -7,12 +7,15 @@ isPosix = os.name == 'posix'
 import math
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
-from MpGlobalDefines import *
+import widgetInfoDisplay
 from SystemPathMethods import *
 from Song_Object import Song
 from datatype_hex64 import *
-import widgetInfoDisplay
+
+from MpGlobalDefines import *
+
+
+
 from MpSongHistory import *
 
 class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
