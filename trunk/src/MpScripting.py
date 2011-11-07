@@ -1369,8 +1369,10 @@ from MpGlobalDefines import *
 
 from Song_Object import Song
 from Song_LibraryFormat import *
+from Song_PlaylistFormat import *
 from datatype_hex64 import *
-from MpFileAccess import *
+
+
 from ReadableDictionary_FileFormat import *
 from SystemPathMethods import *
 from MpID3 import *

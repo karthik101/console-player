@@ -28,7 +28,8 @@ from MpGlobalDefines import *
 from Song_Object import Song
 from datatype_hex64 import *
 from widgetProgressBar import ProgressBar
-from MpFileAccess import *
+
+
 from SystemPathMethods import *
 from MpScripting import *
 from MpSort import *

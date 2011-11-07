@@ -13,6 +13,7 @@ from SystemPathMethods import *
 from Song_Object import Song
 from datatype_hex64 import *
 import widgetInfoDisplay
+from MpSongHistory import *
 
 class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
     def mouseReleaseEvent(self,event):

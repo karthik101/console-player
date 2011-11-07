@@ -49,6 +49,8 @@ from widget_playbutton import *
 from widget_currentSongDisplay import *
 from widget_currentTimeDisplay import *
 
+from MpSongHistory import *
+
 from Qt_CustomStyle import *
 
 _STATUS_BAR_VISIBLE = True; #ach! hans, run! a global.
@@ -913,7 +915,7 @@ def init_preMainWindow():
     getApplicationIcons()
     
     MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
-    MpGlobal.Player.playList = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
+    Settings.PLAYER_LAST_INDEX,MpGlobal.Player.playList = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
 
 def init_postMainWindow():
     """
@@ -1470,7 +1472,8 @@ from MpScripting import *
 from MpSort import *
 from MpSearch import *
 from MpCommands import *
-from MpFileAccess import *
+
+
 from SystemPathMethods import *
 from MpPlayer import *
 from MpEventHook import disableHook
