@@ -185,7 +185,7 @@ class TablePLEditor(widgetTable.HPageTable):
         # get the list of songs
         # remove those songs from the left display list
         if path != "":
-            S = playListLoad(path,R)
+            index,S = playListLoad(path,R) # index is ignored
             listRemoveElements(R,S)
             # update the data pools
             tl.DataSrc = R
@@ -272,6 +272,7 @@ class TablePLEditor(widgetTable.HPageTable):
 
 
 from Song_Object import Song
+from Song_PlaylistFormat import *
 from datatype_hex64 import *
 
 from MpScripting import *

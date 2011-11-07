@@ -1385,7 +1385,7 @@ def cmd_plload(input):
         if os.path.exists(test):
             fname = test
 
-    MpGlobal.Player.playList = playListLoad(fname,MpGlobal.Player.library)
+    Settings.PLAYER_LAST_INDEX,MpGlobal.Player.playList = playListLoad(fname,MpGlobal.Player.library)
     MpGlobal.Window.tbl_playlist.UpdateTable(0,MpGlobal.Player.playList)
 
     MpGlobal.Player.loadSong( Settings.PLAYER_LAST_INDEX );
@@ -1456,8 +1456,10 @@ from MpGlobalDefines import *
 from ReadableDictionary_FileFormat import *
 from Song_Object import Song
 from Song_LibraryFormat import *
+from Song_PlaylistFormat import *
 from datatype_hex64 import *
-from MpFileAccess import *
+
+
 from SystemPathMethods import *
 from MpID3 import *
 from UnicodeTranslate import Translate

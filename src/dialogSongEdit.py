@@ -3,7 +3,8 @@ from PyQt4.QtGui import *
 from MpGlobalDefines import *
 from Song_Object import Song
 from datatype_hex64 import *
-from MpFileAccess import *
+
+
 from SystemPathMethods import *
 from widgetLineEdit import *
 import time
@@ -460,29 +461,31 @@ def secondsToFString(sec):
     return time.strftime("%Y/%m/%d %H:%M",structtime)
     
 if __name__ == '__main__':
-    import sys
-    from MpFileAccess import createSongV2
+    #  import sys
+    #  
+    #  path="M:\\discography\\discography - blind melon\\blind melon\\02 - tones of home.mp3"
+    #  exif="Blind Melon|Tones of Home|Blind Melon|Rock|2010/12/05 15:48|266|5|23|0|0|0|0"
+    #  exi2="Blind Melon|No Rain|Blind Melon|Rock|2010/12/05 15:48|266|5|23|0|0|0|0"
+    #  song = [[]]*16;
+    #  song[EXIF] = exif
+    #  song[PATH] = path
+    #  createSongV2(song)
+    #  song2 = [[]]*16;
+    #  song2[EXIF] = exi2
+    #  song2[PATH] = path
+    #  createSongV2(song2)
+    #  data = [song,song2]
+    #  
+    #  app = QApplication(sys.argv)
+    #  app.setApplicationName("Console Player")
+    #  app.setQuitOnLastWindowClosed(True)
+    #  # create a window with no parent at 200 200 and data
+    #  window = SongEditWindow(None)
+    #  #window.Renew(data)
+    #  window.show()
+    #  
+    #  
+    #  sys.exit(app.exec_())
+    pass
     
-    path="M:\\discography\\discography - blind melon\\blind melon\\02 - tones of home.mp3"
-    exif="Blind Melon|Tones of Home|Blind Melon|Rock|2010/12/05 15:48|266|5|23|0|0|0|0"
-    exi2="Blind Melon|No Rain|Blind Melon|Rock|2010/12/05 15:48|266|5|23|0|0|0|0"
-    song = [[]]*16;
-    song[EXIF] = exif
-    song[PATH] = path
-    createSongV2(song)
-    song2 = [[]]*16;
-    song2[EXIF] = exi2
-    song2[PATH] = path
-    createSongV2(song2)
-    data = [song,song2]
     
-    app = QApplication(sys.argv)
-    app.setApplicationName("Console Player")
-    app.setQuitOnLastWindowClosed(True)
-    # create a window with no parent at 200 200 and data
-    window = SongEditWindow(None)
-    #window.Renew(data)
-    window.show()
-
-    
-    sys.exit(app.exec_())

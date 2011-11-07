@@ -2,6 +2,8 @@
 
 ufr = lambda FILE:  unicode( FILE.readline().strip() ,"utf-8");
 
+from Song_PlaylistFormat import *
+
 def xml_open(file):
 
     D={}

@@ -12,7 +12,8 @@ from Song_LibraryFormat import *
 from datatype_hex64 import *
 
 from datatype_hex64 import *
-from MpFileAccess import *
+
+
 from SystemPathMethods import *
 import widgetProgressBar
 

@@ -31,7 +31,8 @@
 import os.path
 from PyQt4.QtCore import *
 #from MpApplication import *
-from MpFileAccess import *
+
+
 from SystemPathMethods import *
 from MpScripting import *
 from MpID3 import *
@@ -39,7 +40,7 @@ from MpGlobalDefines import *
 from Song_Object import Song
 from Song_LibraryFormat import *
 from datatype_hex64 import *
-
+from MpSongHistory import *
 #__IMPORT_VLC__    = False
 #__IMPORT_PHONON__ = False
 
