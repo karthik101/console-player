@@ -35,7 +35,7 @@ from PyQt4.QtCore import *
 
 from SystemPathMethods import *
 from MpScripting import *
-from MpID3 import *
+from Song_MutagenWrapper import *
 from MpGlobalDefines import *
 from Song_Object import Song
 from Song_LibraryFormat import *

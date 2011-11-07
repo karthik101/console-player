@@ -5,9 +5,22 @@
  
 # TODO:
 # imports should be fixed accross all files
-# in general, i would  like all standard lib imports first
-# then all Qt / non other imports ( including all imports in ./module/ )
-# then all imports specific to this project should be found at the end of the file.
+#   in general, i would  like all standard lib imports first
+#   then all Qt / non other imports ( including all imports in ./module/ )
+#   then all imports specific to this project should be found at the end of the file.
+#
+# better abstraction on the application <--> data level
+#   in general, i want the following:
+#       [data] <-> [translator] <-> [application interface]
+#   what would this get me?:
+#       1. all dialogs would be standalone, 
+#       2. widgets would be independant of the data they represent.
+#           the library table could instead show any list of songs and be easily switched.
+#
+# better tables.
+#   the current tables i wrote the day after i wrote "hello world" in python. i didn't know 
+#   what it was i was doing. I think the idea is sound, 30 rows (or so), and revolve the data
+#   through them. instead of adding/removing 1k-10k rows. do i write my own table <-> interface?
    
 import os   
 import sys
@@ -89,8 +102,8 @@ if __debug: print "Application Created %s"%MpGlobal.Application
 import VersionController
 MpGlobal.VERSION = VersionController.AutoVersion(__devmode) 
 MpGlobal.NAME = "Console Player - v%s"%MpGlobal.VERSION
-del VersionController
-print MpGlobal.NAME
+
+if __debug: print MpGlobal.NAME
     
 
 if __debug: print "Player Version Set"      
@@ -98,7 +111,7 @@ if __debug: print "Player Version Set"
 # ######################################
 # Look for the settings, Check if required files need to be extracted
 # ###################################### 
-startUpCheck(install=__install); # load the settings or install if never been run before
+startUpCheck(install=__install); # TODO CLEAN UP WHAT THIS DOES
 
 if __debug: print "Set Up Check Done"    
 
@@ -108,56 +121,29 @@ if __debug: print "Set Up Check Done"
 init_Settings(not __devmode)
 
 if __debug: print "Settings Initialized"
-    
-init_preMainWindow()
-
-if __debug: print "Player Components initialized"    
+      
 
 import MpAutoUpdate; 
 MpAutoUpdate.checkForUpdates(MpGlobal.SAVED_VERSION);
-del MpAutoUpdate
 
-if __debug: print "Check for updates complete"   
-# ######################################
-# Create the Form
-# ######################################
-MpGlobal.Window = MainWindow(MpGlobal.NAME)
+if __debug: print "Check for updates complete"
 
-if __debug: print "Main Window Created %s"%MpGlobal.Window    
+# #############################################################################################################
+# #############################################################################################################
+# #############################################################################################################
+   
 # ######################################
-# Create the Player
+# Create the Main Window
 # ######################################
-MpGlobal.PlayerThread = MediaPlayerThread(MpGlobal.Window)
-MpGlobal.PlayerThread.start()
-
-if __debug: print "Player Thread Created %s"%MpGlobal.PlayerThread  
+if __debug: print "Creating Main Window..."  
   
-# ######################################
-# Set Keyboard Hook
-# ######################################
-
-if not __devmode and Settings.MEDIAKEYS_ENABLE:
-    MpEventHook.initHook()
-    debugPreboot("KeyBoard Hook Enabled")
-
-# ######################################
-# Finish initializing....
-# ######################################
-MpGlobal.Window.txt_debug.setPlainText(MpGlobal.debug_preboot_string)
-MpGlobal.debug_preboot_string = ""
-
+init_preMainWindow()
+MpGlobal.Window = MainWindow(MpGlobal.NAME)
 MpGlobal.Window.show()
-
-if __debug: print "Window Show"    
-
 init_postMainWindow()
 
-if __debug: print "Post Main Window initilizers done"    
-
-if len(sys.argv) > 1:
-    msg = " ".join(sys.argv[1:])
-    if msg != "":   
-        session_receive_argument(msg)
+if __debug: print "Main Loop Starting..."    
+  
 # ######################################
 # Start the Main Loop
 # ######################################

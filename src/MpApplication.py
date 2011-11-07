@@ -908,11 +908,25 @@ def init_preMainWindow():
     MpGlobal.AudioPlayer = getNewAudioPlayer()
     MpGlobal.Player = MediaManager(MpGlobal.AudioPlayer)
     
+    # ######################################
+    # Create the Player
+    # ######################################
+    MpGlobal.PlayerThread = MediaPlayerThread(MpGlobal.Window)
+    MpGlobal.PlayerThread.start()
+    
     #QMetaType.Q_DECLARE_METATYPE(widgetTable.Table)
     #print QMetaType.type("Table")
     registerSSService()
      
     getApplicationIcons()
+    
+    # ######################################
+    # Set Keyboard Hook
+    # ######################################
+
+    if "-devmode" not in sys.argv and Settings.MEDIAKEYS_ENABLE:
+        MpEventHook.initHook()
+        debugPreboot("KeyBoard Hook Enabled")
     
     MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
     Settings.PLAYER_LAST_INDEX,MpGlobal.Player.playList = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
@@ -945,6 +959,12 @@ def init_postMainWindow():
     
     MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Ready, DevMode : %s"%Settings.DEVMODE)   
 
+    MpGlobal.Window.txt_debug.setPlainText(MpGlobal.debug_preboot_string)
+    MpGlobal.debug_preboot_string = "" 
+    
+    if len(sys.argv) > 1:   
+        session_receive_argument(" ".join(sys.argv[1:]))    # this is yet another Yay Lazy moment, where other code does what i want.
+    
     if Settings.RELEASE:
         sys.stdout = MpSTDDebug()
         sys.stderr = MpSTDDebug()
