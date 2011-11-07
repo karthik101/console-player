@@ -1375,7 +1375,7 @@ from datatype_hex64 import *
 
 from ReadableDictionary_FileFormat import *
 from SystemPathMethods import *
-from MpID3 import *
+from Song_MutagenWrapper import *
 from UnicodeTranslate import Translate
 from MpEventHook import initHook,disableHook
 from dialogSettings import SettingsWindow
@@ -1383,7 +1383,7 @@ from MpScreenSaver import *
 from MpFirstTime import verifyInstallation  
 from MpSort import *
 from MpSearch import *
-from MpID3 import *
+from Song_MutagenWrapper import *
 from MpSocket import *
 
 

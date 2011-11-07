@@ -45,7 +45,6 @@ class MpThread(QThread):
 class MediaPlayerThread(MpThread): 
     
     def run(self):
-        MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Thread Starting")
 
         time = 0
         state = 0

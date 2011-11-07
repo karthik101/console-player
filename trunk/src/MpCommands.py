@@ -1461,7 +1461,7 @@ from datatype_hex64 import *
 
 
 from SystemPathMethods import *
-from MpID3 import *
+from Song_MutagenWrapper import *
 from UnicodeTranslate import Translate
 from MpEventHook import initHook,disableHook
 from dialogSettings import SettingsWindow
