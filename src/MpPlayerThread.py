@@ -1,9 +1,13 @@
 # #########################################################
 # #########################################################
-# File: MpThreading
+# File: MpPlayerThread
 # Description:
 #       File contains all functions and objects relating
 #   to threads in the Media player.
+# goals for this file
+#   remove Thread_LoadMedia - moved to EventManager object 
+#   Remove MpThread. no need for a base class that DOES NOTHING
+#
 # #########################################################
 import sys;
 from PyQt4.QtCore import *
@@ -15,6 +19,8 @@ from MpScripting import *
 from MpSort import *
 from MpSearch import *
 from MpPlayer import *
+
+
 
 class MpThread(QThread):
     """
@@ -130,12 +136,11 @@ class MediaPlayerThread(MpThread):
             wf.close();
         else:    
             MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Thread Ended")
-            
+       
+       
 class Thread_LoadMedia(MpThread):
     def run(self): 
-    
-    
-        
+
         while MpGlobal.ENABLE_MUSIC_LOAD :
             #print "%d-%d"%(len(MpGlobal.Player.list_LoadFolder),len(MpGlobal.Player.list_LoadSongs) )
             if len(MpGlobal.Player.list_LoadFolder) > 0:

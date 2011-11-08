@@ -1,5 +1,5 @@
 #!/usr/bin/python -O
-__VERSION__ = "0.4.4.206"           
+__VERSION__ = "0.4.4.211"           
  ################################################
 # do not edit anything above this line unless you 
 # know what you are doing
@@ -8,10 +8,8 @@ import os
 # example use:
 # import VersionController
 # APPLICATION.VERSION = VersionController.AutoVersion(True) 
-# APPLICATION.VERSION = VersionController.ResetBuildNumber(True) 
 # del VersionController
 # print MpGlobal.NAME
-file="./VersionController.py"
 
 def AutoVersion(update):
 
@@ -20,10 +18,10 @@ def AutoVersion(update):
     ver = __VERSION__
     
     if update:
-        if os.path.exists(file):
+        if os.path.exists("./VersionController.py"):
         
             #version = VersionControl.getVersion()
-            vo = VersionControl.VersionController(file,__VERSION__)
+            vo = VersionControl.VersionController("./VersionController.py",__VERSION__)
             
             vo.updateBuild();
             
@@ -35,29 +33,4 @@ def AutoVersion(update):
     del VersionControl
     
     return ver
-    
-def ResetBuildNumber():
 
-    import VersionControl
-    
-    ver = __VERSION__
-    
-    if os.path.exists(file):
-    
-        #version = VersionControl.getVersion()
-        vo = VersionControl.VersionController(file,__VERSION__)
-        
-        vo.setBuild(1);
-        
-        vo.update();
-
-        ver = vo.version
-    else:
-        print "version file not found - RB"
-
-    del VersionControl
-
-    return ver
-    
-if __name__ == "__main__":
-    print AutoVersionUpdate()

@@ -1,5 +1,7 @@
 #TODO - the XML "works" - but PyQt supplies objects for parsing XML - use those
 
+# ignore this file, i will be trashing all of the code later.
+
 ufr = lambda FILE:  unicode( FILE.readline().strip() ,"utf-8");
 
 from Song_PlaylistFormat import *

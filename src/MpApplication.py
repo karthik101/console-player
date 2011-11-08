@@ -1478,8 +1478,6 @@ def Queue_FunctionCall(function):
 # ##############################################
 # 
 # ##############################################
-        
-
 def menu_open_Settings():
     dialog = SettingsWindow(None)
 
@@ -1498,7 +1496,7 @@ from SystemPathMethods import *
 from MpPlayer import *
 from MpEventHook import disableHook
 from UnicodeTranslate import Translate
-from MpThreading import Thread_LoadMedia
+from MpPlayerThread import Thread_LoadMedia
 from dialogNewPlayList import *  
 from dialogHelp import helpDialog     
         
