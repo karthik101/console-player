@@ -28,7 +28,7 @@ from widgetProgressBar import ProgressBar
 from SystemPathMethods import *
 from MpScripting import *
 from MpSocket import *                   
-                    
+import MpAutoUpdate;                       
 
 
 
@@ -157,6 +157,14 @@ def startUpCheck(install=False):
         #extract any missing files
         quickVerifyCheck(installPath,value >= 0) # quick verify when >= 0, otherwise do a  full replace
 
+    # ######################################
+    # initialize other settings
+    # ######################################
+    init_Settings(not __devmode)    
+    
+       
+    MpAutoUpdate.checkForUpdates(MpGlobal.SAVED_VERSION);
+        
 def getNewInstallLocation():
     """
         display a dialog and let the user

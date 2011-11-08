@@ -725,6 +725,6 @@ from MpScripting import *
 from MpSort import *
 from MpSearch import *
 from MpCommands import *
-from MpThreading import *
+from MpPlayerThread import *
 
 from MpApplication import *

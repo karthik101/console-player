@@ -530,19 +530,6 @@ def init_Settings(release):
         debugPreboot("Last Save was on Different OS - %s Now %s"%(Settings.OS,os.name))
 
     if not release:
-        # calculate the new build number
-        #(a,b,c,build1) = MpGlobal.VERSION.split('.') # version set internally
-        #(p,s,t,build2) = Settings.VERSION.split('.') # the last saved version
-
-        #if (c != t or b != s or a != p): # if higher version numbers change, reset build number
-        #   import VersionController
-        #   MpGlobal.VERSION = VersionController.ResetBuildNumber() 
-        #   del VersionController\
-        
-        # update the settings and save the new version number, it has changed
-        # version number is 1 + the value saved in VersionController
-        # version controller has already had the value incremented by one, and saved
-        # it must nowbne saved again in the settings for other use.
         Settings.VERSION = MpGlobal.VERSION    
         ReadableDict_Save(MpGlobal.FILEPATH_SETTINGS,Settings)
         pass
