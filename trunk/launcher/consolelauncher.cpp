@@ -104,7 +104,7 @@ int get_session_lock(Session * s, const char * lockpath) {
 	FILE * rf;
 	
 	rf = fopen(lockpath,"r");
-	if (rf!=NULL) {
+	if (rf) {
 		fscanf(rf,"%d\r\n",&(s->proc));
 		fscanf(rf,"%d\r\n",&(s->port));
 		fscanf(rf,"%s\r\n",&(s->fname));
