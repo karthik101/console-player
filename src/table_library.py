@@ -190,7 +190,7 @@ class TableLibrary(widgetTable.Table):
         R[self.col_id.index(MpMusic.PATH)]      = self.data[index][MpMusic.PATH]
         R[self.col_id.index(MpMusic.SONGID)]    = str(self.data[index].id)
         R[self.col_id.index(MpMusic.SONGINDEX)] = self.data[index][MpMusic.SONGINDEX]
-        R[self.col_id.index(MpMusic.DATEADDEDS)]= self.data[index][MpMusic.DATEADDEDS]
+        R[self.col_id.index(MpMusic.DATEADDEDS)]= "ONE:"+self.data[index][MpMusic.DATEADDEDS]
         R[self.col_id.index(MpMusic.YEAR)]      = self.data[index][MpMusic.YEAR]
         return R
         
@@ -362,11 +362,13 @@ class TableLibrary(widgetTable.Table):
         """
             convenience method for calling a new search.
         """
-        searchText = MpGlobal.Window.txt_searchBox.displayText()
+        
         
         if string != None:
             MpGlobal.Window.txt_searchBox.setText(string)
             searchText = string
+        else:
+            searchText = MpGlobal.Window.txt_searchBox.displayText()
             
         txtSearch_OnTextChange(searchText);
 
@@ -465,7 +467,7 @@ class TableLibrary(widgetTable.Table):
             self.resizeColumn()
         
         
-def txtSearch_OnTextChange(text):
+def txtSearch_OnTextChange(text,update=0):
     
     
     text = MpGlobal.Window.txt_searchBox.textUpdate(text)
@@ -474,7 +476,7 @@ def txtSearch_OnTextChange(text):
     
     if text == "" :
         MpGlobal.Player.libDisplay = MpGlobal.Player.library[:]
-        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.libDisplay)
+        MpGlobal.Window.tbl_library.UpdateTable(update,MpGlobal.Player.libDisplay)
         MpGlobal.Window.statusWidgets[2].setToolTip(u"No Search Terms")
         UpdateStatusWidget(2,0)
     else:
@@ -483,7 +485,7 @@ def txtSearch_OnTextChange(text):
         so = SearchObject(text)
         MpGlobal.Window.statusWidgets[2].setToolTip(unicode(so))
         MpGlobal.Player.libDisplay = so.search(MpGlobal.Player.library)
-        MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.libDisplay)
+        MpGlobal.Window.tbl_library.UpdateTable(update,MpGlobal.Player.libDisplay)
         UpdateStatusWidget(2,so.termCount)
         #except Exception as e:
         #    debug("EVAL ERROR: %s"%e.args)

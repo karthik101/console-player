@@ -104,7 +104,6 @@ class GlobalContainer(object):
     Player = None
     EventHandler = None;
     PlayerThread = None
-    LoadThread = None
     HookManager = None
     SocketThread = None     # used for session lock and socket communication
     SSService = None # screen saver service object
@@ -347,7 +346,8 @@ class MusicContainer(EnumSong):
         elif exif == EnumSong.SELECTED  : return "SELECTED";
         elif exif == EnumSong.SONGID    : return "ID#";
         
-        elif exif == EnumSong.DATEADDEDS: return "DATEADDED";
+        elif exif == EnumSong.DATEADDEDS: return "DATEADDEDS";
+        elif exif == EnumSong.DATEADDED : return "DATEADDED";
         elif exif == EnumSong.YEAR      : return "YEAR";
         return "UNKOWN TAG:%d"%exif
 
@@ -374,7 +374,8 @@ class MusicContainer(EnumSong):
         elif exif == "SELECTED"  : return EnumSong.SELECTED
         elif exif == "ID#"       : return EnumSong.SONGID
                                          
-        elif exif == "DATEADDED" : return EnumSong.DATEADDEDS
+        elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
+        elif exif == "DATEADDED" : return EnumSong.DATEADDED
         elif exif == "YEAR"      : return EnumSong.YEAR
         return 0
 
