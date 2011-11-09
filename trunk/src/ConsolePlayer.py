@@ -23,18 +23,7 @@
 #   what it was i was doing. I think the idea is sound, 30 rows (or so), and revolve the data
 #   through them. instead of adding/removing 1k-10k rows. do i write my own table <-> interface?
 #
-# i need an Event Manager, that is a class  (inherits QThread) which contains a list of "Events".
-#   Events can be posted to the object.
-#   an Event contains a function to run, and input data to process
-#   The thread waits for an Event post, then starts up, running all events, and ends whenever the Eventlist is empty.
-#   For each Event the provided function is called.
-#   Why do i need this?
-#     1.for creating a playlist Tab. first the user requests a file to load, The file and load function
-#       become an Event. the Event loads the File. then creates the tab and places the data in it.
-#       Meanwhile the user can continue to use the application as normal untill the tab is done loading.
-#     2.Updating ID3 tags. simply post 3000 events for which songs need updating. - done. could not be easier.
-#     3. Loading new songs even... just post each new filepath. no need for the LoadThread.
-#   i have something like this currently for delaying in the main thread, see Queue_FunctionCall()
+# I now have an event Manager.
 #
 # A way to load any text file as a playlist. Look for file paths, check that they are songs
 #   then ask the user to add the songs either A) to the library or B) play all

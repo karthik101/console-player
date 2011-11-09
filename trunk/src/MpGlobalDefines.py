@@ -102,6 +102,7 @@ class GlobalContainer(object):
     Application = None
     AudioPlayer = None
     Player = None
+    EventHandler = None;
     PlayerThread = None
     LoadThread = None
     HookManager = None

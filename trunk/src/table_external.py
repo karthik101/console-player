@@ -6,6 +6,8 @@ import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
    
+#todo: Delete this file   
+   
 class TableExternal(widgetTable.Table):
     def __init__(self,parent):
         header = ("Path",)
@@ -23,10 +25,10 @@ class TableExternal(widgetTable.Table):
             R = list(self.selection)
             R.sort(reverse = True)
             cindex_flag = False
-            for x in R:
-                MpGlobal.Player.list_LoadSongs.pop(x)
-            self.selection = set()
-            self.UpdateTable(self.getDisplayOffset(),MpGlobal.Player.list_LoadSongs)
+            #for x in R:
+            #    MpGlobal.Player.list_ LoadSongs.pop(x)
+            #self.selection = set()
+            #self.UpdateTable(self.getDisplayOffset(),MpGlobal.Player.list_ LoadSongs)
 
     def resizeEvent(self,event):
         self.resize_Column()

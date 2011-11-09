@@ -5,7 +5,6 @@
 #       File contains all functions and objects relating
 #   to threads in the Media player.
 # goals for this file
-#   remove Thread_LoadMedia - moved to EventManager object 
 #   Remove MpThread. no need for a base class that DOES NOTHING
 #
 # #########################################################
@@ -21,13 +20,10 @@ from MpSearch import *
 from MpPlayer import *
 
 
-
-class MpThread(QThread):
-    """
-        Template class for threads in the Media Player
-    """
+class MediaPlayerThread(QThread): 
+    
     def __init__(self,parent=None):
-        super(MpThread, self).__init__(parent)
+        super(MediaPlayerThread, self).__init__(parent)
         self.mutex = QMutex()
         self.condition = QWaitCondition()
         self.restart = False
@@ -41,14 +37,6 @@ class MpThread(QThread):
         self.abort = True
         self.condition.wakeOne()
         self.mutex.unlock()
-    
-    def start(self):
-        super(MpThread, self).start(QThread.LowPriority)
-        
-    def run(self):
-        MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Template Thread Not Initialized\n") 
-       
-class MediaPlayerThread(MpThread): 
     
     def run(self):
 
@@ -138,38 +126,6 @@ class MediaPlayerThread(MpThread):
             MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Thread Ended")
        
        
-class Thread_LoadMedia(MpThread):
-    def run(self): 
-
-        while MpGlobal.ENABLE_MUSIC_LOAD :
-            #print "%d-%d"%(len(MpGlobal.Player.list_LoadFolder),len(MpGlobal.Player.list_LoadSongs) )
-            if len(MpGlobal.Player.list_LoadFolder) > 0:
-                dir = MpGlobal.Player.list_LoadFolder.pop(0)
-                load_music_from_dir(unicode(dir))   # add music in this folder to the load song list, and any folders to the load folder list
-        
-            #elif anything to load other than songs
-            elif len(MpGlobal.Player.list_LoadSongs) > 0:
-                file = MpGlobal.Player.list_LoadSongs.pop(0)
-                
-                for song in MpGlobal.Player.library:
-                    if song[MpMusic.PATH] == file :
-                        continue
-                try:
-                    song = id3_createSongFromPath(file)
-                    MpGlobal.Player.library.append(song)
-                except Exception as e:
-                    MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Error With Loading Song")
-                    MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%file)
-                    MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%e.args)
-                    
-            else:
-                MpGlobal.ENABLE_MUSIC_LOAD = False
-                MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED"))
-                return;
-                
-        MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED"))
-        
-        
         
         
 
