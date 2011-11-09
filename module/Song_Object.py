@@ -11,6 +11,7 @@
 
 import os
 import time
+from calendar import timegm
 
 from datatype_hex64 import *
 
