@@ -843,19 +843,7 @@ def getStyleImagePath(filename):
 # Others
 # ##############################################
 
-def load_music_from_dir(dir):
-    """
-        recursively open directorys and load all valid songs
-    """
 
-    if os.path.isdir(dir):
-        R = os.listdir(dir)
-        for file in R:
-            path = os.path.join(dir,file)
-            if pathMatchExt(path): # and pathIsUnicodeFree(path):
-                MpGlobal.Player.list_LoadSongs.append(path)
-            elif os.path.isdir(path):
-                MpGlobal.Player.list_LoadFolder.append(path)
 
 
 def stringSplit(string,deliminator=" "):

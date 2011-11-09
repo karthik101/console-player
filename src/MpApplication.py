@@ -49,6 +49,8 @@ from widget_playbutton import *
 from widget_currentSongDisplay import *
 from widget_currentTimeDisplay import *
 
+from App_EventManager import EventManager
+
 from MpSongHistory import *
 
 from Qt_CustomStyle import *
@@ -514,10 +516,7 @@ class MainWindow(QMainWindow):
         event.accept() # enable drops by accepting event
     
     def dropEvent(self,event):
-        """
-            drops are processed in the main thread, any files that could be loaded are kicked added to a list_* variable in MpPlayer
-            external_load_start() begins a thread processing any valid files dropped onto the player
-        """
+
         #print "received drop from <%s>"%event.source()
         if event.source() == None: # event comes from outside the application
             mdata = event.mimeData()
@@ -538,16 +537,16 @@ class MainWindow(QMainWindow):
                         fext = fileGetExt(fpath)
                         # now accept unicode filepaths
                         if pathMatchExt(fpath): #and pathIsUnicodeFree(fpath):
-                            MpGlobal.Player.list_LoadSongs.append(fpath)
+                            MpGlobal.EventHandler.postEvent(event_load_song,fpath)
+
                         elif os.path.isdir(fpath):
-                            MpGlobal.Player.list_LoadFolder.append(fpath);
+                            MpGlobal.EventHandler.postEvent(event_load_folder,fpath)
                         #elif XML file drop
                         #elif M3U file drop # ask whether to load songs into library or play
                         #elif playlist file drop (and etc) # play this list
                         elif fext == 'log':
                             history_load(fpath,MpGlobal.Player.library)
-            
-                external_Load_Start()
+
                 Player_set_unsaved();
                 
     def init_Gui(self): 
@@ -907,6 +906,7 @@ def init_preMainWindow():
     #MpGlobal.AudioPlayer = VLCObject()
     MpGlobal.AudioPlayer = getNewAudioPlayer()
     MpGlobal.Player = MediaManager(MpGlobal.AudioPlayer)
+    MpGlobal.EventHandler = EventManager();
     
     # ######################################
     # Create the Player
@@ -925,7 +925,7 @@ def init_preMainWindow():
     # ######################################
 
     if "-devmode" not in sys.argv and Settings.MEDIAKEYS_ENABLE:
-        MpEventHook.initHook()
+        initHook()
         debugPreboot("KeyBoard Hook Enabled")
     
     MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
@@ -1494,9 +1494,8 @@ from MpCommands import *
 
 from SystemPathMethods import *
 from MpPlayer import *
-from MpEventHook import disableHook
+from MpEventHook import initHook,disableHook
 from UnicodeTranslate import Translate
-from MpPlayerThread import Thread_LoadMedia
 from dialogNewPlayList import *  
 from dialogHelp import helpDialog     
-        
+from MpEventMethods import *        

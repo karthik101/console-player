@@ -40,26 +40,30 @@ class TableLibrary(widgetTable.Table):
               MpMusic.SKIPCOUNT, \
               MpMusic.COMMENT,\
               MpMusic.SONGINDEX,\
+              MpMusic.DATEADDEDS, \
+              MpMusic.YEAR, \
               MpMusic.SONGID,
               MpMusic.PATH];
               
     col_id = col_id_template[:]
                                     
-    col_title = {MpMusic.PLAYCOUNT: "#", \
-                 MpMusic.ARTIST   : "Artist", \
-                 MpMusic.TITLE    : "Title", \
-                 MpMusic.ALBUM    : "Album", \
-                 MpMusic.LENGTH   : "Length", \
-                 MpMusic.RATING   : "Rating", \
-                 MpMusic.GENRE    : "Genre", \
-                 MpMusic.FREQUENCY: "Frequency", \
-                 MpMusic.DATESTAMP: "Last Played", \
-                 MpMusic.FILESIZE : "File Size", \
-                 MpMusic.SKIPCOUNT: "Skip Count", \
-                 MpMusic.COMMENT  : "Comment", \
-                 MpMusic.SONGINDEX: "Album Index", \
-                 MpMusic.PATH     : "File Path", \
-                 MpMusic.SONGID   : "ID"};          
+    col_title = {MpMusic.PLAYCOUNT  : "#", \
+                 MpMusic.ARTIST     : "Artist", \
+                 MpMusic.TITLE      : "Title", \
+                 MpMusic.ALBUM      : "Album", \
+                 MpMusic.LENGTH     : "Length", \
+                 MpMusic.RATING     : "Rating", \
+                 MpMusic.GENRE      : "Genre", \
+                 MpMusic.FREQUENCY  : "Frequency", \
+                 MpMusic.DATESTAMP  : "Last Played", \
+                 MpMusic.FILESIZE   : "File Size", \
+                 MpMusic.SKIPCOUNT  : "Skip Count", \
+                 MpMusic.COMMENT    : "Comment", \
+                 MpMusic.SONGINDEX  : "Album Index", \
+                 MpMusic.DATEADDEDS : "Date Added", \
+                 MpMusic.YEAR       : "Year", \
+                 MpMusic.PATH       : "File Path", \
+                 MpMusic.SONGID     : "ID"};          
        
     def __init__(self,col_list=[],col_active=-1,parent=None):
       
@@ -186,6 +190,8 @@ class TableLibrary(widgetTable.Table):
         R[self.col_id.index(MpMusic.PATH)]      = self.data[index][MpMusic.PATH]
         R[self.col_id.index(MpMusic.SONGID)]    = str(self.data[index].id)
         R[self.col_id.index(MpMusic.SONGINDEX)] = self.data[index][MpMusic.SONGINDEX]
+        R[self.col_id.index(MpMusic.DATEADDEDS)]= self.data[index][MpMusic.DATEADDEDS]
+        R[self.col_id.index(MpMusic.YEAR)]      = self.data[index][MpMusic.YEAR]
         return R
         
     def FillRowColor(self,index):

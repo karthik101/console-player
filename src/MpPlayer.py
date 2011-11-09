@@ -113,8 +113,6 @@ class MediaManager(object):
     libDelete = []
     playList = []
     selCount = 0
-    list_LoadSongs = [] # list of paths to load
-    list_LoadFolder= []  # list of folders to load songs from
     quickList = []
     isPlaying = False;
     CurrentIndex=0  # current index in the playlist to play

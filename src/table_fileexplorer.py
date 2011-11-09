@@ -256,16 +256,10 @@ class TableFileExplorer(widgetTable.Table):
                         value = self.f_exists
                         tempsong = song
                         break;
-                #TODO NOT REALLY SURE THIS APPIES ANYMORE:
-                # i used to pend songs then load them later, but no longer
-                if tempsong == None and len(MpGlobal.Player.list_LoadSongs) > 0:
-                    for ex_path in MpGlobal.Player.list_LoadSongs:
-                        if comparePath(ex_path,temppath) :
-                            value = self.f_pending
-                            break;
                     
                 #if not pathIsUnicodeFree(temppath):
                 #    value = self.f_invalid 
+                
                 self.data.append( [self.t_mp3,fname,temppath,value,tempsong] ) 
         
             MpGlobal.Application.processEvents()
@@ -306,9 +300,8 @@ class TableFileExplorer(widgetTable.Table):
             f = self.data[i][self.flag]
             if f != self.f_exists and f != self.f_invalid and f != self.f_pending and self.data[i][self.type] == self.t_mp3:
                 self.data[i][self.flag] = self.f_pending
-                MpGlobal.Player.list_LoadSongs.append(self.data[i][self.path])
-                
-        external_Load_Start()
+                MpGlobal.EventHandler.postEvent(event_load_song,self.data[i][self.path])
+
         Player_set_unsaved();
         
     def __Action_open_dir__(self):
@@ -709,13 +702,7 @@ class dialogRename(QDialog):
         self.edit.setText(text)
         
         
-def external_Load_Start():
 
-    if MpGlobal.ENABLE_MUSIC_LOAD == False and (len(MpGlobal.Player.list_LoadSongs) > 0 or len(MpGlobal.Player.list_LoadFolder) > 0 ):
-        MpGlobal.ENABLE_MUSIC_LOAD = True
-        MpGlobal.LoadThread = Thread_LoadMedia(MpGlobal.Window)
-        MpGlobal.LoadThread.start()        
-        
         
 from MpGlobalDefines import *
 from Song_Object import Song
@@ -726,5 +713,5 @@ from MpSort import *
 from MpSearch import *
 from MpCommands import *
 from MpPlayerThread import *
-
+from MpEventMethods import * 
 from MpApplication import *
