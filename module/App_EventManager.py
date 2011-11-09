@@ -5,22 +5,31 @@
 #       EventManager provides a way of delaying function calls
 #   and moving the call to a separate thread of execution.
 #   call postEvent with the function you want, then all of
-#   the arguments needed. The EventMAnager's thread
+#   the arguments needed. The EventManager's thread
 #   will then deal with the data
 #
 #   A word of caution, if you pass a list the original calling
 #   thread can change the data before the EventManager's thread
 #   can get arround to processing. be sure to pass a copy
 #   if you are worried about it.
+#
+#   this Module can be used in any application, even if
+#   it does not use Qt for anything Else.
+#
+#   Warning: A QWidget can not be updated except from it's
+#   parent thread. Therefore the EventManager can do
+#   the processing, but any updates need to be kicked
+#   backed to the main thread somehow.
+#
 # #########################################################
-import sys;
+
 import Queue
 from PyQt4.QtCore import *
 
 
 class Event(object):
     """
-        Base ype for an "event"
+        Base type for an "event"
         an event consists of a function to call.
         and a tuple of the arguments to use when calling the event.
     """
@@ -46,12 +55,13 @@ class EventManager(QThread):
         
     def run(self):
 
+        print "Event Thread Started"
         while self.eventQueue.qsize() > 0 :
             # get the oldest event from the Queue
             e = self.eventQueue.get()
             # process the event.
-            e.fptr(*e.args);
-
+            e.fptr(*e.args);    # unpack the argument tuple when calling.
+        print "Event Thread Ended"
 if __name__ == "__main__":
 
     """
@@ -63,22 +73,25 @@ if __name__ == "__main__":
         type 'quit' to quit'
         
     """
-    def printer(input):
+    def printer(input): 
+        # printer function prints a atring then waits for a quarter of a second.
         print ">> %s"%input
-    
+        QThread.msleep(250);  
+        
     em = EventManager();
 
-    input =""
-    inputList = []
+    inputList = []  # list of stored inputs, waiting to e posted with 'post'
+    
+    input = raw_input(":");
     
     while input!="quit":
     
-        input = raw_input(":");
-        
         if input == "post":
             for x in inputList:
                 em.postEvent(printer,x);
+            QThread.msleep(len(inputList)*250 + 500);   # wait for the messages to print back
             inputList = []
-            QThread.msleep(1000);   # wait for the messages to print back
         else:
             inputList.append(input);
+            
+        input = raw_input(":");
