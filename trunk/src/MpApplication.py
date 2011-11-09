@@ -408,11 +408,7 @@ class MainWindow(QMainWindow):
         # use this :
         QObject.connect(self, SIGNAL("FILL_PLAYLIST"),self.tbl_playlist.FillTable, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("FILL_LIBRARY"),self.tbl_library.FillTable, Qt.QueuedConnection)
-        
-        QObject.connect(self, SIGNAL("LOAD_FINISHED"),external_Load_Finish, Qt.QueuedConnection)
-        
-        
-    
+
         self.xcut_fconsole = QShortcut(QKeySequence(r"Ctrl+K"),self)
         self.xcut_flibrary = QShortcut(QKeySequence(r"Ctrl+L"),self)
         self.xcut_togdebug = QShortcut(QKeySequence(Qt.Key_Escape),self)
@@ -492,9 +488,6 @@ class MainWindow(QMainWindow):
         print "Closing Threads"    
         if MpGlobal.PlayerThread != None:
             MpGlobal.PlayerThread.exit(0)
-            
-        if MpGlobal.LoadThread != None:
-            MpGlobal.LoadThread.exit(0)
         
         disableHook()
         
@@ -1446,21 +1439,7 @@ def show_NewPlayList_Dialog():
  
 def window_hide_show_library():
     pass
-        
 
-
-def external_Load_Finish():  
-    # TODO: i once had a strange error here, cam back to this code much later
-    # and obviously did not document what that error was.
-    # spend some time working on this function, the if is running should NOT be needed
-    if MpGlobal.LoadThread.isRunning():
-        # once got a thread destryoed while running error
-        MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED")) # calls this function again
-        debug(" *** Load Thread Ended while still Running.")
-    else:
-        MpGlobal.LoadThread = None
-        MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
-        MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0")
 
 def Queue_FunctionCall(function):
     """

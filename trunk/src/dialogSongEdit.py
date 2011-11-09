@@ -311,6 +311,7 @@ class SongEditWindow(QDialog):
             if self.editList[self.add][2].isChecked():
                 date = str(self.editList[self.add][1].text())
                 t = getEpochTime(date)
+                print date,t
                 if t != 0:
                     song[MpMusic.DATEADDEDS] = date
                     song[MpMusic.DATEADDED]  = t

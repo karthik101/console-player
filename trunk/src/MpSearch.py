@@ -382,6 +382,17 @@ class SearchObject(object):
                 else:   # older than date
                     return (song[MpMusic.DATEVALUE] <= element[cf])
                     
+            elif flag_type == MpMusic.DATEADDED:
+                # dates less than means time is greater
+                # set or MpMusic.CONTAINS as default
+                # defaults to >=, ex, not played fro x days or more
+                if flag_dir&SEARCH.LT: # more recent
+                    return (song[MpMusic.DATEADDED] >=  element[cf])
+                elif flag_dir&SEARCH.EQ==SEARCH.EQ : # equals one specific day
+                    return (song[MpMusic.DATEADDED] >= element[cf] and song[MpMusic.DATEADDED] <= element[rf])
+                else:   # older than date
+                    return (song[MpMusic.DATEADDED] <= element[cf])
+                    
             elif flag_type < MpMusic.STRINGTERM :
                 # contains, the element must be anywhere
                 #  ex: 'st' will match 'stone' and 'rockstar'
@@ -511,7 +522,7 @@ class SearchObject(object):
         ostr = unicode(ostr) 
         cf = ostr[:]
         rf = None;
-
+ 
         if (flag_type == MpMusic.SPEC_DATESTD ) :
             cf = getSecondsFromDateFormat(cf,flag_type)
             rf = cf + 24*60*60
@@ -575,7 +586,16 @@ class SearchObject(object):
                 ostr = "day: %s"%ostr
             except:
                 pass
-
+        elif (flag_type == MpMusic.DATEADDED) :
+            cf = getSecondsFromDateFormat(cf,MpMusic.SPEC_DATESTD)
+            rf = cf + 24*60*60
+            if cf == 0:
+                return None
+            ostr = normalizeDateFormat(ostr,MpMusic.SPEC_DATESTD)
+            
+            if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
+                flag = flag|SEARCH.GT
+                
         elif (flag_type == MpMusic.PATH ) :
             if cf == u"":
                 return None
@@ -598,13 +618,12 @@ class SearchObject(object):
         
         term = (ostr,flag_type,flag,cf,rf)
 
-        flag_mod = term[2]&SEARCH.MOD
-        
-        if term != None:   
-            if   flag_mod == SEARCH.OR : self._searchO.append(term);
-            elif flag_mod == SEARCH.NT : self._searchN.append(term);
-            elif flag_mod == SEARCH.IO : self._searchX[-1].append(term);
-            else                       : self._searchC.append(term);
+        flag_mod = flag&SEARCH.MOD
+
+        if   flag_mod == SEARCH.OR : self._searchO.append(term);
+        elif flag_mod == SEARCH.NT : self._searchN.append(term);
+        elif flag_mod == SEARCH.IO : self._searchX[-1].append(term);
+        else                       : self._searchC.append(term);
 
     def __unicode__(self):
         string = ""

@@ -23,7 +23,7 @@
 #   what it was i was doing. I think the idea is sound, 30 rows (or so), and revolve the data
 #   through them. instead of adding/removing 1k-10k rows. do i write my own table <-> interface?
 #
-# I now have an event Manager.
+# I now have an event Manager. I need a way to
 #
 # A way to load any text file as a playlist. Look for file paths, check that they are songs
 #   then ask the user to add the songs either A) to the library or B) play all
