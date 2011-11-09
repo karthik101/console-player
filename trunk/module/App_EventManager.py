@@ -55,13 +55,12 @@ class EventManager(QThread):
         
     def run(self):
 
-        print "Event Thread Started"
         while self.eventQueue.qsize() > 0 :
             # get the oldest event from the Queue
             e = self.eventQueue.get()
             # process the event.
             e.fptr(*e.args);    # unpack the argument tuple when calling.
-        print "Event Thread Ended"
+
 if __name__ == "__main__":
 
     """
