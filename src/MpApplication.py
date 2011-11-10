@@ -1472,7 +1472,7 @@ def menu_open_Settings():
         
 from MpScripting import *
 from MpSort import *
-from MpSearch import *
+from Song_Search import *
 from MpCommands import *
 
 

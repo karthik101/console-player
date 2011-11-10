@@ -424,7 +424,7 @@ from datatype_hex64 import *
 
 from MpScripting import *
 from MpSort import *
-from MpSearch import *
+from Song_Search import *
 from MpCommands import *
 
 from MpApplication import *

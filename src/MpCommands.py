@@ -1470,7 +1470,7 @@ from MpScreenSaver import *
 from MpStartUp import verifyInstallation
 from MpScripting import *      
 from MpSort import *
-from MpSearch import *   
+from Song_Search import *   
 from xml_parser import *  
 import dialogSync       
      
