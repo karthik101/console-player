@@ -33,7 +33,7 @@ from widgetProgressBar import ProgressBar
 from SystemPathMethods import *
 from MpScripting import *
 from MpSort import *
-from MpSearch import *
+from Song_Search import *
 
 class LibraryUpdateDialog(QDialog):
 

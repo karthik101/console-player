@@ -4,7 +4,7 @@
 #----------------------------------------------------------
  
 # TODO:
-# abstract MpSearch to Song_Search, place in modules folder.
+# abstract Song_Search to Song_Search, place in modules folder.
 #
 # imports should be fixed accross all files
 #   in general, i would  like all python standard lib imports first

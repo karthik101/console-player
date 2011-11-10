@@ -5,7 +5,7 @@ from Song_Object import Song
 from SystemPathMethods import *
 from Song_MutagenWrapper import *
 from MpSort import *
-from MpSearch import *   
+from Song_Search import *   
 
 from table_library import *
 

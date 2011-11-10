@@ -9,7 +9,7 @@ from widgetTree import *
 
 
 from MpSort import *
-from MpSearch import *
+from Song_Search import *
 import MpScripting
 import MpCommands
 
