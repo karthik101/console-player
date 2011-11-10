@@ -359,43 +359,6 @@ class COMMAND(object):
     ERROR    = "prompt_unknown"
     SPECIAL  = "prompt_spec"
 
-class SEARCH(object):
-    OR = 0x10  # OR
-    NT = 0x20  # NOT
-    IO = 0x40  # IOR
-    EQ = 0x01  # EQuals
-    GT = 0x02  # Greater Than
-    LT = 0x04  # Less Than
-    GE = EQ|GT      # 0x03
-    LE = EQ|LT      # 0x05
-    MOD  = OR|NT|IO # 0x70
-    DIR  = EQ|LT|GT # 0x07
-    MASK = DIR|MOD  # 0x77
-    def __init__(self,value):
-        self.value = value
-
-    def __repr__(self):
-        return "SEARCH(0x%02X)"%self.value
-
-    def __str__(self):
-        # EXAMPLE:
-        # print "ENUM SEARCH = %S"%SEARCH(value)
-        s = ""
-        if   self.value&SEARCH.OR: s+="_OR"
-        elif self.value&SEARCH.NT: s+="_NOT"
-        elif self.value&SEARCH.IO: s+="_IO"
-        else: s+="_AND"
-
-        if   self.value&SEARCH.GE==SEARCH.GE: s+="_GE"
-        elif self.value&SEARCH.LE==SEARCH.LE: s+="_LE"
-        elif self.value&SEARCH.GT: s+="_GT"
-        elif self.value&SEARCH.LT: s+="_LT"
-        elif self.value&SEARCH.EQ: s+="_EQ"
-        else                     : s+="_INC"
-
-        return "_%s__"%s
-    def __unicode__(self):
-        return unicode(self.__str__())
 
 # ###################################################################
 # Instantiate

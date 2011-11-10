@@ -913,6 +913,11 @@ def init_preMainWindow():
      
     getApplicationIcons()
     
+    # init the search classes for searching through the library.
+    SearchObject_Controller.getSearchDictionary   = SOC_getSearchDictionary   
+    SearchObject_Controller.getFavoriteArtistList = SOC_getFavoriteArtistList                            
+    SearchObject_Controller.getPresetStringdef    = SOC_getPresetString
+    
     # ######################################
     # Set Keyboard Hook
     # ######################################
