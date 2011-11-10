@@ -2,7 +2,6 @@
 # todo: abstract this file. rename Song_Search. move to ./module/
 # ~almost there. just need some sort of global that wraps the following values:
 #	Line ~223:             flag_type = MpMusic.D_StrToDec.get(key,flag_type)
-#	Line ~188:             for art in Settings.FAVORITE_ARTIST:
 #	Line ~315:             string = string.replace(p,Settings.getPreset(preset))
 # function pointer to find a preset value
 # an array of artists for 'favorites
@@ -21,6 +20,109 @@ from SystemPathMethods import *
 from collections import namedtuple
 SearchTerm = namedtuple("SearchTerm",'str typ dir cf rf') #TODO use these instead of just tuples
 
+class SearchObject_Controller(object):
+    """
+        Thsi class provides a way for globally setting values needed to extend
+        the functionality of the Search Class.
+        
+        Example use found in the Console Player:
+        found during initilization before the main window is created in MpApplication.py
+        SearchObject_Controller.getSearchDictionary   = SOC_getSearchDictionary   
+        SearchObject_Controller.getFavoriteArtistList = SOC_getFavoriteArtistList                            
+        SearchObject_Controller.getPresetStringdef    = SOC_getPresetString
+    """
+    #TODO: remember to update this dictionary whenever you update the default one in MpGlobalDefines.
+    D_StrToDec = {   'alb'           : EnumSong.ALBUM, \
+                     'abm'           : EnumSong.ALBUM, \
+                     'added'         : EnumSong.DATEADDED, \
+                     'album'         : EnumSong.ALBUM, \
+                     'art'           : EnumSong.ARTIST, \
+                     'artist'        : EnumSong.ARTIST, \
+                     'bitrate'       : EnumSong.BITRATE, \
+                     'comm'          : EnumSong.COMMENT, \
+                     'comment'       : EnumSong.COMMENT, \
+                     'day'           : EnumSong.DATESTAMP, \
+                     'dateval'       : EnumSong.DATEVALUE, \
+                     'exif'          : EnumSong.EXIF, \
+                     'size'          : EnumSong.FILESIZE, \
+                     'freq'          : EnumSong.FREQUENCY, \
+                     'gen'           : EnumSong.GENRE, \
+                     'len'           : EnumSong.LENGTH, \
+                     'path'          : EnumSong.PATH, \
+                     'pcnt'          : EnumSong.PLAYCOUNT, \
+                     'playcount'     : EnumSong.PLAYCOUNT, \
+                     'rte'           : EnumSong.RATING, \
+                     'rate'          : EnumSong.RATING, \
+                     'rating'        : EnumSong.RATING, \
+                     'sel'           : EnumSong.SELECTED, \
+                     'scnt'          : EnumSong.SKIPCOUNT, \
+                     'skipcount'     : EnumSong.SKIPCOUNT, \
+                     'id'            : EnumSong.SONGID, \
+                     'index'         : EnumSong.SONGINDEX, \
+                     'spec'          : EnumSong.SPECIAL, \
+                     'dateeu'        : EnumSong.SPEC_DATEEU, \
+                     'dateus'        : EnumSong.SPEC_DATEUS, \
+                     'date'          : EnumSong.SPEC_DATESTD, \
+                     "month"         : EnumSong.SPEC_MONTH, \
+                     "week"          : EnumSong.SPEC_WEEK, \
+                     'ttl'           : EnumSong.TITLE, \
+                     'tit'           : EnumSong.TITLE, \
+                     'title'         : EnumSong.TITLE, \
+                     'year'          : EnumSong.YEAR
+                    }
+    
+    @staticmethod
+    def getSearchDictionary():
+        #return MpMusic.D_StrToDec          # what the function actually does in Console Player
+        return D_StrToDec                   # what it should do by default
+    @staticmethod
+    def getFavoriteArtistList():
+        #return Settings.FAVORITE_ARTIST    # what the function actually does in Console Player
+        return []                           # what it should do by default
+    @staticmethod
+    def getPresetString(index):
+        #return Settings.getPreset(index)   # what the function actually does in Console Player
+        return ""                           # what it should do by default
+
+class SEARCH(object):
+    OR = 0x10  # OR
+    NT = 0x20  # NOT
+    IO = 0x40  # IOR
+    EQ = 0x01  # EQuals
+    GT = 0x02  # Greater Than
+    LT = 0x04  # Less Than
+    GE = EQ|GT      # 0x03
+    LE = EQ|LT      # 0x05
+    MOD  = OR|NT|IO # 0x70
+    DIR  = EQ|LT|GT # 0x07
+    MASK = DIR|MOD  # 0x77
+    def __init__(self,value):
+        self.value = value
+
+    def __repr__(self):
+        return "SEARCH(0x%02X)"%self.value
+
+    def __str__(self):
+        # EXAMPLE:
+        # print "ENUM SEARCH = %S"%SEARCH(value)
+        s = ""
+        if   self.value&SEARCH.OR: s+="_OR"
+        elif self.value&SEARCH.NT: s+="_NOT"
+        elif self.value&SEARCH.IO: s+="_IO"
+        else: s+="_AND"
+
+        if   self.value&SEARCH.GE==SEARCH.GE: s+="_GE"
+        elif self.value&SEARCH.LE==SEARCH.LE: s+="_LE"
+        elif self.value&SEARCH.GT: s+="_GT"
+        elif self.value&SEARCH.LT: s+="_LT"
+        elif self.value&SEARCH.EQ: s+="_EQ"
+        else                     : s+="_INC"
+
+        return "_%s__"%s
+    def __unicode__(self):
+        return unicode(self.__str__())
+        
+        
 class SearchObject(object):
     # """
     #     provides an object that contains all methods related to 
@@ -189,7 +291,7 @@ class SearchObject(object):
             result = ".art +"
             if string[0] == "*":
                 result = ".art *"
-            for art in Settings.FAVORITE_ARTIST:
+            for art in SearchObject_Controller.getFavoriteArtistList():
                 if len(art) > 0:
                     result += u" \"%s\""%(art)
             result += ';'
@@ -224,7 +326,7 @@ class SearchObject(object):
                 self._searchC.append( (".alt",EnumSong.SPECIAL,0,None,None) )
                 continue
             else: # get key or return the default value
-                flag_type = MpMusic.D_StrToDec.get(key,flag_type)
+                flag_type = SearchObject_Controller.getSearchDictionary().get(key,flag_type)
                 
             # chop the .word search
             #print flag_type,frame
@@ -316,7 +418,7 @@ class SearchObject(object):
     def _expand_preset(self,string,preset):
         p = ".preset %d"%preset
         if string.find(p) > -1:
-            string = string.replace(p,Settings.getPreset(preset))
+            string = string.replace(p,SearchObject_Controller.getPresetString(preset))
         return string
         
     def _compareSongElement(self,song,element):
@@ -649,10 +751,6 @@ class SearchObject(object):
         print self._searchN
         print self._searchX
 
-        
-
-    
-    
 def stringSplit(string,deliminator=" "):
     """
         Custom string split function
@@ -681,19 +779,6 @@ def stringSplit(string,deliminator=" "):
         R.append(n)
         
     return R
-    
-    
-    
-
-
-from MpGlobalDefines import *
-
-
-#from MpScripting import *
-    
-    
-    
-    
     
     
     

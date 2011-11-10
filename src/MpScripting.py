@@ -383,6 +383,17 @@ def searchSetSelection(string,sel=True):
     
     return count # return the number of songs that matched the input string.    
     
+@staticmethod    
+def SOC_getSearchDictionary():        # These methods are used in the Search Object Controller Class
+    return MpMusic.D_StrToDec         # 
+@staticmethod                                      #  Found in ./module/Song_Search.py
+def SOC_getFavoriteArtistList():      # 
+    return Settings.FAVORITE_ARTIST   # They are used to extend the basic functionality of searching.
+@staticmethod                                      # 
+def SOC_getPresetString(index):       # 
+    return Settings.getPreset(index)  # 
+
+    
 # ##############################################
 # time
 # ############################################## 
