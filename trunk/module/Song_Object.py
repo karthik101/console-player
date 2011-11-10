@@ -56,6 +56,63 @@ class EnumSong(object):
 
     SONGDATASIZE = SELECTED+1 #NOTE: selected must always be the last element in the array
     
+    @staticmethod
+    def exifToString(exif):
+
+        if   exif == EnumSong.PATH      : return "PATH";
+        elif exif == EnumSong.EXIF      : return "EXIF";
+        elif exif == EnumSong.ARTIST    : return "ARTIST";
+        elif exif == EnumSong.TITLE     : return "TITLE";
+        elif exif == EnumSong.ALBUM     : return "ALBUM";
+        elif exif == EnumSong.GENRE     : return "GENRE";
+        elif exif == EnumSong.DATESTAMP : return "DATESTAMP";
+        elif exif == EnumSong.COMMENT   : return "COMMENT";
+        elif exif == EnumSong.RATING    : return "RATING";
+        elif exif == EnumSong.LENGTH    : return "LENGTH";
+        elif exif == EnumSong.SONGINDEX : return "SONGINDEX";
+        elif exif == EnumSong.PLAYCOUNT : return "PLAYCOUNT";
+        elif exif == EnumSong.SKIPCOUNT : return "SKIPCOUNT";
+        elif exif == EnumSong.FILESIZE  : return "FILESIZE";
+        elif exif == EnumSong.BITRATE   : return "BITRATE";
+        elif exif == EnumSong.FREQUENCY : return "FREQUENCY";
+        elif exif == EnumSong.DATEVALUE : return "DATEVALUE";
+        elif exif == EnumSong.SPECIAL   : return "SPECIAL";
+        elif exif == EnumSong.SELECTED  : return "SELECTED";
+        elif exif == EnumSong.SONGID    : return "ID#";
+        
+        elif exif == EnumSong.DATEADDEDS: return "DATEADDEDS";
+        elif exif == EnumSong.DATEADDED : return "DATEADDED";
+        elif exif == EnumSong.YEAR      : return "YEAR";
+        return "UNKOWN TAG:%d"%exif
+    @staticmethod
+    def stringToExif(exif):
+
+        if   exif == "PATH"      : return EnumSong.PATH
+        elif exif == "EXIF"      : return EnumSong.EXIF
+        elif exif == "ARTIST"    : return EnumSong.ARTIST
+        elif exif == "TITLE"     : return EnumSong.TITLE
+        elif exif == "ALBUM"     : return EnumSong.ALBUM
+        elif exif == "GENRE"     : return EnumSong.GENRE
+        elif exif == "DATESTAMP" : return EnumSong.DATESTAMP
+        elif exif == "COMMENT"   : return EnumSong.COMMENT
+        elif exif == "RATING"    : return EnumSong.RATING
+        elif exif == "LENGTH"    : return EnumSong.LENGTH
+        elif exif == "SONGINDEX" : return EnumSong.SONGINDEX
+        elif exif == "PLAYCOUNT" : return EnumSong.PLAYCOUNT
+        elif exif == "SKIPCOUNT" : return EnumSong.SKIPCOUNT
+        elif exif == "FILESIZE"  : return EnumSong.FILESIZE
+        elif exif == "BITRATE"   : return EnumSong.BITRATE
+        elif exif == "FREQUENCY" : return EnumSong.FREQUENCY
+        elif exif == "DATEVALUE" : return EnumSong.DATEVALUE
+        elif exif == "SPECIAL"   : return EnumSong.SPECIAL
+        elif exif == "SELECTED"  : return EnumSong.SELECTED
+        elif exif == "ID#"       : return EnumSong.SONGID
+                                         
+        elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
+        elif exif == "DATEADDED" : return EnumSong.DATEADDED
+        elif exif == "YEAR"      : return EnumSong.YEAR
+        return 0
+    
 class Song(list):
     __repr_str__ = [ EnumSong.ARTIST,
                      EnumSong.TITLE,
@@ -275,7 +332,27 @@ class Song(list):
     @staticmethod
     def repr_length():
         return 6; # return the number of lines of text retunred by __repr__.
-    
+   
+    def format_datefield(self,FMT,string_index,num_index):
+        """
+            format a date string, using FMT to format
+            the integer value comes from num_index
+            the formated string value is stored in string_index
+        """
+        ds = ""
+        try:
+            if self[num_index]:
+                ds = time.strftime(FMT, time.localtime(self[num_index])) 
+            #TODO -V0.5.0.0 : remove this code.
+            if ds == "1969/12/31 19:00":
+                self[num_index] = 0;
+                ds=""
+        except Exception as e:
+            print e
+        finally:
+            self[string_index] = ds
+
+            
     def __format_exif__(self):
         """
             returns a formatted exif string.
@@ -402,21 +479,10 @@ class Song(list):
             
         self[EnumSong.PATH] = path
         
-        # use the time library to format the date
-        ds = ""
-        try:
-            if EnumSong.DATEVALUE > 0:
-                ds = time.strftime(FMT, time.localtime(self[EnumSong.DATEVALUE])) 
-            #TODO -V0.5.0.0 : remove this code.
-            if ds == "1969/12/31 19:00":
-                ds = ""
-                self[EnumSong.DATEVALUE] = 0;
-        except:
-            pass
-        finally:
-            #print ds
-            self[EnumSong.DATESTAMP] = ds 
-        
+        # format the date values
+        self.format_datefield(FMT,EnumSong.DATESTAMP,EnumSong.DATEVALUE)
+        self.format_datefield(FMT,EnumSong.DATEADDEDS,EnumSong.DATEADDED)
+
         # ################################################################
         # special data
         
@@ -427,7 +493,6 @@ class Song(list):
         self[EnumSong.EXIF]      = self.__format_exif__();
         self[EnumSong.SPECIAL]   = False
         self[EnumSong.SELECTED]  = False 
-        self[EnumSong.DATEADDEDS]=""
         
         self.update();
      

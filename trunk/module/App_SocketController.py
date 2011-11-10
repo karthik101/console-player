@@ -4,8 +4,13 @@
 # Description:
 #  Implement a Session lock using a text file and os.getpid()
 #  Use a socket to communicate between 
+#
+# To test how this script works, run two copies.
+# you will be able to send messages from the second copy
+# to the first copy.
 # #########################################################
 
+# file requirements:
 
 # the session lock should save to ~/session.lock
 # it should save the current process id on the first line
@@ -187,14 +192,14 @@ class LocalSocket_listen(object):
         self.conn.close()
         self.sock.close()
     
-def session_lock_exists():
+def session_lock_exists(path="./"):
     """
         return whether the contents of the current session lock are still valid
         
         return -1 when no current session can be found
         return the port number if the session exists.
     """
-    lock_path = os.path.join(MpGlobal.installPath,"session.lock");
+    lock_path = os.path.join(path,"session.lock");
     
     
     if os.path.exists(lock_path):
@@ -208,9 +213,9 @@ def session_lock_exists():
     
     return -1;
     
-def session_create_lock(port=-1):
+def session_create_lock(fpath="./",port=-1):
 
-    lock_path = os.path.join(MpGlobal.installPath,"session.lock");
+    lock_path = os.path.join(fpath,"session.lock");
     # session lock file contains three parameters:
     # the current PID
     # current listening port
@@ -225,16 +230,7 @@ def session_create_lock(port=-1):
         
                    
 if __name__ == "__main__":
-    import time
-    global MpGlobal
-    
-    class GlobalDummy(object):
-        Socket = None
-        installPath = "./"
-     
-          
-    MpGlobal = GlobalDummy()
-
+    import time    
     
     class LocalSocket_Thread_test(QThread):     
     
@@ -243,7 +239,7 @@ if __name__ == "__main__":
             print "Creating Primary Socket"
             sock = LocalSocket_listen()
             print "NEW PORT: %d"%sock.getport() 
-            session_create_lock( sock.getport() )
+            session_create_lock( port=sock.getport() )
             
             msg = ""
             while msg != "quit":
@@ -263,8 +259,7 @@ if __name__ == "__main__":
         the first copy will quit when the message it recieves is 'quit'
         the second copy will then close when it recieves '<accept>'
     """
-    
-    
+
     port = session_lock_exists();
     print "Session Lock Port: %d"%port
     if port >= 0:
@@ -281,43 +276,4 @@ if __name__ == "__main__":
     else:
         thread = LocalSocket_Thread_test();
         thread.start();
-        x = raw_input();
-        # create copy one
-        
-            #time.sleep(1/8)
-else:
-    # all the normal imports
-    from MpGlobalDefines import *
-    from MpCommands import *
-    from MpScripting import session_receive_argument
-    class LocalSocket_Thread(QThread):     
-    
-        def run(self):
-        
-            self.setPriority(QThread.LowestPriority);
-
-            sock = LocalSocket_listen()
-            
-            print "creating session lock. PID: %d PORT: %d"%(SystemPID.getPID(),sock.getport())
-            session_create_lock( sock.getport() )
-            
-            msg = ""
-            
-            while QThread:
-                #print ">"
-                msg = sock.recv();
-                if msg != "":
-                    msg = msg.strip();
-                    size = msg[1:msg.find(']')]
-                    body = msg[msg.find(']')+1:]
-                    
-                    size = int(size)
-
-                    session_receive_argument(body);
-                    
-                    #print "Received: %s"%msg
-                    
-                QThread.msleep(125);
-                
-            print "Socket Thread Ended Unexpectedly."
-                
+        x = raw_input(); # wait for the user t type anything to wait

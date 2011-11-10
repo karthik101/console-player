@@ -4,8 +4,7 @@
 #----------------------------------------------------------
  
 # TODO:
-# abstract MpSearch to Song_Search
-# abstract MpSocket to App_Socket leaving only the player specific code in MpSocket.
+# abstract MpSearch to Song_Search, place in modules folder.
 #
 # imports should be fixed accross all files
 #   in general, i would  like all python standard lib imports first

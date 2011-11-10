@@ -23,6 +23,7 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+from App_SocketController import session_lock_exists
                     
 from MpGlobalDefines import *
 from ReadableDictionary_FileFormat import *
@@ -33,7 +34,7 @@ from widgetProgressBar import ProgressBar
 
 from SystemPathMethods import *
 from MpScripting import *
-from MpSocket import *                   
+from MpSocket_Thread import *                   
 import MpAutoUpdate;                       
 
 
@@ -138,7 +139,7 @@ def startUpCheck(install=False):
         # Check Session Lock
         # ######################################
         # we now have the install path, and this is the earliest we can check it.
-        port = session_lock_exists();
+        port = session_lock_exists(installPath);
         if port >= 0:
             if len(sys.argv) == 1:
                 pass # do something?

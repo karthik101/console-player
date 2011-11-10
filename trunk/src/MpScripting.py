@@ -1350,7 +1350,7 @@ from MpStartUp import verifyInstallation
 from MpSort import *
 from MpSearch import *
 from Song_MutagenWrapper import *
-from MpSocket import *
+from MpSocket_Thread import *
 
 
 
