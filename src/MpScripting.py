@@ -1355,7 +1355,7 @@ from UnicodeTranslate import Translate
 from MpEventHook import initHook,disableHook
 from dialogSettings import SettingsWindow
 from MpScreenSaver import *
-from MpFirstTime import verifyInstallation  
+from MpStartUp import verifyInstallation  
 from MpSort import *
 from MpSearch import *
 from Song_MutagenWrapper import *

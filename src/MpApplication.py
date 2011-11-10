@@ -941,7 +941,7 @@ def init_postMainWindow():
     if not MpGlobal.Window.txt_debug.isHidden():
         splitter_resize_debug()
     
-    MpGlobal.Window.search_label.setText("Found: %d"%len(MpGlobal.Player.libDisplay))
+    MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
     
     if Settings.PLAYER_LAST_INDEX < len(MpGlobal.Player.playList):
         MpGlobal.Player.CurrentIndex = Settings.PLAYER_LAST_INDEX

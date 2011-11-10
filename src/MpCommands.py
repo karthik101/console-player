@@ -1467,7 +1467,7 @@ from MpEventHook import initHook,disableHook
 from dialogSettings import SettingsWindow
 from dialogHelp import *
 from MpScreenSaver import *
-from MpFirstTime import verifyInstallation
+from MpStartUp import verifyInstallation
 from MpScripting import *      
 from MpSort import *
 from MpSearch import *   

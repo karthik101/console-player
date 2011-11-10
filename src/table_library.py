@@ -494,7 +494,7 @@ def txtSearch_OnTextChange(text,update=0):
         #debug( "Search Time: %s"%(end-time) )
         
     #MpGlobal.Window.tabMain.setTabText(0,"Library (%d)"%len(MpGlobal.Player.libDisplay))
-    MpGlobal.Window.search_label.setText("Found: %d"%len(MpGlobal.Player.libDisplay))
+    MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
         
         
 from Song_Object import Song
