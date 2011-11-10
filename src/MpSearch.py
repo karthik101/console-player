@@ -1,4 +1,23 @@
 
+# todo: abstract this file. rename Song_Search. move to ./module/
+# ~almost there. just need some sort of global that wraps the following values:
+#	Line ~223:             flag_type = MpMusic.D_StrToDec.get(key,flag_type)
+#	Line ~188:             for art in Settings.FAVORITE_ARTIST:
+#	Line ~315:             string = string.replace(p,Settings.getPreset(preset))
+# function pointer to find a preset value
+# an array of artists for 'favorites
+# a dictionary of search terms
+
+from calendar import timegm
+import time
+import datetime
+
+from datatype_hex64 import *
+from Song_Object import Song, EnumSong
+from StringQuoter import *    
+
+from SystemPathMethods import *
+
 from collections import namedtuple
 SearchTerm = namedtuple("SearchTerm",'str typ dir cf rf') #TODO use these instead of just tuples
 
@@ -78,11 +97,6 @@ class SearchObject(object):
             
             blah blah blah mr freeman
         """
-        self.a=0; # the only way to debug match() effectivley
-        self.b=0; # is to increment these counters, one each for C O N X
-        self.c=0;
-        self.d=0;
-        
         self.q = StringQuote()
         self.q.quoteable = '"'  # only quote items wrapped in double quotes
         
@@ -201,20 +215,20 @@ class SearchObject(object):
             frame = field.replace(dword,"",1).strip()   # frame is everything but the dword
             key   = dword[1:]       #the dword with the sigil removed
            
-            flag_type = MpMusic.EXIF
+            flag_type = EnumSong.EXIF
                 
             if key == "sel":
-                self._searchC.append( (".sel",MpMusic.SELECTED,0,None,None) )
+                self._searchC.append( (".sel",EnumSong.SELECTED,0,None,None) )
                 continue
             elif key == "spec":
-                self._searchC.append( (".alt",MpMusic.SPECIAL,0,None,None) )
+                self._searchC.append( (".alt",EnumSong.SPECIAL,0,None,None) )
                 continue
             else: # get key or return the default value
                 flag_type = MpMusic.D_StrToDec.get(key,flag_type)
                 
             # chop the .word search
             #print flag_type,frame
-            if flag_type == MpMusic.EXIF:
+            if flag_type == EnumSong.EXIF:
                 self._parseFrame(flag_type,field)
             else:
                 self._parseFrame(flag_type,frame)
@@ -240,14 +254,11 @@ class SearchObject(object):
             c = self._compareSongElement(song,self._searchC[i])
             if not c:
                 return False; # song did not match a AND term, so break out 
-            else:
-                self.a+=1;
                 
         # check that the song matches none of the not terms
         for i in xrange(len(self._searchN)):
             n = self._compareSongElement(song,self._searchN[i])
             if n:
-                self.c+=1;
                 return False; # song matched so break out 
                 
         # ensure that song matches at least one or term        
@@ -255,7 +266,6 @@ class SearchObject(object):
             for i in xrange(len(self._searchO)):
                 o = self._compareSongElement(song,self._searchO[i])
                 if o:
-                    self.b+=1
                     break;     
         else:
             o = True
@@ -269,7 +279,6 @@ class SearchObject(object):
                 for j in xrange(len(self._searchX[i])):
                     t = self._compareSongElement(song,self._searchX[i][j])
                     if t:
-                        self.d+=1
                         break;  
                 if not t: 
                     x = False;
@@ -290,12 +299,7 @@ class SearchObject(object):
 
         index = 0
         
-        time = datetime.datetime.now()
-        
-        self.a=0; # the only way to debug match() effectivley
-        self.b=0; # is to increment these counters, one each for C O N X
-        self.c=0;
-        self.d=0;
+        #time = datetime.datetime.now()
         
         for i in xrange(len(R)):
         
@@ -304,18 +308,9 @@ class SearchObject(object):
             if self.match(song):
                 S[index] = song
                 index += 1
-
-            if i%Settings.SEARCH_STALL == 0:   # SEARCH_STALL controls how often to pause
-                MpGlobal.Application.processEvents() # pause this to update application
-
-        if MpGlobal.DIAG_SONGMATCH:
-            print "A: %d"%self.a
-            print "B: %d"%self.b
-            print "C: %d"%self.c
-            print "D: %d\n"%self.d
             
-        end = datetime.datetime.now()
-        diagMessage( MpGlobal.DIAG_SEARCH, "Search Time: %s\n"%(end-time) )
+        #end = datetime.datetime.now()
+        #print "Search Time: %s\n"%(end-time) 
         return S[:index]
 
     def _expand_preset(self,string,preset):
@@ -346,64 +341,64 @@ class SearchObject(object):
         # TODO: REMOVE THIS
         flag_dir  = element[dm]
         flag_type = element[st]
-        #if    element[2]&SEARCH.GE==SEARCH.GE: flag_dir = MpMusic.GTEQUAL
-        #elif  element[2]&SEARCH.LE==SEARCH.LE: flag_dir = MpMusic.LTEQUAL
-        #elif  element[2]&SEARCH.GT           : flag_dir = MpMusic.GREATERTHAN
-        #elif  element[2]&SEARCH.LT           : flag_dir = MpMusic.LESSTHAN
-        #elif  element[2]&SEARCH.EQ           : flag_dir = MpMusic.EQUAL
-        #else                                 : flag_dir = MpMusic.CONTAINS
+        #if    element[2]&SEARCH.GE==SEARCH.GE: flag_dir = EnumSong.GTEQUAL
+        #elif  element[2]&SEARCH.LE==SEARCH.LE: flag_dir = EnumSong.LTEQUAL
+        #elif  element[2]&SEARCH.GT           : flag_dir = EnumSong.GREATERTHAN
+        #elif  element[2]&SEARCH.LT           : flag_dir = EnumSong.LESSTHAN
+        #elif  element[2]&SEARCH.EQ           : flag_dir = EnumSong.EQUAL
+        #else                                 : flag_dir = EnumSong.CONTAINS
         #element = (element[0],element[1],flag_dir,element[3],element[4])
         
         # split this function into special cases, 
         # then all string elements
         # then all number elements
         try:
-            if flag_type == MpMusic.SELECTED :
-                return song[MpMusic.SELECTED]
+            if flag_type == EnumSong.SELECTED :
+                return song[EnumSong.SELECTED]
                 
-            elif flag_type == MpMusic.SPECIAL :
-                return song[MpMusic.SPECIAL]
+            elif flag_type == EnumSong.SPECIAL :
+                return song[EnumSong.SPECIAL]
                 
-            elif flag_type == MpMusic.PATH :
+            elif flag_type == EnumSong.PATH :
                 if flag_dir&SEARCH.EQ:
-                    #return song[MpMusic.PATH].find(element[cf]) == 0
-                    return comparePathLength(element[cf],song[MpMusic.PATH])
+                    #return song[EnumSong.PATH].find(element[cf]) == 0
+                    return comparePathLength(element[cf],song[EnumSong.PATH])
                 else:
-                    return comparePartInPath(song[MpMusic.PATH],element[cf])  
+                    return comparePartInPath(song[EnumSong.PATH],element[cf])  
                     
-            elif flag_type == MpMusic.DATESTAMP:
+            elif flag_type == EnumSong.DATESTAMP:
                 # dates less than means time is greater
-                # set or MpMusic.CONTAINS as default
+                # set or EnumSong.CONTAINS as default
                 # defaults to >=, ex, not played fro x days or more
                 if flag_dir&SEARCH.LT: # more recent
-                    return (song[MpMusic.DATEVALUE] >=  element[cf])
+                    return (song[EnumSong.DATEVALUE] >=  element[cf])
                 elif flag_dir&SEARCH.EQ==SEARCH.EQ : # equals one specific day
-                    return (song[MpMusic.DATEVALUE] >= element[cf] and song[MpMusic.DATEVALUE] <= element[rf])
+                    return (song[EnumSong.DATEVALUE] >= element[cf] and song[EnumSong.DATEVALUE] <= element[rf])
                 else:   # older than date
-                    return (song[MpMusic.DATEVALUE] <= element[cf])
+                    return (song[EnumSong.DATEVALUE] <= element[cf])
                     
-            elif flag_type == MpMusic.DATEADDED:
+            elif flag_type == EnumSong.DATEADDED:
                 # dates less than means time is greater
-                # set or MpMusic.CONTAINS as default
+                # set or EnumSong.CONTAINS as default
                 # defaults to >=, ex, not played fro x days or more
                 if flag_dir&SEARCH.LT: # more recent
-                    return (song[MpMusic.DATEADDED] >=  element[cf])
+                    return (song[EnumSong.DATEADDED] >=  element[cf])
                 elif flag_dir&SEARCH.EQ==SEARCH.EQ : # equals one specific day
-                    return (song[MpMusic.DATEADDED] >= element[cf] and song[MpMusic.DATEADDED] <= element[rf])
+                    return (song[EnumSong.DATEADDED] >= element[cf] and song[EnumSong.DATEADDED] <= element[rf])
                 else:   # older than date
-                    return (song[MpMusic.DATEADDED] <= element[cf])
+                    return (song[EnumSong.DATEADDED] <= element[cf])
                     
-            elif flag_type < MpMusic.STRINGTERM :
+            elif flag_type < EnumSong.STRINGTERM :
                 # contains, the element must be anywhere
                 #  ex: 'st' will match 'stone' and 'rockstar'
                 # equals the entered text must equal the equivalent length in the song
                 #  ex: 'st' will match 'stone' but not 'rockstar'
-                if flag_dir&SEARCH.EQ and flag_type != MpMusic.EXIF:
+                if flag_dir&SEARCH.EQ and flag_type != EnumSong.EXIF:
                     return song[flag_type].lower().find(element[cf]) == 0
                 else:
                     return song[flag_type].lower().find(element[cf]) >= 0
      
-            elif flag_type >= MpMusic.STRINGTERM and element[st] < MpMusic.NUMTERM :
+            elif flag_type >= EnumSong.STRINGTERM and element[st] < EnumSong.NUMTERM :
                 if   flag_dir&SEARCH.LE == SEARCH.LE : return song[flag_type] <= element[cf]
                 elif flag_dir&SEARCH.LT              : return song[flag_type] <  element[cf]
                 elif flag_dir&SEARCH.GE == SEARCH.GE : return song[flag_type] >= element[cf]
@@ -411,7 +406,7 @@ class SearchObject(object):
                 elif flag_dir&SEARCH.EQ              : return song[flag_type] == element[cf]
                 
         except Exception as e:
-            print "Error: [%s] %s"%(MpMusic.exifToString(flag_type),e.args)
+            print "Error: [%s] %s"%(EnumSong.exifToString(flag_type),e.args)
             print song
             print element
         return False;    
@@ -523,7 +518,7 @@ class SearchObject(object):
         cf = ostr[:]
         rf = None;
  
-        if (flag_type == MpMusic.SPEC_DATESTD ) :
+        if (flag_type == EnumSong.SPEC_DATESTD ) :
             cf = getSecondsFromDateFormat(cf,flag_type)
             rf = cf + 24*60*60
             if cf == 0:
@@ -533,8 +528,8 @@ class SearchObject(object):
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
                 
-            flag_type = MpMusic.DATESTAMP # change type to standard date format
-        elif (flag_type == MpMusic.SPEC_DATEEU ) :
+            flag_type = EnumSong.DATESTAMP # change type to standard date format
+        elif (flag_type == EnumSong.SPEC_DATEEU ) :
             cf = getSecondsFromDateFormat(cf,flag_type)
             rf = cf + 24*60*60
             if cf == 0:
@@ -542,8 +537,8 @@ class SearchObject(object):
             ostr = normalizeDateFormat(ostr,flag_type)
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
-            flag_type = MpMusic.DATESTAMP # change type to standard date format   
-        elif (flag_type == MpMusic.SPEC_DATEUS ) :
+            flag_type = EnumSong.DATESTAMP # change type to standard date format   
+        elif (flag_type == EnumSong.SPEC_DATEUS ) :
             cf = getSecondsFromDateFormat(cf,flag_type)
             rf = cf + 24*60*60
             if cf == 0:
@@ -551,11 +546,11 @@ class SearchObject(object):
             ostr = normalizeDateFormat(ostr,flag_type)
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
-            flag_type = MpMusic.DATESTAMP # change type to standard date format
-        elif (flag_type == MpMusic.SPEC_MONTH ) :
+            flag_type = EnumSong.DATESTAMP # change type to standard date format
+        elif (flag_type == EnumSong.SPEC_MONTH ) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
-            flag_type = MpMusic.DATESTAMP
+            flag_type = EnumSong.DATESTAMP
             cf = getCurrentTime()
             try :
                 cf -= 30*int(ostr)*24*60*60
@@ -564,10 +559,10 @@ class SearchObject(object):
             except:
                 pass
             
-        elif (flag_type == MpMusic.SPEC_WEEK ) :
+        elif (flag_type == EnumSong.SPEC_WEEK ) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
-            flag_type = MpMusic.DATESTAMP
+            flag_type = EnumSong.DATESTAMP
             cf = getCurrentTime()
             try :
                 cf -= 7*int(ostr)*24*60*60
@@ -576,7 +571,7 @@ class SearchObject(object):
             except:
                 pass
                 
-        elif (flag_type == MpMusic.DATESTAMP) :
+        elif (flag_type == EnumSong.DATESTAMP) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             cf = getCurrentTime()
@@ -586,27 +581,27 @@ class SearchObject(object):
                 ostr = "day: %s"%ostr
             except:
                 pass
-        elif (flag_type == MpMusic.DATEADDED) :
-            cf = getSecondsFromDateFormat(cf,MpMusic.SPEC_DATESTD)
+        elif (flag_type == EnumSong.DATEADDED) :
+            cf = getSecondsFromDateFormat(cf,EnumSong.SPEC_DATESTD)
             rf = cf + 24*60*60
             if cf == 0:
                 return None
-            ostr = normalizeDateFormat(ostr,MpMusic.SPEC_DATESTD)
+            ostr = normalizeDateFormat(ostr,EnumSong.SPEC_DATESTD)
             
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
                 
-        elif (flag_type == MpMusic.PATH ) :
+        elif (flag_type == EnumSong.PATH ) :
             if cf == u"":
                 return None
             rf = None
-        elif (flag_type == MpMusic.LENGTH ):
+        elif (flag_type == EnumSong.LENGTH ):
             cf = 0;
             try:
                 cf = convertStringToTime(ostr)
             except:
                 pass
-        elif flag_type >= MpMusic.STRINGTERM and flag_type < MpMusic.NUMTERM :
+        elif flag_type >= EnumSong.STRINGTERM and flag_type < EnumSong.NUMTERM :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.EQ
             try:
@@ -628,20 +623,20 @@ class SearchObject(object):
     def __unicode__(self):
         string = ""
         for term in self._searchC:
-            s = term[3] if (term[1] != MpMusic.DATESTAMP) else term[0]
-            string += "%s %s %s\n"%(MpMusic.exifToString(term[1]),SEARCH(term[2]),s)
+            s = term[3] if (term[1] != EnumSong.DATESTAMP) else term[0]
+            string += "%s %s %s\n"%(EnumSong.exifToString(term[1]),SEARCH(term[2]),s)
         for term in self._searchO:
-            s = term[3] if (term[1] != MpMusic.DATESTAMP) else term[0]
-            string += "%s %s %s\n"%(MpMusic.exifToString(term[1]),SEARCH(term[2]),s)
+            s = term[3] if (term[1] != EnumSong.DATESTAMP) else term[0]
+            string += "%s %s %s\n"%(EnumSong.exifToString(term[1]),SEARCH(term[2]),s)
         for term in self._searchN:
-            s = term[3] if (term[1] != MpMusic.DATESTAMP) else term[0]
-            string += "%s %s %s\n"%(MpMusic.exifToString(term[1]),SEARCH(term[2]),s)
+            s = term[3] if (term[1] != EnumSong.DATESTAMP) else term[0]
+            string += "%s %s %s\n"%(EnumSong.exifToString(term[1]),SEARCH(term[2]),s)
         i=1;    
         for lst in self._searchX:
             
             for term in lst:
-                s = term[3] if (term[1] != MpMusic.DATESTAMP) else term[0]
-                string += "%s %s %d %s\n"%(MpMusic.exifToString(term[1]),SEARCH(term[2]),i,s)
+                s = term[3] if (term[1] != EnumSong.DATESTAMP) else term[0]
+                string += "%s %s %d %s\n"%(EnumSong.exifToString(term[1]),SEARCH(term[2]),i,s)
             i+=1;
         return string
     
@@ -655,46 +650,46 @@ class SearchObject(object):
         print self._searchX
 
         
-def searchSetSelection(string,sel=True):
-    so = SearchObject(string)
+
     
-    MpGlobal.Player.selCount = 0
-    count = 0 # total count of new songs found
     
-    for song in MpGlobal.Player.library:
-    
-        if so.match(song):
-            song[MpMusic.SELECTED] = sel
-            count += 1
+def stringSplit(string,deliminator=" "):
+    """
+        Custom string split function
+        splits  strings/unicode strings at deliminator list
+        deliminator is a string containing a list of all characters to ignore
+        string will be split into tokens and array of all tokens will be returned
+        ex:
+            deliminator=",;"
+            string = "a,b;c,;"
+            return ['a','b','c']
+    """
+    R = []
+    n = ''
+    l=0
+    i=0
+    while i < len(string):
+        if string[i] in deliminator:
+            n = string[l:i]
+            if n != "":
+                R.append(n)
+            l = i+1
+        i += 1
         
-        if song[MpMusic.SELECTED] == True:
-            MpGlobal.Player.selCount += 1
-    
-    UpdateStatusWidget(0,MpGlobal.Player.selCount)
-    
-    return count # return the number of songs that matched the input string.
-    
+    n = string[l:i] # aquire the last term if any
+    if n != "":
+        R.append(n)
+        
+    return R
     
     
     
-    
-from calendar import timegm
-import os
-import time
-import datetime
-import random
-import re
-import subprocess
-import ctypes
- 
-from StringQuoter import *    
+
+
 from MpGlobalDefines import *
-from Song_Object import Song
-from datatype_hex64 import *
 
 
-from SystemPathMethods import *
-from MpScripting import *
+#from MpScripting import *
     
     
     

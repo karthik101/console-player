@@ -4,6 +4,9 @@
 #----------------------------------------------------------
  
 # TODO:
+# abstract MpSearch to Song_Search
+# abstract MpSocket to App_Socket leaving only the player specific code in MpSocket.
+#
 # imports should be fixed accross all files
 #   in general, i would  like all python standard lib imports first
 #   then all Qt / other imports ( including all imports in ./module/ last in the list )
@@ -23,13 +26,21 @@
 #   what it was i was doing. I think the idea is sound, 30 rows (or so), and revolve the data
 #   through them. instead of adding/removing 1k-10k rows. do i write my own table <-> interface?
 #
-# I now have an event Manager. I need a way to
+# I now have an event Manager. I may need a way to have a function run after all other Events are done.
+#   my current thought is to have an event dictionary, where the key is the function, and the value
+#   is a tuple of arguments. one sets the dictionary, then posts an event with postEvent
+#   when all events are done the dictionary is checked and each key is called then removed.
+#   afterwards the main loop is checked for more events to run.
 #
 # A way to load any text file as a playlist. Look for file paths, check that they are songs
 #   then ask the user to add the songs either A) to the library or B) play all
 #       play all automatically when no new songs would need to be added.
 # Also XML support, get paths in the same way, but if it's in an itunes format grab the data using that format.
 #
+#
+# def searchSetSelection(string,sel=True): # incorporate with SongSearch
+#            if i%Settings.SEARCH_STALL == 0:   # SEARCH_STALL controls how often to pause
+#                MpGlobal.Application.processEvents() # pause this to update application
 import os   
 import sys
 import sip

@@ -323,62 +323,6 @@ class MusicContainer(EnumSong):
                      'year'          : EnumSong.YEAR
                     }
 
-    def exifToString(self,exif):
-
-        if   exif == EnumSong.PATH      : return "PATH";
-        elif exif == EnumSong.EXIF      : return "EXIF";
-        elif exif == EnumSong.ARTIST    : return "ARTIST";
-        elif exif == EnumSong.TITLE     : return "TITLE";
-        elif exif == EnumSong.ALBUM     : return "ALBUM";
-        elif exif == EnumSong.GENRE     : return "GENRE";
-        elif exif == EnumSong.DATESTAMP : return "DATESTAMP";
-        elif exif == EnumSong.COMMENT   : return "COMMENT";
-        elif exif == EnumSong.RATING    : return "RATING";
-        elif exif == EnumSong.LENGTH    : return "LENGTH";
-        elif exif == EnumSong.SONGINDEX : return "SONGINDEX";
-        elif exif == EnumSong.PLAYCOUNT : return "PLAYCOUNT";
-        elif exif == EnumSong.SKIPCOUNT : return "SKIPCOUNT";
-        elif exif == EnumSong.FILESIZE  : return "FILESIZE";
-        elif exif == EnumSong.BITRATE   : return "BITRATE";
-        elif exif == EnumSong.FREQUENCY : return "FREQUENCY";
-        elif exif == EnumSong.DATEVALUE : return "DATEVALUE";
-        elif exif == EnumSong.SPECIAL   : return "SPECIAL";
-        elif exif == EnumSong.SELECTED  : return "SELECTED";
-        elif exif == EnumSong.SONGID    : return "ID#";
-        
-        elif exif == EnumSong.DATEADDEDS: return "DATEADDEDS";
-        elif exif == EnumSong.DATEADDED : return "DATEADDED";
-        elif exif == EnumSong.YEAR      : return "YEAR";
-        return "UNKOWN TAG:%d"%exif
-
-    def stringToExif(self,exif):
-
-        if   exif == "PATH"      : return EnumSong.PATH
-        elif exif == "EXIF"      : return EnumSong.EXIF
-        elif exif == "ARTIST"    : return EnumSong.ARTIST
-        elif exif == "TITLE"     : return EnumSong.TITLE
-        elif exif == "ALBUM"     : return EnumSong.ALBUM
-        elif exif == "GENRE"     : return EnumSong.GENRE
-        elif exif == "DATESTAMP" : return EnumSong.DATESTAMP
-        elif exif == "COMMENT"   : return EnumSong.COMMENT
-        elif exif == "RATING"    : return EnumSong.RATING
-        elif exif == "LENGTH"    : return EnumSong.LENGTH
-        elif exif == "SONGINDEX" : return EnumSong.SONGINDEX
-        elif exif == "PLAYCOUNT" : return EnumSong.PLAYCOUNT
-        elif exif == "SKIPCOUNT" : return EnumSong.SKIPCOUNT
-        elif exif == "FILESIZE"  : return EnumSong.FILESIZE
-        elif exif == "BITRATE"   : return EnumSong.BITRATE
-        elif exif == "FREQUENCY" : return EnumSong.FREQUENCY
-        elif exif == "DATEVALUE" : return EnumSong.DATEVALUE
-        elif exif == "SPECIAL"   : return EnumSong.SPECIAL
-        elif exif == "SELECTED"  : return EnumSong.SELECTED
-        elif exif == "ID#"       : return EnumSong.SONGID
-                                         
-        elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
-        elif exif == "DATEADDED" : return EnumSong.DATEADDED
-        elif exif == "YEAR"      : return EnumSong.YEAR
-        return 0
-
     def expandExifMacro(self,string,sigil,song):
         """
             Expand a string macro based of a template song,
