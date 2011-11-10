@@ -364,6 +364,25 @@ def songGetAlbumIndex(song):
     
     return i
     
+def searchSetSelection(string,sel=True):
+    so = SearchObject(string)
+    
+    MpGlobal.Player.selCount = 0
+    count = 0 # total count of new songs found
+    
+    for song in MpGlobal.Player.library:
+    
+        if so.match(song):
+            song[EnumSong.SELECTED] = sel
+            count += 1
+        
+        if song[EnumSong.SELECTED] == True:
+            MpGlobal.Player.selCount += 1
+    
+    UpdateStatusWidget(0,MpGlobal.Player.selCount)
+    
+    return count # return the number of songs that matched the input string.    
+    
 # ##############################################
 # time
 # ############################################## 
@@ -846,34 +865,6 @@ def getStyleImagePath(filename):
 
 
 
-def stringSplit(string,deliminator=" "):
-    """
-        Custom string split function
-        splits  strings/unicode strings at deliminator list
-        deliminator is a string containing a list of all characters to ignore
-        string will be split into tokens and array of all tokens will be returned
-        ex:
-            deliminator=",;"
-            string = "a,b;c,;"
-            return ['a','b','c']
-    """
-    R = []
-    n = ''
-    l=0
-    i=0
-    while i < len(string):
-        if string[i] in deliminator:
-            n = string[l:i]
-            if n != "":
-                R.append(n)
-            l = i+1
-        i += 1
-        
-    n = string[l:i] # aquire the last term if any
-    if n != "":
-        R.append(n)
-        
-    return R
 
 def stringCustomReplace(string,old,new=""):
     """

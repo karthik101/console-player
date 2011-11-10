@@ -2,15 +2,21 @@
 # #########################################################
 # File: MpStartUp
 # Description:
-#       This file controls what happens before anything
-# is loaded by the Appication. A certain set of external
-# files are required to style and provide icons. 
-#   This files asks the user the first time the application
-# is started where to extract files to, local or AppData
-# each time after this program checks to see if all of these files
-# still exist in that location.
-#   A verify dialog is shown as a progressbar indication the
-# progress as files are extracted.
+#       Provides functions and a few dialogs for
+# initlilizing the player.
+# When initilizing we need to find the settings file.
+# Which is only difficult because it is allowed to be in one
+# of two places ( 4, including Max and Linux Home Folders)
+# If it is not found then we need to let the user extract files 
+# somewhere.
+# even if the settings.ini file is found, I then made loading it difficult
+# A default settings object is made, then some values are 
+# set to default values based off of theQapplication / user enviroment
+# then the file is laoded. then values can be initiliazed
+# from the settings read in.
+# Finally we need to check for updates.
+# if the version has changed since the alst save, we may need to
+# modify some data
 # #########################################################
 import os
 import sys
