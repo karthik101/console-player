@@ -1,5 +1,5 @@
 #!/usr/bin/python -O
-__VERSION__ = "0.4.4.255"           
+__VERSION__ = "0.4.4.259"           
  ################################################
 # do not edit anything above this line unless you 
 # know what you are doing

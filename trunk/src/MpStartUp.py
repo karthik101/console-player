@@ -1,6 +1,6 @@
 # #########################################################
 # #########################################################
-# File: MpFirstTime
+# File: MpStartUp
 # Description:
 #       This file controls what happens before anything
 # is loaded by the Appication. A certain set of external

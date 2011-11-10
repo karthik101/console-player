@@ -17,26 +17,17 @@ def event_load_song(filepath):
     try:
         song = id3_createSongFromPath(filepath)
         MpGlobal.Player.library.append(song)
-        MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
-        txtSearch_OnTextChange(".pcnt =0", -1)
+        #todo use .added =%TODAY%
+        #MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
+        #txtSearch_OnTextChange(".pcnt =0", -1)
         #MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0")   
+        MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
         
         
     except Exception as e:
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Error With Loading Song")
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%filepath)
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%e.args)
-        
-# def external_Load_Finish():  
-#    # spend some time working on this function, the if is running should NOT be needed
-#    if MpGlobal.LoadThread.isRunning():
-#        # once got a thread destryoed while running error
-#        MpGlobal.Window.emit(SIGNAL("LOAD_FINISHED")) # calls this function again
-#        debug(" *** Load Thread Ended while still Running.")
-#    else:
-#        MpGlobal.LoadThread = None
-#        MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
-#        MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0")   
 
 def event_load_folder(folderpath,subfolders=True):
 

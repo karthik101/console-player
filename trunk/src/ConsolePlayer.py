@@ -70,7 +70,7 @@ from MpGlobalDefines import *
 from MpApplication import *
 from MpScripting import *
 from MpPlayerThread import MediaPlayerThread
-from MpFirstTime import startUpCheck
+from MpStartUp import startUpCheck
 
 
 
@@ -112,10 +112,10 @@ if __debug: print "Set Up Check Done\n"
 # ######################################
 if __debug: print "Creating Main Window..."  
   
-init_preMainWindow()
+init_preMainWindow()        #code to run before MainWindow.__init__()
 MpGlobal.Window = MainWindow(MpGlobal.NAME)
 MpGlobal.Window.show()
-init_postMainWindow()
+init_postMainWindow()       #code to run after  MainWindow.__init__(), AND after show()
 
 if __debug: print "Main Loop Starting..."    
   
