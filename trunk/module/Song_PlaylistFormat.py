@@ -100,7 +100,7 @@ def playListLoad(filepath,source):
                     break
             else:
                 for x in range(len(source)):
-                    if comparePath( source[x][MpMusic.PATH] ,path ):
+                    if comparePath( source[x][EnumSong.PATH] ,path ):
                         array.append(source[x])
                         break
         except Exception as e:

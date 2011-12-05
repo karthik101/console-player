@@ -53,6 +53,9 @@ class EnumSong(object):
     SPEC_DATEEU  = 103 # search by formated date DD/MM/YYYY
     SPEC_DATEUS  = 104 # search by formated date MM/DD/YYYY
     SPEC_DATESTD = 105 # search by formated date YYYY/MM/DD
+    SPEC_FREQ_G = 106 # return true when the song's days elapsed is >= freq
+    SPEC_FREQ_L = 107 # return true when the song's days elapsed is <  freq
+    SPEC_FREQ_E = 108 # return true when the song's days elapsed is == freq
 
     SONGDATASIZE = SELECTED+1 #NOTE: selected must always be the last element in the array
     
@@ -83,6 +86,11 @@ class EnumSong(object):
         elif exif == EnumSong.DATEADDEDS: return "DATEADDEDS";
         elif exif == EnumSong.DATEADDED : return "DATEADDED";
         elif exif == EnumSong.YEAR      : return "YEAR";
+        
+        elif exif == EnumSong.SPEC_FREQ_L      : return "FREQ-L";
+        elif exif == EnumSong.SPEC_FREQ_E      : return "FREQ-E";
+        elif exif == EnumSong.SPEC_FREQ_G      : return "FREQ-G";
+
         return "UNKOWN TAG:%d"%exif
     @staticmethod
     def stringToExif(exif):
@@ -111,6 +119,10 @@ class EnumSong(object):
         elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
         elif exif == "DATEADDED" : return EnumSong.DATEADDED
         elif exif == "YEAR"      : return EnumSong.YEAR
+        
+        elif exif == "FREQ-L"      : return EnumSong.SPEC_FREQ_L
+        elif exif == "FREQ-E"      : return EnumSong.SPEC_FREQ_E
+        elif exif == "FREQ-G"      : return EnumSong.SPEC_FREQ_G
         return 0
     
 class Song(list):
@@ -264,6 +276,30 @@ class Song(list):
         #print "[%03X] [%03X] [%03X] [%03X]"%(_a,_b,_t,_l)
         return
 
+    def updateFrequency(self,days_elapsed,N=4):
+        """
+            update the frequency value when given the number of days elapsed
+            
+            days_elapsed - an integer specifying the number of days sins last played.
+            N            - A Running average constant, frequency is an average of 
+                           N samples.
+            
+            get days_elapsed with get_DaysPassed() in MpScripting / EasyDateTime
+            
+        """
+        #TODO i can now use date added when calculating the playback freq.
+        # use date added as the first point
+        # after first playcount
+        # use added,NOW
+        #other wise
+        # use prev,NOW
+        if self[EnumSong.PLAYCOUNT] == 1:
+            self[EnumSong.FREQUENCY] = (self[EnumSong.FREQUENCY] + (N-1)*days_elapsed)/N
+        elif self[EnumSong.FREQUENCY] != 0 :
+            self[EnumSong.FREQUENCY] = ((N-1)*self[EnumSong.FREQUENCY] + days_elapsed)/N
+        else:
+            self[EnumSong.FREQUENCY] = days_elapsed
+            
     @staticmethod
     def __char_to_6bit__(c):
         o = ord(c.upper())
@@ -352,7 +388,6 @@ class Song(list):
         finally:
             self[string_index] = ds
 
-            
     def __format_exif__(self):
         """
             returns a formatted exif string.
