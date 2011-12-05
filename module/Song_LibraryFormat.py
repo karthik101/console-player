@@ -24,7 +24,7 @@ except:
     pylzma = None
 # ##############################
 #  Library save formats
-def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
+def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):
     """
         save a new file, but first compress it using LZMA.
         
@@ -86,11 +86,12 @@ def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
             you must provide the maximum length as keyword parameter.
     """
     
+   
     s = datetime.datetime.now()
     
     with open(filepath,"wb") as FILE:
         FILE.write( struct.pack("4sI","LVER",1) );             # 
-        FILE.write( struct.pack("4sI","LTYP",typ) );           # 
+        FILE.write( struct.pack("4sI","LTYP",typ|1) );           # 
         FILE.write( struct.pack("4sI","LBLK",block_size) );    # number of songs in each block
         FILE.write( struct.pack("4sI","LCNT",len(songList)) ); # 
         FILE.write( struct.pack("4sI","LFMT",Song.repr_length() ) );
@@ -102,6 +103,15 @@ def musicSave_LIBZ(filepath,songList,typ=0,block_size=128):
 def musicLoad_LIBZ(filepath):
     """
         load the specified .libz file and return an array of songs.
+        
+        #todo : read 8 bytes
+        # read in : LVERABCD
+        # if A== 0x3D == '=' then file is ascii format
+        
+        # when saving a non binary version save version as '=001' or 3D 30 30 31
+        # increment the version count for new ascii file formats
+        # for binary formats:
+        #   LVERABCD, where A,B,C,D are a little endian 32 bit integer with A=0x00
     """
     
 
@@ -179,10 +189,10 @@ def LIBZ_write_songList(FILE,songList,typ,block_size):
             else: break;
             i+=1;
             
-        if typ&1 == 0 and pylzma != None: # no compression for typ|=1 
-            # exec MpGlobal.t1=23;MpGlobal.t2=128;
-            #dictionary=MpGlobal.t1,fastBytes=MpGlobal.t2
-            block = pylzma.compress(block);
+        #if typ&1 == 0 and pylzma != None: # no compression for typ|=1 
+        #    # exec MpGlobal.t1=23;MpGlobal.t2=128;
+        #    #dictionary=MpGlobal.t1,fastBytes=MpGlobal.t2
+        #    block = pylzma.compress(block);
 
             
         # write a header for the block, SIZE=length of the block

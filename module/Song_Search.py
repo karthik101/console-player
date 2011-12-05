@@ -27,6 +27,8 @@ from SystemPathMethods import *
 from collections import namedtuple
 SearchTerm = namedtuple("SearchTerm",'str typ dir cf rf') #TODO use these instead of just tuples
 
+
+
 class SearchObject_Controller(object):
     """
         Thsi class provides a way for globally setting values needed to extend
@@ -217,6 +219,10 @@ class SearchObject(object):
         
         self.termCount = 0;
         
+        # these are used with Search N
+        self.search_iter_index = 0
+        self.search_iter_list = None
+        self.search_iter_N = 0
         
         if string != "":
             self.compile(string)      
@@ -305,7 +311,6 @@ class SearchObject(object):
         
         # ########################################################
         # Begin Parsing User Input
-        
          # quote first to protect anything the user wants protected.
         string = self.q.quote(string.lower())
 
@@ -322,6 +327,7 @@ class SearchObject(object):
                 continue;
             frame = field.replace(dword,"",1).strip()   # frame is everything but the dword
             key=""
+            sigil = dword[0];
             if not dword[0].isalpha():
                 key   = dword[1:]       #the dword with the sigil removed
            
@@ -332,6 +338,38 @@ class SearchObject(object):
                 continue
             elif key == "spec":
                 self._searchC.append( (".alt",EnumSong.SPECIAL,0,None,None) )
+                continue
+            elif key[:4] == "freq" and key[4:5] in "<=>" and key[4:5] != "": # a slice never throws an exception, but can return empty
+                # allow $freqX , where X is <=>,
+                fdict = {
+                            '<' : EnumSong.SPEC_FREQ_L,
+                            '=' : EnumSong.SPEC_FREQ_E,
+                            '>' : EnumSong.SPEC_FREQ_G,
+                        }
+                fflag = {
+                            '<' : SEARCH.LT,
+                            '=' : SEARCH.EQ,
+                            '>' : SEARCH.GT,
+                        }
+                ftype = {
+                            '.' : 0,
+                            '+' : SEARCH.OR,
+                            '!' : SEARCH.NT,
+                            '*' : SEARCH.IO,
+                        }      
+                        
+                flag = fflag.get(key[4],0)|ftype.get(sigil,0)        
+                        
+                t = (key,fdict[key[4]],flag,getEpochTime( getNewDate() ),None) # TODO TIME LIB,and USE GET_EPOCH_TIME
+                
+                if sigil == ".":
+                    self._searchC.append( t  ) 
+                elif sigil == "+":
+                    self._searchO.append( t  ) 
+                elif sigil == "!":
+                    self._searchN.append( t  ) 
+                elif sigil == "*":
+                    self._searchX.append( [t,]  ) 
                 continue
             else: # get key or return the default value
                 flag_type = SearchObject_Controller.getSearchDictionary().get(key,flag_type)
@@ -359,19 +397,19 @@ class SearchObject(object):
         n = False   # Not
         x = True    # Inclusive or
         
-        # check if the song matches all constant terms
+        # check if the song matches all 'constant' terms
         for i in xrange(len(self._searchC)):
             c = self._compareSongElement(song,self._searchC[i])
             if not c:
                 return False; # song did not match a AND term, so break out 
                 
-        # check that the song matches none of the not terms
+        # check that the song matches none of the 'not' terms
         for i in xrange(len(self._searchN)):
             n = self._compareSongElement(song,self._searchN[i])
             if n:
                 return False; # song matched so break out 
                 
-        # ensure that song matches at least one or term        
+        # ensure that song matches at least one 'or' term        
         if len(self._searchO) > 0:
             for i in xrange(len(self._searchO)):
                 o = self._compareSongElement(song,self._searchO[i])
@@ -421,6 +459,56 @@ class SearchObject(object):
         #print "Search Time: %s\n"%(end-time) 
         return S[:index]
 
+    def searchN(self,songList=None,N=100):
+        """
+            Function: searchN
+            call this method with a song list and number N
+            the songs that match from thefirst N in the list will be returned
+            
+            then, call this function with no arguments
+            each time the function is called the songs that match in the next set of N
+            will be returned.
+            
+            example
+            
+            so = SearchObject(".pcnt < 10")
+            temp = so.searchN(library,50)
+            result = []                         # list of songs that match
+            while temp != None:
+                result += temp                  # append the matching songs to the end of the resulting song list
+                print len(temp)                 # print the number of songs that matched the last time searchN was called.
+                temp = so.searchN()             # compare the next 50 songs
+            print len(result)                   # print the number of songs that matched the search
+                
+        """
+        if songList != None:
+            # initialize the search iteration
+            self.search_iter_index = 0
+            self.search_iter_list = songList
+            self.search_iter_N = N
+        
+        iter_end = self.search_iter_index + self.search_iter_N
+
+        S = [[]]*self.search_iter_N # init the resulting array to the maximum number of values that could be found
+        
+        count = 0;
+        
+        # look through the Next N songs
+        while self.search_iter_index < iter_end and self.search_iter_index < len(self.search_iter_list):
+            song = self.search_iter_list[self.search_iter_index]
+            
+            if self.match(song):
+                S[count] = song
+                count += 1;
+                
+            self.search_iter_index += 1
+        
+        # return none when iterating through the list is done
+        if self.search_iter_index >= len(self.search_iter_list) and count == 0:
+            return None;
+        # otherwise return any songs found. this could be zero.
+        return S[:count]
+        
     def _expand_preset(self,string,preset):
         p = ".preset %d"%preset
         if string.find(p) > -1:
@@ -466,6 +554,33 @@ class SearchObject(object):
                 
             elif flag_type == EnumSong.SPECIAL :
                 return song[EnumSong.SPECIAL]
+                
+            elif flag_type == EnumSong.SPEC_FREQ_G :
+
+                old=song[EnumSong.DATEVALUE]
+                if old != 0:
+                    d =  max(1, int(float(element[cf] - old)/(60*60*24)) )
+                else: 
+                    d = 0;
+                return d > song[EnumSong.FREQUENCY];
+                
+            elif flag_type == EnumSong.SPEC_FREQ_L :
+
+                old=song[EnumSong.DATEVALUE]
+                if old != 0:
+                    d =  max(1, int(float(element[cf] - old)/(60*60*24)) )
+                else: 
+                    d = 0;
+                return d < song[EnumSong.FREQUENCY];
+            
+            elif flag_type == EnumSong.SPEC_FREQ_E :
+
+                old=song[EnumSong.DATEVALUE]
+                if old != 0:
+                    d =  max(1, int(float(element[cf] - old)/(60*60*24)) )
+                else: 
+                    d = 0;
+                return d == song[EnumSong.FREQUENCY];
                 
             elif flag_type == EnumSong.PATH :
                 if flag_dir&SEARCH.EQ:
@@ -897,7 +1012,25 @@ def getSecondsFromDateFormat(date,format):
         pass
         
     return 0
-    
+   
+def getNewDate():
+    """return a new formatted time string"""
+    datetime = time.localtime(time.time())
+    return time.strftime("%Y/%m/%d %H:%M",datetime)
+   
+def getEpochTime( date ):
+    """return epoch time for a date"""
+    datetime = None
+    try:
+        datetime = time.strptime(date,"%Y/%m/%d %H:%M")
+        return timegm(datetime)   
+    except:
+        pass
+        
+    return 0  
+
+#__all__  = ["SearchObject_Controller","SearchObject"]
+  
 if __name__ == "__main__":
     print "Debug Search"
     #so = SearchObject(".day 5");
