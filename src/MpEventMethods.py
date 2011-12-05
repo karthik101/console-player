@@ -8,6 +8,21 @@ from MpSort import *
 from Song_Search import *   
 
 from table_library import *
+from MpScripting import *
+
+def event_end_load_song():
+    """
+        void-function to run after all event_load_song have been
+        run in the EventHandler.
+        
+        run a search for all songs added today
+    """
+    date,_ = getNewDate().split(' ')
+    search = ".added =%s"%date
+    
+    MpGlobal.Window.txt_searchBox.setText(search)
+    #txtSearch_OnTextChange(search, -1)
+    MpGlobal.Window.tbl_library.updateDisplay(search)   
 
 def event_load_song(filepath):
 
@@ -28,6 +43,9 @@ def event_load_song(filepath):
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Error With Loading Song")
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%filepath)
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%e.args)
+    
+    # i can get away with posting multiple copies, because only one is saved.    
+    MpGlobal.EventHandler.postEndEvent(event_end_load_song);
 
 def event_load_folder(folderpath,subfolders=True):
 

@@ -9,6 +9,20 @@
 #   itself can be found in MpApplication
 # -All imports are at the bottom of this doc-
 # #########################################################
+from PyQt4.QtCore import * 
+from PyQt4.QtGui  import *
+
+#import objgraph
+
+from calendar import timegm
+import os
+import time
+import datetime
+import random
+import re
+import subprocess
+import ctypes
+
 
 def debug(string):
     """
@@ -39,7 +53,21 @@ def RetailMessage(string):
     #tip.showText(point,string)
     return;
  
+def WarningMessage(message,btn1="Ok",btn2="",icon=QMessageBox.Warning):
+    """
+        icon can be of value:
+        QMessageBox.Warning
+    """
+    msgBox = QMessageBox()
+    msgBox.setIcon(QMessageBox.Warning)
+    msgBox.setText(message)
+    #    "Delete Song Confirmation", message,
+     #   QMessageBox.NoButton, self)
+    msgBox.addButton(btn1, QMessageBox.AcceptRole)
+    if btn2 !="":
+        msgBox.addButton(btn2, QMessageBox.RejectRole)
 
+    return msgBox.exec_() == QMessageBox.AcceptRole
 # ##############################################
 # Create PlayList
 # ##############################################
@@ -520,6 +548,16 @@ def setSearchTime():
     MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60)
     MpGlobal.RecentEpochTime -= (24*60*60)
 
+def get_DaysPassed(dateformat):
+    try:
+        old=getEpochTime( dateformat   )
+        now=getEpochTime( getNewDate() )
+        if old != 0:
+            return max(1, int(float(now - old)/(60*60*24)) )
+    except:
+        pass
+    
+    return 0;
     
 # ##############################################
 # Initialize settings values
@@ -686,7 +724,7 @@ def On_Close_Save_Data(force = False):
     if MpGlobal.UNSAVED_DATA or force == True:
         
         
-        musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+        musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
         playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT,MpGlobal.Player.CurrentIndex);
         
         MpGlobal.UNSAVED_DATA = False
@@ -879,6 +917,7 @@ def getStyleImagePath(filename):
 
 def stringCustomReplace(string,old,new=""):
     """
+        TODO: delete me - this is from the days of no python experience
         Quick and dirty custom replace function that repeatedly calls
         replace until no instance of old exists
     """
@@ -1015,6 +1054,10 @@ def info_UpdateDisplay(song):
         obj.text_date = song[MpMusic.DATESTAMP]
         obj.setScrolling()
         obj.update()
+        
+        d = get_DaysPassed(song[MpMusic.DATESTAMP])
+        if (d > 0) :
+            obj.text_date += " {%d}"%( d )
   
 def convertTimeToString( t ):
 
@@ -1328,19 +1371,6 @@ def testbench_search(testLib):
 # ###################################################################
 # ###################################################################
 
-from PyQt4.QtCore import * 
-from PyQt4.QtGui  import *
-
-#import objgraph
-
-from calendar import timegm
-import os
-import time
-import datetime
-import random
-import re
-import subprocess
-import ctypes
 
 from MpGlobalDefines import *
 

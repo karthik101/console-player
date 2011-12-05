@@ -916,7 +916,7 @@ def init_preMainWindow():
     # init the search classes for searching through the library.
     SearchObject_Controller.getSearchDictionary   = SOC_getSearchDictionary   
     SearchObject_Controller.getFavoriteArtistList = SOC_getFavoriteArtistList                            
-    SearchObject_Controller.getPresetStringdef    = SOC_getPresetString
+    SearchObject_Controller.getPresetString       = SOC_getPresetString
     
     # ######################################
     # Set Keyboard Hook
@@ -927,7 +927,11 @@ def init_preMainWindow():
         debugPreboot("KeyBoard Hook Enabled")
     
     MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
-    Settings.PLAYER_LAST_INDEX,MpGlobal.Player.playList = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
+    #TODO: FIX THIS FUNCTION CALL
+    R = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
+    if len(R) == 2:
+        Settings.PLAYER_LAST_INDEX = R[0]
+        MpGlobal.Player.playList = R[1]
 
 def init_postMainWindow():
     """

@@ -401,6 +401,10 @@ class SyncFiles(QThread):
         if r < 0:
             return True
             
+        message = "Delete %d Songs from:\n%s?"%(r,self.dir)    
+        if not WarningMessage(message,"Delete","Cancel"):
+            return False
+        
         self.parent.emit(SIGNAL("SYNC_SET_RANGE"),self.parent,0,r)
         # ###########################################################
         # Delete Songs from dir
@@ -514,7 +518,7 @@ class SyncFiles(QThread):
         player_path = os.path.join(self.dir[:2]+"\\","Player","user","");
 
         if (os.path.exists(player_path)):
-            musicSave_LIBZ(player_path+MpGlobal.FILEPATH_LIBRARY_SYNC_NAME,lib,type=MpGlobal.SAVE_FORMAT_CWD)
+            musicSave_LIBZ(player_path+MpGlobal.FILEPATH_LIBRARY_SYNC_NAME,lib,typ=2)
     
     def run(self): 
         # ###########################################################
@@ -527,7 +531,7 @@ class SyncFiles(QThread):
         
         self._get_Dir_List()
         
-        self.__savelists__()
+        #self.__savelists__()
 
         self._del_files()
         

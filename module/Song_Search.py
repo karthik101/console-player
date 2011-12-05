@@ -1,11 +1,18 @@
-
-# todo: abstract this file. rename Song_Search. move to ./module/
-# ~almost there. just need some sort of global that wraps the following values:
-#	Line ~223:             flag_type = MpMusic.D_StrToDec.get(key,flag_type)
-#	Line ~315:             string = string.replace(p,Settings.getPreset(preset))
-# function pointer to find a preset value
-# an array of artists for 'favorites
-# a dictionary of search terms
+# #########################################################
+# #########################################################
+# File: MpScripting
+# import:  from Song_Search import SearchObject
+# Description:
+#   Provides a generic way to search through a list of Songs
+# Abreviations are given for each field, allowing a user
+# to type .art ="Stone Temple Pilots" and return all songs
+# with a matching artist.
+# the type of abreviations used can be changed, and the Sigil
+# character does not matter, as long as it is not alphanumeric.
+# Macros are provided, '.favorite' can be used to expand
+# to a list of favorite artists and '.preset X' can be 
+# ued to expand to a predefined search string.
+# #########################################################
 
 from calendar import timegm
 import time
@@ -73,8 +80,8 @@ class SearchObject_Controller(object):
     
     @staticmethod
     def getSearchDictionary():
-        #return MpMusic.D_StrToDec          # what the function actually does in Console Player
-        return D_StrToDec                   # what it should do by default
+        #return MpMusic.D_StrToDec                # what the function actually does in Console Player
+        return SearchObject_Controller.D_StrToDec # what it should do by default
     @staticmethod
     def getFavoriteArtistList():
         #return Settings.FAVORITE_ARTIST    # what the function actually does in Console Player
@@ -121,8 +128,7 @@ class SEARCH(object):
         return "_%s__"%s
     def __unicode__(self):
         return unicode(self.__str__())
-        
-        
+              
 class SearchObject(object):
     # """
     #     provides an object that contains all methods related to 
@@ -315,7 +321,9 @@ class SearchObject(object):
             else:
                 continue;
             frame = field.replace(dword,"",1).strip()   # frame is everything but the dword
-            key   = dword[1:]       #the dword with the sigil removed
+            key=""
+            if not dword[0].isalpha():
+                key   = dword[1:]       #the dword with the sigil removed
            
             flag_type = EnumSong.EXIF
                 
@@ -388,7 +396,7 @@ class SearchObject(object):
         
         return o and x;
         
-    def search(self,R):
+    def search(self,songList):
         """
             given a list of music R
             search through the entire list and return
@@ -397,16 +405,14 @@ class SearchObject(object):
             using the timer on my machine this function takes 17ms for 3000 songs (average, 3 terms)
             for referance an entire search takes 22ms, 5ms to compile, 17 to search
         """
-        S = [[]]*len(R)
+        S = [[]]*len(songList)
 
         index = 0
         
         #time = datetime.datetime.now()
         
-        for i in xrange(len(R)):
-        
-            song = R[i]
-            
+        for song in songList:
+
             if self.match(song):
                 S[index] = song
                 index += 1
@@ -659,8 +665,7 @@ class SearchObject(object):
                 rf = cf + 28*24*60*60
                 ostr = "month: %s"%ostr
             except:
-                pass
-            
+                pass   
         elif (flag_type == EnumSong.SPEC_WEEK ) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
@@ -671,8 +676,7 @@ class SearchObject(object):
                 rf = cf + 7*24*60*60
                 ostr = "week: %s"%ostr
             except:
-                pass
-                
+                pass        
         elif (flag_type == EnumSong.DATESTAMP) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
@@ -697,6 +701,7 @@ class SearchObject(object):
             if cf == u"":
                 return None
             rf = None
+        
         elif (flag_type == EnumSong.LENGTH ):
             cf = 0;
             try:
@@ -780,10 +785,125 @@ def stringSplit(string,deliminator=" "):
         
     return R
     
+def convertStringToTime(string):
+    string = string.replace(" ","")
+    R = string.split(':');
+    sec = R[-1];
+    min = "0";
+    our = "0";
+    day = "0";
     
+    if len(R) > 1:
+        min = R[-2];
+    if len(R) > 2:
+        our = R[-3];
+    if len(R) > 3:
+        day = R[-4];
     
+    h = int(our) + 24*int(day)
+    m = int(min) + 60*h
+    s = int(sec) + 60*m
     
+    return s    
     
+def getCurrentTime():
+    """return seconds since epoch"""
+    return timegm(time.localtime(time.time()))    
+   
+def normalizeDateFormat(date,format):
+    """
+        provide an autocomplete function for
+        predicting the date based off the format expected,
+        and what the user has already input
+    """
+    current_year  = str(datetime.date.today().year) # OK RIGHT HERE, FUCK EVERYTHING ABOUT PYTHON AND THIS MODULE.
+                                               # year is an attr of datetime.date but not accessible, and today is not OBVIOUS
+    
+    date = date.replace("\\","/")
+    date = date.replace(" ","")
+    
+    R = date.split('/')
+    
+    for i in range(len(R)-1,-1,-1): # remove empty fields
+        if R[i] == '':
+            R.pop(i)
+            
+    l = len(R) # for determining how many fields are missing
+    
+    if l < 1 :
+        return ""
+        
+    if format == EnumSong.SPEC_DATESTD:
+        if l == 1:
+            R.append("01") # append month
+        if l < 3 :  
+            R.append("01") # append  day
+        if len(R[2]) == 1: R[2] =  "0"+R[2];  
+        if len(R[1]) == 1: R[1] =  "0"+R[1];  
+        if len(R[0]) == 1: R[0] =  "0"+R[0];
+        if len(R[0]) == 2: R[0] = "20"+R[0];
+    else:
+        if l == 1:
+            R.append("01") # append day or month
+        if l < 3 :  
+            R.append(current_year) # append cyear
+            
+        if len(R[0]) == 1: R[0] =  "0"+R[0];   
+        if len(R[1]) == 1: R[1] =  "0"+R[1];  
+        if len(R[2]) == 1: R[2] =  "0"+R[2];
+        if len(R[2]) == 2: R[2] = "20"+R[2];
+    
+    date = R[0]+"/"+R[1]+"/"+R[2] # reconstruct the date format   
+    if len(date) != 10 :
+        return ""   # if the user put to many numbers in one of the fields
+    return date
+   
+def getSecondsFromDateFormat(date,format):    
+    """
+        format as: SPEC_DATEEU, SPEC_DATEUS SPEC_DATESTD
+        There are three basic formats a user can type the date in
+        either ISO standard, US custom, or European custom
+        The user needs to tell the program which to expect, and even
+        then a wide variety of formats can be given, 
+        YY or YYYY 
+        d or dd
+        m or mm
+        knowing which format to expect, we can exptrapolate or plug in default
+        values, and then parse the UNIX time code from that,
+        return 0 if we cant figure out the input
+    """
+    # assume as input, 'xxxx/xx/xx' , 'xx/xx/xx' , 'xx/xx/xxxx'
+    # use the format to determine how to parse this
+    
+    # repair xx,xxxx,xx/xx,xxxx/xx,xx/xx/xx to full string parameters
+    
+    date = normalizeDateFormat(str(date),format)
+
+    if date == '':
+        return 0
+        
+    dateFormat = "%Y/%m/%d"
+    if format == EnumSong.SPEC_DATEEU:
+        dateFormat = "%d/%m/%Y"
+    elif format == EnumSong.SPEC_DATEUS:
+        dateFormat = "%m/%d/%Y"
+        
+    datetime = None
+
+    try:
+        datetime = time.strptime(date,dateFormat)
+        return timegm(datetime)   
+    except:
+        pass
+        
+    return 0
+    
+if __name__ == "__main__":
+    print "Debug Search"
+    #so = SearchObject(".day 5");
+    #so = SearchObject(".len 60");
+    so = SearchObject(".dateeu 11/12/12");
+    so.debug();
     
     
     

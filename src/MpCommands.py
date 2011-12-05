@@ -1313,7 +1313,7 @@ def cmd_libsave(input):
         the location and format is dependant on several settings.
     """
     type=0;
-    musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+    musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
     debug( len(MpGlobal.Player.library))
     return COMMAND.VALID
 def cmd_libload(input):

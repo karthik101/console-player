@@ -74,7 +74,7 @@ except:
 if not __IMPORT_VLC__ and not __IMPORT_PHONON__:
     app = QtGui.QApplication(sys.argv)
     QtGui.QMessageBox.critical(None, "Music Player",
-            "Unable to import a suitable media player",
+            "Unable to import VLC or PHONON media player",
             QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default,
             QtGui.QMessageBox.NoButton)
     del app
@@ -125,6 +125,10 @@ class MediaManager(object):
     
    
     def __init__(self,obj):
+        """
+            obj - an instance of VLCObject or PHONONObject, or any other media player
+                  that extends GenericMediaObject
+        """
         self.mp = obj;
         self.setVolume(Settings.PLAYER_VOLUME)
 
@@ -318,7 +322,7 @@ class MediaManager(object):
             MpGlobal.INPUT_PLAY_GOTO_ZERO == False:
             #if isPosix: print "   . CREATE NEW LIST FROM INDEX"  
             
-            musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT);
+            musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
             
             num = MpGlobal.Window.btn_spn.value()
             selectByNumber(num) # set selection to the numbered option option
@@ -471,7 +475,7 @@ class MediaManager(object):
 
     def updateSongRecord(self,song,newtime=-1):
         # update the given song because it has just finished playing
-        # update the time if there is a discrepancy
+        # update the lengths if there is a discrepancy using newtime as the new length
         if song == None:
             debug("None Song Passed to updateSongRecord")
             return
@@ -481,31 +485,12 @@ class MediaManager(object):
                 MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s : OldTime: %d NewTime: %d"%(song[MpMusic.TITLE],song[MpMusic.LENGTH],newtime))  
                 song[MpMusic.LENGTH] = newtime
             
-        old = getEpochTime(song[MpMusic.DATESTAMP])
+        days_elapsed = get_DaysPassed(song[MpMusic.DATESTAMP])
+
         song[MpMusic.DATESTAMP] = getNewDate()  
-        # date value also needs to be updated, it is only used when searching
-        song[MpMusic.DATEVALUE] = getEpochTime(song[MpMusic.DATESTAMP]) 
-        new = getEpochTime(song[MpMusic.DATESTAMP])
+        song[MpMusic.DATEVALUE] = getEpochTime(song[MpMusic.DATESTAMP])
         
-        displacement = 0
-        if old != 0 :
-            #print "value  :",(new - old), "   normal :",(new - old)/(60*60*24)
-            displacement = max(1, int(float(new - old)/(60*60*24)) ) # div by seconds in day
-        # if the song has only been playd once, and this is the second play
-        # we only have one data point, so bias that value
-        # if the frequency is none zero, bias the old frequency
-        # otherwise set the value equal to the displacement 
-        #   will be set to one on first play if loaded after 2011-02-26
-        #   will be set to a calculated displacement if added before 201-02-26
-        n = 4
-        #print "Disp:",displacement
-        if song[MpMusic.PLAYCOUNT] == 1:
-            song[MpMusic.FREQUENCY] = (song[MpMusic.FREQUENCY] + (n-1)*displacement)/n
-        elif song[MpMusic.FREQUENCY] != 0 :
-            song[MpMusic.FREQUENCY] = ((n-1)*song[MpMusic.FREQUENCY] + displacement)/n
-        else:
-            song[MpMusic.FREQUENCY] = displacement
-            #print int(float(new - old)/(60*60*24))
+        song.updateFrequency(days_elapsed)
 
         song[MpMusic.PLAYCOUNT] += 1 
         
