@@ -421,18 +421,11 @@ class TableLibrary(widgetTable.Table):
     def __Action_deleteSingle(self):
         R = self.getSelection()
         if len(R) == 1:
+            
             message = "Are you sure you want to delete this song?\n"
             message += R[0][MpMusic.ARTIST] + " - " + R[0][MpMusic.TITLE]
             
-            msgBox = QMessageBox(MpGlobal.Window)
-            msgBox.setIcon(QMessageBox.Warning)
-            msgBox.setText(message)
-            #    "Delete Song Confirmation", message,
-             #   QMessageBox.NoButton, self)
-            msgBox.addButton("Delete", QMessageBox.AcceptRole)
-            msgBox.addButton("Cancel", QMessageBox.RejectRole)
-            
-            if msgBox.exec_() == QMessageBox.AcceptRole:            
+            if WarningMessage(message,"Delete","Cancel"):            
                 MpGlobal.Player.libDelete.append( R[0] )
                 MpGlobal.Player.library.remove(R[0])
                 MpGlobal.Window.tbl_library.updateDisplay()

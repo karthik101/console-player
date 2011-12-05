@@ -39,7 +39,7 @@ class SettingsContainer(object):
         self.SEARCH_PRESET3 = ""
         self.SEARCH_PRESET4 = ".rte >=4;"
         self.SEARCH_PRESET5 = ""
-        self.SEARCH_PRESET6 = ""
+        self.SEARCH_PRESET6 = "+freq>;+freq=;.pcnt >1;" # "below average songs" (where 'below' is greater than average, and lower than average is 'higher'
         self.SEARCH_PRESET7 = ""
         self.SEARCH_PRESET8 = ""
         self.SEARCH_PRESET9 = ""

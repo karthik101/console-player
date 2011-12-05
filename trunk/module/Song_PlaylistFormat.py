@@ -20,13 +20,13 @@ def playListSave(filepath,data,typ=0,index=0):
 def playListLoad(filepath,source):
     
     if not os.path.exists(filepath):
-        return [] # return empty array, then check status from that
+        return (0,[]) # return empty array, then check status from that
         
     try:
         rf = open(filepath,"r")
     except:
         print "cannot open: %s"%filepath
-        return [];
+        return (0,[]);
      
     array = []
     
