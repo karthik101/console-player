@@ -3,11 +3,9 @@ from MpGlobalDefines import *
 from Song_Object import Song
 from Song_LibraryFormat import *
 from SystemPathMethods import *
+from SystemDateTime import DateTime
 from MpScripting import *
 
-import time
-import datetime
-from calendar import timegm
 
 def history_log(filepath,song,typ): 
 
@@ -19,16 +17,14 @@ def history_log(filepath,song,typ):
         wf.close()
     #try:
     wf = open(filepath,"a")
-    
-    datetime = time.localtime(time.time())
-    
+   
     data = "None"
     
     if (typ == MpMusic.RATING):
         data = "%d"%song[MpMusic.RATING]
         path = createMiniPath(song)
     else: #if (typ == MpMusic.DATESTAMP)
-        data = time.strftime("%Y/%m/%d %H:%M",datetime)
+        data = DateTime().currentDateTime();
         typ = MpMusic.DATESTAMP
 
     art = song[MpMusic.ARTIST].encode('unicode-escape') 
@@ -130,7 +126,7 @@ def __history_NewSongEntry(lib,typ,data,id):
     return False;
                             
 def __history_NewDate__(date,song):
-    time = getEpochTime(date) 
+    time = DateTime().getEpochTime(date) 
     
     song[MpMusic.PLAYCOUNT] += 1 
     song[MpMusic.SPECIAL] = True 

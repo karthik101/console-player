@@ -48,6 +48,7 @@ def initCommandList():
               "lut"      : cmd_lut,
               "plsave"   : cmd_plsave,
               "plload"   : cmd_plload,
+              "random"   : cmd_random,
               "save"     : cmd_save,
               "settings" : cmd_settings,
               "setsave"  : cmd_setsave,
@@ -219,16 +220,16 @@ def printHelp(input):
     
 def setFeedBackColor(value):
     #value as ENUM COMMAND
-    time = 2;
+    t = 2;
 
     D = MpGlobal.Window.style_dict
 
     if value in D:
 
-        setConsoleColor(D[value],time)
+        setConsoleColor(D[value],t)
     #else:    
     #    
-    #    setConsoleColor(D["prompt_error"],time)
+    #    setConsoleColor(D["prompt_error"],t)
     return;
 
 #----------------------------------------------------------------- 
@@ -502,6 +503,38 @@ def cmd_build(input):
     else:
         buildArtistList()
     return COMMAND.VALID
+def cmd_bestof(input):
+    """
+        Command: BESTOF
+        Usage: bestof [max_artist_count=5, [max_song_count=50] ]
+        
+        Generates a list of songs to be considered "Best of"
+        
+        TODO: 
+        -p create as a playlist instead of printing
+        -l use what is displayed in the library tab, instead of the entire library
+    """
+    d = {};
+    R=[];
+    n = 5;
+    c=0;
+    m=100;
+   
+    for song in MpGlobal.Player.library:
+        a = song[MpMusic.ARTIST]
+        t = song[MpMusic.TITLE]
+        if d.get(a,-1) == -1:
+            d[a] = 0
+        else:
+            d[a] += 1;
+        if d[a] < n:
+            if input.Switch['p']:
+                print "%d - %s - %s"%(c+1,a,t)
+            R.append(song);
+            c+=1;
+        if c >= m:
+            break;
+            
 def cmd_clear(input):   
     """
         Command: CLEAR
@@ -635,6 +668,33 @@ def cmd_lut(input):
     t = Translate(input.string)
     debugRetail("Input Translates to: "+t.rstring)
     return COMMAND.VALID
+def cmd_random(input):
+    """
+        Command: RANDOM
+        Usage: random [#]
+        
+        Randomize the current playlist starting with the song at the sepcified position 
+        If no input argument is used then the entire list is shuffled.
+    """
+    s = 0 # start index to shuffle
+    if input.hasDecVal :
+        s = input.DecVal[0]
+
+    if s >= MpGlobal.Player.playList:
+        s = 0;
+    
+    print "Shuffling List at index %d."%s
+    
+    R = MpGlobal.Player.playList[s:]
+    
+    random.shuffle(R);
+    
+    MpGlobal.Player.playList = MpGlobal.Player.playList[:s] + R
+    
+    MpGlobal.Window.tbl_playlist.UpdateTable(0,MpGlobal.Player.playList) 
+    
+    return COMMAND.VALID
+        
 def cmd_save(input):
     """
         Command: SAVE
@@ -803,12 +863,12 @@ def cmd_log(input):
         Optionally you can specify an alternative file name.
     """
     if input.hasStrVal:
-        fname = "%s.log"%input.StrVal[0]
+        fname = "log_%s.log"%input.StrVal[0]
     else:
         fname = 'debug.log'
         
-    wf = open(fname,"w"); 
-    wf.write(MpGlobal.Window.txt_debug.toPlainText())
+    wf = open(os.path.join(MpGlobal.installPath,fname),"w"); 
+    wf.write(MpGlobal.Window.txt_debug.toPlainText().encode('unicode-escape'))
     wf.close()
     
 def cmd_new(input):
@@ -991,11 +1051,8 @@ def cmd_xx(input):
             song = id3_createSongFromPath(path)
         
     if input.DecVal[0] == 5 : #xx 5
-        string =  "2010/10/08 11:52"
-        print getEpochTime(string)
-        print getCurrentTime()
-        print getNewDate()  
-    
+        pass
+        
     if input.DecVal[0] == 6 : #xx 6
         
         R = xml_open("./library.xml");
@@ -1004,8 +1061,7 @@ def cmd_xx(input):
         MpGlobal.Window.tbl_library.UpdateTable(0,MpGlobal.Player.library)
         
     if input.DecVal[0] == 7 : #xx 7
-        s = "Time: %d"%getSecondsFromDateFormat(input.StrVal[1],input.DecVal[2])
-        debug (s)
+        pass
     
     if input.DecVal[0] == 8 : #xx 8
         test = Translate(u"::sutereoponi-\u30B0")
@@ -1442,11 +1498,8 @@ initCommandList()
 # ###################################################################
 # ###################################################################          
 
-from calendar import timegm
 import os
 import sys
-import time
-import datetime
 import random
 import re
 import subprocess

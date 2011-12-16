@@ -8,15 +8,16 @@
 # #########################################################
 import os
 import sys
-import time
-import datetime
-from calendar import timegm
+
+
+
 import struct
 import urllib
 
 from Song_Object import *
 
 from SystemPathMethods import *
+from SystemDateTime import DateTime
 try:
     import pylzma
 except:
@@ -86,8 +87,8 @@ def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):
             you must provide the maximum length as keyword parameter.
     """
     
-   
-    s = datetime.datetime.now()
+    dt = DateTime();
+    dt.timer_start()
     
     with open(filepath,"wb") as FILE:
         FILE.write( struct.pack("4sI","LVER",1) );             # 
@@ -97,8 +98,8 @@ def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):
         FILE.write( struct.pack("4sI","LFMT",Song.repr_length() ) );
         LIBZ_write_songList(FILE,songList,typ,block_size)
         
-    e = datetime.datetime.now()
-    print "Saved %d songs to libz container in %s"%( len(songList), (e-s))
+    dt.timer_end();
+    print "Saved %d songs to libz container in %d"%( len(songList), dt.timedelta)
     
 def musicLoad_LIBZ(filepath):
     """
@@ -121,8 +122,9 @@ def musicLoad_LIBZ(filepath):
     R=[];
     drivelist = [];
     cnt = 0
-    s = datetime.datetime.now()
     
+    dt = DateTime()
+    dt.timer_start();
     with open(filepath,"rb") as FILE:
         # ##################################
         # read the header
@@ -160,8 +162,8 @@ def musicLoad_LIBZ(filepath):
                 key,size = struct.unpack("4sI",bin)
                 bin = FILE.read(size); # read val bytes from the frame  
    
-    e = datetime.datetime.now()
-    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,(e-s))
+    dt.timer_end();
+    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,dt.timedelta)
     return R;
       
 def LIBZ_write_songList(FILE,songList,typ,block_size): 
@@ -331,8 +333,9 @@ def musicBackup(path,songList,format=0,force = False):
         os.mkdir(path)
         print "backup directory created"
         
-    datetime = time.localtime(time.time())
-    date,hourmin = time.strftime("%Y/%m/%d %H:%M",datetime).split(' ')
+    dt = DateTime(); # create a new date time object
+    date = dt.currentDate();
+    hourmin = dt.currentTime();
     date = date.replace('/','-').replace('\\','-')
     
     name = 'music_backup-'

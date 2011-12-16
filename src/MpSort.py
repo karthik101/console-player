@@ -134,10 +134,7 @@ def setSortActionIcons(index):
 
 
 
-from calendar import timegm
 import os
-import time
-import datetime
 import random
 import re
 import subprocess

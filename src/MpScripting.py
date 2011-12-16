@@ -14,14 +14,13 @@ from PyQt4.QtGui  import *
 
 #import objgraph
 
-from calendar import timegm
 import os
-import time
-import datetime
 import random
 import re
 import subprocess
 import ctypes
+
+from SystemDateTime import DateTime
 
 
 def debug(string):
@@ -425,139 +424,11 @@ def SOC_getPresetString(index):       #
 # ##############################################
 # time
 # ############################################## 
- 
-def getEpochTime( date ):
-    """return epoch time for a date"""
-    datetime = None
-    try:
-        datetime = time.strptime(date,"%Y/%m/%d %H:%M")
-        return timegm(datetime)   
-    except:
-        pass
-        
-    return 0
-
-def getFormatDate( unixTime ):
     
-    try:
-        return time.strftime("%Y/%m/%d %H:%M", time.localtime(int(unixTime))) 
-    except:
-        pass
-        
-    return "1970/01/01 00:00"
-        
-def getCurrentTime():
-    """return seconds since epoch"""
-    return timegm(time.localtime(time.time()))
-    
-def getNewDate():
-    """return a new formatted time string"""
-    datetime = time.localtime(time.time())
-    return time.strftime("%Y/%m/%d %H:%M",datetime)
-
-def normalizeDateFormat(date,format):
-    """
-        provide an autocomplete function for
-        predicting the date based off the format expected,
-        and what the user has already input
-    """
-    current_year  = str(datetime.date.today().year) # OK RIGHT HERE, FUCK EVERYTHING ABOUT PYTHON AND THIS MODULE.
-                                               # year is an attr of datetime.date but not accessible, and today is not OBVIOUS
-    
-    date = date.replace("\\","/")
-    date = date.replace(" ","")
-    
-    R = date.split('/')
-    
-    for i in range(len(R)-1,-1,-1): # remove empty fields
-        if R[i] == '':
-            R.pop(i)
-            
-    l = len(R) # for determining how many fields are missing
-    
-    if l < 1 :
-        return ""
-        
-    if format == MpMusic.SPEC_DATESTD:
-        if l == 1:
-            R.append("01") # append month
-        if l < 3 :  
-            R.append("01") # append  day
-        if len(R[2]) == 1: R[2] =  "0"+R[2];  
-        if len(R[1]) == 1: R[1] =  "0"+R[1];  
-        if len(R[0]) == 1: R[0] =  "0"+R[0];
-        if len(R[0]) == 2: R[0] = "20"+R[0];
-    else:
-        if l == 1:
-            R.append("01") # append day or month
-        if l < 3 :  
-            R.append(current_year) # append cyear
-            
-        if len(R[0]) == 1: R[0] =  "0"+R[0];   
-        if len(R[1]) == 1: R[1] =  "0"+R[1];  
-        if len(R[2]) == 1: R[2] =  "0"+R[2];
-        if len(R[2]) == 2: R[2] = "20"+R[2];
-    
-    date = R[0]+"/"+R[1]+"/"+R[2] # reconstruct the date format   
-    if len(date) != 10 :
-        return ""   # if the user put to many numbers in one of the fields
-    return date
-    
-def getSecondsFromDateFormat(date,format):    
-    """
-        format as: SPEC_DATEEU, SPEC_DATEUS SPEC_DATESTD
-        There are three basic formats a user can type the date in
-        either ISO standard, US custom, or European custom
-        The user needs to tell the program which to expect, and even
-        then a wide variety of formats can be given, 
-        YY or YYYY 
-        d or dd
-        m or mm
-        knowing which format to expect, we can exptrapolate or plug in default
-        values, and then parse the UNIX time code from that,
-        return 0 if we cant figure out the input
-    """
-    # assume as input, 'xxxx/xx/xx' , 'xx/xx/xx' , 'xx/xx/xxxx'
-    # use the format to determine how to parse this
-    
-    # repair xx,xxxx,xx/xx,xxxx/xx,xx/xx/xx to full string parameters
-    
-    date = normalizeDateFormat(str(date),format)
-
-    if date == '':
-        return 0
-        
-    dateFormat = "%Y/%m/%d"
-    if format == MpMusic.SPEC_DATEEU:
-        dateFormat = "%d/%m/%Y"
-    elif format == MpMusic.SPEC_DATEUS:
-        dateFormat = "%m/%d/%Y"
-        
-    datetime = None
-
-    try:
-        datetime = time.strptime(date,dateFormat)
-        return timegm(datetime)   
-    except:
-        pass
-        
-    return 0
-        
 def setSearchTime(): 
-    MpGlobal.RecentEpochTime = getCurrentTime()
+    MpGlobal.RecentEpochTime = DateTime.now()
     MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60)
     MpGlobal.RecentEpochTime -= (24*60*60)
-
-def get_DaysPassed(dateformat):
-    try:
-        old=getEpochTime( dateformat   )
-        now=getEpochTime( getNewDate() )
-        if old != 0:
-            return max(1, int(float(now - old)/(60*60*24)) )
-    except:
-        pass
-    
-    return 0;
     
 # ##############################################
 # Initialize settings values
@@ -973,7 +844,7 @@ def getSelection(unselect = True):
         return []
     R = [[]]*MpGlobal.Player.selCount
     i = 0;
-    time = getCurrentTime() - 60*60*24
+    time = DateTime.now() - 60*60*24
     for song in MpGlobal.Player.library:
         if song[MpMusic.SELECTED] :
         
@@ -1055,7 +926,7 @@ def info_UpdateDisplay(song):
         obj.setScrolling()
         obj.update()
         
-        d = get_DaysPassed(song[MpMusic.DATESTAMP])
+        d = DateTime().daysElapsed(song[MpMusic.DATESTAMP])
         if (d > 0) :
             obj.text_date += " {%d}"%( d )
   
@@ -1273,7 +1144,7 @@ def session_receive_argument(message):
         
 def testbench_build_library():
     library = []
-    time = getCurrentTime();
+    time = DateTime.now()
     for i in range(30):
         song=Song("C:/Folder%d/Artist%d/Title%d.mp3"%(i,i,i))
         song[MpMusic.ARTIST]    = u"%dArtist The Band"%(i%10) # id will have 10 different A,B,T
@@ -1281,7 +1152,7 @@ def testbench_build_library():
         song[MpMusic.ALBUM]     = u"%dMonthly Album"%(i%10) 
         song[MpMusic.GENRE]     = (u"ROCK",u"POP","ALT")[(i%3)]
         song[MpMusic.DATEVALUE] = time - (60*60*24*i)# each song is one day older
-        song[MpMusic.DATESTAMP] = getFormatDate(song[MusicContainer.DATEVALUE])
+        song[MpMusic.DATESTAMP] = DateTime.formatDateTime(song[MusicContainer.DATEVALUE])
         song[MpMusic.COMMENT]   = ""
         song[MpMusic.RATING]    = i%6   # in 30 songs, 5 of each rating value
         song[MpMusic.LENGTH]    = 15*i

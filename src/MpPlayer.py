@@ -34,6 +34,7 @@ from PyQt4.QtCore import *
 
 
 from SystemPathMethods import *
+from SystemDateTime import DateTime
 from MpScripting import *
 from Song_MutagenWrapper import *
 from MpGlobalDefines import *
@@ -41,6 +42,7 @@ from Song_Object import Song
 from Song_LibraryFormat import *
 from datatype_hex64 import *
 from MpSongHistory import *
+
 #__IMPORT_VLC__    = False
 #__IMPORT_PHONON__ = False
 
@@ -485,10 +487,12 @@ class MediaManager(object):
                 MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s : OldTime: %d NewTime: %d"%(song[MpMusic.TITLE],song[MpMusic.LENGTH],newtime))  
                 song[MpMusic.LENGTH] = newtime
             
-        days_elapsed = get_DaysPassed(song[MpMusic.DATESTAMP])
+        dt = DateTime()
+        days_elapsed = dt.daysElapsed(song[MpMusic.DATESTAMP]) # number of days since the date stamp
 
-        song[MpMusic.DATESTAMP] = getNewDate()  
-        song[MpMusic.DATEVALUE] = getEpochTime(song[MpMusic.DATESTAMP])
+        
+        song[MpMusic.DATESTAMP] = dt.currentDateTime();
+        song[MpMusic.DATEVALUE] = DateTime.now();
         
         song.updateFrequency(days_elapsed)
 

@@ -14,15 +14,12 @@
 # ued to expand to a predefined search string.
 # #########################################################
 
-from calendar import timegm
-import time
-import datetime
-
 from datatype_hex64 import *
 from Song_Object import Song, EnumSong
 from StringQuoter import *    
 
 from SystemPathMethods import *
+from SystemDateTime import DateTime
 
 from collections import namedtuple
 SearchTerm = namedtuple("SearchTerm",'str typ dir cf rf') #TODO use these instead of just tuples
@@ -360,7 +357,7 @@ class SearchObject(object):
                         
                 flag = fflag.get(key[4],0)|ftype.get(sigil,0)        
                         
-                t = (key,fdict[key[4]],flag,getEpochTime( getNewDate() ),None) # TODO TIME LIB,and USE GET_EPOCH_TIME
+                t = (key,fdict[key[4]],flag,DateTime.now(),None)
                 
                 if sigil == ".":
                     self._searchC.append( t  ) 
@@ -586,8 +583,9 @@ class SearchObject(object):
                 if flag_dir&SEARCH.EQ:
                     #return song[EnumSong.PATH].find(element[cf]) == 0
                     return comparePathLength(element[cf],song[EnumSong.PATH])
+                    
                 else:
-                    return comparePartInPath(song[EnumSong.PATH],element[cf])  
+                    return comparePartInPath(song[EnumSong.PATH],element[cf]) 
                     
             elif flag_type == EnumSong.DATESTAMP:
                 # dates less than means time is greater
@@ -742,31 +740,37 @@ class SearchObject(object):
         rf = None;
  
         if (flag_type == EnumSong.SPEC_DATESTD ) :
-            cf = getSecondsFromDateFormat(cf,flag_type)
+            dt = DateTime(flag_type&0xF)
+            cf = dt.getEpochTime(dt.repairDateTime(cf))
             rf = cf + 24*60*60
             if cf == 0:
                 return None
-            ostr = normalizeDateFormat(ostr,flag_type)
+            dt = DateTime(flag_type&0xF)
+            ostr = dt.repairDateTime(ostr)
             
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
                 
             flag_type = EnumSong.DATESTAMP # change type to standard date format
         elif (flag_type == EnumSong.SPEC_DATEEU ) :
-            cf = getSecondsFromDateFormat(cf,flag_type)
+            dt = DateTime(flag_type&0xF) # set which format to use for dates, for help check the definition for SPEC_DATESTD, and the enumeration in DateTime
+            cf = dt.getEpochTime(dt.repairDateTime(cf)) # autocomplete the entered date then convert to seconds
             rf = cf + 24*60*60
             if cf == 0:
                 return None
-            ostr = normalizeDateFormat(ostr,flag_type)
+            dt = DateTime(flag_type&0xF)
+            ostr = dt.repairDateTime(ostr)
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             flag_type = EnumSong.DATESTAMP # change type to standard date format   
         elif (flag_type == EnumSong.SPEC_DATEUS ) :
-            cf = getSecondsFromDateFormat(cf,flag_type)
+            dt = DateTime(flag_type&0xF)
+            cf = dt.getEpochTime(dt.repairDateTime(cf))
             rf = cf + 24*60*60
             if cf == 0:
                 return None
-            ostr = normalizeDateFormat(ostr,flag_type)
+            dt = DateTime(flag_type&0xF)
+            ostr = dt.repairDateTime(ostr)
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             flag_type = EnumSong.DATESTAMP # change type to standard date format
@@ -774,7 +778,7 @@ class SearchObject(object):
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             flag_type = EnumSong.DATESTAMP
-            cf = getCurrentTime()
+            cf = DateTime.now()
             try :
                 cf -= 30*int(ostr)*24*60*60
                 rf = cf + 28*24*60*60
@@ -785,7 +789,7 @@ class SearchObject(object):
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             flag_type = EnumSong.DATESTAMP
-            cf = getCurrentTime()
+            cf = DateTime.now()
             try :
                 cf -= 7*int(ostr)*24*60*60
                 rf = cf + 7*24*60*60
@@ -795,7 +799,7 @@ class SearchObject(object):
         elif (flag_type == EnumSong.DATESTAMP) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
-            cf = getCurrentTime()
+            cf = DateTime.now()
             try :
                 cf -= int(ostr)*24*60*60
                 rf = cf + 24*60*60
@@ -803,11 +807,13 @@ class SearchObject(object):
             except:
                 pass
         elif (flag_type == EnumSong.DATEADDED) :
-            cf = getSecondsFromDateFormat(cf,EnumSong.SPEC_DATESTD)
+            dt = DateTime(EnumSong.SPEC_DATESTD&0xF)
+            cf = dt.getEpochTime(dt.repairDateTime(cf))
             rf = cf + 24*60*60
             if cf == 0:
                 return None
-            ostr = normalizeDateFormat(ostr,EnumSong.SPEC_DATESTD)
+            dt = DateTime(EnumSong.SPEC_DATESTD&0xF)
+            ostr = dt.repairDateTime(ostr)
             
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
@@ -866,10 +872,10 @@ class SearchObject(object):
         return "<SearchObject>"
     
     def debug(self):
-        print self._searchC
-        print self._searchO
-        print self._searchN
-        print self._searchX
+        print "c:%s"%self._searchC
+        print "o:%s"%self._searchO
+        print "n:%s"%self._searchN
+        print "x:%s"%self._searchX
 
 def stringSplit(string,deliminator=" "):
     """
@@ -920,123 +926,34 @@ def convertStringToTime(string):
     s = int(sec) + 60*m
     
     return s    
-    
-def getCurrentTime():
-    """return seconds since epoch"""
-    return timegm(time.localtime(time.time()))    
-   
-def normalizeDateFormat(date,format):
-    """
-        provide an autocomplete function for
-        predicting the date based off the format expected,
-        and what the user has already input
-    """
-    current_year  = str(datetime.date.today().year) # OK RIGHT HERE, FUCK EVERYTHING ABOUT PYTHON AND THIS MODULE.
-                                               # year is an attr of datetime.date but not accessible, and today is not OBVIOUS
-    
-    date = date.replace("\\","/")
-    date = date.replace(" ","")
-    
-    R = date.split('/')
-    
-    for i in range(len(R)-1,-1,-1): # remove empty fields
-        if R[i] == '':
-            R.pop(i)
-            
-    l = len(R) # for determining how many fields are missing
-    
-    if l < 1 :
-        return ""
-        
-    if format == EnumSong.SPEC_DATESTD:
-        if l == 1:
-            R.append("01") # append month
-        if l < 3 :  
-            R.append("01") # append  day
-        if len(R[2]) == 1: R[2] =  "0"+R[2];  
-        if len(R[1]) == 1: R[1] =  "0"+R[1];  
-        if len(R[0]) == 1: R[0] =  "0"+R[0];
-        if len(R[0]) == 2: R[0] = "20"+R[0];
-    else:
-        if l == 1:
-            R.append("01") # append day or month
-        if l < 3 :  
-            R.append(current_year) # append cyear
-            
-        if len(R[0]) == 1: R[0] =  "0"+R[0];   
-        if len(R[1]) == 1: R[1] =  "0"+R[1];  
-        if len(R[2]) == 1: R[2] =  "0"+R[2];
-        if len(R[2]) == 2: R[2] = "20"+R[2];
-    
-    date = R[0]+"/"+R[1]+"/"+R[2] # reconstruct the date format   
-    if len(date) != 10 :
-        return ""   # if the user put to many numbers in one of the fields
-    return date
-   
-def getSecondsFromDateFormat(date,format):    
-    """
-        format as: SPEC_DATEEU, SPEC_DATEUS SPEC_DATESTD
-        There are three basic formats a user can type the date in
-        either ISO standard, US custom, or European custom
-        The user needs to tell the program which to expect, and even
-        then a wide variety of formats can be given, 
-        YY or YYYY 
-        d or dd
-        m or mm
-        knowing which format to expect, we can exptrapolate or plug in default
-        values, and then parse the UNIX time code from that,
-        return 0 if we cant figure out the input
-    """
-    # assume as input, 'xxxx/xx/xx' , 'xx/xx/xx' , 'xx/xx/xxxx'
-    # use the format to determine how to parse this
-    
-    # repair xx,xxxx,xx/xx,xxxx/xx,xx/xx/xx to full string parameters
-    
-    date = normalizeDateFormat(str(date),format)
-
-    if date == '':
-        return 0
-        
-    dateFormat = "%Y/%m/%d"
-    if format == EnumSong.SPEC_DATEEU:
-        dateFormat = "%d/%m/%Y"
-    elif format == EnumSong.SPEC_DATEUS:
-        dateFormat = "%m/%d/%Y"
-        
-    datetime = None
-
-    try:
-        datetime = time.strptime(date,dateFormat)
-        return timegm(datetime)   
-    except:
-        pass
-        
-    return 0
-   
-def getNewDate():
-    """return a new formatted time string"""
-    datetime = time.localtime(time.time())
-    return time.strftime("%Y/%m/%d %H:%M",datetime)
-   
-def getEpochTime( date ):
-    """return epoch time for a date"""
-    datetime = None
-    try:
-        datetime = time.strptime(date,"%Y/%m/%d %H:%M")
-        return timegm(datetime)   
-    except:
-        pass
-        
-    return 0  
 
 #__all__  = ["SearchObject_Controller","SearchObject"]
   
 if __name__ == "__main__":
-    print "Debug Search"
+
+    def newSong(art,ttl,alb,len):
+        song = Song("/usr/music/%s/%s/%s-%s.mp3"%(art,alb,art,ttl))
+        song[EnumSong.ARTIST] = art
+        song[EnumSong.TITLE ] = ttl
+        song[EnumSong.ALBUM ] = alb
+        song[EnumSong.GENRE ] = len
+        song.update();
+        return song
+    
+    def testso():
+        pass
+    # newSong("Stone Temple Pilots","unglued","purple",30))
+    song = newSong("Blind Melon","No Rain","Blind Melon",60)
+    
     #so = SearchObject(".day 5");
     #so = SearchObject(".len 60");
-    so = SearchObject(".dateeu 11/12/12");
+    print song
+
+    so = SearchObject(".path =/usr/");
     so.debug();
+    print "Song Match: %s"%so.match(song)
+    print "----------: %s"%so._compareSongElement(song,so._searchC[0])
+    
     
     
     

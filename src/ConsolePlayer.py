@@ -14,6 +14,14 @@
 # ALL file in ./module/  - better comments, these files should be easy to use,
 #       and clearly defined.
 #
+# Number one: Abstration of pythons core date / time libraries into a single import object.
+# PyDateTime - converting between unix time and date formats. 
+#   now() - get current time as int
+#
+#  DateTime Widget, in form of several spinboxes in a line. [year][mo][dy] [HR]:[MN]
+#       three different formats Date, Time and DateTime
+#       for song edit
+#
 # imports should be fixed accross all files
 #   in general, i would  like all python standard lib imports first
 #   then all Qt / other imports ( including all imports in ./module/ last in the list )
@@ -35,13 +43,12 @@
 #   what it was i was doing. I think the idea is sound, 30 rows (or so), and revolve the data
 #   through them. instead of adding/removing 1k-10k rows. do i write my own table <-> interface?
 #
-# in the current song display, add "{%d}" after the last date played,
-# to represent how many days have passed. for comparing to the frequency.
-#
 # in the explorer tab, files can be moved copied etc. the functions that do this work need to
 #       be moved to SystemPathMethods.
 #       In addition, any of these function calls should be called using postEvent. 
 #       with postEndEvent used for reloading the current folder.
+#
+# there are many bugs related to loading mpe/m4a songs and reading the tags.
 #
 # Context menu for playlist table. similar information as right clicking the current song display
 #
