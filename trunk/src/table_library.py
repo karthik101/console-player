@@ -14,6 +14,8 @@ from MpApplication import *
 import dialogSongEdit
 import dialogColumnSelect
 
+from SystemDateTime import DateTime
+
 class TableLibrary(widgetTable.Table):
     widthA = 100; #On Resize check these for percents, auto scaling of these regions
     widthT = 100; #sum these and divide out each for a scale  
@@ -179,7 +181,7 @@ class TableLibrary(widgetTable.Table):
         R[self.col_id.index(MpMusic.ARTIST)]    = self.data[index][MpMusic.ARTIST]
         R[self.col_id.index(MpMusic.TITLE)]     = self.data[index][MpMusic.TITLE]
         R[self.col_id.index(MpMusic.ALBUM)]     = self.data[index][MpMusic.ALBUM]
-        R[self.col_id.index(MpMusic.LENGTH)]    = convertTimeToString(self.data[index][MpMusic.LENGTH])
+        R[self.col_id.index(MpMusic.LENGTH)]    = DateTime.formatTimeDelta(self.data[index][MpMusic.LENGTH])
         R[self.col_id.index(MpMusic.RATING)]    = self.data[index][MpMusic.RATING]
         R[self.col_id.index(MpMusic.GENRE)]     = self.data[index][MpMusic.GENRE]
         R[self.col_id.index(MpMusic.FREQUENCY)] = self.data[index][MpMusic.FREQUENCY]

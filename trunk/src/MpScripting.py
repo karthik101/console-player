@@ -335,7 +335,7 @@ def getStatistics():
         c_frq += song[MpMusic.FREQUENCY]
     c_frq /= count; 
     debug( "Song Count        : %d"%count)
-    debug( "Play Time         : %s"%convertTimeToString(c_len))   
+    debug( "Play Time         : %s"%DateTime.formatTimeDelta(c_len))   
     debug( "Play Count        : %d"%c_ply)
     debug( "Play Count (AVG)  : %s"%(c_ply/count))
     debug( "Frequency         : %d"%(c_frq))
@@ -410,13 +410,13 @@ def searchSetSelection(string,sel=True):
     
     return count # return the number of songs that matched the input string.    
     
-@staticmethod    
+
 def SOC_getSearchDictionary():        # These methods are used in the Search Object Controller Class
     return MpMusic.D_StrToDec         # 
-@staticmethod                                      #  Found in ./module/Song_Search.py
+                                      #  Found in ./module/Song_Search.py
 def SOC_getFavoriteArtistList():      # 
     return Settings.FAVORITE_ARTIST   # They are used to extend the basic functionality of searching.
-@staticmethod                                      # 
+                                      # 
 def SOC_getPresetString(index):       # 
     return Settings.getPreset(index)  # 
 
@@ -426,9 +426,12 @@ def SOC_getPresetString(index):       #
 # ############################################## 
     
 def setSearchTime(): 
-    MpGlobal.RecentEpochTime = DateTime.now()
-    MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60)
-    MpGlobal.RecentEpochTime -= (24*60*60)
+    dt = DateTime()
+    date = DateTime.currentDate();
+    
+    MpGlobal.RecentEpochTime = DateTime.getEpochTime(date+" 00:00") # return seconds at start of this day
+    MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60) # date of two weeks ago
+    #MpGlobal.RecentEpochTime -= (24*60*60)
     
 # ##############################################
 # Initialize settings values
@@ -782,10 +785,6 @@ def getStyleImagePath(filename):
 # Others
 # ##############################################
 
-
-
-
-
 def stringCustomReplace(string,old,new=""):
     """
         TODO: delete me - this is from the days of no python experience
@@ -930,57 +929,6 @@ def info_UpdateDisplay(song):
         if (d > 0) :
             obj.text_date += " {%d}"%( d )
   
-def convertTimeToString( t ):
-
-    day =  t/86400
-    our = (t%86400)/3600
-    min = (t%3600)/60
-    sec = (t%60)
-
-    if (sec< 10):
-        sec = ":0%d"%sec
-    else:
-        sec = ":%d"%sec
-    if (min< 10):
-        min = "0%d"%min
-    else:
-        min = "%d"%min  
-        
-    if our > 0 or day > 0:
-        if (our< 10):
-            our = "0%d:"%our
-        else:
-            our = "%d:"%our
-    else:
-        our = ""
-    if day > 0 :
-        day = "%d:"%day
-    else:   
-        day = ""
-
-    return "%s%s%s%s"%(day,our,min,sec)
-
-def convertStringToTime(string):
-    string = string.replace(" ","")
-    R = string.split(':');
-    sec = R[-1];
-    min = "0";
-    our = "0";
-    day = "0";
-    
-    if len(R) > 1:
-        min = R[-2];
-    if len(R) > 2:
-        our = R[-3];
-    if len(R) > 3:
-        day = R[-4];
-    
-    h = int(our) + 24*int(day)
-    m = int(min) + 60*h
-    s = int(sec) + 60*m
-    
-    return s
-    
 def setConsoleColor(hex_color="",counter=0):
     """
         hex_color as #RRGGBB
@@ -1081,7 +1029,6 @@ def versionCompare(ver,const):
     
     return m+n+o+p
     
-
 def bitSet(value,bit):
     """
         returns the value with bit or'd in

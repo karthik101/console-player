@@ -194,7 +194,7 @@ def id3_mp3_updateSongInfo( song ):
         audio['artist']  = song[EnumSong.ARTIST]
         audio['title']  = song[EnumSong.TITLE]
         audio['album']  = song[EnumSong.ALBUM]
-        audio['length'] = convertTimeToString( song[EnumSong.LENGTH] )
+        audio['length'] = DateTime.formatTimeDelta( song[EnumSong.LENGTH] )
         
         audio.save()
 

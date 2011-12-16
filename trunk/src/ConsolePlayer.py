@@ -22,6 +22,10 @@
 #       three different formats Date, Time and DateTime
 #       for song edit
 #
+# There are multiple multi-string-splitters defined, stringSplit, msplit, etc
+# these should be defined once, and the best implementation should be used
+# but first compare to ensure they all work the same
+#
 # imports should be fixed accross all files
 #   in general, i would  like all python standard lib imports first
 #   then all Qt / other imports ( including all imports in ./module/ last in the list )
