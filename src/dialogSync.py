@@ -454,7 +454,7 @@ class SyncFiles(QThread):
             
             # ----------------------------------------------
             s = "Copying %d/%d - %s - %d MB free"
-            p = (self.index,len(self.listc),convertTimeToString(time_remaining),MBfree)
+            p = (self.index,len(self.listc),DateTime.formatTimeDelta(time_remaining),MBfree)
             self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,s%p)
                         
             # ----------------------------------------------

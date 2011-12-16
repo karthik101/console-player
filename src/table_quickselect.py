@@ -9,6 +9,8 @@ from PyQt4.QtGui import *
 
 from MpGlobalDefines import *
 
+from SystemDateTime import DateTime
+
 class TableQuickSelect(widgetTable.Table):
     """
         Quick Selection
@@ -205,7 +207,7 @@ class TableQuickSelect(widgetTable.Table):
         """
         
         if self.dispElement in (5,6):
-            return "%s"%convertTimeToString(item[self.dispElement])
+            return "%s"%DateTime.formatTimeDelta(item[self.dispElement])
         else:
             return "%d"%item[self.dispElement]
     
@@ -216,7 +218,7 @@ class TableQuickSelect(widgetTable.Table):
         """
         
         if self.dispElement in (5,6):
-            return "%s "%convertTimeToString(self.data[index][self.dispElement])
+            return "%s "%DateTime.formatTimeDelta(self.data[index][self.dispElement])
         else:
             return "%d"%self.data[index][self.dispElement]
           

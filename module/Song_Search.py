@@ -826,7 +826,7 @@ class SearchObject(object):
         elif (flag_type == EnumSong.LENGTH ):
             cf = 0;
             try:
-                cf = convertStringToTime(ostr)
+                cf = DateTime.parseTimeDelta(ostr)
             except:
                 pass
         elif flag_type >= EnumSong.STRINGTERM and flag_type < EnumSong.NUMTERM :
@@ -906,27 +906,6 @@ def stringSplit(string,deliminator=" "):
         
     return R
     
-def convertStringToTime(string):
-    string = string.replace(" ","")
-    R = string.split(':');
-    sec = R[-1];
-    min = "0";
-    our = "0";
-    day = "0";
-    
-    if len(R) > 1:
-        min = R[-2];
-    if len(R) > 2:
-        our = R[-3];
-    if len(R) > 3:
-        day = R[-4];
-    
-    h = int(our) + 24*int(day)
-    m = int(min) + 60*h
-    s = int(sec) + 60*m
-    
-    return s    
-
 #__all__  = ["SearchObject_Controller","SearchObject"]
   
 if __name__ == "__main__":

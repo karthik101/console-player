@@ -243,6 +243,103 @@ class DateTime(object):
         
         return 0;
 
+    def getTimeDelta(self):
+        """
+            return the current timedelta, as a formatted string:
+                DD:HH:MM:SS where D is days
+            set the time delta using timer_start and timer_end
+            
+        """
+        pass
+        
+    @staticmethod
+    def formatTimeDelta(seconds):
+        """
+            return a formated string converting the number of seconds
+            to "DD:HH:MM:SS"
+        """
+        _d =  seconds/86400
+        _h = (seconds%86400)/3600
+        _m = (seconds%3600)/60
+        _s = (seconds%60)
+
+        ms = "%02d:%02d"%(_m,_s)
+        h = ""
+        d = ""
+   
+        #conditionally format hours only when needed
+        if _h > 0 or _d > 0:
+            h = "%02d:"%_h
+        #conditionally format days only when needed
+        if _d > 0 :
+            d = "%d:"%_d
+            
+        #return "DD:HH:MM:SS"
+        return "%s%s%s"%(d,h,ms)
+        
+    @staticmethod
+    def formatTimeDeltams(milliseconds):
+        """
+            return a formated string converting the number of milliseconds
+            to "DD:HH:MM:SS.mmm"
+        """
+        ms = milliseconds%1000
+        s = milliseconds/1000
+        return DateTime.formatTimeDelta(s)+(".%03d"%ms)
+        
+    @staticmethod    
+    def formatTimeDeltaus(microseconds):
+        """
+            return a formated string converting the number of milliseconds
+            to "DD:HH:MM:SS.mmm"
+        """
+        us = microseconds%1000
+        ms = microseconds/1000
+        return DateTime.formatTimeDeltams(ms)+("%03d"%ms)    
+       
+    @staticmethod
+    def parseTimeDelta(string):
+        """
+            reverse of formatTimeDelta
+        """
+        string = string.replace(" ","")
+        R = string.split(':');
+        _s = R[-1];
+        _m = "0";
+        _h = "0";
+        _d = "0";
+        
+        l = len(R)
+        
+        if l > 1:
+            _m = R[-2];
+        if l > 2:
+            _h = R[-3];
+        if l > 3:
+            _d = R[-4];
+        
+        h = int(_h) + 24*int(_d) # given time in hours
+        m = int(_m) + 60*_h      # given time in minutes
+        s = int(_s) + 60*_m      # given time in seconds
+        
+        return s
+        
+    @staticmethod   
+    def parseTimeDeltams(string)
+        """
+            reverse of formatTimeDeltams
+        """
+        R = string.split('.')
+        return DateTime.parseTimeDelta(R[0])*1000 + atoi(R[1])
+    
+    @staticmethod   
+    def parseTimeDeltaus(string)
+        """
+            reverse of formatTimeDeltaus
+        """
+        R = string.split('.')
+        return DateTime.parseTimeDelta(R[0])*1000000 + atoi(R[1])
+        
     # the following just make some of the above code easier to read
     # if i always want to get a date/time format, i must use 'get'
     # and supply the default.

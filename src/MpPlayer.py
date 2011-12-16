@@ -455,13 +455,13 @@ class MediaManager(object):
         for song in self.playList:
             s += song[MpMusic.LENGTH]
             
-        return convertTimeToString(s)
+        return DateTime.formatTimeDelta(s)
     
     def updateTimeDisplay(self,time):
         if self.CurrentSong != None:
-            a = convertTimeToString(time)
-            b = convertTimeToString(self.CurrentSong[MpMusic.LENGTH])
-            c = convertTimeToString(self.CurrentSong[MpMusic.LENGTH] - time)
+            a = DateTime.formatTimeDelta(time)
+            b = DateTime.formatTimeDelta(self.CurrentSong[MpMusic.LENGTH])
+            c = DateTime.formatTimeDelta(self.CurrentSong[MpMusic.LENGTH] - time)
             if time > self.CurrentSong[MpMusic.LENGTH] :
                 MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEINFO"),"%s/%s"%(a,b)) 
             else:
