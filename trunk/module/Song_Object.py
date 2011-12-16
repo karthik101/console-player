@@ -10,8 +10,8 @@
 # #########################################################
 
 import os
-import time
-from calendar import timegm
+
+from SystemDateTime import DateTime
 
 from datatype_hex64 import *
 
@@ -50,12 +50,12 @@ class EnumSong(object):
     NUMTERM = SELECTED+1;   # if less than this, greater than strterm, we have a numerical value
     SPEC_WEEK  = 101 # searching by week count ( similar to search by .day)
     SPEC_MONTH = 102 # searching by month count ( similar to search by .day)
-    SPEC_DATEEU  = 103 # search by formated date DD/MM/YYYY
-    SPEC_DATEUS  = 104 # search by formated date MM/DD/YYYY
-    SPEC_DATESTD = 105 # search by formated date YYYY/MM/DD
-    SPEC_FREQ_G = 106 # return true when the song's days elapsed is >= freq
-    SPEC_FREQ_L = 107 # return true when the song's days elapsed is <  freq
-    SPEC_FREQ_E = 108 # return true when the song's days elapsed is == freq
+    SPEC_DATEEU  = 0xDA130002 # search by formated date DD/MM/YYYY
+    SPEC_DATEUS  = 0xDA130001 # search by formated date MM/DD/YYYY where DA13 = DATE
+    SPEC_DATESTD = 0xDA130000 # search by formated date YYYY/MM/DD
+    SPEC_FREQ_G  = 106 # return true when the song's days elapsed is >= freq
+    SPEC_FREQ_L  = 107 # return true when the song's days elapsed is <  freq
+    SPEC_FREQ_E  = 108 # return true when the song's days elapsed is == freq
 
     SONGDATASIZE = SELECTED+1 #NOTE: selected must always be the last element in the array
     
@@ -377,12 +377,9 @@ class Song(list):
         """
         ds = ""
         try:
+            dt = DateTime(FMT)
             if self[num_index]:
-                ds = time.strftime(FMT, time.localtime(self[num_index])) 
-            #TODO -V0.5.0.0 : remove this code.
-            if ds == "1969/12/31 19:00":
-                self[num_index] = 0;
-                ds=""
+                ds = dt.formatDateTime(self[num_index])
         except Exception as e:
             print e
         finally:
@@ -467,7 +464,7 @@ class Song(list):
             take the output from __repr__
             and set the values of the current song.
             
-            FMT allows the date to be formatted an way a user wants, as only the UNIX time stamp
+            FMT allows the date to be formatted any way a user wants, as only the UNIX time stamp
             is saved, as an integer
             
         """

@@ -230,8 +230,7 @@ def session_create_lock(fpath="./",port=-1):
         
                    
 if __name__ == "__main__":
-    import time    
-    
+
     class LocalSocket_Thread_test(QThread):     
     
         def run(self):

@@ -14,9 +14,6 @@ isPosix = os.name == 'posix'
 
 import ctypes
 
-import time
-import datetime
-
 import urllib
 import re
 if not isPosix:

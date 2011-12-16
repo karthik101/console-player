@@ -7,8 +7,7 @@ from datatype_hex64 import *
 
 from SystemPathMethods import *
 from widgetLineEdit import *
-import time
-from calendar import timegm
+from SystemDateTime import DateTime
 
 
 class SongEditWindow(QDialog):
@@ -303,14 +302,14 @@ class SongEditWindow(QDialog):
 
             if self.editList[self.dte][2].isChecked():
                 date = str(self.editList[self.dte][1].text())
-                t = getEpochTime(date)
+                t = DateTime().getEpochTime(date)
                 if t != 0:
                     song[MpMusic.DATESTAMP] = date
                     song[MpMusic.DATESTAMP] = t
                     
             if self.editList[self.add][2].isChecked():
                 date = str(self.editList[self.add][1].text())
-                t = getEpochTime(date)
+                t = DateTime().getEpochTime(date)
                 print date,t
                 if t != 0:
                     song[MpMusic.DATEADDEDS] = date
@@ -318,10 +317,10 @@ class SongEditWindow(QDialog):
             
             
             if OPERATION == 4:
-                t = getEpochTime(song[MpMusic.DATESTAMP])
+                t = DateTime().getEpochTime(song[MpMusic.DATESTAMP])
                 SECONDS_IN_DAY = 86400#60*60*24
                 t -= song[MpMusic.FREQUENCY]*SECONDS_IN_DAY
-                song[MpMusic.DATESTAMP] = secondsToFString(t)
+                song[MpMusic.DATESTAMP] = DateTime().formatDateTime(t)
                 song[MpMusic.DATEVALUE] = t
                 song[MpMusic.PLAYCOUNT] -= 1
                 #song[MpMusic.FREQUENCY] = 0
@@ -445,21 +444,7 @@ class SongEditWindow(QDialog):
                 x[1].setDisabled(False)
             else:
                 x[1].setDisabled(True)
-                
-def getEpochTime( date ):
-    """return epoch time for a date"""
-    datetime = None
-    try:
-        datetime = time.strptime(date,"%Y/%m/%d %H:%M")
-        return timegm(datetime)   
-    except:
-        pass
-        
-    return 0     
-
-def secondsToFString(sec):
-    structtime = time.gmtime(sec)
-    return time.strftime("%Y/%m/%d %H:%M",structtime)
+                 
     
 if __name__ == '__main__':
     #  import sys

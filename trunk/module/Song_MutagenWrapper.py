@@ -7,10 +7,6 @@
 #   Controls for reading/editing metadata tags in audio files
 #
 #----------------------------------------------------------
-import time
-import datetime
-from calendar import timegm
-
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3
 from mutagen.mp3 import MP3
@@ -20,6 +16,7 @@ from mutagen.flac import FLAC
 
 
 from SystemPathMethods import *
+from SystemDateTime import DateTime
 from Song_Object import *
 from datatype_hex64 import *
 
@@ -56,8 +53,8 @@ def id3_createSongFromPath(path):
                     
         
     song[EnumSong.FILESIZE] = fileGetSize(path)
-    song[EnumSong.DATEADDED ] = timegm(time.localtime(time.time()))
-    song[EnumSong.DATEADDEDS] = time.strftime("%Y/%m/%d %H:%M", time.localtime(int(song[EnumSong.DATEADDED]))) 
+    song[EnumSong.DATEADDED ] = DateTime.now()
+    song[EnumSong.DATEADDEDS] = DateTime().currentDateTime() 
 
     
     if song[EnumSong.LENGTH] > 2000: # 2k seconds = 32 minutes. is that a good break point?

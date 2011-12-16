@@ -17,8 +17,8 @@ def event_end_load_song():
         
         run a search for all songs added today
     """
-    date,_ = getNewDate().split(' ')
-    search = ".added =%s"%date
+    dt = DateTime();
+    search = ".added =%s"%dt.currentDate();
     
     MpGlobal.Window.txt_searchBox.setText(search)
     #txtSearch_OnTextChange(search, -1)

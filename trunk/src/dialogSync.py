@@ -15,10 +15,8 @@ from datatype_hex64 import *
 
 
 from SystemPathMethods import *
+from SystemDateTime import DateTime
 import widgetProgressBar
-
-
-import datetime
 
 if not isPosix:
     import win32api
@@ -429,6 +427,7 @@ class SyncFiles(QThread):
                 
     def _cpy_files(self):
         
+        dt = DateTime();
         r = len(self.listc) - 1
         if r < 0:
             return True
@@ -472,11 +471,10 @@ class SyncFiles(QThread):
                 print newPath
                 
             # get the end time right before the next update
-            
-            etime = datetime.datetime.now()    
+            dt.timer_end();
             try:
                 if bytes > 0 and stime != None:
-                    delta = (etime - stime).microseconds
+                    delta = dt.usdelta
                     #print delta, float(delta)/bytes, bytes/delta
                     delta = float(delta)/float(bytes)
                     if rTime > 0: rTime = (rTime*9 + delta)/10
@@ -484,12 +482,12 @@ class SyncFiles(QThread):
                     if byteAvg > 0: byteAvg = (byteAvg*9 + bytes)/10
                     else:           byteAvg = bytes
                     time_remaining = byteAvg*rTime #average microseconds per song
-                    time_remaining *= (r-self.index) # songs remaining
+                    time_remaining *= (r-self.index) # times the total songs remaining
                     time_remaining /= 1000.0*1000.0 # to seconds
             except:
                 pass
             finally:
-                stime = datetime.datetime.now()
+                dt.timer_start();
                 
                 
             self.parent.emit(SIGNAL("UPDATE_SYNC_DIALOG"),self.parent,self.index)
