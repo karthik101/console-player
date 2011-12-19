@@ -410,14 +410,14 @@ def searchSetSelection(string,sel=True):
     
     return count # return the number of songs that matched the input string.    
     
-
+@staticmethod
 def SOC_getSearchDictionary():        # These methods are used in the Search Object Controller Class
     return MpMusic.D_StrToDec         # 
-                                      #  Found in ./module/Song_Search.py
+@staticmethod                         #  Found in ./module/Song_Search.py
 def SOC_getFavoriteArtistList():      # 
     return Settings.FAVORITE_ARTIST   # They are used to extend the basic functionality of searching.
-                                      # 
-def SOC_getPresetString(index):       # 
+@staticmethod                         # 
+def SOC_getPresetString(index):       # They must be defined as a static method
     return Settings.getPreset(index)  # 
 
     
@@ -427,9 +427,9 @@ def SOC_getPresetString(index):       #
     
 def setSearchTime(): 
     dt = DateTime()
-    date = DateTime.currentDate();
+    date = dt.currentDate();
     
-    MpGlobal.RecentEpochTime = DateTime.getEpochTime(date+" 00:00") # return seconds at start of this day
+    MpGlobal.RecentEpochTime = dt.getEpochTime(date+" 00:00") # return seconds at start of this day
     MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60) # date of two weeks ago
     #MpGlobal.RecentEpochTime -= (24*60*60)
     

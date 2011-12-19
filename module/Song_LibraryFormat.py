@@ -99,7 +99,7 @@ def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):
         LIBZ_write_songList(FILE,songList,typ,block_size)
         
     dt.timer_end();
-    print "Saved %d songs to libz container in %d"%( len(songList), dt.timedelta)
+    print "Saved %d songs to libz container in %s"%( len(songList), DateTime.formatTimeDeltams(dt.timedelta))
     
 def musicLoad_LIBZ(filepath):
     """
@@ -163,7 +163,7 @@ def musicLoad_LIBZ(filepath):
                 bin = FILE.read(size); # read val bytes from the frame  
    
     dt.timer_end();
-    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,dt.timedelta)
+    print "Loaded %d/%d songs from libz container in %s"%(len(R),cnt,DateTime.formatTimeDeltams(dt.timedelta))
     return R;
       
 def LIBZ_write_songList(FILE,songList,typ,block_size): 
