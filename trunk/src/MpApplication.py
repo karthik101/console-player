@@ -38,6 +38,8 @@ from Song_LibraryFormat import *
 
 from datatype_hex64 import *
 
+from widgetLargeTable import LargeTable
+
 from table_playlist import *
 from table_library import *
 from table_quickselect import *
@@ -236,8 +238,11 @@ class MainWindow(QMainWindow):
         
         self.tbl_playlist = TablePlayList(self)
         self.tbl_library = TableLibrary(Settings.LIB_COL_ID, Settings.LIB_COL_ACTIVE, parent=self)
- 
+        
+        #vlt =LargeTable()
+        
         self.vbox_playlist.insertLayout(5,self.tbl_playlist.container)
+        #self.vbox_playlist.insertLayout(5,vlt.container)
         self.tab_library.addLayout(self.tbl_library.container)
         
         self.pixmap_dndMusic = MpGlobal.pixmap_Song

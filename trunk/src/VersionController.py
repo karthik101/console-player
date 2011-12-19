@@ -1,6 +1,6 @@
 #!/usr/bin/python -O
-__VERSION__ = "0.4.5.46"            
-###############################################
+__VERSION__ = "0.5.0.0"             
+##############################################
 # do not edit anything above this line unless you 
 # know what you are doing
 import os

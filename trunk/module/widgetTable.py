@@ -2,6 +2,8 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from widgetPage import HPage
+
+from Qt_CustomStyle import *
 #Qt.Key_MediaPlay
 
 class CustomTableView(QTableView):

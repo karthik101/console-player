@@ -48,9 +48,6 @@ class DateTime(object):
                     2:"%H:%M"
                   }
     
-
-    timedelta = 0;
-                  
     def __init__(self,format=0):
         if isinstance(format,basestring):
             self.format = -1;
@@ -61,6 +58,7 @@ class DateTime(object):
         self.timedelta_end = 0;
         self.timedelta = 0;
         self.usdelta = 0;
+        
     @staticmethod
     def now():
         """
@@ -325,7 +323,7 @@ class DateTime(object):
         return s
         
     @staticmethod   
-    def parseTimeDeltams(string)
+    def parseTimeDeltams(string):
         """
             reverse of formatTimeDeltams
         """
@@ -333,7 +331,7 @@ class DateTime(object):
         return DateTime.parseTimeDelta(R[0])*1000 + atoi(R[1])
     
     @staticmethod   
-    def parseTimeDeltaus(string)
+    def parseTimeDeltaus(string):
         """
             reverse of formatTimeDeltaus
         """
@@ -526,4 +524,15 @@ if __name__ == "__main__":
     print dt.getEpochTime("89/3/12")
     
 
+    # print "test timer"
+    # d1 = DateTime()
+    # d2 = DateTime()
+    # count = 999999
+    # d1.timer_start()
+    # for i in range(count):
+    #     d2.timer_start()
+    #     d2.timer_end()
+    # d1.timer_end();
+    # print d1.timedelta
+    # print d1.timedelta/float(count)
  

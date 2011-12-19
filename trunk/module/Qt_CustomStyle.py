@@ -115,9 +115,10 @@ def style_set_custom_theme(style_directory,style_name,QApplicationObject=None,di
                 css += read_css_file(dict_vars, fpath,fname) 
 
     #debugPreboot("Style Sheet: %s Size: %d bytes"%(style_name,len(css)))
-
+    
     if QApplicationObject != None:
         QApplicationObject.setStyleSheet(css)
+        #dict_update_palette(QApplicationObject,dict_vars);
 
     return dict_vars
 
@@ -184,6 +185,15 @@ def css_dict_value(key,cdict,rdict):
         cdict[key] = color_stringToQColor(rdict[key])
     return cdict
 
+def dict_update_palette(obj,dict_vars):
+    p = obj.palette();
+    print dict_vars["color_highlight"]
+    print type(dict_vars["color_highlight"])
+    p.setColor( QPalette.Active, QPalette.Highlight, color_stringToQColor( dict_vars["color_highlight"] ) )
+    p.setColor( QPalette.Inactive, QPalette.Highlight, color_stringToQColor( dict_vars["color_highlightOOF"] ) )
+    
+    obj.setPalette(p);
+    
 def color_stringToQColor(string):
     #TODO this function looks un-neccessary
     hex = {'0':0, '1':1, '2':2, '3':3, '4':4,
