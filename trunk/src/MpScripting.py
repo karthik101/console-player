@@ -92,7 +92,7 @@ def registerNewListAsPlayList(songList,autoLoad = False, autoStart = False):
     MpGlobal.Player.playList = songList
     MpGlobal.Window.dsp_info.text_index = "-/%d"%len(songList)
     MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Window.dsp_info.update())    
-    MpGlobal.Window.tbl_playlist.UpdateTable(0,MpGlobal.Player.playList)
+
     
     if autoLoad and not autoStart:
         MpGlobal.Player.loadNoPlayback(MpGlobal.Player.getPlayListIndex(0))
@@ -108,6 +108,9 @@ def registerNewListAsPlayList(songList,autoLoad = False, autoStart = False):
 
     # update the time used when comparing songs played since two weeks.
     setSearchTime() 
+    
+    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
+    MpGlobal.Window.tbl_library.updateTable()
     
     playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT)
     if Settings.SAVE_BACKUP:
@@ -194,7 +197,7 @@ def createFromPlayList(size,index,shuffle=True, hash=0):
         else:
             MpGlobal.Player.playList = R[:size]
         
-        MpGlobal.Window.tbl_playlist.UpdateTable(0,MpGlobal.Player.playList)
+        MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
         
         MpGlobal.Player.playSong(0)
 
@@ -247,7 +250,7 @@ def insertIntoPlayList(R,pos):
 
     MpGlobal.Player.playList = MpGlobal.Player.playList[:pos] + R + MpGlobal.Player.playList[pos:]
 
-    MpGlobal.Window.tbl_playlist.UpdateTable(MpGlobal.Window.tbl_playlist.getDisplayOffset(),MpGlobal.Player.playList)
+    MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.playList)
     
     UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
     
@@ -431,6 +434,7 @@ def setSearchTime():
     
     MpGlobal.RecentEpochTime = dt.getEpochTime(date+" 00:00") # return seconds at start of this day
     MpGlobal.LaunchEpochTime = MpGlobal.RecentEpochTime - (14*24*60*60) # date of two weeks ago
+
     #MpGlobal.RecentEpochTime -= (24*60*60)
     
 # ##############################################
@@ -535,8 +539,8 @@ def settings_get_Update():
     if Settings.SCREEN_POSITION_Y < 0:
         Settings.SCREEN_POSITION_Y = 0
     # ----------------------------------------------------------------
-    Settings.LIB_COL_ID     = MpGlobal.Window.tbl_library.col_id[:]
-    Settings.LIB_COL_ACTIVE = MpGlobal.Window.tbl_library.colCount
+    #Settings.LIB_COL_ID     = MpGlobal.Window.tbl_library.col_id[:] #TODO-LIB
+    #Settings.LIB_COL_ACTIVE = MpGlobal.Window.tbl_library.colCount  #TODO-LIB
     # windows seven can dictate screen relestate without Qt realizing it has been resized
     # if the window is snapped to an edge or dragged from a snap, it is considered fullscreen
     # even when not
@@ -922,6 +926,7 @@ def info_UpdateDisplay(song):
         obj.int_rating = song[MpMusic.RATING]
         obj.int_freq = song[MpMusic.FREQUENCY]
         obj.text_date = song[MpMusic.DATESTAMP]
+        obj.text_index = "%d/%d"%(MpGlobal.Player.CurrentIndex+1,len(MpGlobal.Player.playList))
         obj.setScrolling()
         obj.update()
         

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from PyQt4 import QtCore, QtGui
-
+from Song_Object import *
 class InfoDisplay(QtGui.QWidget):
     mousex=0    # last registered mouse position
     
@@ -87,7 +87,7 @@ class InfoDisplay(QtGui.QWidget):
         painter = QtGui.QPainter(self)
         fh = painter.fontMetrics().height()
         fl = rh/2.0 + fh/2.0 - 2
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.setRenderHint(0)#painter.setRenderHint(QtGui.QPainter.Antialiasing)
         painter.scale( 1.0, 1.0)
 
         #painter.setPen(QtGui.QPen(self.penColor, self.penWidth, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
@@ -115,18 +115,19 @@ class InfoDisplay(QtGui.QWidget):
         
         
         #-------------------------------------------------------
+        # fixed the following code on 2011/12/22
         painter.setClipRegion(QtGui.QRegion(w-16,0,16,h))
         painter.setPen(QtCore.Qt.black)
-        painter.setBrush(self.brush_barfill)
-        
-        painter.drawRect(w-13,1,12,h-2)
+
         painter.setBrush(QtGui.QBrush(QtGui.QColor(100,100,100)))
-        vi = 5-self.int_rating
-        if vi != 0 :
-            painter.drawRect(w-13,1,12,((h-2)/5)*vi) 
-            
-        painter.setBrush(QtGui.QBrush(QtGui.QColor(0,0,0)))
+        painter.drawRect(w-13,0,12,h-1)
         
+        bar_len = int((float(h)/EnumSong.MAX_RATING)*self.int_rating)
+        
+        if self.int_rating > 0:
+            painter.setBrush(self.brush_barfill)
+            painter.drawRect(w-13,h-bar_len-1,12,bar_len+1)
+
         #rh = h/5 - 1
         #painter.drawLine(w-14,rh,  w-2,rh)
         #painter.drawLine(w-14,rh*2,w-2,rh*2)
@@ -143,7 +144,8 @@ class InfoDisplay(QtGui.QWidget):
         btn = int(event.buttons())
         
         if x > w-16 and btn == QtCore.Qt.LeftButton:
-            self.int_rating = 5 - int(float(y) / (h-2) * 5)
+            self.int_rating = EnumSong.MAX_RATING - int((float(y) / (h+4)) * (EnumSong.MAX_RATING+1))
+            self.int_rating = max(0,self.int_rating)
             self.update()
         elif x < w-16:
 
@@ -180,7 +182,10 @@ class InfoDisplay(QtGui.QWidget):
         mse_down = True
         
         if x > w-16:
-            self.int_rating = 5 - int(float(y) / (h-2) * 5)
+            # by adding one to the range, the types of values that could be
+            # returned by the equation are 0 - range, instead of  0- range-1
+            self.int_rating = EnumSong.MAX_RATING - int((float(y) / (h+4)) * (EnumSong.MAX_RATING+1))
+            self.int_rating = max(0,self.int_rating)
             self.update()
         
     def mouseReleaseEvent(self,event):
@@ -356,9 +361,9 @@ if __name__ == '__main__':
     window = InfoDisplay()
     window.show()
     
-    window.text_artist = "Luke James and the firewaterband"
-    window.text_album  = ""
-    window.text_title  = ""
+    window.text_artist = "Luke James and the firewater band"
+    window.text_album  = "Blah"
+    window.text_title  = "Blah Blah"
     window.text_playcount = "41"
     window.text_time   = "1:45/5:45 -4:00"
     window.text_index  = "117/150"

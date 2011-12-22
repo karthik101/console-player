@@ -59,7 +59,7 @@ class SongEditWindow(QDialog):
         self.editList.append(self.newMultiTextEdit("Album"))
         self.editList.append(self.newMultiTextEdit("Genre"))
         self.editList.append(self.newMultiTextEdit("Comment"))
-        self.editList.append(self.newIntEdit("Rating",-5,5))
+        self.editList.append(self.newIntEdit("Rating",-MpMusic.MAX_RATING,MpMusic.MAX_RATING))
         self.editList.append(self.newIntEdit("Play Count",-100,9999))
         self.editList.append(self.newIntEdit("Skip Count",-100,9999))
         self.editList.append(self.newIntEdit("Frequency",-100,9999))
@@ -259,8 +259,8 @@ class SongEditWindow(QDialog):
                 else:
                     song[MpMusic.RATING] = self.editList[self.rte][1].value()
                 
-                if song[MpMusic.RATING] > 5:
-                    song[MpMusic.RATING] = 5
+                if song[MpMusic.RATING] > MpMusic.MAX_RATING:
+                    song[MpMusic.RATING] = MpMusic.MAX_RATING
                 if song[MpMusic.RATING] < 0:
                     song[MpMusic.RATING] = 0
                     

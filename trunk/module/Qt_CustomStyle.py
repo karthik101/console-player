@@ -118,7 +118,7 @@ def style_set_custom_theme(style_directory,style_name,QApplicationObject=None,di
     
     if QApplicationObject != None:
         QApplicationObject.setStyleSheet(css)
-        #dict_update_palette(QApplicationObject,dict_vars);
+        dict_update_palette(QApplicationObject,dict_vars);
 
     return dict_vars
 
@@ -187,11 +187,37 @@ def css_dict_value(key,cdict,rdict):
 
 def dict_update_palette(obj,dict_vars):
     p = obj.palette();
-    print dict_vars["color_highlight"]
-    print type(dict_vars["color_highlight"])
-    p.setColor( QPalette.Active, QPalette.Highlight, color_stringToQColor( dict_vars["color_highlight"] ) )
-    p.setColor( QPalette.Inactive, QPalette.Highlight, color_stringToQColor( dict_vars["color_highlightOOF"] ) )
+    #print dict_vars["color_highlight"]
+    #print type(dict_vars["color_highlight"])
+    #p.setColor( QPalette.Active  , QPalette.Highlight    , color_stringToQColor( dict_vars["color_highlight"]    ) )
+    #p.setColor( QPalette.Inactive, QPalette.Highlight    , color_stringToQColor( dict_vars["color_highlightOOF"] ) )
+    #
+    #p.setColor( QPalette.Active  , QPalette.Base         , color_stringToQColor( dict_vars["theme_bg_color"]     ) )
+    #p.setColor( QPalette.Inactive, QPalette.Base         , color_stringToQColor( dict_vars["theme_bg_color"]     ) )
+    #                                                                                                            
+    #p.setColor( QPalette.Active  , QPalette.AlternateBase, color_stringToQColor( dict_vars["theme_bg_color_alt"]     ) )
+    #p.setColor( QPalette.Inactive, QPalette.AlternateBase, color_stringToQColor( dict_vars["theme_bg_color_alt"]     ) )
+    CG  = [QPalette.Disabled,QPalette.Active,QPalette.Inactive]
+    c1  = color_stringToQColor( dict_vars["theme_p_light"] )
+    c2  = color_stringToQColor( dict_vars["theme_p_mid"] )
+    c3  = color_stringToQColor( dict_vars["theme_p_dark"] )
+    c4  = color_stringToQColor( dict_vars["theme_p_vdark"] )
+    c2a = color_avg_rgb(c1,c2)
+    c2b = color_avg_rgb(c2,c3)
     
+    for cg in CG:
+        p.setColor( cg, QPalette.Light    , c1   )
+        p.setColor( cg, QPalette.Midlight , c2a  )
+        p.setColor( cg, QPalette.Button   , c2   )
+        p.setColor( cg, QPalette.Mid      , c2b  )
+        p.setColor( cg, QPalette.Dark     , c3   )
+        p.setColor( cg, QPalette.Shadow   , c4   )
+        
+    #c1  = color_stringToQColor( dict_vars["theme_s_mid"] )
+    #c2  = color_stringToQColor( dict_vars["theme_s_dark"] )
+    #p.setColor( QPalette.Active, QPalette.Light    , c1   )
+    #p.setColor( QPalette.Active, QPalette.Dark     , c2  )
+        
     obj.setPalette(p);
     
 def color_stringToQColor(string):
@@ -224,6 +250,13 @@ def color_stringToQColor(string):
         #string is now YYX,YYX,YYX
     return QColor(r,g,b,255*a);   
 
+def color_avg_rgb(c1,c2):
+    r = (c1.red()+c2.red())/2
+    g = (c1.green()+c2.green())/2
+    b = (c1.blue()+c2.blue())/2
+    a = (c1.alpha()+c2.alpha())/2
+    return QColor(r,g,b,a)
+    
     
 # ######################################################
 # Working With Dictionary Files

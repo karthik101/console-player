@@ -22,7 +22,7 @@ def event_end_load_song():
     
     MpGlobal.Window.txt_searchBox.setText(search)
     #txtSearch_OnTextChange(search, -1)
-    MpGlobal.Window.tbl_library.updateDisplay(search)   
+    MpGlobal.Window.tbl_library.updateDisplay(search)   #TODO-LIB
 
 def event_load_song(filepath):
 
@@ -35,7 +35,7 @@ def event_load_song(filepath):
         #todo use .added =%TODAY%
         #MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
         #txtSearch_OnTextChange(".pcnt =0", -1)
-        #MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0")   
+        #MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0")  #TODO-LIB was originally commented out anyway 
         MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
         
         
