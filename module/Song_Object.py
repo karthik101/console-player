@@ -57,6 +57,8 @@ class EnumSong(object):
     SPEC_FREQ_L  = 107 # return true when the song's days elapsed is <  freq
     SPEC_FREQ_E  = 108 # return true when the song's days elapsed is == freq
 
+    MAX_RATING = 10
+    
     SONGDATASIZE = SELECTED+1 #NOTE: selected must always be the last element in the array
     
     @staticmethod

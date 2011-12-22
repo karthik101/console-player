@@ -14,8 +14,6 @@ from datatype_hex64 import *
 
 from MpGlobalDefines import *
 
-
-
 from MpSongHistory import *
 
 class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
@@ -27,8 +25,10 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
         if x > w-16 and event.button() == Qt.LeftButton: # and left click
             if MpGlobal.Player.CurrentSong != None:
                 MpGlobal.Player.CurrentSong[MpMusic.RATING] = self.int_rating
+                MpGlobal.Window.tbl_library.update()
                 if Settings.LOG_HISTORY:
                     history_log(MpGlobal.FILEPATH_HISTORY,MpGlobal.Player.CurrentSong,MpMusic.RATING)
+                    
         elif event.button() == Qt.RightButton:
             
 
@@ -37,6 +37,7 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
                 contextMenu.addAction("Find Lyrics",self.__Action__GoTo_Lyrics__)
                 contextMenu.addAction("Artist Wiki Page",self.__Action__GoTo_Wiki__)
                 contextMenu.addAction("Explore Containing Folder",self.__Action__EXPLORE__)
+                contextMenu.addAction("Search for Artist",self.__Action_searchARTIST__)
                 contextMenu.addAction("Search for Album",self.__Action_searchALBUM__)
                 
                 contextMenu.exec_( event.globalPos() )
@@ -58,10 +59,15 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
         if MpGlobal.Player.CurrentSong != None:
             path = fileGetPath(MpGlobal.Player.CurrentSong[MpMusic.PATH])
             MpGlobal.Window.tbl_explorer.__load_Directory__(path)
-            MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_Explorer)
+            MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_Explorer) 
+    def __Action_searchARTIST__(self):
+        if MpGlobal.Player.CurrentSong != None:
+            s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
+            
+            MpGlobal.Window.tbl_library.updateDisplay(s); #TODO-LIB
     def __Action_searchALBUM__(self):
         if MpGlobal.Player.CurrentSong != None:
             s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
             s += "; .abm \""+MpGlobal.Player.CurrentSong[MpMusic.ALBUM][:]+"\""
             
-            MpGlobal.Window.tbl_library.updateDisplay(s);
+            MpGlobal.Window.tbl_library.updateDisplay(s); #TODO-LIB
