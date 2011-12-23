@@ -715,10 +715,10 @@ class MainWindow(QMainWindow):
         
         #self.tbl_library.brush_special = QBrush(self.style_dict["color_special2"])
         
-        #self.tbl_gui.brush_selected = QBrush(self.style_dict["color_special2"])
-        #self.tbl_gui.brush_selectedOOF = QBrush(self.style_dict["color_special2"])
-        #self.tbl_gui.brush_text_default = QBrush(self.style_dict["text_color"])
-        #self.tbl_gui.brush_text_favorite = QBrush(self.style_dict["text_important2"])
+        self.tbl_gui.brush_selected = QBrush(self.style_dict["color_special2"])
+        self.tbl_gui.brush_selectedOOF = QBrush(self.style_dict["color_special2"])
+        self.tbl_gui.brush_text_default = QBrush(self.style_dict["text_color"])
+        self.tbl_gui.brush_text_favorite = QBrush(self.style_dict["text_important2"])
         
         self.dsp_info.brush_barfill = QBrush(self.style_dict["text_important1"])
     
@@ -1246,7 +1246,7 @@ def txtSearch_KeyBoardRelease(event=None):
     if event.key() == Qt.Key_Down:
         MpGlobal.Window.tbl_library.selection = {0,}
         MpGlobal.Window.tbl_library.updateTable(0)
-        MpGlobal.Window.tbl_library.table.setFocus()
+        MpGlobal.Window.tbl_library.setFocus()
 
 def splitter_resize_control(pos,index):
     sizes = MpGlobal.Window.splitter.sizes()
@@ -1397,7 +1397,7 @@ def button_library_SelectAll(bool=0):
 
 def tabbar_tab_changed(index=0):
     if index == 1:
-        MpGlobal.Window.tbl_quicklist.updateTable();
+        MpGlobal.Window.tbl_quicklist.UpdateTable();
         s = MpGlobal.Window.tbl_quicklist.calc_hvalue();  
         UpdateStatusWidget(3,"Playlist Length: %d. Maximum Songs per Artist: %d."%(MpGlobal.PLAYLIST_SIZE,s))
        

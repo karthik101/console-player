@@ -93,27 +93,26 @@ class LTable_Library(SongTable):
      
     def sortColumnByExifTag(self,exif_tag):
     
-        
-        
         col = self.getColumn(exif_tag,True)
         
         dir = 1
         if col != None:
             dir = self.setSortColumn( col )
+            
         sortLibraryInplace(exif_tag,dir==-1)  
      
         self.data = MpGlobal.Player.library;
         
-        #t_txt  =    (u"#-A-Z-\u3042" , u"\u3042-Z-A-#"), \
-        #            (u"Increasing"   , u"Decreasing"  ), \
-        #            (u"Not Recent First" , u"Recent First" ), \
-        #
-        #dir_text = t_txt[i][1] if dir else t_txt[i][0]
-        dir_text = u"\u3042-Z-A-#" if dir==-1 else u"#-A-Z-\u3042"
+        self.updateDisplay()
+
+        if exif_tag in (MpMusic.DATESTAMP,MpMusic.DATEADDEDS):
+            dir_text = u"Not Recent First" if dir==-1 else u"Recent First"
+        elif exif_tag < MpMusic.STRINGTERM:
+            dir_text = u"\u3042-Z-A-#" if dir==-1 else u"#-A-Z-\u3042"
+        else:
+            dir_text = u"Decreasing" if dir==-1 else u"Increasing"
         
         UpdateStatusWidget(3,"sorted by %s - %s"%(MpMusic.exifToString(exif_tag),dir_text))
-        
-        self.update() 
         
     def sortColumn(self,col_index):
         """
@@ -157,6 +156,30 @@ class LTable_Library(SongTable):
         action = contextMenu.exec_( event.globalPos() )
 
         info_UpdateCurrent()
+     
+    def mouseReleaseLeft(self,event):
+        row,col = self.positionToRowCol(event.x(),event.y())
+        if row < len(self.data):
+            UpdateStatusWidget(3,self.data[row][MpMusic.PATH])
+        
+    def keyReleaseUp(self,event):
+        if len(self.selection) == 1:    # return focus to the text box
+            if list(self.selection)[0] == 0:
+                MpGlobal.Window.txt_searchBox.setFocus()
+        super(LTable_Library,self).keyReleaseUp(event)
+        if len(self.selection) > 0:
+            row = list(self.selection)[0]
+            UpdateStatusWidget(3,self.data[row][MpMusic.PATH])
+            
+    def keyReleaseDown(self,event):
+        super(LTable_Library,self).keyReleaseDown(event)
+        if len(self.selection) > 0:
+            row = list(self.selection)[0]
+            UpdateStatusWidget(3,self.data[row][MpMusic.PATH])
+            
+    def keyReleaseOther(self,event):
+        MpGlobal.Window.txt_searchBox.setFocus()
+        MpGlobal.Window.txt_searchBox.keyPressEvent(event)
      
     def __Action_editSong__(self):
 

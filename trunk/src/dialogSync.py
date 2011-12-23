@@ -36,6 +36,9 @@ class SyncSongs(QDialog):
     thread = None
     dir =""
     initdir = "F:\\Music\\"
+    
+    show_warning_message = pyqtSignal("QString","QString","QString")
+    
     def __init__(self,parent):
 
         super(SyncSongs, self).__init__(parent)
@@ -86,6 +89,9 @@ class SyncSongs(QDialog):
         
         self.sbtn.clicked.connect(self.sync)
         self.ebtn.clicked.connect(self.btn_stop)
+        
+        self.show_warning_message.connect(self.WarningMessage);
+        self.message_result = -1;   # used when returning from the message
         
         QObject.connect(self, SIGNAL("UPDATE_SYNC_DIALOG"),updateSyncDialogEvent, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("DONE_SYNC_DIALOG"),updateSyncDialogDoneEvent, Qt.QueuedConnection)
@@ -195,7 +201,22 @@ class SyncSongs(QDialog):
             self.edit.setCurrentIndex(R.index("F:\\music\\"))
         elif len(R) > 0:
             self.edit.setCurrentIndex(0)
+     
+    def WarningMessage(self,message,btn1="Ok",btn2="",icon=QMessageBox.Warning):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Warning)
+        msgBox.setText(message)
+        #    "Delete Song Confirmation", message,
+         #   QMessageBox.NoButton, self)
+        msgBox.addButton(btn1, QMessageBox.AcceptRole)
+        if btn2 !="":
+            msgBox.addButton(btn2, QMessageBox.RejectRole)
+
+        self.message_result =  msgBox.exec_() == QMessageBox.AcceptRole
         
+        return self.message_result
+    
+     
 def sync_setRange(obj,min,max):
     obj.pbar.setRange(min,max)
     
@@ -244,14 +265,44 @@ class SyncFiles(QThread):
     flag_gather = True
     flag_delete = True
     
+    illegal_diretory = False # if the target directory is illegal
+    
     def __init__(self,parent,dir):
         super(SyncFiles, self).__init__()
         # use parent to reference objects in the dialog
         
-        self.parent = parent
+        self.parent = parent # parent is the dialog controlling the sync
         self.dir = dir
+        
+        if len(self.parent.data) > 0:
+            s=fileGetDrive(self.parent.data[0][MpMusic.PATH]) # source drive
+            d=fileGetDrive(dir) # destination drive
+            if s==d :
+                self.illegal_diretory = True
+                
     
-
+    def showWarningMessage(self,message,btn1="0k",btn2=""):
+        """
+            a message box cannot be started outside of the main thread
+            i want to be able to show the user warnings during the sync process
+            
+            solution, this method emits a signal back to the sync dialog which message
+            properties. then waits for a variable to be set
+            
+            that variable is set when the main thread is done showing the blocking message
+        """
+        
+        self.parent.message_result = -1;
+        self.parent.show_warning_message.emit(message,btn1,btn2)
+        
+        while self.parent.message_result == -1:
+            QThread.msleep(20)
+            
+        print "message result = %d"% self.parent.message_result
+        
+        return self.parent.message_result
+        
+        
     def _get_FileList(self):
         self.filelist = []           # list of files on the drive
         
@@ -311,7 +362,7 @@ class SyncFiles(QThread):
             path = createMiniPath(self.parent.data[s])
             path = os.path.join(self.dir,path)
             self.listc.append( (self.parent.data[s][MpMusic.PATH],path) )
-            
+ 
         # ###########################################################
         # using this list create two lists,
         # c list, files that will need to be transfered
@@ -399,8 +450,9 @@ class SyncFiles(QThread):
         if r < 0:
             return True
             
+            
         message = "Delete %d Songs from:\n%s?"%(r,self.dir)    
-        if not WarningMessage(message,"Delete","Cancel"):
+        if not self.showWarningMessage(message,"Delete","Cancel"):
             return False
         
         self.parent.emit(SIGNAL("SYNC_SET_RANGE"),self.parent,0,r)
@@ -441,6 +493,7 @@ class SyncFiles(QThread):
         byteAvg = 0
         time_remaining=0
         stime = None
+        dt.timer_start();
         while self.alive and self.index < len(self.listc):
 
             free = driveGetFreeSpace(self.dir)
@@ -523,23 +576,33 @@ class SyncFiles(QThread):
         # build self.filelist from file
         
         
-        self._get_FileList() # dbl u-score is a dummy which grabs from a text file
         
-        self._get_CD_lists()
+        if not self.illegal_diretory:
         
-        self._get_Dir_List()
+            self.showWarningMessage("Sync Start")
+            
+            self._get_FileList()
+            
+            self._get_CD_lists() #  generate list of songs to copy and delete
         
-        #self.__savelists__()
+            self._get_Dir_List() # generate list of directories to make
+            
+            #self.__savelists__() # save text copies
 
-        self._del_files()
+            self._del_files() 
+            
+            self._cpy_files()
+            
+            self._build_library_()
+            
+            self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,"Finished")  
         
-        self._cpy_files()
+            self.parent.emit(SIGNAL("DONE_SYNC_DIALOG"),self.parent,self.alive)
         
-        self._build_library_()
+        else:
+            self.showWarningMessage("Cannot Use Same Source and Destination Directories")
         
-        self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,"Finished")  
         
-        self.parent.emit(SIGNAL("DONE_SYNC_DIALOG"),self.parent,self.alive)
     
 
         
