@@ -18,6 +18,18 @@
 # PyDateTime - converting between unix time and date formats. 
 #   now() - get current time as int
 #
+# *** Error [[0x00000000_00000000]] Reading Tags for Type: mp3
+#    'D:/Music\Misc\Left 4 Dead\L4D2 Midnight Riders - One Bad Man.mp3' doesn't start
+#     with an ID3 tag
+#     *** Error [[0x00000000_00000000]] Reading Tags for Type: m4a
+#    object of type 'int' has no len()
+#     *** Error [[0x00000000_00000000]] Reading Tags for Type: m4a
+#     *** Error [[0x00000000_00000000]] Reading Tags for Type: wma
+#    object of type 'ASFDWordAttribute' has no len()
+#     *** Error [[0x00000000_00000000]] Reading Tags for Type: m4a
+#    object of type 'int' has no len()
+#     *** Error [[0x00000000_00000000]] Reading Tags for Type: m4a
+#
 #  DateTime Widget, in form of several spinboxes in a line. [year][mo][dy] [HR]:[MN]
 #       three different formats Date, Time and DateTime
 #       for song edit

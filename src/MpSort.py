@@ -20,7 +20,7 @@ def sortKey(index):
     """
     if index == EnumSong.PATH:
         return lambda song: __sort_parameter_path__(song)
-    elif index <= EnumSong.STRINGTERM:
+    elif index < EnumSong.STRINGTERM:
         return lambda song: sort_parameter_str(song,index)
     elif index == EnumSong.FREQUENCY:
         return lambda song: __sort_parameter_freq__(song)
@@ -71,10 +71,12 @@ def sortLibraryInplace(index,r=False):
         Sort the Library List inplace
     """
     ico = MpGlobal.icon_Clear
+    
     if index in (EnumSong.ARTIST, EnumSong.TITLE,EnumSong.ALBUM):
         ico = MpGlobal.icon_Check if r else MpGlobal.icon_Clear
     else:
         ico = MpGlobal.icon_Clear if r else MpGlobal.icon_Check
+        
     MpGlobal.Window.act_sfl_reverse.setIcon( ico )
     
     g = sortKey(index)

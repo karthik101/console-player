@@ -51,6 +51,9 @@ class LTable_PlayList(LargeTable):
         else:
             self.data = self.data[:row] + data + self.data[row:]
             self.selection = set( range(row,row+len(data) ) )
+            if row < MpGlobal.Player.CurrentIndex:  
+                MpGlobal.Player.CurrentIndex += len(data)
+            
         MpGlobal.Player.playList = self.data    
         info_UpdateCurrent() # update the info display
         UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
