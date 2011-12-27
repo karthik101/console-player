@@ -30,6 +30,7 @@ def initCommandList():
               "cont"      : cmd_cont,
               "stop"      : cmd_stop,
               "state"     : cmd_state,
+              "time"     : cmd_time,
               "volume"    : cmd_volume,
               "vol"       : cmd_volume,
 
@@ -428,6 +429,18 @@ def cmd_state(input):
         "PAUSED", "STOPPED", "ENDED", "ERROR", "UNKOWN")[MpGlobal.Player.mp.mediaState()];
     debugRetail ( "Current State: %s"%string );
     return COMMAND.VALID
+def cmd_time(input):
+    """
+        Command: TIME
+        Usage: time <int>
+        
+        set the time to TIME.
+        
+        TODO: allow relative time with -r flag (10 is +10 seconds
+        TODO: allow percentage of time with -p (33 -> 1/3rd of the song)
+    """
+    if input.hasDecVal:
+        MpGlobal.Player.setTime( input.DecVal[0] )
 def cmd_volume(input):
     """
         Command: VOLUME
@@ -778,13 +791,15 @@ def cmd_sync(input):
             <dir>\Artist\Album\filename
     """
         
-    if len(MpGlobal.Window.editorTabs) > 0:
-        MpGlobal.Window.syncDialogObj = dialogSync.SyncSongs(MpGlobal.Window);
-        MpGlobal.Window.syncDialogObj.Renew()
-        return COMMAND.VALID
-    else:  
-        print "Error Opening Sync Window"
-        return COMMAND.ERROR
+    #if len(MpGlobal.Window.editorTabs) > 0:
+    MpGlobal.Window.syncDialogObj = dialogSync.SyncSongs(MpGlobal.Window);
+    MpGlobal.Window.syncDialogObj.Renew()
+    
+    #else:  
+    #    print "Error Opening Sync Window"
+    #    return COMMAND.ERROR
+    return COMMAND.VALID
+    
 def cmd_theme(input):  
     # ##----1----2----3----4----5----6----7----8----9----0----1----2----3----4----5----6
     """
@@ -1051,17 +1066,24 @@ def cmd_xx(input):
             song = id3_createSongFromPath(path)
         
     if input.DecVal[0] == 5 : #xx 5
-        pass
+    
+        tab = Tab_PlaylistEditor()
+        tab.addTab( "New Playlist" )
+        tab.setCloseButton()
+        
         
     if input.DecVal[0] == 6 : #xx 6
+        tab = Tab_Explorer()
+        tab.setIcon(MpGlobal.icon_Folder)
+        tab.addTab( "Explorer" )
+        #tab.setCloseButton()
         
+        
+    if input.DecVal[0] == 7 : #xx 7
         R = xml_open("./library.xml");
         print len(R);
         MpGlobal.Player.library = MpGlobal.Player.library + R
         MpGlobal.Window.tbl_library.updateTable(0,MpGlobal.Player.library)
-        
-    if input.DecVal[0] == 7 : #xx 7
-        pass
     
     if input.DecVal[0] == 8 : #xx 8
         test = Translate(u"::sutereoponi-\u30B0")
@@ -1525,6 +1547,8 @@ from MpScripting import *
 from MpSort import *
 from Song_Search import *   
 from xml_parser import *  
+from tab_playlist_editor import Tab_PlaylistEditor
+from tab_explorer import Tab_Explorer
 import dialogSync       
      
 StringParse.D_StrToDec = MpMusic.D_StrToDec     

@@ -46,6 +46,8 @@ from table_quickselect import *
 from table_playlisteditor import *
 from table_fileexplorer import *
 from table_external import *        #TODO i don't think this is used at all anymore
+from tab_explorer import * 
+from tab_playlist_editor import * 
 
 from widget_playbutton import *
 from widget_currentSongDisplay import *
@@ -149,7 +151,6 @@ class MainWindow(QMainWindow):
         
         self.init_StatusBar()
         self.init_Gui()
-        newFileExplorerTab(self)
         
         #self.dialogSongEdit = dialogSongEdit.SongEditWindow(self)
         self.syncDialogObj = None #dialogSync.SyncSongs(self)
@@ -168,6 +169,12 @@ class MainWindow(QMainWindow):
         # set up keyboard shortcuts
         #
         
+        self.tab_explorer = Tab_Explorer()
+        self.tab_explorer.setIcon(MpGlobal.icon_Folder)
+        
+        
+        
+            
         self.txt_main.setFocus()
         self.setWindowTitle(title)
         
@@ -720,14 +727,16 @@ class MainWindow(QMainWindow):
         self.tbl_gui.brush_text_default = QBrush(self.style_dict["text_color"])
         self.tbl_gui.brush_text_favorite = QBrush(self.style_dict["text_important2"])
         
+        self.tab_explorer.table.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
+        
         self.dsp_info.brush_barfill = QBrush(self.style_dict["text_important1"])
     
-        self.tbl_explorer.brush_default = QBrush(self.style_dict["text_color"],0)
-        self.tbl_explorer.brush_selected = QBrush(self.style_dict["color_highlight"])
-        self.tbl_explorer.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
-        self.tbl_explorer.brush_highlight1 = QBrush(self.style_dict["color_special1"]) #already exist
-        self.tbl_explorer.brush_highlight2 = QBrush(self.style_dict["color_invalid"])  #invalid
-        self.tbl_explorer.brush_highlight3 = QBrush(self.style_dict["color_special2"]) #loading
+        #self.tbl_explorer.brush_default = QBrush(self.style_dict["text_color"],0)
+        #self.tbl_explorer.brush_selected = QBrush(self.style_dict["color_highlight"])
+        #self.tbl_explorer.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
+        #self.tbl_explorer.brush_highlight1 = QBrush(self.style_dict["color_special1"]) #already exist
+        #self.tbl_explorer.brush_highlight2 = QBrush(self.style_dict["color_invalid"])  #invalid
+        #self.tbl_explorer.brush_highlight3 = QBrush(self.style_dict["color_special2"]) #loading
 
     def setPlayListWidth(self,w) :
 
@@ -739,15 +748,20 @@ class MainWindow(QMainWindow):
         """ Create a new playlist editor and
             immediatley prompt the user to open one
         """
-        obj = newPlayListEditor(self)
+        tab = Tab_PlaylistEditor()
+        tab.addTab( "New Playlist" )
+        tab.setCloseButton()
             
     def __Action_Load_PlayList__(self):
         """ Create a new playlist editor and
             immediatley prompt the user to open one
         """
-        obj = newPlayListEditor(self)
-        if obj.__btn_load__() == False:
-            obj.__btn_close__()
+        #newPlayListEditor(self)
+        tab = Tab_PlaylistEditor()
+        tab.addTab( "New Playlist" )
+        tab.setCloseButton()
+        if not tab.btn_click_playlist_load():
+            tab.btn_click_close()
 
     def __Action_shortcut_library__(self):
         obj = MpGlobal.Window.txt_searchBox
@@ -944,6 +958,8 @@ def init_postMainWindow():
         Called immediatley after window.show()
     """
     
+    
+    
     sortLibraryInplace(MpMusic.ARTIST)
     buildArtistList()
     
@@ -969,6 +985,9 @@ def init_postMainWindow():
 
     MpGlobal.Window.txt_debug.setPlainText(MpGlobal.debug_preboot_string)
     MpGlobal.debug_preboot_string = "" 
+    
+    MpGlobal.Window.tab_explorer.load_directory()  
+    MpGlobal.Window.tab_explorer.addTab( "Explorer" )
     
     if len(sys.argv) > 1:   
         session_receive_argument(" ".join(sys.argv[1:]))    # this is yet another Yay Lazy moment, where other code does what i want.

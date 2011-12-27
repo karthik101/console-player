@@ -46,9 +46,16 @@ class LTable_PlayList(LargeTable):
             
     def processDropEvent(self,source,row,data):
         
+        
+        
         if source == self:
             self.__dropEvent_self(row,data)
         else:
+        
+            for item in data: # dropped data must all be songs
+                if not isinstance(item,Song):
+                    return
+                    
             self.data = self.data[:row] + data + self.data[row:]
             self.selection = set( range(row,row+len(data) ) )
             if row < MpGlobal.Player.CurrentIndex:  

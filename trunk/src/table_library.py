@@ -194,8 +194,8 @@ class LTable_Library(SongTable):
     def __Action_Explore__(self):
         sel = self.getSelection()
         path = fileGetPath(sel[0][MpMusic.PATH])
-        MpGlobal.Window.tbl_explorer.__load_Directory__(path)
-        MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_Explorer)
+        MpGlobal.Window.tab_explorer.load_directory(path)
+        MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_explorer.getCurrentIndex())
     
     def __Action_addSelectionToPool(self):
         R = list(self.selection)

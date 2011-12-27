@@ -29,23 +29,29 @@ def event_load_song(filepath):
     for song in MpGlobal.Player.library:
         if song[MpMusic.PATH] == filepath :
             return;
+            
+    song = None
+    
     try:
         song = id3_createSongFromPath(filepath)
-        MpGlobal.Player.library.append(song)
+        
         #todo use .added =%TODAY%
         #MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
         #txtSearch_OnTextChange(".pcnt =0", -1)
         #MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0") 
-        MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
         
-        
+
     except Exception as e:
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Error With Loading Song")
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%filepath)
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%e.args)
-    
+    else:
+        MpGlobal.Player.library.append(song)
+        MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
     # i can get away with posting multiple copies, because only one is saved.    
     MpGlobal.EventHandler.postEndEvent(event_end_load_song);
+    
+    return song
 
 def event_load_folder(folderpath,subfolders=True):
 

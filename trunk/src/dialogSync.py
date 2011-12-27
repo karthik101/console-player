@@ -14,6 +14,7 @@ from datatype_hex64 import *
 from datatype_hex64 import *
 
 
+
 from SystemPathMethods import *
 from SystemDateTime import DateTime
 import widgetProgressBar
@@ -103,18 +104,25 @@ class SyncSongs(QDialog):
         while self.cbox.count() > 0:
             self.cbox.removeItem(0)
         # add items from MpGlobal.Window.editTabs[x] 
-        for x in range(len(MpGlobal.Window.editorTabs)):
-            self.cbox.addItem(MpGlobal.Window.editorTabs[x][0])
+        #for x in range(len(MpGlobal.Window.editorTabs)):
+        #    self.cbox.addItem(MpGlobal.Window.editorTabs[x][0])
+        for i in range(MpGlobal.Window.tabMain.count()):
+        
+            widget = MpGlobal.Window.tabMain.widget( i )
+            
+            if isinstance(widget,Tab_PlaylistEditor):
+                    self.cbox.addItem(widget.name)
+                    
         self.setWindowTitle("Sync Songs to Folder")
         
         self.sbtn.setDisabled(False)
         self.ebtn.setDisabled(True)
         self.edit.setDisabled(False) 
         self.cbox.setDisabled(False)    
-        if len(MpGlobal.Window.editorTabs) == 0 :
-            self.sbtn.setDisabled(True)
-        else:
-            self.sbtn.setDisabled(False)
+        #if len(MpGlobal.Window.editorTabs) == 0 :
+        #    self.sbtn.setDisabled(True)
+        #else:
+        self.sbtn.setDisabled(False)
             
         self.pbar.setValue(0)
         
@@ -162,13 +170,22 @@ class SyncSongs(QDialog):
             return; # return if it is an invalid path
             
         index = self.cbox.currentIndex()
-        obj = None # obj is the list of objects in editorTabs
-        for x in MpGlobal.Window.editorTabs:
-            if x[0] == self.cbox.itemText(index):
-                obj = x
-                break
-                
-        self.data = obj[3].DataSrc[:]
+        #obj = None # obj is the list of objects in editorTabs
+        self.data = []
+        pl_name = self.cbox.itemText(index)
+        for i in range(MpGlobal.Window.tabMain.count()):
+        
+            widget = MpGlobal.Window.tabMain.widget( i )
+            
+            if isinstance(widget,Tab_PlaylistEditor):
+                if widget.name == pl_name:
+                    self.data = widget.playlist
+                    
+        #for x in MpGlobal.Window.editorTabs:
+        #    if x[0] == self.cbox.itemText(index):
+        #        obj = x
+        #        break      
+        #self.data = obj[3].DataSrc[:]
         
         if len(self.data) > 0 :
             self.sbtn.setDisabled(True)
@@ -507,7 +524,7 @@ class SyncFiles(QThread):
             
             # ----------------------------------------------
             s = "Copying %d/%d - %s - %d MB free"
-            p = (self.index,len(self.listc),DateTime.formatTimeDelta(time_remaining),MBfree)
+            p = (self.index,len(self.listc),DateTime.formatTimeDeltams(time_remaining),MBfree)
             self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,s%p)
                         
             # ----------------------------------------------
@@ -526,7 +543,7 @@ class SyncFiles(QThread):
             # get the end time right before the next update
             dt.timer_end();
             try:
-                if bytes > 0 and stime != None:
+                if bytes > 0:
                     delta = dt.usdelta
                     #print delta, float(delta)/bytes, bytes/delta
                     delta = float(delta)/float(bytes)
@@ -536,7 +553,7 @@ class SyncFiles(QThread):
                     else:           byteAvg = bytes
                     time_remaining = byteAvg*rTime #average microseconds per song
                     time_remaining *= (r-self.index) # times the total songs remaining
-                    time_remaining /= 1000.0*1000.0 # to seconds
+                    time_remaining /= 1000 # to milliseconds
             except:
                 pass
             finally:
@@ -604,8 +621,7 @@ class SyncFiles(QThread):
         
         
     
-
-        
+from tab_playlist_editor import *        
      
 if __name__ == '__main__':
     import sys
