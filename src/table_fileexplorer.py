@@ -70,9 +70,7 @@ class TableFileExplorer(widgetTable.Table):
         
         self.manageDriveList()
         self.textEditor.activated.connect(self.__index_Change__)
-        
-        
-        
+         
     def FillTable(self,offset=-1):    
         """fill the table with data, starting at index offset, from the Display Array"""
         R = []
@@ -293,16 +291,7 @@ class TableFileExplorer(widgetTable.Table):
                 
     def __Action_load_song__(self):
         """ add the selected songs to the list of songs to load"""
-        self.cut_folder = ""
-        self.cut_file = []
-        
-        for i in self.selection:
-            f = self.data[i][self.flag]
-            if f != self.f_exists and f != self.f_invalid and f != self.f_pending and self.data[i][self.type] == self.t_mp3:
-                self.data[i][self.flag] = self.f_pending
-                MpGlobal.EventHandler.postEvent(event_load_song,self.data[i][self.path])
-
-        Player_set_unsaved();
+        pass
         
     def __Action_open_dir__(self):
         self.__load_Directory__(self.__act_dir1__)
@@ -336,205 +325,6 @@ class TableFileExplorer(widgetTable.Table):
             self.data.insert(0, [self.t_dir,name, path ,False,None] ) 
             os.mkdir(path);
             self.FillTable();
-    
-    def __Action_Rename_File(self):
-        """
-            Rename a single file or a group of files.
-        """
-        self.cut_folder = ""
-        self.cut_file = []
-        
-        R = list(self.selection)
-        print len(R)
-        fprompt = "";
-        new_name = ""
-
-        #determine the prompt for the new file name
-        if len(R) == 0:  
-            print "No Items Selected to rename"
-            return
-        else:
-            fprompt = fileGetName(self.data[R[0]][self.name])
-        
-        prompt = 'Pattern Rename songs:\ne.g. $art => artist_name\nAll standard search terms apply except dates.'    
-        dialog = dialogRename(fprompt,'Rename File',prompt)  
-        
-        #get the new file name
-        if dialog.exec_():
-                new_name = dialog.edit.displayText();
-        else: 
-            debug("User canceled rename request")
-            return;    
-        
-        # enough for now, this should be expanded into renaming multiple songs
-        # by using the already defined .art .ttl etc. ~ 
-        # then appending incrementing numbers for any colliding songs.
-        
-        # a template song is used to check the pattern renaming, and then
-        # askthe user if this is what they want.
-        template_song = None
-        for row in R: 
-            s = self.data[row][self.song]
-            if s != None:
-                template_song = s;
-                break;
-            # if template_song != None and s != None and template_song != s:
-            #     template_song = None;
-            #     break;  
-            continue;
-            
-        sample = OS_FileName_Correct( MpMusic.expandExifMacro(new_name,'$',template_song) )
-        
-        if sample != new_name: # show a second prompt if the user wants pattern replacement
-            message = 'Songs to Modify: %d\n'%len(R)
-            message += 'Rename Pattern:\n%s\n'%new_name
-            message += 'Sample:\n%s\n'%sample
-            message += 'Continue?:'
-            msgBox = QMessageBox(MpGlobal.Window)
-            msgBox.setWindowTitle('Confirm Rename')
-            msgBox.setIcon(QMessageBox.Question)
-            msgBox.setText(message)
-            #    "Delete Song Confirmation", message,
-             #   QMessageBox.NoButton, self)
-            msgBox.addButton("Rename", QMessageBox.AcceptRole)
-            msgBox.addButton("Cancel", QMessageBox.RejectRole)
-            
-            if msgBox.exec_() != QMessageBox.AcceptRole:
-                debug("Rename Request Canceled By User")
-                return;
-        #
-        filepath = self.__act_dir2__ # root path is the same for all selected songs
-        
-        for row in R:
-
-            song = self.data[row][self.song]
-            
-            if song == None:
-                continue;
-                
-            if song == MpGlobal.Player.CurrentSong:
-                debug("File is currently in use")
-                continue;
-
-            fileext  = fileGetExt(self.data[row][self.name])
-            
-            name = MpMusic.expandExifMacro(new_name,'$',song)
-            
-            name = OS_FileName_Correct(name).strip() # strip illegal characters with a sudo whitlist
-            
-            if name != '':
-                path = os.path.join(filepath,name+'.'+fileext)
-                
-                debug(path)
-
-                if path != "" and not os.path.exists(path):
-                    self._rename_file_(row,song[MpMusic.PATH],path)
-            
-        return;
-        Player_set_unsaved();
-        
-    def __Action_Rename_Folder(self):
-        
-        #print "Current Folder: %s"%self.currentPath
-        #print "Target  Folder: %s"%self.__act_dir1__ 
-        #print "Working Folder: %s"%self.__act_dir2__ 
-        #print "Renaming: %s"%self.__act_dir2__
-        
-        self.cut_folder = ""
-        self.cut_file = []
-        
-        R = [] # list of songs in the target folder, and all sub folders
-        
-        folder_path = self.__act_dir1__   # root path to change
-        root_path = self.__act_dir2__
-        #TODO UNIX PATH CORRECT on root_path
-        if isPosix:
-            root_path = UnixPathCorrect(root_path)
-        
-        if root_path == "" or not os.path.exists(root_path):
-            debug("Error Path Does Not Exist on File System:\n%s\n"%root_path)
-            return;
-            
-        dirlist = [self.__act_dir1__, ]
-        
-        # this loop will gather all songs in the current library
-        # that exist in child folders of the selected folder from the explorer window
-        flag_AccessError = False # can't rename a folder if a child song is in use
-        while len(dirlist) > 0:
-            path = dirlist.pop()
-            dir = os.listdir(path)
-            
-            for fname in dir:
-                temppath = os.path.join(path,fname)
-                # append new folders to the pathlist
-                # append files to the file list
-                tempsong = None
-                #TODO reset checkattrib
-                if os.path.isdir(temppath) :#and dirCheckAttribNormal(temppath):
-                    dirlist.append( temppath )
-                elif pathMatchExt(fname): # file is a playable song file
-
-                    for song in MpGlobal.Player.library:
-                        if comparePath(song[MpMusic.PATH],temppath) :
-                            #print song
-                            R.append(song)
-                            if song == MpGlobal.Player.CurrentSong:
-                                flag_AccessError = True;
-                            break;
-                    MpGlobal.Application.processEvents();
-                    
-            debug("%d Folders remaining"%len(dirlist))
-        print " %d Songs will be affected"%len(R) 
-        
-        
-        
-        if flag_AccessError:
-            debug("File is currently in use")
-            return;
-        
-        # get the new folder name, and whether the user will commit to this 
-        
-        dialog = dialogRename(self.data[self.__act_row__][1],"Rename Folder")
-        
-        if dialog.exec_():
-            print "accepted"
-        else: 
-            flag_AccessError = True
-        
-        new_name = dialog.edit.displayText();
-        
-        print flag_AccessError, new_name
-        
-        if flag_AccessError:
-            debug("User canceled rename request")
-            return;
-
-        new_path = os.path.join(root_path,new_name)
-        
-        print "New Name: %s"%new_path
-        
-        try:
-        
-            os.rename(folder_path,new_path)
-        
-        except Exception as e:
-            for i in e:
-                debug("%s"%str(i))
-                
-        else:
-            print "folder renamed..."
-            self.data[self.__act_row__][1] = new_name;
-            for song in R:
-                song_path = song[MpMusic.PATH][len(folder_path):]
-                # on unix/POSIX the player will do a PATHFIX then next time it is played
-                song[MpMusic.PATH] = new_path+song_path
-                print song[MpMusic.PATH]
-        
-        finally:
-            self.FillTable()
-        
-        Player_set_unsaved();
-        return;
     
     def __Action_cut_file(self):
         self.cut_folder = ""
@@ -701,9 +491,7 @@ class dialogRename(QDialog):
         
         self.edit.setText(text)
         
-        
-
-        
+       
 from MpGlobalDefines import *
 from Song_Object import Song
 from datatype_hex64 import *

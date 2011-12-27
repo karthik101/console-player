@@ -58,8 +58,8 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
     def __Action__EXPLORE__(self):
         if MpGlobal.Player.CurrentSong != None:
             path = fileGetPath(MpGlobal.Player.CurrentSong[MpMusic.PATH])
-            MpGlobal.Window.tbl_explorer.__load_Directory__(path)
-            MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_Explorer) 
+            MpGlobal.Window.tab_explorer.load_directory(path)
+        MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_explorer.getCurrentIndex())
     def __Action_searchARTIST__(self):
         if MpGlobal.Player.CurrentSong != None:
             s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
