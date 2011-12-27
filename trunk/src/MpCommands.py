@@ -1073,10 +1073,10 @@ def cmd_xx(input):
         
         
     if input.DecVal[0] == 6 : #xx 6
-        tab = Tab_Explorer()
-        tab.setIcon(MpGlobal.icon_Folder)
-        tab.addTab( "Explorer" )
-        #tab.setCloseButton()
+        tab = Tab_QuickSelect()
+        #tab.setIcon(MpGlobal.icon_Folder)
+        tab.addTab( "Quick" )
+        tab.setCloseButton()
         
         
     if input.DecVal[0] == 7 : #xx 7
@@ -1549,6 +1549,7 @@ from Song_Search import *
 from xml_parser import *  
 from tab_playlist_editor import Tab_PlaylistEditor
 from tab_explorer import Tab_Explorer
+from tab_quickselect import *
 import dialogSync       
      
 StringParse.D_StrToDec = MpMusic.D_StrToDec     

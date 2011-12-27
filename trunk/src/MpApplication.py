@@ -43,8 +43,6 @@ from widgetLargeTable import LargeTable
 from table_playlist import *
 from table_library import *
 from table_quickselect import *
-from table_playlisteditor import *
-from table_fileexplorer import *
 from table_external import *        #TODO i don't think this is used at all anymore
 from tab_explorer import * 
 from tab_playlist_editor import * 
@@ -245,7 +243,7 @@ class MainWindow(QMainWindow):
         
         self.tbl_playlist = LTable_PlayList(self) #TablePlayList(self)
         self.tbl_library = LTable_Library(self)#TableLibrary(Settings.LIB_COL_ID, Settings.LIB_COL_ACTIVE, parent=self)
-        
+        self.tbl_library.columns_setOrder(Settings.LIB_COL_ID)
         self.vbox_playlist.insertWidget(5,self.tbl_playlist.container)
         
         self.tab_library.addWidget(self.tbl_library.container)
@@ -745,21 +743,21 @@ class MainWindow(QMainWindow):
         MpGlobal.Window.splitter.setSizes([r,w])
          
     def __Action_New_PlayList__(self):
-        """ Create a new playlist editor and
-            immediatley prompt the user to open one
+        """ Create a new playlist editor
         """
         tab = Tab_PlaylistEditor()
         tab.addTab( "New Playlist" )
         tab.setCloseButton()
+        tab.switchTo()
             
     def __Action_Load_PlayList__(self):
         """ Create a new playlist editor and
-            immediatley prompt the user to open one
+            immediatley prompt the user to open A LIST
         """
-        #newPlayListEditor(self)
         tab = Tab_PlaylistEditor()
         tab.addTab( "New Playlist" )
         tab.setCloseButton()
+        tab.switchTo()
         if not tab.btn_click_playlist_load():
             tab.btn_click_close()
 
@@ -1107,158 +1105,7 @@ def init_MenuBar(window):
         window.act_view_statusbar.setIcon(MpGlobal.icon_Check)
         
         window.act_pMode_pb1.setIcon(MpGlobal.icon_Check)
-    
-def newPlayListEditor(MainWindow,name = "PlayList Editor"):
-        # #######################################################
-        # create the objects
-        pagem  = VPage()
-        #pagel = VPage(pagem)
-        #pager = VPage(pagem)
         
-        id = 0;
-        for item in MpGlobal.Window.editorTabs:
-            id = max(id,item[5])
-        id += 1
-        
-        if name == "PlayList Editor":
-            name += " (%d)"%id
-            
-        #index = MainWindow.tabMain.addTab(pagem,MpGlobal.icon_file,name)
-        index = MainWindow.tabMain.addTab(pagem,name)
-        
-        
-        #vbox = QVBoxLayout(page)
-        #vboxl = QVBoxLayout(pagel)
-        #vboxr = QVBoxLayout(pager)
-        
-        hbox = QHBoxLayout()
-        edit = LineEdit(pagem)
-        btn1 = QPushButton(MpGlobal.icon_open,"",pagem)
-        btn2 = QPushButton(MpGlobal.icon_save,"",pagem)
-        #btn3 = QPushButton(MpGlobal.icon_AutoPLO,"",pagem) 
-        btn4 = QPushButton("Play",pagem) 
-        btnX = CloseTabButton(MainWindow);
-        
-        
-        #hbox.addWidget(btn3) # close
-        hbox.addWidget(btn1) # open
-        hbox.addWidget(btn2) # save
-        hbox.addWidget(edit)
-        hbox.addWidget(btn4) # play   
-        MainWindow.tabMain.tabBar().setTabButton (index,QTabBar.LeftSide,btnX)
-        
-        
-        splitter = QSplitter(pagem)
-        
-        #lname = "Left_%d"%len(MainWindow.editorTabs)
-        #rname = "Right_%d"%len(MainWindow.editorTabs)
-        lname = "Left"
-        rname = "Right"
-        
-        tbl_left = TablePLEditor(pagem,lname,rname)
-        tbl_rite = TablePLEditor(pagem,rname,lname)
-        
-        # #######################################################
-        # add widgets to the containers
-        pagem.addLayout(hbox)
-        pagem.addWidget(splitter)
-
-        #pagel.addWi()
-        #pager.addLayout()
-        
-        splitter.addWidget(tbl_left.container)
-        splitter.addWidget(tbl_rite.container)
-        # #######################################################
-        # Connect Signals and init the new Tab
-        # each tab has a copy of the library to work with
-        # data can be moved from the left or right table
-        tbl_left.UpdateTable(0,)
-        
-        tbl_left.setTables(tbl_rite)
-        tbl_rite.setTables(tbl_left)
-        
-        # create the two data pools, 
-        # these will be searched then sorted and displayed
-        
-        leftData = sortLibrary(MpMusic.ARTIST)
-        riteData = []
-        
-        tbl_left.setDataSrc(leftData)
-        tbl_rite.setDataSrc(riteData)
-        
-        tbl_left.setOtherDataSrc(riteData)
-        tbl_rite.setOtherDataSrc(leftData)
-        
-        tbl_left.setTextEdit(edit)
-        tbl_rite.setTextEdit(edit)
-        
-        edit.textEdited.connect(tbl_left.__text_edit__)
-        btn1.clicked.connect(tbl_left.__btn_load__)
-        btn2.clicked.connect(tbl_left.__btn_save__)
-        #btn3.clicked.connect(tbl_left.__btn_close__)
-        btn4.clicked.connect(tbl_left.__btn_play__)
-        
-        tbl_left.runSearchUpdate("")    # update and show all
-        tbl_rite.runSearchUpdate("")
-        #tbl_left.UpdateTable(0,tbl_left.DataSrc)
-        #tbl_rite.oTable.UpdateTable(0,tbl_rite.oDataSrc)
-
-        tbl_rite.isRight = True # the right table is the playlist
-        
-        btn1.setFixedWidth(32)
-        btn2.setFixedWidth(32)
-        #btn4.setFixedWidth(48)
-
-        # #######################################################
-        # save a record of the new Tab
-        
-        object = [name,edit,tbl_left,tbl_rite,index,id,pagem,splitter]
-        tbl_left.setObjectList(object)
-        tbl_rite.setObjectList(object)
-        
-        MpGlobal.Window.tabMain.setCurrentIndex(index)
-        MpGlobal.Window.tabMain.tabBar().setTabData(index,tbl_left)
-        
-        #TODO set btnX callBack
-        btnX.setCallback(tbl_left.__btn_close__)
-        
-        MainWindow.editorTabs.append( object )
-        
-        return tbl_left
-
-def newFileExplorerTab(self,path="C:\\"):
-        # #######################################################
-        # create the objects
-        pagem = VPage(self)
-        
-        
-        hbox = QHBoxLayout()
-        cbox = QComboBox(pagem)
-        cbox.setEditable(True)
-        pbtn = QPushButton(pagem)
-        pbtn_go = QPushButton("Open",pagem)
-        
-        self.tbl_explorer = TableFileExplorer(pagem,cbox)
-
-        index = self.tabMain.addTab(pagem,MpGlobal.icon_Folder,"Explorer")    
-        self.tabMain.setIconSize(QSize(16,16))
-        hbox.addWidget(pbtn)
-        hbox.addWidget(cbox)
-        hbox.addWidget(pbtn_go)
-        
-        pagem.addLayout(hbox)
-        pagem.addLayout(self.tbl_explorer.container)
-        
-        pbtn.setFixedWidth(20)
-        pbtn_go.setFixedWidth(48)
-        
-        pbtn.setObjectName("MpExplorer_Back")
-        
-        pbtn.clicked.connect(self.tbl_explorer.__Goto_ParentDir__)
-        pbtn_go.clicked.connect(self.tbl_explorer.__Goto_NewDir__)
-  
-
-    
 def txtSearch_KeyBoardRelease(event=None):
     super(QLineEdit,MpGlobal.Window.txt_searchBox).keyPressEvent(event)
     #print ">"
@@ -1511,3 +1358,4 @@ from UnicodeTranslate import Translate
 from dialogNewPlayList import *  
 from dialogHelp import helpDialog     
 from MpEventMethods import *        
+from MpPlayerThread import MediaPlayerThread

@@ -42,9 +42,22 @@ class Application_Tab(QWidget):
         self.name = name
     
     def setIcon(self,icon):
-        self.icon = icon
-        #TODO: check if set and update icon
+        self.icon = icon #TODO: check if added to tab bar and update icon
+       
+    def switchTo(self):
+        """ switch focus to this tab"""
+        index = self.getCurrentIndex()
+        
+        MpGlobal.Window.tabMain.setCurrentIndex( index )
+     
+    def setName(self,name):
     
+        index = self.getCurrentIndex()
+        
+        MpGlobal.Window.tabMain.setTabText ( index, name )
+        
+        self.name = name
+     
     def getCurrentIndex(self):
         """
             return the current index of the tab in the main tab bar
@@ -68,10 +81,11 @@ class Application_Tab(QWidget):
             self.btn_close.setCallback(self.btn_click_close)
             return True
           
-    def btn_click_close(self,bool=False):
-        print "close me" 
-
+    def btn_click_close(self,bool=False):   
     
+        index = self.getCurrentIndex()
+        MpGlobal.Window.tabMain.removeTab( index )
+ 
 class CloseTabButton(QPushButton):
     """
         callBack is the function to run when clicked

@@ -34,7 +34,17 @@ class Item_Base(list):
         
         self.path = path
         self.type = ""
-
+        
+    def __setattr__(self,name,value):
+        if name == "name":
+            self[self.index_name]= value
+        elif name == "icon":
+            self[self.index_icon]= value
+        elif name == "song":
+            self[self.index_song]= value
+        else:
+            self.__dict__[name] = value
+            
     def __getattr__(self,attr):
         if attr == "name":
             return self[self.index_name]
@@ -85,8 +95,8 @@ class Tab_Explorer(Application_Tab):
         self.btn_back = QPushButton("Back")
         self.btn_open = QPushButton("Open")
         
-        self.btn_back.setFixedWidth(30)#setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Minimum)
-        self.btn_open.setFixedWidth(30)#setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Minimum)
+        self.btn_back.setFixedWidth(50)#setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Minimum)
+        self.btn_open.setFixedWidth(50)#setSizePolicy(QSizePolicy.Minimum,QSizePolicy.Minimum)
         
         self.table = Table_Explorer(self)
         
@@ -108,6 +118,8 @@ class Tab_Explorer(Application_Tab):
         self.edit.activated.connect(self.edit_change_index)
         self.btn_back.clicked.connect(self.btn_clicked_back)
         self.btn_open.clicked.connect(self.btn_clicked_open)
+        
+        self.vbox.setMargin(0)
     
     def lock(self):
         """ prevent directory change"""
@@ -142,44 +154,57 @@ class Tab_Explorer(Application_Tab):
         """
         g = lambda item: unicode(item)
         
-        #set default item to '..' to enable going up one level or empty string
+        #set default item to '..' to enable going up one level or empty string when path is parent path (root dir)
         default_item = [Item_Folder("..",".."),] if path != fileGetParentDir(path) else []
 
         data = []
-           
+        song_item_list = []   
         self.table.updateTable(0)        
         
         try:
-            
-            
+
             R = os.listdir(path)
             
         except:
-            pass
+            print "cannot access <%s>"%path
             
         else:
             count = 0;
+
             for fname in R:
                 temppath = os.path.join(self.directory,fname)
                 
                 if os.path.isdir(temppath) :
                     data.append( Item_Folder(fname,temppath) )
                 else:
-                    song = None
+                    item = Item_File(fname,temppath) 
                     if pathMatchExt(temppath):
-                        for s in MpGlobal.Player.library:
-                            if comparePath(temppath,s[MpMusic.PATH]):
-                                song = s
-                    data.append( Item_File(fname,temppath,song) )
+                        song_item_list.append(item)
+                    data.append( item )
                     
                 count += 1
-                if count%5==0:
-                    data.sort(key=g)
+                if count%10==0:
+                    #data.sort(key=g)
                     self.table.updateTable(-1,default_item + data)
-                    
-                    #QThread.msleep(20)
+  
         finally:   
             data.sort(key=g)
+            
+            for song in MpGlobal.Player.library:
+                if len(song_item_list) == 0:
+                    break;
+                    
+                temp_item = None
+                
+                for item in song_item_list:
+                    if comparePath(item.path,song[MpMusic.PATH]):
+                        item.song = song
+                        temp_item = item
+                        break
+                        
+                if temp_item != None:
+                    song_item_list.remove(temp_item)
+            
             self.table.updateTable(-1,default_item + data)
     
     def manageDriveList(self):
@@ -248,7 +273,6 @@ class Tab_Explorer(Application_Tab):
         row_item.song = event_load_song(row_item.path)
         self.update();
 
-     
 class Table_Explorer(LargeTable):
     
     def __init__(self,parent):
@@ -275,6 +299,7 @@ class Table_Explorer(LargeTable):
         g = lambda row,item: u"%r"%item
         
         c1.setTextTransform( g )
+        c1.setEnableResize( False )
         c1.width = 18
         
         self.columns.append(c1)
