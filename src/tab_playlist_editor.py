@@ -76,6 +76,10 @@ class Tab_PlaylistEditor(Application_Tab):
         self.vbox.addLayout(self.hbox_main)
         self.vbox.addWidget(self.splitter)
         
+        self.vbox_l.setMargin(0)
+        self.vbox_r.setMargin(0)
+        self.vbox.setMargin(0)
+
         
         
         # -----------------------------------------
@@ -96,11 +100,13 @@ class Tab_PlaylistEditor(Application_Tab):
         self.btn_play.clicked.connect(self.btn_click_playlist_play)
         
         self.table_library.setData(self.library)
+        
+        self.setLabels()
   
     def setLabels(self):
         self.setFileSize()
         
-        self.lbl_count_l.setText("%d/%d/%d"%(len(self.library_display),len(self.library),len(MpGlobal.Player.library)))
+        self.lbl_count_l.setText("%d/%d [%d]"%(len(self.library_display),len(self.library),len(MpGlobal.Player.library)))
         self.lbl_count_r.setText("%d/%d %dMB"%(len(self.playlist_display),len(self.playlist),self.filesize))
         
     def runSearch(self,text=None):
@@ -138,12 +144,7 @@ class Tab_PlaylistEditor(Application_Tab):
         self.table_playlist.selection = set()
         
         self.runSearch(text)
-        
-    def changeName(self,name):
-        self.name = name
-        # update my tab
-        print self.name
-    
+            
     def setFileSize(self):
         self.filesize = 0    
         for item in self.playlist:
@@ -165,7 +166,7 @@ class Tab_PlaylistEditor(Application_Tab):
                 self.playlist = S
                 self.setLabels()
                 self.runSearch()
-                QThread.msleep(100)
+                QThread.msleep(10)
             
             for i in range(len(R)):
                 if S[j] == R[i]:
@@ -175,19 +176,19 @@ class Tab_PlaylistEditor(Application_Tab):
         
         self.library = R
         self.playlist = S
-        
+        self.setLabels()
         self.runSearch()
 
     def btn_click_playlist_load(self,bool=False):
         
         path = QFileDialog.getOpenFileName(MpGlobal.Window,
                 "Open Playlist File",
-                MpGlobal.installPath+"playlist/",
+                os.path.join(MpGlobal.installPath,"playlist",self.name+'.m3u'),
                 "M3U Files (*.playlist)")
         
         if path != "":
             name = fileGetName(path)
-            self.changeName(name)
+            self.setName(name)
             
             #self.playlist_load(path)
             self.event_manager.postEvent(self.playlist_load,path)
@@ -199,13 +200,13 @@ class Tab_PlaylistEditor(Application_Tab):
     
         path = QFileDialog.getSaveFileName(MpGlobal.Window,
             "Save Playlist File",
-            MpGlobal.installPath+"playlist/",
+            os.path.join(MpGlobal.installPath,"playlist",self.name+'.m3u'),
             "M3U Files (*.playlist)")
             
         if path != "":
             playListSave(path,self.playlist) 
             name = fileGetName(path)
-            self.changeName(name)
+            self.setName(name)
             return True
         else:
             return False    
@@ -233,19 +234,7 @@ class PLETable_base(SongTable):
         
         self.column_changed_signal.connect(self.columns_changed)
         self.column_header_resize.connect(self.columns_resized) #TODO: i should probably remove this
-        
-    def deleteSelection(self):
-        sel = self.getSelection()
-        sel_list = list(self.selection) # get the list of selection indexes
-        sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one
-        
-        for i in sel_list:
-            self.data.pop(i)
-         
-        self.selection = set()
-        self._sbar_ver_setrange()
-        self.update()
-    
+
     def sortColumn(self,col_index):
         """
             when a column is sorted both tables must be sorted and updated
@@ -267,7 +256,15 @@ class PLETable_library(PLETable_base):
         table to display songs remaining in the library
     """
     
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("data/list") and event.source()==self.parent.table_playlist:
+            event.accept()
+        else:
+            event.ignore()
+            
     def processDropEvent(self,source,row,data):
+        if source != self.parent.table_playlist:
+            return
         self.parent.library += data
         
         sortList(self.parent.library,self.parent.sort_index,self.parent.sort_direction==-1)
@@ -275,8 +272,7 @@ class PLETable_library(PLETable_base):
         self.parent.table_playlist.deleteSelection()
     
         self.parent.runSearch()
-    
-    
+
     def columns_changed(self):
         order = self.columns_getOrder()
         self.parent.table_playlist.columns_setOrder(order)
@@ -286,12 +282,28 @@ class PLETable_library(PLETable_base):
             self.parent.table_playlist.columns[i].width = self.columns[i].width
         self.parent.table_playlist.update()    
     
+    def deleteSelection(self):
+        sel = self.getSelection()
+
+        for row in sel:
+            self.parent.library.remove(row)
+         
+        self.selection = set()
+    
 class PLETable_playlist(PLETable_base):  
     """
         table to display songs in the playlist
     """
-
+    
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("data/list") and event.source()==self.parent.table_library:
+            event.accept()
+        else:
+            event.ignore()
+            
     def processDropEvent(self,source,row,data):
+        if source != self.parent.table_library:
+            return
         self.parent.playlist += data
         
         sortList(self.parent.playlist,self.parent.sort_index,self.parent.sort_direction==-1)
@@ -309,6 +321,14 @@ class PLETable_playlist(PLETable_base):
             self.parent.table_library.columns[i].width = self.columns[i].width
         self.parent.table_library.update()  
         
+    def deleteSelection(self):
+        sel = self.getSelection()
+
+        for row in sel:
+            self.parent.playlist.remove(row)
+         
+        self.selection = set()
+    
 from MpSort import *
         
 from MpGlobalDefines import *
