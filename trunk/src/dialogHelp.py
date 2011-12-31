@@ -13,7 +13,6 @@ from Song_Search import *
 import MpScripting
 import MpCommands
 
-
 class helpDialog(QDialog):
     def __init__(self,parent=None):
         super(QDialog,self).__init__(parent)
@@ -45,7 +44,7 @@ class helpDialog(QDialog):
 
         
         prompt_start = self.docToHtml(ReadableDocs(MpApplication.MainWindow))
-        prompt_quick = self.docToHtml(ReadableDocs(table_quickselect.TableQuickSelect))
+        prompt_quick = self.docToHtml(ReadableDocs(tab_quickselect.Table_Quick))
         prompt_list = self.docToHtml(ReadableDocs(table_playlist.TablePlayList))
         
         prompt_search = self.docToHtml(ReadableDocs(SearchObject))
@@ -169,9 +168,8 @@ from MpScripting import *
  
 import  MpApplication
 import  table_playlist 
-import  table_library 
-import  table_quickselect  
-  
+import  table_library   
+import tab_quickselect   
   
 if __name__ == "__main__":
 

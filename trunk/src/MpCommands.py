@@ -30,7 +30,7 @@ def initCommandList():
               "cont"      : cmd_cont,
               "stop"      : cmd_stop,
               "state"     : cmd_state,
-              "time"     : cmd_time,
+              "time"      : cmd_time,
               "volume"    : cmd_volume,
               "vol"       : cmd_volume,
 
@@ -434,13 +434,31 @@ def cmd_time(input):
         Command: TIME
         Usage: time <int>
         
-        set the time to TIME.
+        set the time to TIME for the current song, in seconds.
         
-        TODO: allow relative time with -r flag (10 is +10 seconds
-        TODO: allow percentage of time with -p (33 -> 1/3rd of the song)
+        time can be formatted as absolute seconds
+            e.g. 170 => 2 minutes and 50 seconds
+        or can be formatted in hh:mm::ss
+            e.g. 2:50 => 2 minutes and 50 seconds
+        
     """
+    
     if input.hasDecVal:
-        MpGlobal.Player.setTime( input.DecVal[0] )
+        value =  input.DecVal[0] 
+    if input.hasDecVal:    
+        value = DateTime.parseTimeDelta(input.StrVal[0]) 
+        
+    song = MpGlobal.Player.getCurrentSong()    
+    
+    if song != None:
+        if 'r' in input.Switch:
+            value = song[MpMusic.LENGTH] + value # value can be negative - TODO allow value to be negative
+        if 'p' in input.Switch:
+            value = int ( (value/100.0) * song[MpMusic.LENGTH] )
+            
+    MpGlobal.Player.setTime(value)   
+    
+    return COMMAND.VALID   
 def cmd_volume(input):
     """
         Command: VOLUME
@@ -1105,9 +1123,8 @@ def cmd_xx(input):
         #test[MpMusic.ALBUM] = "Test ALBUM"
         #id3_updateSongInfo(test)
         for song in MpGlobal.Player.library:
-            id3_updateSongInfo(song)
-            MpGlobal.Application.processEvents();
-        debug("Done.");
+            MpGlobal.EventHandler.postEvent(id3_updateSongInfo,song)
+        MpGlobal.EventHandler.postEvent(debug,"Done Tag Update")    
     if input.DecVal[0] == 11 : #xx 11   
         h = helpDialog();
         h.show();
@@ -1536,6 +1553,7 @@ from datatype_hex64 import *
 
 
 from SystemPathMethods import *
+from SystemDateTime import *
 from Song_MutagenWrapper import *
 from UnicodeTranslate import Translate
 from MpEventHook import initHook,disableHook

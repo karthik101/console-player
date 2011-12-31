@@ -18,7 +18,10 @@ from SystemPathMethods import *
 from App_EventManager import *
 
 from tab_base import *
-
+"""
+    TODO on click up one level:
+        select the current folder when the parent flder is finished loading use scrollTo()
+"""
 class Item_Base(list):
     """
         A LargeTable expects a 2D list of data
@@ -110,7 +113,7 @@ class Tab_Explorer(Application_Tab):
         self.edit.setEditable(True)
         
         self.directory = "C:\\"
-        
+        self.load_finished_select_directory = ""
         self.chdir_lock = False
         
         self.manageDriveList()
@@ -120,6 +123,7 @@ class Tab_Explorer(Application_Tab):
         self.btn_open.clicked.connect(self.btn_clicked_open)
         
         self.vbox.setMargin(0)
+        
     
     def lock(self):
         """ prevent directory change"""
@@ -138,6 +142,7 @@ class Tab_Explorer(Application_Tab):
         self.table.selection = []
         
         if dir == "..":
+            self.load_finished_select_directory = self.directory
             self.directory = fileGetParentDir(self.directory)
         elif dir != "":    
             self.directory = dir
@@ -204,9 +209,17 @@ class Tab_Explorer(Application_Tab):
                         
                 if temp_item != None:
                     song_item_list.remove(temp_item)
+                    
             
             self.table.updateTable(-1,default_item + data)
-    
+            
+            for i in range(len(self.table.data)):
+                item = self.table.data[i]
+                if item.path ==  self.load_finished_select_directory:
+                    self.table.selection = {i,}
+                    self.table.scrollTo(i)
+                    break;
+                    
     def manageDriveList(self):
     
         drives = systemDriveList()
@@ -238,6 +251,9 @@ class Tab_Explorer(Application_Tab):
             
     def btn_clicked_back(self,bool):
         path = fileGetParentDir(self.directory)
+        
+        self.load_finished_select_directory = self.directory
+        
         if os.path.isdir(path) and not self.isLocked():
             self.load_directory(path)
             
@@ -507,7 +523,6 @@ class Table_Explorer(LargeTable):
         else: 
             print "User canceled rename request"
             return; 
-  
         
 class dialogRename(QDialog):
 
