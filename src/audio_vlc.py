@@ -206,7 +206,9 @@ else:
                 return MP_UNKOWN
         def setVolume(self,value):
             if self.__player__ != None:
-                self.__player__.audio_set_volume(value)
+                temp = int( (value/100.0) * 60.0 )
+                temp = max(1,temp)
+                self.__player__.audio_set_volume(temp)
                 self.volume = value
         def getVolume(self):
             # return the current volume as a value from 0 (off or mute) to 100 (full on)

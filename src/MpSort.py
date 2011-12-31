@@ -35,8 +35,8 @@ def sort_parameter_str(song,index):
         check to see if the string starts with certain words,
         and remove them
     """
-    s = unicode(song[index])
-    if s.lower()[0:4] == "the ":
+    s = song[index]
+    if s.lower().startswith("the "):
         return s[4:]
     return s
     

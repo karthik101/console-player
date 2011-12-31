@@ -224,7 +224,7 @@ def fromGuiSetSelection():
         if data[1]:
             R.append(data[0])
             data[1] = False
-    MpGlobal.Window.tbl_quicklist.FillTable(0)
+    #MpGlobal.Window.tbl_quicklist.FillTable(0)
     if len(R) > 0:
         MpGlobal.Player.selCount = 0
         for song in MpGlobal.Player.library:
@@ -324,7 +324,7 @@ def buildArtistList(minimum=2):
     R.sort(key = k, reverse=False )
     
     MpGlobal.Player.quickList = R
-    MpGlobal.Window.tbl_quicklist.UpdateTable(0,MpGlobal.Player.quickList)
+    #MpGlobal.Window.tbl_quicklist.UpdateTable(0,MpGlobal.Player.quickList)
     
 def getStatistics():
     c_ply=0 # total play count

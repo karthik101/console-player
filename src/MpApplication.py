@@ -42,7 +42,6 @@ from widgetLargeTable import LargeTable
 
 from table_playlist import *
 from table_library import *
-from table_quickselect import *
 from table_external import *        #TODO i don't think this is used at all anymore
 from tab_explorer import * 
 from tab_playlist_editor import * 
@@ -74,8 +73,7 @@ class MainWindow(QMainWindow):
     """
     tbl_playlist=None;
     tbl_library=None;
-    tbl_explorer=None;
-    tbl_quicklist = None;
+
     btn_playstate = None;
     
     tab_Explorer = 2 
@@ -148,8 +146,7 @@ class MainWindow(QMainWindow):
         self.init_DisplayTables()
         
         self.init_StatusBar()
-        self.init_Gui()
-        
+
         #self.dialogSongEdit = dialogSongEdit.SongEditWindow(self)
         self.syncDialogObj = None #dialogSync.SyncSongs(self)
         
@@ -167,9 +164,11 @@ class MainWindow(QMainWindow):
         # set up keyboard shortcuts
         #
         
+        self.tab_quickselect = Tab_QuickSelect()
+        self.tab_quickselect.setIcon(MpGlobal.icon_favpage)
+        
         self.tab_explorer = Tab_Explorer()
         self.tab_explorer.setIcon(MpGlobal.icon_Folder)
-        
         
         
             
@@ -425,8 +424,7 @@ class MainWindow(QMainWindow):
         self.xcut_fconsole.activated.connect(self.__Action_shortcut_console__)
         self.xcut_flibrary.activated.connect(self.__Action_shortcut_library__)
         self.xcut_togdebug.activated.connect(self.__Action_shortcut_toggle_debug__)
-
-        
+  
     def sizeHint(self):
         return QSize(660, 305)
     
@@ -548,66 +546,7 @@ class MainWindow(QMainWindow):
 
                 Player_set_unsaved();
                 
-    def init_Gui(self): 
-        pagem  = VPage(self)
-        hbox = QHBoxLayout()
-        table  = TableQuickSelect(pagem)
-        self.tbl_gui = table
-        cbox1 = QComboBox(pagem)
-        cbox2 = QComboBox(pagem)
-        cbox3 = QCheckBox("reverse",pagem)
-        sbox1 = QSpinBox(pagem)
-        pbtn1 = QPushButton("Clear Selection",pagem)
-        pbtn2 = QPushButton("Create",pagem)
-        
-        hbox.addWidget(cbox1)
-        hbox.addWidget(cbox2)
-        hbox.addWidget(cbox3)
-        hbox.addWidget(sbox1)
-        hbox.addWidget(pbtn1)
-        hbox.addWidget(pbtn2)
-        
-        pagem.addLayout(hbox)
-        pagem.addWidget(QLabel("Create a new playlist by selecting artists then clicking 'Create'.",self))
-        pagem.addLayout(table.container)
-    
-        self.tabMain.insertTab(1,pagem,MpGlobal.icon_favpage,"Quick Selection")
-        self.tbl_quicklist = table
-        
-        cbox1.addItem("Display: Song Count")
-        cbox1.addItem("Display: Play Count")
-        cbox1.addItem("Display: Play Time")
-        cbox1.addItem("Display: Listen Time")
-        cbox1.addItem("Display: Frequency")
-        cbox1.addItem("Display: Rating Count")
-        cbox1.addItem("Display: Count of Rated songs")
-        
-        cbox2.addItem("Sort by: Artist")
-        cbox2.addItem("Sort by: Song Count")
-        cbox2.addItem("Sort by: Play Count")
-        cbox2.addItem("Sort by: Play Time")
-        cbox2.addItem("Sort by: Listen Time")
-        cbox2.addItem("Sort By: Frequency")
-        cbox2.addItem("Sort By: Rating Count")
-        cbox2.addItem("Sort By: Count of Rated songs")
-        
-        sbox1.setRange(0,5)
-        sbox1.setFixedWidth(32)
-        sbox1.setToolTip("Set Minimum Rating")
-        
-        table.cbox1 = cbox1
-        table.cbox2 = cbox2
-        table.cbox3 = cbox3
-        table.sbox1 = sbox1
-        
-        cbox1.currentIndexChanged[int].connect(table.__CBOX_CHANGE_DISPLAY__)
-        cbox2.currentIndexChanged[int].connect(table.__CBOX_SORT_DISPLAY__)
-        cbox3.stateChanged[int].connect(table.__CHECK_STATE_CHANGE__)
-        sbox1.valueChanged[int].connect(table.__SBOX_Value_Changed__)
-        pbtn1.clicked.connect(table.clearSelection)
-        pbtn2.clicked.connect(table.newPushed)
-        #c_rte=0 # combined rating
-        #c_rct=0 # count of songs rated
+
     def setTheme(self,name='default'):
         D = style_set_custom_theme(MpGlobal.installPath,name,MpGlobal.Application)
         self.set_colorFromCssDict(D)
@@ -720,14 +659,17 @@ class MainWindow(QMainWindow):
         
         #self.tbl_library.brush_special = QBrush(self.style_dict["color_special2"])
         
-        self.tbl_gui.brush_selected = QBrush(self.style_dict["color_special2"])
-        self.tbl_gui.brush_selectedOOF = QBrush(self.style_dict["color_special2"])
-        self.tbl_gui.brush_text_default = QBrush(self.style_dict["text_color"])
-        self.tbl_gui.brush_text_favorite = QBrush(self.style_dict["text_important2"])
-        
         self.tab_explorer.table.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
         
         self.dsp_info.brush_barfill = QBrush(self.style_dict["text_important1"])
+        
+        # do not need any of the following
+        #self.tbl_gui.brush_selected = QBrush(self.style_dict["color_special2"])
+        #self.tbl_gui.brush_selectedOOF = QBrush(self.style_dict["color_special2"])
+        #self.tbl_gui.brush_text_default = QBrush(self.style_dict["text_color"])
+        #self.tbl_gui.brush_text_favorite = QBrush(self.style_dict["text_important2"])
+        
+        
     
         #self.tbl_explorer.brush_default = QBrush(self.style_dict["text_color"],0)
         #self.tbl_explorer.brush_selected = QBrush(self.style_dict["color_highlight"])
@@ -983,6 +925,9 @@ def init_postMainWindow():
 
     MpGlobal.Window.txt_debug.setPlainText(MpGlobal.debug_preboot_string)
     MpGlobal.debug_preboot_string = "" 
+    
+    MpGlobal.Window.tab_quickselect.switchTo()
+    MpGlobal.Window.tab_quickselect.addTab( "Quick Select" )
     
     MpGlobal.Window.tab_explorer.load_directory()  
     MpGlobal.Window.tab_explorer.addTab( "Explorer" )
@@ -1262,10 +1207,11 @@ def button_library_SelectAll(bool=0):
     UpdateStatusWidget(0,MpGlobal.Player.selCount)
 
 def tabbar_tab_changed(index=0):
-    if index == 1:
-        MpGlobal.Window.tbl_quicklist.UpdateTable();
-        s = MpGlobal.Window.tbl_quicklist.calc_hvalue();  
-        UpdateStatusWidget(3,"Playlist Length: %d. Maximum Songs per Artist: %d."%(MpGlobal.PLAYLIST_SIZE,s))
+    pass
+    #if index == 1:
+    #    MpGlobal.Window.tbl_quicklist.UpdateTable();
+    #    s = MpGlobal.Window.tbl_quicklist.calc_hvalue();  
+    #    UpdateStatusWidget(3,"Playlist Length: %d. Maximum Songs per Artist: %d."%(MpGlobal.PLAYLIST_SIZE,s))
        
     
 def toggle_DebugText_Show():

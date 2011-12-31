@@ -34,6 +34,10 @@ class Tab_PlaylistEditor(Application_Tab):
         self.table_library  = PLETable_library(self)
         self.table_playlist = PLETable_playlist(self)
         
+        self.table_library.otable = self.table_playlist
+        self.table_playlist.otable = self.table_library
+        
+        
         self.page_l = QWidget()
         self.page_r = QWidget()
        
@@ -104,6 +108,8 @@ class Tab_PlaylistEditor(Application_Tab):
         self.setLabels()
   
     def setLabels(self):
+        #todo on drop handle this so it does not need to be recalculated
+        
         self.setFileSize()
         
         self.lbl_count_l.setText("%d/%d [%d]"%(len(self.library_display),len(self.library),len(MpGlobal.Player.library)))
@@ -137,6 +143,59 @@ class Tab_PlaylistEditor(Application_Tab):
         
         self.table_library.updateTable(0,self.library_display)
         self.table_playlist.updateTable(0,self.playlist_display)
+    
+    def insertData(self,data,target_1,target_2):
+        """
+            at any time, both the library and playlist are sorted the same
+            due to this exploitable fact, data can be inserted by comparing each element in order
+            then finding the element in target_1 or target_2 that i should be place after.
+            once the first item in both targets is found, finding where item 2 in data should
+            be place will be even easier, then each item afterwards will be just as easy
+
+            target_1 should be either playlist or library
+            target_2 should be either playlist_display or library_display
+        """
+    
+        # get the key used to compare two elements when sorting
+        key = sortKey(self.sort_index)
+        
+        if self.sort_direction == 1:
+            # return true when the data song is smaller than target song
+            sort_key = lambda data_song,target_song : key(data_song) < key(target_song)
+        else:
+            # return true when the data song is greater than the target song
+            sort_key = lambda data_song,target_song : key(data_song) > key(target_song)
+            
+        save_index = self.__insertData_target(sort_key,data,target_1)
+        
+        if target_1 != target_2:
+            return self.__insertData_target(sort_key,data,target_2)
+        
+        return save_index
+        
+    def __insertData_target(self,sort_key,data,target):
+    
+        # first do a binary search to find where to first start placing items:
+        # this will give O(log(n)) for first insertion instead of O(N)
+        
+        index = 0 # should be set by a binary search
+        save_index = []
+        i=0    
+        while index < len(target):
+            if sort_key(data[i],target[index]):
+                target.insert(index,data[i])
+                save_index.append(index)
+                i += 1
+                if i == len(data):
+                    return save_index
+            
+            index += 1
+            
+        # add any remaining items to the end of the data set
+        if i < len(data):
+            target += data[i:]  
+            save_index += range(index,len(target)) # generate indexes of items for selection
+        return save_index 
     
     def text_edit(self,text):
         
@@ -228,13 +287,21 @@ class PLETable_base(SongTable):
     def __init__(self,parent=None):
         super(PLETable_base, self).__init__(parent)
         
+        self.otable = None # the other table
+        
         self.showRowHeader(False)
         
         self.setAutoHideScrollbar(True,True)
         
         self.column_changed_signal.connect(self.columns_changed)
         self.column_header_resize.connect(self.columns_resized) #TODO: i should probably remove this
-
+        
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat("data/list") and event.source()==self.otable:
+            event.accept()
+        else:
+            event.ignore()
+            
     def sortColumn(self,col_index):
         """
             when a column is sorted both tables must be sorted and updated
@@ -248,86 +315,102 @@ class PLETable_base(SongTable):
         sortList(self.parent.library,self.parent.sort_index,self.parent.sort_direction==-1)
         sortList(self.parent.playlist,self.parent.sort_index,self.parent.sort_direction==-1)
         
-        self.parent.table_library.updateTable(0,self.parent.library)
-        self.parent.table_playlist.updateTable(0,self.parent.playlist)
-       
+        self.parent.runSearch()
+        #self.parent.table_library.updateTable(0,self.parent.library)
+        #self.parent.table_playlist.updateTable(0,self.parent.playlist)
+        
+    def columns_changed(self):
+        """ when the table has columns hidden or restored, the effect will happen on the other table"""
+        order = self.columns_getOrder()
+        self.otable.columns_setOrder(order)
+        
+    def columns_resized(self):
+        """ when ever one table resizes the col width, the effect will appear on the other table"""
+        for i in range(len(self.columns)):
+            self.otable.columns[i].width = self.columns[i].width
+        self.otable.update()      
+        
 class PLETable_library(PLETable_base):        
     """
         table to display songs remaining in the library
     """
-    
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasFormat("data/list") and event.source()==self.parent.table_playlist:
-            event.accept()
-        else:
-            event.ignore()
-            
+
     def processDropEvent(self,source,row,data):
         if source != self.parent.table_playlist:
             return
-        self.parent.library += data
+        #self.parent.library += data
         
-        sortList(self.parent.library,self.parent.sort_index,self.parent.sort_direction==-1)
+        #sortList(self.parent.library,self.parent.sort_index,self.parent.sort_direction==-1)
+        
+        
+    
+        sel = self.parent.insertData(data,self.parent.library,self.parent.library_display)
         
         self.parent.table_playlist.deleteSelection()
-    
-        self.parent.runSearch()
-
-    def columns_changed(self):
-        order = self.columns_getOrder()
-        self.parent.table_playlist.columns_setOrder(order)
+        self.selection = set(sel)
         
-    def columns_resized(self):
-        for i in range(len(self.columns)):
-            self.parent.table_playlist.columns[i].width = self.columns[i].width
-        self.parent.table_playlist.update()    
+        self.scrollTo(sel[0],len(sel))
+        
+        self.parent.table_library.setData(self.parent.library_display)
+        self.parent.table_library.update()
+        
+        self.parent.table_playlist.setData(self.parent.playlist_display)
+        self.parent.table_playlist.update()
+        
+        self.parent.setLabels()
     
     def deleteSelection(self):
         sel = self.getSelection()
-
+        #remove the selection from both the actual list
+        # and from the display list then update this table
         for row in sel:
             self.parent.library.remove(row)
+            self.parent.library_display.remove(row)
          
         self.selection = set()
+        self.updateTable(-1,self.parent.library_display)
     
 class PLETable_playlist(PLETable_base):  
     """
         table to display songs in the playlist
     """
-    
-    def dragEnterEvent(self, event):
-        if event.mimeData().hasFormat("data/list") and event.source()==self.parent.table_library:
-            event.accept()
-        else:
-            event.ignore()
             
     def processDropEvent(self,source,row,data):
         if source != self.parent.table_library:
             return
-        self.parent.playlist += data
         
-        sortList(self.parent.playlist,self.parent.sort_index,self.parent.sort_direction==-1)
+        # dropped data is in order 
+            
+        #self.parent.playlist += data
+        
+        #sortList(self.parent.playlist,self.parent.sort_index,self.parent.sort_direction==-1)
  
+        
+        
+        sel = self.parent.insertData(data,self.parent.playlist,self.parent.playlist_display)
+        
         self.parent.table_library.deleteSelection()
+        self.selection = set(sel)
         
-        self.parent.runSearch() 
-    
-    def columns_changed(self):
-        order = self.columns_getOrder()
-        self.parent.table_library.columns_setOrder(order)
+        self.scrollTo(sel[0],len(sel))
         
-    def columns_resized(self):
-        for i in range(len(self.columns)):
-            self.parent.table_library.columns[i].width = self.columns[i].width
-        self.parent.table_library.update()  
+        self.parent.table_library.setData(self.parent.library_display)
+        self.parent.table_library.update()
         
+        self.parent.table_playlist.setData(self.parent.playlist_display)
+        self.parent.table_playlist.update()
+        
+        self.parent.setLabels()
+
     def deleteSelection(self):
         sel = self.getSelection()
 
         for row in sel:
             self.parent.playlist.remove(row)
+            self.parent.playlist_display.remove(row)
          
         self.selection = set()
+        self.updateTable(-1,self.parent.playlist_display)
     
 from MpSort import *
         
