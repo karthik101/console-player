@@ -14,7 +14,8 @@
 #   new file: frame_main - the left side of the splitter in the main application window
 #   new file: frame_playlist - ...
 #   new file: tab_library - a new tabe implementing tab_base for the library.
-#
+#   Banish - Right click and banish, save the song to a textfile in repr format. remove from library
+#           use a setting to track whether to prompt the user 
 # ALL file in ./module/  - better comments, these files should be easy to use,
 #       and clearly defined.
 #

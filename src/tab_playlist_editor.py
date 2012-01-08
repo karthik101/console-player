@@ -365,7 +365,10 @@ class PLETable_library(PLETable_base):
         # and from the display list then update this table
         for row in sel:
             self.parent.library.remove(row)
-            self.parent.library_display.remove(row)
+            # we only need to remove the row when the list does not equal the
+            # display list, and the item is in view. this one check does both
+            if row in self.parent.library_display:
+                self.parent.library_display.remove(row)
          
         self.selection = set()
         self.updateTable(-1,self.parent.library_display)
@@ -407,7 +410,10 @@ class PLETable_playlist(PLETable_base):
 
         for row in sel:
             self.parent.playlist.remove(row)
-            self.parent.playlist_display.remove(row)
+            # we only need to remove the row when the list does not equal the
+            # display list, and the item is in view. this one check does both
+            if row in self.parent.playlist_display:
+                self.parent.playlist_display.remove(row)
          
         self.selection = set()
         self.updateTable(-1,self.parent.playlist_display)

@@ -849,7 +849,7 @@ def getSelection(unselect = True):
     i = 0;
     time = DateTime.now() - 60*60*24
     for song in MpGlobal.Player.library:
-        if song[MpMusic.SELECTED] :
+        if song[MpMusic.SELECTED] and not song.banish :
         
             if MpGlobal.PLAYLIST_SKIP_RECENT and song[MpMusic.DATEVALUE] >= time:
                 # if skip recent is enabled remove them from the selection.
