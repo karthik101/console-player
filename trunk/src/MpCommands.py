@@ -579,11 +579,17 @@ def cmd_clear(input):
     clearSelection()
     MpGlobal.INPUT_PLAY_GOTO_ZERO = False
     MpGlobal.PLAYLIST_ARTIST_HASH_SIZE = 0
-    MpGlobal.Window.txt_main.clearHistory()
+    
+    
     if input.hasStrVal:
+        
+        MpGlobal.Window.txt_main.clearHistory()
+        
         if input.StrVal[0] == 'all':
             MpGlobal.Window.debugClear();
+            
     return COMMAND.VALID
+    
 def cmd_export(input):
     """
         DEV

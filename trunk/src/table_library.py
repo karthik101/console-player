@@ -32,17 +32,17 @@ class LTable_Library(SongTable):
         
         self.modify_song.connect(self.event_modifiy_song)
         # enable highlighting of the current song
+        s = lambda row: self.data[row][EnumSong.SELECTED]  
+        b = lambda row: self.data[row].banish
         
-        # highlight songs that are selected to be in the pool
-        self.addRowHighlightComplexRule(self.__rh_Selected,self.color_text_played_recent)
+        # highlight songs that are selected
+        self.addRowHighlightComplexRule(s,self.color_text_played_recent)
+        
         # change the text color for the current song
         self.addRowTextColorComplexRule(self.__rt_currentSong,self.color_text_played_recent)
-        
-    def __rh_Selected(self,row):
-        """ return true when the given song is the current song playing
-            use for highlighting the row
-        """
-        return self.data[row][EnumSong.SELECTED]  
+
+        # change text color for
+        self.addRowTextColorComplexRule(b,QColor(128,128,128))
         
     def __rt_currentSong(self,row):
         """ return true when the given song is the current song playing
@@ -129,10 +129,15 @@ class LTable_Library(SongTable):
         cx,cy = self._mousePosToCellPos(mx,my)
         row,cur_c = self.positionToRowCol(mx,my)
         
+        act_res = None # retore banned songs
+        act_ban = None # banish songs
+        
         contextMenu = QMenu(self)
     
         if len(self.selection) > 0 and row < len(self.data):
 
+            # item_zero is just a random selected item for testing against
+            item_zero = self.data[ list(self.selection)[0] ]
             # modify the context menu based on click context
 
             if len(self.selection) == 1:
@@ -141,9 +146,19 @@ class LTable_Library(SongTable):
                 contextMenu.addAction("Edit Song",self.__Action_editSong__)
                 contextMenu.addAction("DELETE Song",self.__Action_deleteSingle)
             
+                if item_zero.banish:
+                    act_res = contextMenu.addAction("Restore")
+                else:
+                    act_ban = contextMenu.addAction("Banish")
             else:
                 contextMenu.addAction("Add Selection to Pool",self.__Action_addSelectionToPool)
                 contextMenu.addAction("Edit Songs",self.__Action_editSong__)
+                
+                if item_zero.banish:
+                    act_res = contextMenu.addAction("Restore ALL")
+                else:
+                    act_ban = contextMenu.addAction("Banish ALL")
+ 
                 
             contextMenu.addAction("Explore Containing Folder",self.__Action_Explore__)
             
@@ -153,6 +168,14 @@ class LTable_Library(SongTable):
 
         action = contextMenu.exec_( event.globalPos() )
 
+        if action != None:
+            if action == act_res:
+                for index in self.selection:
+                    self.data[index].banish = False
+            if action == act_ban:
+                for index in self.selection:
+                    self.data[index].banish = True
+                    
         info_UpdateCurrent()
      
     def mouseReleaseLeft(self,event):

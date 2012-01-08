@@ -290,6 +290,8 @@ class MusicContainer(EnumSong):
                      'album'         : EnumSong.ALBUM, \
                      'art'           : EnumSong.ARTIST, \
                      'artist'        : EnumSong.ARTIST, \
+                     'ban'           : EnumSong.BANISH, \
+                     'banish'        : EnumSong.BANISH, \
                      'bitrate'       : EnumSong.BITRATE, \
                      'comm'          : EnumSong.COMMENT, \
                      'comment'       : EnumSong.COMMENT, \
