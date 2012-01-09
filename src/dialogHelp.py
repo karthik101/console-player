@@ -167,8 +167,7 @@ from MpScripting import *
 
  
 import  MpApplication
-import  table_playlist 
-import  table_library   
+import  table_playlist   
 import tab_quickselect   
   
 if __name__ == "__main__":

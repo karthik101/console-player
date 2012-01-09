@@ -599,7 +599,7 @@ def cmd_export(input):
         undocumented
 
     """
-    for song in MpGlobal.Window.tbl_library.data:
+    for song in MpGlobal.Window.tab_library.table.data:
         if 'l' in input.Switch:
             debug("--")
         else:
@@ -663,7 +663,7 @@ def cmd_load(input):
 
     MpGlobal.Window.txt_searchBox.setText("")
     sortLibraryInplace(MpMusic.ARTIST)
-    MpGlobal.Window.tbl_library.updateTable(0,MpGlobal.Player.library)
+    MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.library)
     
     init_Settings_default(Settings);
     ReadableDict_Load(MpGlobal.FILEPATH_SETTINGS,Settings)
@@ -1107,7 +1107,7 @@ def cmd_xx(input):
         R = xml_open("./library.xml");
         print len(R);
         MpGlobal.Player.library = MpGlobal.Player.library + R
-        MpGlobal.Window.tbl_library.updateTable(0,MpGlobal.Player.library)
+        MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.library)
     
     if input.DecVal[0] == 8 : #xx 8
         test = Translate(u"::sutereoponi-\u30B0")
@@ -1443,7 +1443,7 @@ def cmd_libload(input):
         # reload playlist
         processTextInput('plload')
         # update tables
-        MpGlobal.Window.tbl_library.updateTable(0,MpGlobal.Player.library)
+        MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.library)
     
         return COMMAND.VALID
         

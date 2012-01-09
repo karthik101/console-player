@@ -26,7 +26,6 @@ import dialogSync
 
 
 from widgetPage import *
-import widgetTable
 
 from widgetLineEdit import LineEdit
 
@@ -42,9 +41,11 @@ from widgetLargeTable import LargeTable
 
 from table_playlist import *
 from table_library import *
-from table_external import *        #TODO i don't think this is used at all anymore
+
 from tab_explorer import * 
 from tab_playlist_editor import * 
+from tab_library import *
+from tab_quickselect import *
 
 from widget_playbutton import *
 from widget_currentSongDisplay import *
@@ -72,7 +73,7 @@ class MainWindow(QMainWindow):
         read the help.
     """
     tbl_playlist=None;
-    tbl_library=None;
+    tab_library=None;
 
     btn_playstate = None;
     
@@ -170,8 +171,6 @@ class MainWindow(QMainWindow):
         self.tab_explorer = Tab_Explorer()
         self.tab_explorer.setIcon(MpGlobal.icon_Folder)
         
-        
-            
         self.txt_main.setFocus()
         self.setWindowTitle(title)
         
@@ -199,25 +198,30 @@ class MainWindow(QMainWindow):
         self.splitter.insertWidget(1,self.vbox_playlist) # for insertion to left or right use 0=left, 1=right
 
         self.tabMain = QTabWidget(self)
-        self.tab_library = VPage(self.tabMain)
+        self.tab_library = Tab_Library(self) # VPage(self.tabMain)
 
         # use my custom line edit widget
-        self.search_hbox = QHBoxLayout()
+        #self.search_hbox = QHBoxLayout()
    
-        self.txt_searchBox = LineEdit(self.tabMain)
-        self.txt_debug = QPlainTextEdit("...",self)
+        #self.txt_searchBox = LineEdit(self.tabMain)
+        
         
         #self.search_selbtn = QPushButton("Select All",self)
-        self.search_label = QLabel("Found",self)
+        #self.search_label = QLabel("Found",self)
         #self.search_label.setFixedWidth(80)
         
-        self.tab_library.addLayout(self.search_hbox)
-        self.search_hbox.addWidget(self.txt_searchBox)
+        #self.tab_library.addLayout(self.search_hbox)
+        #self.search_hbox.addWidget(self.txt_searchBox)
         #self.search_hbox.addWidget(self.search_selbtn)
-        self.search_hbox.addWidget(self.search_label)
+        #self.search_hbox.addWidget(self.search_label)
+        
+        self.txt_searchBox = self.tab_library.txt_searchBox
+        self.search_label = self.tab_library.search_label
+        self.tab_library.table = self.tab_library.table
+        #self.tabMain.addTab(self.tab_library,MpGlobal.icon_note, "Library")        
 
-        self.tabMain.addTab(self.tab_library,MpGlobal.icon_note, "Library")        
-
+        self.txt_debug = QPlainTextEdit("...",self)
+        
         self.txt_debug.setEnabled(True)
         #self.txt_debug.setMaximumHeight(320)
         self.txt_debug.setReadOnly(True)
@@ -241,19 +245,16 @@ class MainWindow(QMainWindow):
     def init_DisplayTables(self):
         
         self.tbl_playlist = LTable_PlayList(self) #TablePlayList(self)
-        self.tbl_library = LTable_Library(self)#TableLibrary(Settings.LIB_COL_ID, Settings.LIB_COL_ACTIVE, parent=self)
-        self.tbl_library.columns_setOrder(Settings.LIB_COL_ID)
+        #TableLibrary(Settings.LIB_COL_ID, Settings.LIB_COL_ACTIVE, parent=self)
+        
         self.vbox_playlist.insertWidget(5,self.tbl_playlist.container)
         
-        self.tab_library.addWidget(self.tbl_library.container)
-        
+
         self.pixmap_dndMusic = MpGlobal.pixmap_Song
         #self.tbl_playlist.pixmap_drag = self.pixmap_dndMusic
-        #self.tbl_library.pixmap_drag  = self.pixmap_dndMusic
+        #self.tab_library.table.pixmap_drag  = self.pixmap_dndMusic
         
-        self.txt_searchBox.keyReleaseEvent = txtSearch_KeyBoardRelease
-
-        self.txt_searchBox.setPlaceholderText(MpGlobal.SEARCH_PROMPT)
+        
 
     def init_DisplaySong(self):
         self.hbox_timeBar = QHBoxLayout()
@@ -382,7 +383,7 @@ class MainWindow(QMainWindow):
         
         #self.txt_main.returnPressed.connect(txtMain_OnTextEnter)
         #self.txt_main.textEdited.connect(txtMain_OnTextChange)
-        self.txt_searchBox.textEdited.connect(txtSearch_OnTextChange)
+        #self.txt_searchBox.textEdited.connect(txtSearch_OnTextChange)
         #self.search_selbtn.clicked.connect(button_library_SelectAll)
         
         self.btn_prev.clicked.connect(button_music_prev)
@@ -411,11 +412,8 @@ class MainWindow(QMainWindow):
         QObject.connect(self, SIGNAL("SET_PLAYBUTTON_ICON"),button_PlayPause_setPlayIcon, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("SET_CONTBUTTON_ICON"),button_PlayPause_setContIcon, Qt.QueuedConnection)
         
-        # depreciated:
-        QObject.connect(self, SIGNAL("ON_SONG_LOAD_FILLTABlE"),self.tbl_playlist.updateTable, Qt.QueuedConnection)
-        # use this :
         QObject.connect(self, SIGNAL("FILL_PLAYLIST"),self.tbl_playlist.updateTable, Qt.QueuedConnection)
-        QObject.connect(self, SIGNAL("FILL_LIBRARY"),self.tbl_library.updateTable, Qt.QueuedConnection)
+        QObject.connect(self, SIGNAL("FILL_LIBRARY"),self.tab_library.table.updateTable, Qt.QueuedConnection)
 
         self.xcut_fconsole = QShortcut(QKeySequence(r"Ctrl+K"),self)
         self.xcut_flibrary = QShortcut(QKeySequence(r"Ctrl+L"),self)
@@ -645,19 +643,19 @@ class MainWindow(QMainWindow):
         #self.tbl_playlist.brush_highlight2 = QBrush(self.style_dict["color_invalid"])
         self.tbl_playlist.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
         self.tbl_playlist.setRowTextColorComplexRule(0,None,self.style_dict["text_important2"])
-        #self.tbl_library.brush_default = QBrush(self.style_dict["text_color"],0)
-        #self.tbl_library.brush_selected = QBrush(self.style_dict["color_highlight"])
-        #self.tbl_library.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
-        #self.tbl_library.brush_selectedText = QBrush(self.style_dict["text_light"])
-        #self.tbl_library.brush_highlight1 = QBrush(self.style_dict["color_special1"])
-        #self.tbl_library.brush_text_default = QBrush(self.style_dict["text_color"])
-        self.tbl_library.color_text_played_recent = self.style_dict["text_important1"]
-        self.tbl_library.color_text_played_not_recent = self.style_dict["text_important2"]
-        self.tbl_library.color_rating = self.style_dict["text_important1"]
-        self.tbl_library.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
-        self.tbl_library.setRowTextColorComplexRule(0,None,self.style_dict["text_important1"])
+        #self.tab_library.table.brush_default = QBrush(self.style_dict["text_color"],0)
+        #self.tab_library.table.brush_selected = QBrush(self.style_dict["color_highlight"])
+        #self.tab_library.table.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
+        #self.tab_library.table.brush_selectedText = QBrush(self.style_dict["text_light"])
+        #self.tab_library.table.brush_highlight1 = QBrush(self.style_dict["color_special1"])
+        #self.tab_library.table.brush_text_default = QBrush(self.style_dict["text_color"])
+        self.tab_library.table.color_text_played_recent = self.style_dict["text_important1"]
+        self.tab_library.table.color_text_played_not_recent = self.style_dict["text_important2"]
+        self.tab_library.table.color_rating = self.style_dict["text_important1"]
+        self.tab_library.table.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
+        self.tab_library.table.setRowTextColorComplexRule(0,None,self.style_dict["text_important1"])
         
-        #self.tbl_library.brush_special = QBrush(self.style_dict["color_special2"])
+        #self.tab_library.table.brush_special = QBrush(self.style_dict["color_special2"])
         
         self.tab_explorer.table.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
         
@@ -719,12 +717,12 @@ class MainWindow(QMainWindow):
         if not Settings.DEVMODE:
             toggle_DebugText_Show()
     def Action_sel_all(self):
-        self.tbl_library.selection = set(range(len(self.tbl_library.data)));
-        self.tbl_library.updateTable();            
+        self.tab_library.table.selection = set(range(len(self.tab_library.table.data)));
+        self.tab_library.table.updateTable();            
     def Action_sort_REVERSE(self):
         MpGlobal.Player.library.reverse()
         MpGlobal.Player.lastSortType *= -1;
-        MpGlobal.Window.tbl_library.updateTable()
+        MpGlobal.Window.tab_library.table.updateTable()
         
         r = MpGlobal.Player.lastSortType>0
         ico = MpGlobal.icon_Clear
@@ -736,30 +734,30 @@ class MainWindow(QMainWindow):
         MpGlobal.Window.act_sfl_reverse.setIcon( ico )
     
     def Action_sort_DATESTAMP(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.DATESTAMP)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.DATESTAMP)
     def Action_sort_PLAYCOUNT(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.PLAYCOUNT)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.PLAYCOUNT)
     def Action_sort_FREQUENCY(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.FREQUENCY)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.FREQUENCY)
     def Action_sort_PATH(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.PATH)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.PATH)
     def Action_sort_RATING(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.RATING)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.RATING)
     def Action_sort_ARTIST(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.ARTIST)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.ARTIST)
     def Action_sort_TITLE(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.TITLE)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.TITLE)
     def Action_sort_ALBUM(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.ALBUM)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.ALBUM)
     
     def Action_sort_LENGTH(self):
-        self.tbl_library.sortColumnByExifTag(MpMusic.LENGTH)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.LENGTH)
     def Action_sort_GENRE(self):                  
-        self.tbl_library.sortColumnByExifTag(MpMusic.GENRE)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.GENRE)
     def Action_sort_FSIZE(self):                  
-        self.tbl_library.sortColumnByExifTag(MpMusic.FILESIZE)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.FILESIZE)
     def Action_sort_SKIPCOUNT(self):              
-        self.tbl_library.sortColumnByExifTag(MpMusic.SKIPCOUNT)
+        self.tab_library.table.sortColumnByExifTag(MpMusic.SKIPCOUNT)
 
                  
 # ######################################
@@ -867,8 +865,6 @@ def init_preMainWindow():
     MpGlobal.PlayerThread = MediaPlayerThread(MpGlobal.Window)
     MpGlobal.PlayerThread.start()
     
-    #QMetaType.Q_DECLARE_METATYPE(widgetTable.Table)
-    #print QMetaType.type("Table")
     registerSSService()
      
     getApplicationIcons()
@@ -905,7 +901,7 @@ def init_postMainWindow():
     
     MpGlobal.Player.libDisplay = MpGlobal.Player.library[:]
     
-    MpGlobal.Window.tbl_library.updateTable(0,MpGlobal.Player.libDisplay) 
+    MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.libDisplay) 
     MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList) 
     
     MpGlobal.Window.setPlayListWidth(300)
@@ -925,6 +921,8 @@ def init_postMainWindow():
 
     MpGlobal.Window.txt_debug.setPlainText(MpGlobal.debug_preboot_string)
     MpGlobal.debug_preboot_string = "" 
+    
+    MpGlobal.Window.tab_library.addTab("Library")
     
     MpGlobal.Window.tab_quickselect.switchTo()
     MpGlobal.Window.tab_quickselect.addTab( "Quick Select" )
@@ -1051,13 +1049,7 @@ def init_MenuBar(window):
         
         window.act_pMode_pb1.setIcon(MpGlobal.icon_Check)
         
-def txtSearch_KeyBoardRelease(event=None):
-    super(QLineEdit,MpGlobal.Window.txt_searchBox).keyPressEvent(event)
-    #print ">"
-    if event.key() == Qt.Key_Down:
-        MpGlobal.Window.tbl_library.selection = {0,}
-        MpGlobal.Window.tbl_library.updateTable(0)
-        MpGlobal.Window.tbl_library.setFocus()
+
 
 def splitter_resize_control(pos,index):
     sizes = MpGlobal.Window.splitter.sizes()
@@ -1203,7 +1195,7 @@ def button_library_SelectAll(bool=0):
         if not song[MpMusic.SELECTED]:
             MpGlobal.Player.selCount += 1
             song[MpMusic.SELECTED] = True;
-    MpGlobal.Window.tbl_library.updateTable()
+    MpGlobal.Window.tab_library.table.updateTable()
     UpdateStatusWidget(0,MpGlobal.Player.selCount)
 
 def tabbar_tab_changed(index=0):
@@ -1305,3 +1297,4 @@ from dialogNewPlayList import *
 from dialogHelp import helpDialog     
 from MpEventMethods import *        
 from MpPlayerThread import MediaPlayerThread
+

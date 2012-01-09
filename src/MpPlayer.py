@@ -168,7 +168,8 @@ class MediaManager(object):
                 MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEBARMAXVAL"),self.CurrentSong[MpMusic.LENGTH])    
                 self.updateDisplayIndex()
                 self.updateTimeDisplay(0)
-                MpGlobal.Window.emit(SIGNAL("ON_SONG_LOAD_FILLTABlE")) 
+                MpGlobal.Window.emit(SIGNAL("FILL_PLAYLIST")) 
+                MpGlobal.Window.emit(SIGNAL("FILL_LIBRARY")) 
                 MpGlobal.Window.emit(SIGNAL("UPDATE_INFODISPLAY"),self.CurrentSong)
                 
                 MpMusic.AUTO_SIGNAL_ISSUED = False
