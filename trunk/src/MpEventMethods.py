@@ -7,7 +7,6 @@ from Song_MutagenWrapper import *
 from MpSort import *
 from Song_Search import *   
 
-from table_library import *
 from MpScripting import *
 
 def event_end_load_song():
@@ -22,7 +21,7 @@ def event_end_load_song():
     
     MpGlobal.Window.txt_searchBox.setText(search)
     #txtSearch_OnTextChange(search, -1)
-    MpGlobal.Window.tbl_library.updateDisplay(search)  
+    MpGlobal.Window.tab_library.table.updateDisplay(search)  
 
 def event_load_song(filepath):
 
@@ -38,7 +37,7 @@ def event_load_song(filepath):
         #todo use .added =%TODAY%
         #MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
         #txtSearch_OnTextChange(".pcnt =0", -1)
-        #MpGlobal.Window.tbl_library.updateDisplay(".pcnt =0") 
+        #MpGlobal.Window.tab_library.table.updateDisplay(".pcnt =0") 
         
 
     except Exception as e:

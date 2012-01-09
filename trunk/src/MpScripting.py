@@ -110,7 +110,7 @@ def registerNewListAsPlayList(songList,autoLoad = False, autoStart = False):
     setSearchTime() 
     
     MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
-    MpGlobal.Window.tbl_library.updateTable()
+    MpGlobal.Window.tab_library.table.updateTable()
     
     playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT)
     if Settings.SAVE_BACKUP:
@@ -539,8 +539,8 @@ def settings_get_Update():
     if Settings.SCREEN_POSITION_Y < 0:
         Settings.SCREEN_POSITION_Y = 0
     # ----------------------------------------------------------------
-    Settings.LIB_COL_ID     = MpGlobal.Window.tbl_library.columns_getOrder()
-    #Settings.LIB_COL_ACTIVE = MpGlobal.Window.tbl_library.colCount  #TODO-LIB
+    Settings.LIB_COL_ID     = MpGlobal.Window.tab_library.table.columns_getOrder()
+    #Settings.LIB_COL_ACTIVE = MpGlobal.Window.tab_library.table.colCount  #TODO-LIB
     # windows seven can dictate screen relestate without Qt realizing it has been resized
     # if the window is snapped to an edge or dragged from a snap, it is considered fullscreen
     # even when not

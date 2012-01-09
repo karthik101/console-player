@@ -1,25 +1,60 @@
 
-
 import math 
 import sys
-import os  
+import os
 
-import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from MpGlobalDefines import *
-from MpApplication import *
+isPosix = os.name == 'posix'
 
-import dialogSongEdit
-import dialogColumnSelect
-
-from SystemDateTime import DateTime
-from widgetLargeTable import LargeTable,TableColumn
-
+from widgetLineEdit import LineEdit
+from widgetLargeTable import *
 from Song_Table import *
+from Song_Search import *
+from Song_FileManager import *
+from Song_MutagenWrapper import *
+from SystemPathMethods import * 
+from SystemDateTime import * 
 
-#TODO-LIB - flag used for stuff to do
+from App_EventManager import *
+
+from tab_base import *
+
+from MpSort import *
+from MpCommands import *
+
+class Tab_Library(Application_Tab):
+
+    def __init__(self,parent=None):
+        super(Tab_Library, self).__init__(parent)
+
+        self.vbox = QVBoxLayout(self)
+        self.vbox.setSpacing(0)
+        self.vbox.setMargin(0)
+        
+        self.hbox_search = QHBoxLayout()
+        
+        self.txt_searchBox = LineEdit_Search(self)
+        self.search_label = QLabel("---",self)
+        
+        self.table = LTable_Library(self)
+        
+        # -------------------------------------------------------
+        self.hbox_search.addWidget(self.txt_searchBox)
+        self.hbox_search.addWidget(self.search_label)
+        
+        
+        self.vbox.addSpacing(3)
+        self.vbox.addLayout(self.hbox_search)
+        self.vbox.addSpacing(3)
+        self.vbox.addWidget(self.table.container)
+        
+        # ----------------------------------
+        
+        # set the order of the table columns from the save state
+        self.table.columns_setOrder(Settings.LIB_COL_ID)
+        self.txt_searchBox.textEdited.connect(txtSearch_OnTextChange)
 
 class LTable_Library(SongTable):
 
@@ -237,19 +272,35 @@ class LTable_Library(SongTable):
             if WarningMessage(message,"Delete","Cancel"):            
                 MpGlobal.Player.libDelete.append( R[0] )
                 MpGlobal.Player.library.remove(R[0])
-                MpGlobal.Window.tbl_library.updateDisplay()
+                MpGlobal.Window.tab_library.table.updateDisplay()
                 Player_set_unsaved();
-             
+     
+class LineEdit_Search(LineEdit):
+        
+    def __init__(self,parent):
+        super(LineEdit_Search,self).__init__(parent)
+        self.parent = parent
+        
+        self.setPlaceholderText(MpGlobal.SEARCH_PROMPT)
+        
+    def txtSearch_KeyBoardRelease(self,event=None):
+        super(LineEdit_Search,self).keyPressEvent(event)
+        #print ">"
+        if event.key() == Qt.Key_Down:
+            self.parent.table.setSelection( [0,] )
+            self.parent.table.updateTable(0)
+            self.parent.table.setFocus()        
+
 def txtSearch_OnTextChange(text,update=0):
     
     
     text = MpGlobal.Window.txt_searchBox.textUpdate(text)
     text += MpGlobal.SEARCH_AUTOAPPEND
-    MpGlobal.Window.tbl_library.selection = set() 
+    MpGlobal.Window.tab_library.table.clearSelection()
     
     if text == "" :
         MpGlobal.Player.libDisplay = MpGlobal.Player.library[:]
-        MpGlobal.Window.tbl_library.updateTable(update,MpGlobal.Player.libDisplay)
+        MpGlobal.Window.tab_library.table.updateTable(update,MpGlobal.Player.libDisplay)
         MpGlobal.Window.statusWidgets[2].setToolTip(u"No Search Terms")
         UpdateStatusWidget(2,0)
     else:
@@ -258,7 +309,7 @@ def txtSearch_OnTextChange(text,update=0):
         so = SearchObject(text)
         MpGlobal.Window.statusWidgets[2].setToolTip(unicode(so))
         MpGlobal.Player.libDisplay = so.search(MpGlobal.Player.library)
-        MpGlobal.Window.tbl_library.updateTable(update,MpGlobal.Player.libDisplay)
+        MpGlobal.Window.tab_library.table.updateTable(update,MpGlobal.Player.libDisplay)
         UpdateStatusWidget(2,so.termCount)
         #except Exception as e:
         #    debug("EVAL ERROR: %s"%e.args)
@@ -268,14 +319,23 @@ def txtSearch_OnTextChange(text,update=0):
         
     #MpGlobal.Window.tabMain.setTabText(0,"Library (%d)"%len(MpGlobal.Player.libDisplay))
     MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
-        
-        
+      
+
+import dialogSongEdit
+import dialogColumnSelect
+
+
 from Song_Object import Song
 from datatype_hex64 import *
 
 from MpScripting import *
-from MpSort import *
 from Song_Search import *
-from MpCommands import *
 
-        
+
+from MpGlobalDefines import *
+from MpApplication import *
+            
+from tab_base import *
+
+from MpSort import *
+from MpCommands import *

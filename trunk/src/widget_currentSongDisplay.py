@@ -25,7 +25,7 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
         if x > w-16 and event.button() == Qt.LeftButton: # and left click
             if MpGlobal.Player.CurrentSong != None:
                 MpGlobal.Player.CurrentSong[MpMusic.RATING] = self.int_rating
-                MpGlobal.Window.tbl_library.update()
+                MpGlobal.Window.tab_library.table.update()
                 if Settings.LOG_HISTORY:
                     history_log(MpGlobal.FILEPATH_HISTORY,MpGlobal.Player.CurrentSong,MpMusic.RATING)
                     
@@ -64,10 +64,10 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
         if MpGlobal.Player.CurrentSong != None:
             s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
             
-            MpGlobal.Window.tbl_library.updateDisplay(s); #TODO-LIB
+            MpGlobal.Window.tab_library.table.updateDisplay(s);
     def __Action_searchALBUM__(self):
         if MpGlobal.Player.CurrentSong != None:
             s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
             s += "; .abm \""+MpGlobal.Player.CurrentSong[MpMusic.ALBUM][:]+"\""
             
-            MpGlobal.Window.tbl_library.updateDisplay(s); #TODO-LIB
+            MpGlobal.Window.tab_library.table.updateDisplay(s);

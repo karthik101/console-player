@@ -2,7 +2,6 @@ import math
 import sys
 import os  
 
-import widgetTable
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 

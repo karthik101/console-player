@@ -9,7 +9,7 @@ from MpScripting import *
 
 def history_log(filepath,song,typ): 
 
-    #exec for song in MpGlobal.Window.tbl_library.data: print "%s %d %s\n"%(song.id,MpMusic.DATESTAMP,song[MpMusic.DATESTAMP])
+    #exec for song in MpGlobal.Window.tab_library.table.data: print "%s %d %s\n"%(song.id,MpMusic.DATESTAMP,song[MpMusic.DATESTAMP])
 
     if not os.path.exists(filepath):
         wf = open(filepath,"w")
