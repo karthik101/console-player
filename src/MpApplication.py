@@ -29,8 +29,6 @@ from widgetPage import *
 
 from widgetLineEdit import LineEdit
 
-import widgetLineEdit
-
 from MpGlobalDefines import *
 from Song_Object import Song
 from Song_LibraryFormat import *
@@ -40,7 +38,8 @@ from datatype_hex64 import *
 from widgetLargeTable import LargeTable
 
 from table_playlist import *
-from table_library import *
+
+from frame_main import *
 
 from tab_explorer import * 
 from tab_playlist_editor import * 
@@ -75,6 +74,8 @@ class MainWindow(QMainWindow):
     tbl_playlist=None;
     tab_library=None;
 
+    syncDialogObj = None
+    
     btn_playstate = None;
     
     tab_Explorer = 2 
@@ -82,7 +83,7 @@ class MainWindow(QMainWindow):
     window = None;
     ui = None;      # the bare bones user interface
     geometry = None
-    playListWidth = 250
+    playListWidth = 300
     dialogSongEdit = None
     
     editorTabs = [] # list of open playlists as array of tuples 
@@ -126,14 +127,13 @@ class MainWindow(QMainWindow):
         
     def __init__(self,title):
         super(QMainWindow, self).__init__()
-
-        #self.ui = form_main.Ui_MainWindow()   # create a new user interface
-        #self.setupUi(self)       # build the ui
-        self.setFocusPolicy(Qt.StrongFocus)
-        self.init_Ui()
         
+        self.setWindowTitle(title)
+        self.setMinimumSize(230,110) 
+        self.setFocusPolicy(Qt.StrongFocus)
+        self.setAcceptDrops(True);
         self.setWindowIcon(QIcon(MpGlobal.FILEPATH_ICON))
-
+        
         self.move  ( Settings.SCREEN_POSITION_X ,Settings.SCREEN_POSITION_Y )
         
         if Settings.WINDOW_MAXIMIZED :
@@ -141,29 +141,20 @@ class MainWindow(QMainWindow):
         else:
             self.resize( Settings.SCREEN_POSITION_W ,Settings.SCREEN_POSITION_H )
         
+        # --------------------------------
         
-        self.setMinimumSize(230,110)  
+        self.init_Ui()
+         
         self.init_DisplaySong()   
-        self.init_DisplayTables()
-        
-        self.init_StatusBar()
 
-        #self.dialogSongEdit = dialogSongEdit.SongEditWindow(self)
-        self.syncDialogObj = None #dialogSync.SyncSongs(self)
-        
-        self.init_ConnectSignals() # do this last, after creating all objects
-        
         init_MenuBar(self)
+        self.init_StatusBar()
         
-        self.setAcceptDrops(True);
-        #<WORK> REMOVE MIN WIDTH
-        #self.setMinimumWidth(MpGlobal.SplitterWidthMin+20)
         
-        #tsize = sum ( self.splitter.sizes() )
-        #print tsize
-        #self.splitter.setSizes([300,300])
-        # set up keyboard shortcuts
-        #
+        
+        # --------------------------------------
+        
+        self.tab_library = Tab_Library(self)
         
         self.tab_quickselect = Tab_QuickSelect()
         self.tab_quickselect.setIcon(MpGlobal.icon_favpage)
@@ -171,8 +162,11 @@ class MainWindow(QMainWindow):
         self.tab_explorer = Tab_Explorer()
         self.tab_explorer.setIcon(MpGlobal.icon_Folder)
         
+        self.init_ConnectSignals() # do this last, after creating all objects
+        
         self.txt_main.setFocus()
-        self.setWindowTitle(title)
+        
+        self.pixmap_dndMusic = MpGlobal.pixmap_Song #TODO what is this
         
         if Settings.DEVMODE == False:
             self.txt_debug.hide()
@@ -188,37 +182,19 @@ class MainWindow(QMainWindow):
 
         self.splitter = QSplitter(Qt.Horizontal,self)
 
-        self.vbox_library = VPage(self)
-        self.vbox_playlist = VPage(self)
-        self.vbox_playlist.layout.setSpacing(0)
+        self.frame_main = Frame_Main(self)
         
-        self.spt_left = QSplitter(Qt.Vertical,self.vbox_library )
+        
+        self.spt_left = QSplitter(Qt.Vertical, self)
         
         self.splitter.addWidget(self.spt_left)
-        self.splitter.insertWidget(1,self.vbox_playlist) # for insertion to left or right use 0=left, 1=right
+        self.splitter.insertWidget(Settings.PLAYLIST_SIDE,self.frame_main) # for insertion to left or right use 0=left, 1=right
 
         self.tabMain = QTabWidget(self)
-        self.tab_library = Tab_Library(self) # VPage(self.tabMain)
-
-        # use my custom line edit widget
-        #self.search_hbox = QHBoxLayout()
-   
-        #self.txt_searchBox = LineEdit(self.tabMain)
         
-        
-        #self.search_selbtn = QPushButton("Select All",self)
-        #self.search_label = QLabel("Found",self)
-        #self.search_label.setFixedWidth(80)
-        
-        #self.tab_library.addLayout(self.search_hbox)
-        #self.search_hbox.addWidget(self.txt_searchBox)
-        #self.search_hbox.addWidget(self.search_selbtn)
-        #self.search_hbox.addWidget(self.search_label)
-        
-        self.txt_searchBox = self.tab_library.txt_searchBox
-        self.search_label = self.tab_library.search_label
-        self.tab_library.table = self.tab_library.table
-        #self.tabMain.addTab(self.tab_library,MpGlobal.icon_note, "Library")        
+        #self.txt_searchBox = self.tab_library.txt_searchBox
+        #self.search_label = self.tab_library.search_label
+        #self.tabMain.addTab(self.tab_library,, "Library")        
 
         self.txt_debug = QPlainTextEdit("...",self)
         
@@ -241,124 +217,10 @@ class MainWindow(QMainWindow):
         # this sets a minimum size for the left side of the splitter
         # this also enables contained widgets to be resized freely
         self.tabMain.setMinimumSize(100,100) 
-        
-    def init_DisplayTables(self):
-        
-        self.tbl_playlist = LTable_PlayList(self) #TablePlayList(self)
-        #TableLibrary(Settings.LIB_COL_ID, Settings.LIB_COL_ACTIVE, parent=self)
-        
-        self.vbox_playlist.insertWidget(5,self.tbl_playlist.container)
-        
 
-        self.pixmap_dndMusic = MpGlobal.pixmap_Song
-        #self.tbl_playlist.pixmap_drag = self.pixmap_dndMusic
-        #self.tab_library.table.pixmap_drag  = self.pixmap_dndMusic
         
-        
-
     def init_DisplaySong(self):
-        self.hbox_timeBar = QHBoxLayout()
-        
-        self.txt_main = widgetLineEdit.LineEditHistory(self)
-        self.txt_main.keyReleaseEnter = processTextInput
-        self.txt_main.setPlaceholderText("Command Input <Ctrl+K>")
-        self.txt_main.setObjectName("Console")
-        # this forces a minimum size for the right side of the splitter
-        self.txt_main.setMinimumHeight(20)
-        # #########################################
-        # time display bar
-        #self.bar_time = ScrollBar_Time()
-        
-        self.bar_time = MpTimeBar(self)
-        #self.bar_time = QSlider(self)
-        self.bar_time.setObjectName("MpMediaTime")
-        self.bar_time.setPageStep(0)# slider is of length 'page step'
-        
-        # prev/next buttons
-        self.btn_prev = QPushButton(self)#ButtonArrow(True) # mirror vertically
-        self.btn_next = QPushButton(self)#ButtonArrow()
-
-        self.btn_prev.setObjectName("MpMediaPrev")
-        self.btn_next.setObjectName("MpMediaNext")
-        
-        self.btn_prev.setToolTip("Previous Song")
-        self.btn_next.setToolTip("Next Song")
-        
-        self.hbox_timeBar.addWidget(self.btn_prev)
-        self.hbox_timeBar.addWidget(self.bar_time)
-        self.hbox_timeBar.addWidget(self.btn_next)
-        self.hbox_timeBar.setSpacing(0)
-        
-        # #########################################
-        # Play Button, Display Labels
-        self.hbox_playbutton = QHBoxLayout()
-
-        self.btn_playstate = ButtonPlay()
-        self.dsp_info = CurrentSongDisplay()
-        self.dsp_info.text_title = "Select a Song to Play"
-        self.dsp_info.text_album = "Drag and Drop music to Load"
-        self.dsp_info.stopScrolling()
-        self.dsp_info.setFixedHeight(48)
-        self.dsp_info.update()
-        
-        self.btn_playstate.setToolTip("Play/Pause Current Song\nStop playback when current song finishes")
-        # add button and vbox to the hbox
-        self.hbox_playbutton.addWidget(self.btn_playstate)
-        self.hbox_playbutton.addWidget(self.dsp_info)
-        self.hbox_playbutton.setSpacing(0)
-        #self.hbox_playbutton.addWidget(self.dsp_rate)
-        # add the time bar and display to the vbox
-        self.vbox_playlist.addWidget(self.txt_main)
-        self.vbox_playlist.addLayout(self.hbox_timeBar)
-        self.vbox_playlist.layout.addSpacing(4)
-        self.vbox_playlist.addLayout(self.hbox_playbutton)
-        self.vbox_playlist.layout.addSpacing(4)
-        self.vbox_playlist.layout.addSpacing(4)
-        # set sizing for newly created widgets
-        self.btn_prev.setFixedWidth(32)
-        self.btn_next.setFixedWidth(32)
-        self.btn_prev.setFixedHeight(16)
-        self.btn_next.setFixedHeight(16)
-    
-        self.btn_playstate.setFixedHeight(48)
-        self.btn_playstate.setFixedWidth(48)
-        #self.dsp_rate.setFixedHeight(48)
-        #self.dsp_rate.setFixedWidth(8)
-        
-        self.hbox_btn = QHBoxLayout()
-        self.btn_clr = QPushButton(MpGlobal.icon_Trash,"",self)
-        self.btn_sfl = QPushButton("Shuffle",self)
-        self.btn_spn = QSpinBox(self)
-        self.btn_apl = QPushButton(MpGlobal.icon_AutoPL,"",parent=self)
-        
-        self.btn_spn.setRange(0,9)
-        self.btn_spn.setFixedWidth(32)
-        self.hbox_btn.setSpacing(0)
-        self.btn_clr.setToolTip("Clear current Playlist")
-        s="Shuffle the remaining songs to be played\nIf songs in the playlist are selected, they will be shuffled in place"
-        self.btn_sfl.setToolTip(s)
-        s="Auto make a new playlist when\nthe current one finishes.\nNew Playlist will be made from a pool\nof songs from the indicated preset"
-        self.btn_spn.setToolTip(s)
-        self.btn_apl.setToolTip(s)
-        # we need equal spacing on either side of the shuffle button
-        # add spacers to make up for the width of widgets on the other side
-        # don't argue with the AlignRight on the shuffle button, it just works to center
-        self.hbox_btn.addWidget(self.btn_clr)
-        if not isPosix: # adding a volume bar here instead
-            self.hbox_btn.addSpacing(32) # equal to width of spinbox
-        self.hbox_btn.addWidget(self.btn_sfl,0,Qt.AlignRight)
-        self.hbox_btn.addWidget(self.btn_spn,0,Qt.AlignRight)
-        self.hbox_btn.addWidget(self.btn_apl)
-
-        self.vbox_playlist.addLayout(self.hbox_btn)
-        
-        self.btn_clr.setFixedWidth(24)
-        #self.btn_sfl.setFixedWidth(50)
-        self.btn_apl.setFixedWidth(24)
-        
-        self.btn_clr.clicked.connect(button_PlayList_Clear)
-        self.btn_sfl.clicked.connect(button_PlayList_Shuffle)
-        self.btn_apl.clicked.connect(button_PlayList_AutoPlayList)
+        pass
 
     def init_StatusBar(self):
         lbl1 = QLabel("0 Selected")
@@ -380,17 +242,10 @@ class MainWindow(QMainWindow):
             connect custom signals that can be emmitted from the
             seconday thread
         """
-        
-        #self.txt_main.returnPressed.connect(txtMain_OnTextEnter)
-        #self.txt_main.textEdited.connect(txtMain_OnTextChange)
-        #self.txt_searchBox.textEdited.connect(txtSearch_OnTextChange)
-        #self.search_selbtn.clicked.connect(button_library_SelectAll)
-        
         self.btn_prev.clicked.connect(button_music_prev)
         self.btn_next.clicked.connect(button_music_next)
         
         self.tabMain.currentChanged.connect(tabbar_tab_changed)
-        #self.txt_searchBox.returnPressed.connect(txtSearch_OnTextEnter)
 
         self.splitter.splitterMoved.connect(splitter_resize_control)
         # connect signals for the QThread to Use
@@ -438,7 +293,7 @@ class MainWindow(QMainWindow):
 
         wthresh = 300;
         hthresh1 = 200;
-        hthresh2 = 150;
+        hthresh2 = 200;
         if w < wthresh:
             self.spt_left.hide()
             MpGlobal.Window.statusWidgets[2].hide();
@@ -449,11 +304,28 @@ class MainWindow(QMainWindow):
             MpGlobal.Window.statusWidgets[3].show();
             self.spt_left.show()
             tsize = sum ( MpGlobal.Window.splitter.sizes() )
-            MpGlobal.Window.splitter.setSizes([tsize - self.playListWidth,self.playListWidth])
+            
+            lsize = tsize - self.playListWidth
+            psize = self.playListWidth
+            if self.splitter.widget(0) == self.frame_main:
+                new_sizes = [psize,lsize]
+            else:
+                new_sizes = [lsize,psize]
+                
+            self.splitter.setSizes(new_sizes)
         
         
+        #if h < hthresh1:
+        #    self.tbl_playlist.container.hide()
+        #    self.btn_clr.hide()
+        #    self.btn_sfl.hide()
+        #    self.btn_apl.hide()
+        #    self.btn_spn.hide()
+        #    self.spt_left.hide()
+        #    self.statusbar.hide()
+        #    self.menubar.hide()
         if h < hthresh2:
-            self.tbl_playlist.hide()
+            self.tbl_playlist.container.hide()
             self.btn_clr.hide()
             self.btn_sfl.hide()
             self.btn_apl.hide()
@@ -461,17 +333,8 @@ class MainWindow(QMainWindow):
             self.spt_left.hide()
             self.statusbar.hide()
             self.menubar.hide()
-        elif h < hthresh1:
-            self.tbl_playlist.hide()
-            #self.btn_clr.hide()
-            #self.btn_sfl.hide()
-            #elf.btn_apl.hide()
-            #elf.btn_spn.hide()
-            #elf.spt_left.hide()
-            self.statusbar.hide()
-            self.menubar.hide()
         else:    
-            self.tbl_playlist.show()
+            self.tbl_playlist.container.show()
             self.btn_clr.show()
             self.btn_sfl.show()
             self.btn_apl.show()
@@ -678,9 +541,15 @@ class MainWindow(QMainWindow):
 
     def setPlayListWidth(self,w) :
 
-        tsize = sum ( MpGlobal.Window.splitter.sizes() )
+        tsize = sum ( self.splitter.sizes() )
         r = tsize - w
-        MpGlobal.Window.splitter.setSizes([r,w])
+        
+        if self.splitter.widget(0) == self.frame_main:
+            n = [w,r]
+        else:
+            n = [r,w]
+            
+        self.splitter.setSizes( n )
          
     def __Action_New_PlayList__(self):
         """ Create a new playlist editor
@@ -702,7 +571,7 @@ class MainWindow(QMainWindow):
             tab.btn_click_close()
 
     def __Action_shortcut_library__(self):
-        obj = MpGlobal.Window.txt_searchBox
+        obj = MpGlobal.Window.tab_library.txt_searchBox
         obj.setFocus()
         obj.setSelection(0,len(obj.displayText()))
         
@@ -904,11 +773,11 @@ def init_postMainWindow():
     MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.libDisplay) 
     MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList) 
     
-    MpGlobal.Window.setPlayListWidth(300)
+    MpGlobal.Window.setPlayListWidth(MpGlobal.Window.playListWidth)
     if not MpGlobal.Window.txt_debug.isHidden():
         splitter_resize_debug()
     
-    MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
+    MpGlobal.Window.tab_library.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
     
     if Settings.PLAYER_LAST_INDEX < len(MpGlobal.Player.playList):
         MpGlobal.Player.CurrentIndex = Settings.PLAYER_LAST_INDEX
@@ -1054,18 +923,25 @@ def init_MenuBar(window):
 def splitter_resize_control(pos,index):
     sizes = MpGlobal.Window.splitter.sizes()
     totalsize = sum(sizes)
+    
+    p = 1
+    l = 0
+    
+    if MpGlobal.Window.splitter.widget(0) == MpGlobal.Window.frame_main:
+        p=0; l=1;
     # check the size of the layouts in the main splitter
     # if they are above or below the set maximum then set them equal to that value
-    if (sizes[1] < MpGlobal.SplitterWidthMin):
-        sizes[1] = MpGlobal.SplitterWidthMin
-        sizes[0] = totalsize - MpGlobal.SplitterWidthMin
+    
+    if (sizes[p] < MpGlobal.SplitterWidthMin):
+        sizes[p] = MpGlobal.SplitterWidthMin
+        sizes[l] = totalsize - MpGlobal.SplitterWidthMin
         #MpGlobal.Window.splitter.setSizes(sizes)
-    if (sizes[1] > MpGlobal.SplitterWidthMax):
-        sizes[1] = MpGlobal.SplitterWidthMax
-        sizes[0] = totalsize - MpGlobal.SplitterWidthMax
+    if (sizes[p] > MpGlobal.SplitterWidthMax):
+        sizes[p] = MpGlobal.SplitterWidthMax
+        sizes[l] = totalsize - MpGlobal.SplitterWidthMax
         #MpGlobal.Window.splitter.setSizes(sizes)
     
-    MpGlobal.Window.playListWidth = MpGlobal.Window.splitter.sizes()[1]
+    MpGlobal.Window.playListWidth = MpGlobal.Window.splitter.sizes()[p]
     
 def splitter_resize_debug(pos=None,index=None):
     sizes = MpGlobal.Window.splitter.sizes()
@@ -1074,86 +950,8 @@ def splitter_resize_debug(pos=None,index=None):
     totalsize -= size
     MpGlobal.Window.spt_left.setSizes([totalsize,size])
 
-def button_PlayList_Clear():
-    MpGlobal.Player.playList = []
-    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
-def button_PlayList_Shuffle():
-    sindex = list(MpGlobal.Window.tbl_playlist.selection) # list of song indexes
-    if len(sindex) > 1:
-        # if multiple songs are selected in the playlist
-        # select these songs into a new array, shuffle
-        # and place back at the original indexes
-        S = MpGlobal.Window.tbl_playlist.getSelection() # list of songs
-        ShuffleList(S) # shuffle selection array in place
-        for x in range(len(sindex)):
-            MpGlobal.Player.playList[sindex[x]] = S[x]
-    else:
-        # shuffle the entire playlist starting with the first
-        # song after the current song playing
-        s = MpGlobal.Player.CurrentIndex + 1
-        e = len(MpGlobal.Player.playList)
-        ShufflePartition(MpGlobal.Player.playList,s,e)
-    MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.playList)
-    
-def button_PlayList_AutoPlayList():
-    """ change the playlist ending policy
-        order of the array determines how the values are updated
-    """
-    S = (MpGlobal.PLAYLIST_END_CREATE_NEW,\
-         MpGlobal.PLAYLIST_END_STOP,\
-         MpGlobal.PLAYLIST_END_LOOP_SAME,\
-         MpGlobal.PLAYLIST_END_LOOP_ONE)
-    R = ( setPlayBack_Mode1, \
-          setPlayBack_Mode4, \
-          setPlayBack_Mode2, \
-          setPlayBack_Mode3 )    
-    index = (S.index(MpGlobal.PLAYLIST_END_POLICY)+1)%len(S)      
-    R[index]();
-    #MpGlobal.PLAYLIST_END_POLICY = R[]
-    #button_PlayList_AutoPlayList_SetIcon()
-    return
-def button_PlayList_AutoPlayList_SetIcon():
-    if MpGlobal.PLAYLIST_END_POLICY == MpGlobal.PLAYLIST_END_CREATE_NEW:
-        MpGlobal.Window.btn_apl.setIcon(MpGlobal.icon_AutoPL)
-        MpGlobal.Window.btn_spn.setDisabled(False)
-    elif MpGlobal.PLAYLIST_END_POLICY == MpGlobal.PLAYLIST_END_STOP:
-        MpGlobal.Window.btn_apl.setIcon(MpGlobal.icon_AutoPLO)
-        MpGlobal.Window.btn_spn.setDisabled(True)
-    elif MpGlobal.PLAYLIST_END_POLICY == MpGlobal.PLAYLIST_END_LOOP_SAME:
-        MpGlobal.Window.btn_apl.setIcon(MpGlobal.icon_AutoPLS)
-        MpGlobal.Window.btn_spn.setDisabled(True)
-    else:
-        MpGlobal.Window.btn_apl.setIcon(MpGlobal.icon_AutoPL1)
-        MpGlobal.Window.btn_spn.setDisabled(True)    
-def setPlayBack_Mode1():  
-    MpGlobal.PLAYLIST_END_POLICY = MpGlobal.PLAYLIST_END_CREATE_NEW
-    button_PlayList_AutoPlayList_SetIcon()
-    MpGlobal.Window.act_pMode_pb1.setIcon(MpGlobal.icon_Check)
-    MpGlobal.Window.act_pMode_pb2.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb3.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb4.setIcon(MpGlobal.icon_Clear)
-def setPlayBack_Mode2():  
-    MpGlobal.PLAYLIST_END_POLICY = MpGlobal.PLAYLIST_END_LOOP_SAME
-    button_PlayList_AutoPlayList_SetIcon()
-    MpGlobal.Window.act_pMode_pb1.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb2.setIcon(MpGlobal.icon_Check)
-    MpGlobal.Window.act_pMode_pb3.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb4.setIcon(MpGlobal.icon_Clear)
-def setPlayBack_Mode3():  
-    MpGlobal.PLAYLIST_END_POLICY = MpGlobal.PLAYLIST_END_LOOP_ONE
-    button_PlayList_AutoPlayList_SetIcon()
-    MpGlobal.Window.act_pMode_pb1.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb2.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb3.setIcon(MpGlobal.icon_Check)
-    MpGlobal.Window.act_pMode_pb4.setIcon(MpGlobal.icon_Clear)
-def setPlayBack_Mode4():  
-    MpGlobal.PLAYLIST_END_POLICY = MpGlobal.PLAYLIST_END_STOP
-    button_PlayList_AutoPlayList_SetIcon()
-    MpGlobal.Window.act_pMode_pb1.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb2.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb3.setIcon(MpGlobal.icon_Clear)
-    MpGlobal.Window.act_pMode_pb4.setIcon(MpGlobal.icon_Check)
- 
+
+
 def open_dialog_Help():
     helpDialog().show();
         

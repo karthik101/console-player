@@ -65,6 +65,7 @@ class SettingsContainer(object):
         self.SEARCH_FIELD_YEAR      = "year"
         self.SEARCH_FIELD_DATEADDED = "added"
 
+        self.PLAYLIST_SIDE = 1 # 1==right, 0==left
         self.POSIX_VLC_MODULE_PATH='/usr/lib/vlc'
         self.DRIVE_ALTERNATE_LOCATIONS=[] #'/home/nick/windows/D_DRIVE'
         self.FILE_LOCATION_LIBRARY='' #when  empty str, not in use, otherwise path to an alternate library file

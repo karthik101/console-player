@@ -19,7 +19,7 @@ def event_end_load_song():
     dt = DateTime();
     search = ".added =%s"%dt.currentDate();
     
-    MpGlobal.Window.txt_searchBox.setText(search)
+    MpGlobal.Window.tab_library.txt_searchBox.setText(search)
     #txtSearch_OnTextChange(search, -1)
     MpGlobal.Window.tab_library.table.updateDisplay(search)  
 
@@ -35,7 +35,7 @@ def event_load_song(filepath):
         song = id3_createSongFromPath(filepath)
         
         #todo use .added =%TODAY%
-        #MpGlobal.Window.txt_searchBox.setText(".pcnt =0")
+        #MpGlobal.Window.tab_library.txt_searchBox.setText(".pcnt =0")
         #txtSearch_OnTextChange(".pcnt =0", -1)
         #MpGlobal.Window.tab_library.table.updateDisplay(".pcnt =0") 
         
@@ -46,7 +46,7 @@ def event_load_song(filepath):
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%e.args)
     else:
         MpGlobal.Player.library.append(song)
-        MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
+        MpGlobal.Window.tab_library.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
     # i can get away with posting multiple copies, because only one is saved.    
     MpGlobal.EventHandler.postEndEvent(event_end_load_song);
     
