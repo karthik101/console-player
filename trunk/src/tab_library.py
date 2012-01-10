@@ -52,6 +52,8 @@ class Tab_Library(Application_Tab):
         
         # ----------------------------------
         
+        self.setIcon(MpGlobal.icon_note)
+        
         # set the order of the table columns from the save state
         self.table.columns_setOrder(Settings.LIB_COL_ID)
         self.txt_searchBox.textEdited.connect(txtSearch_OnTextChange)
@@ -110,10 +112,10 @@ class LTable_Library(SongTable):
         """
         
         if string != None:
-            MpGlobal.Window.txt_searchBox.setText(string)
+            MpGlobal.Window.tab_library.txt_searchBox.setText(string)
             searchText = string
         else:
-            searchText = MpGlobal.Window.txt_searchBox.displayText()
+            searchText = MpGlobal.Window.tab_library.txt_searchBox.displayText()
             
         txtSearch_OnTextChange(searchText);    
 
@@ -221,7 +223,7 @@ class LTable_Library(SongTable):
     def keyReleaseUp(self,event):
         if len(self.selection) == 1:    # return focus to the text box
             if list(self.selection)[0] == 0:
-                MpGlobal.Window.txt_searchBox.setFocus()
+                MpGlobal.Window.tab_library.txt_searchBox.setFocus()
         super(LTable_Library,self).keyReleaseUp(event)
         if len(self.selection) > 0:
             row = list(self.selection)[0]
@@ -234,8 +236,8 @@ class LTable_Library(SongTable):
             UpdateStatusWidget(3,self.data[row][MpMusic.PATH])
             
     def keyReleaseOther(self,event):
-        MpGlobal.Window.txt_searchBox.setFocus()
-        MpGlobal.Window.txt_searchBox.keyPressEvent(event)
+        MpGlobal.Window.tab_library.txt_searchBox.setFocus()
+        MpGlobal.Window.tab_library.txt_searchBox.keyPressEvent(event)
      
     def __Action_editSong__(self):
 
@@ -294,7 +296,7 @@ class LineEdit_Search(LineEdit):
 def txtSearch_OnTextChange(text,update=0):
     
     
-    text = MpGlobal.Window.txt_searchBox.textUpdate(text)
+    text = MpGlobal.Window.tab_library.txt_searchBox.textUpdate(text)
     text += MpGlobal.SEARCH_AUTOAPPEND
     MpGlobal.Window.tab_library.table.clearSelection()
     
@@ -318,7 +320,7 @@ def txtSearch_OnTextChange(text,update=0):
         #debug( "Search Time: %s"%(end-time) )
         
     #MpGlobal.Window.tabMain.setTabText(0,"Library (%d)"%len(MpGlobal.Player.libDisplay))
-    MpGlobal.Window.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
+    MpGlobal.Window.tab_library.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
       
 
 import dialogSongEdit

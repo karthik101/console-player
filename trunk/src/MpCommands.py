@@ -479,7 +479,8 @@ def cmd_volume(input):
 
 #----------------------------------------------------------------- 
 # PlayList/Library   
-
+# exec MpGlobal.Window.splitter.insertWidget(0,MpGlobal.Window.frame_main)
+# with pos = 0 for left and 1 for right
 def cmd_append(input):
     # provides the ability of a default search
     """
@@ -661,7 +662,7 @@ def cmd_load(input):
     processTextInput('plload')
     # update tables
 
-    MpGlobal.Window.txt_searchBox.setText("")
+    MpGlobal.Window.tab_library.txt_searchBox.setText("")
     sortLibraryInplace(MpMusic.ARTIST)
     MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.library)
     
@@ -1117,8 +1118,11 @@ def cmd_xx(input):
         debug( test.position )
     
     if input.DecVal[0] == 9 : #xx 9
-        RetailMessage("Sample Display Message")
-       
+        #RetailMessage("Sample Display Message")
+        if MpGlobal.Window.splitter.widget(0) == MpGlobal.Window.frame_main:
+            MpGlobal.Window.splitter.insertWidget(1,MpGlobal.Window.frame_main)
+        else:
+            MpGlobal.Window.splitter.insertWidget(0,MpGlobal.Window.frame_main)
     
     if input.DecVal[0] == 10 : #xx 10
         

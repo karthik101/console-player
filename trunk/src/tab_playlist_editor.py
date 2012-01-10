@@ -60,6 +60,7 @@ class Tab_PlaylistEditor(Application_Tab):
         self.hbox_l.addWidget(self.btn_reload)
         self.hbox_l.addWidget(self.lbl_count_l)
         
+        self.vbox_l.addSpacing(3)
         self.vbox_l.addLayout(self.hbox_l)
         self.vbox_l.addWidget(self.table_library.container)
         
@@ -69,6 +70,7 @@ class Tab_PlaylistEditor(Application_Tab):
         self.hbox_r.addWidget(self.btn_play)
         self.hbox_r.addWidget(self.lbl_count_r)
         
+        self.vbox_r.addSpacing(3)
         self.vbox_r.addLayout(self.hbox_r)
         self.vbox_r.addWidget(self.table_playlist.container)
         
@@ -77,15 +79,15 @@ class Tab_PlaylistEditor(Application_Tab):
         
         self.hbox_main.addWidget(self.edit)
         
+        self.vbox.addSpacing(3)
         self.vbox.addLayout(self.hbox_main)
         self.vbox.addWidget(self.splitter)
         
         self.vbox_l.setMargin(0)
         self.vbox_r.setMargin(0)
         self.vbox.setMargin(0)
+        self.vbox.setSpacing(0)
 
-        
-        
         # -----------------------------------------
         
         self.sort_index = MpMusic.ARTIST
