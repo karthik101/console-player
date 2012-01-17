@@ -22,9 +22,21 @@ from SystemPathMethods import *
 from SystemDateTime import DateTime
 
 from collections import namedtuple
-SearchTerm = namedtuple("SearchTerm",'str typ dir cf rf') #TODO use these instead of just tuples
+SearchTerm = namedtuple("SearchTerm",['str','type','dir','cf','rf','fptr'])
 
-
+# TODO: i now have abetter understanding of lambdas / function pointers with python
+#   the current implementation takes input text and transforms this into a list of terms.
+#   when generating the list of terms, one of the term fields can be a function pointer
+#   in this way instead of using a switch statement to determine how to compare each song to a term
+#   the term can use the function with the song and the term information as arguments
+#   for any term, a new index is added for 'fptr'
+#   fptr is a function or lambda that excepts two arguments. a song and a term.
+#   _compareSongElement can then be removed
+#   in terms of runtime, we go from one function call + N if statements + run time of the compare
+#       to one function call + run time of compare, - removing N if statements
+#   Big-O for a search is O(t*n*N) ~ where t*n is a pseudo constant for the number of terms
+#       and the processing time for one term and N is the number of songs.
+#       this plan should drop the t*n term significantly.
 
 class SearchObject_Controller(object):
     """
@@ -37,13 +49,15 @@ class SearchObject_Controller(object):
         SearchObject_Controller.getFavoriteArtistList = SOC_getFavoriteArtistList                            
         SearchObject_Controller.getPresetStringdef    = SOC_getPresetString
     """
-    #TODO: remember to update this dictionary whenever you update the default one in MpGlobalDefines.
+    #TODO: remember to update this dictionary whenever you update the default one in MpGlobalDefines.    
     D_StrToDec = {   'alb'           : EnumSong.ALBUM, \
                      'abm'           : EnumSong.ALBUM, \
                      'added'         : EnumSong.DATEADDED, \
                      'album'         : EnumSong.ALBUM, \
                      'art'           : EnumSong.ARTIST, \
                      'artist'        : EnumSong.ARTIST, \
+                     'ban'           : EnumSong.BANISH, \
+                     'banish'        : EnumSong.BANISH, \
                      'bitrate'       : EnumSong.BITRATE, \
                      'comm'          : EnumSong.COMMENT, \
                      'comment'       : EnumSong.COMMENT, \
@@ -291,6 +305,19 @@ class SearchObject(object):
         self._searchX = [[]]
         
         self.termCount = 0;
+                
+        fflag = {
+                '<' : SEARCH.LT,
+                '=' : SEARCH.EQ,
+                '>' : SEARCH.GT,
+            }
+                    
+        ftype = {
+                '.' : 0,
+                '+' : SEARCH.OR,
+                '!' : SEARCH.NT,
+                '*' : SEARCH.IO,
+            } 
         
         #expand preset modifiers into their expressions
         for i in range(10):
@@ -325,53 +352,40 @@ class SearchObject(object):
             frame = field.replace(dword,"",1).strip()   # frame is everything but the dword
             key=""
             sigil = dword[0];
+            sigil_type = ftype.get(sigil,0) # integer translation of the sigil
+            
             if not dword[0].isalpha():
                 key   = dword[1:]       #the dword with the sigil removed
            
             flag_type = EnumSong.EXIF
-                
+            
+      
             if key == "sel":
-                self._searchC.append( (".sel",EnumSong.SELECTED,0,None,None) )
+                term = SearchTerm(dword,EnumSong.SELECTED,0,None,None,self._compareSongElement) 
+                self.addTerm(sigil_type,term)
                 continue
             elif key == "spec":
-                self._searchC.append( (".alt",EnumSong.SPECIAL,0,None,None) )
+                term = SearchTerm(dword,EnumSong.SPECIAL,0,None,None,self._compareSongElement)
+                self.addTerm(sigil_type,term)
+                continue
+            elif key == "ban" or key == 'banish':
+                term = SearchTerm(dword,EnumSong.BANISH,0,None,None,self._compareSongElement)
+                self.addTerm(sigil_type,term)
                 continue
             elif key[:4] == "freq" and key[4:5] in "<=>" and key[4:5] != "": # a slice never throws an exception, but can return empty
                 # allow $freqX , where X is <=>,
                 fdict = {
-                            '<' : EnumSong.SPEC_FREQ_L,
-                            '=' : EnumSong.SPEC_FREQ_E,
-                            '>' : EnumSong.SPEC_FREQ_G,
-                        }
-                fflag = {
-                            '<' : SEARCH.LT,
-                            '=' : SEARCH.EQ,
-                            '>' : SEARCH.GT,
-                        }
-                ftype = {
-                            '.' : 0,
-                            '+' : SEARCH.OR,
-                            '!' : SEARCH.NT,
-                            '*' : SEARCH.IO,
-                        }      
-                        
-                flag = fflag.get(key[4],0)|ftype.get(sigil,0)        
-                        
-                t = (key,fdict[key[4]],flag,DateTime.now(),None)
-                
-                if sigil == ".":
-                    self._searchC.append( t  ) 
-                elif sigil == "+":
-                    self._searchO.append( t  ) 
-                elif sigil == "!":
-                    self._searchN.append( t  ) 
-                elif sigil == "*":
-                    self._searchX.append( [t,]  ) 
+                    '<' : EnumSong.SPEC_FREQ_L,
+                    '=' : EnumSong.SPEC_FREQ_E,
+                    '>' : EnumSong.SPEC_FREQ_G,
+                }
+                flag = fflag.get(key[4],0)|sigil_type          
+                term = SearchTerm(key,fdict[key[4]],flag,DateTime.now(),None,self._compareSongElement)
+                self.addTerm(sigil_type,term)
                 continue
             else: # get key or return the default value
                 flag_type = SearchObject_Controller.getSearchDictionary().get(key,flag_type)
                 
-            # chop the .word search
             #print flag_type,frame
             if flag_type == EnumSong.EXIF:
                 self._parseFrame(flag_type,field)
@@ -389,47 +403,40 @@ class SearchObject(object):
             
             the a,b,c,d incrementers are for debug and can be removed later
         """
-        c = True    # And
         o = False   # Or
-        n = False   # Not
         x = True    # Inclusive or
         
         # check if the song matches all 'constant' terms
-        for i in xrange(len(self._searchC)):
-            c = self._compareSongElement(song,self._searchC[i])
-            if not c:
+        for term in self._searchC:
+            if not term.fptr( song, term ):
                 return False; # song did not match a AND term, so break out 
                 
         # check that the song matches none of the 'not' terms
-        for i in xrange(len(self._searchN)):
-            n = self._compareSongElement(song,self._searchN[i])
-            if n:
+        for term in self._searchN:
+            if term.fptr( song, term ):
                 return False; # song matched so break out 
                 
         # ensure that song matches at least one 'or' term        
         if len(self._searchO) > 0:
-            for i in xrange(len(self._searchO)):
-                o = self._compareSongElement(song,self._searchO[i])
+            for term in self._searchO:
+                o = term.fptr( song, term )
                 if o:
                     break;     
         else:
-            o = True
+            o = True # matches all zero terms...
 
-        #check X
-        # searchX is a set of lists
-        # a song must match as least one item in each list for each set.
+        # searchX is a list of lists
+        # a song must match as least one item in each list.
         if len(self._searchX[0]) > 0:
-            for i in xrange(len(self._searchX)):
-                t = False
-                for j in xrange(len(self._searchX[i])):
-                    t = self._compareSongElement(song,self._searchX[i][j])
-                    if t:
-                        break;  
-                if not t: 
-                    x = False;
-                    break;
+            for l in self._searchX:
+                for term in l:
+                    if self._compareSongElement(song,term): 
+                        break
+                else: # if the for-loop does not break
+                    x = False
+                    break
         
-        return o and x;
+        return o and x
         
     def search(self,songList):
         """
@@ -548,9 +555,12 @@ class SearchObject(object):
         try:
             if flag_type == EnumSong.SELECTED :
                 return song[EnumSong.SELECTED]
-                
+
             elif flag_type == EnumSong.SPECIAL :
                 return song[EnumSong.SPECIAL]
+
+            elif flag_type == EnumSong.BANISH :
+                return song.banish
                 
             elif flag_type == EnumSong.SPEC_FREQ_G :
 
@@ -618,20 +628,48 @@ class SearchObject(object):
                     return song[flag_type].lower().find(element[cf]) == 0
                 else:
                     return song[flag_type].lower().find(element[cf]) >= 0
-     
-            elif flag_type >= EnumSong.STRINGTERM and element[st] < EnumSong.NUMTERM :
-                if   flag_dir&SEARCH.LE == SEARCH.LE : return song[flag_type] <= element[cf]
-                elif flag_dir&SEARCH.LT              : return song[flag_type] <  element[cf]
-                elif flag_dir&SEARCH.GE == SEARCH.GE : return song[flag_type] >= element[cf]
-                elif flag_dir&SEARCH.GT              : return song[flag_type] >  element[cf]
-                elif flag_dir&SEARCH.EQ              : return song[flag_type] == element[cf]
-                
+                     
         except Exception as e:
             print "Error: [%s] %s"%(EnumSong.exifToString(flag_type),e.args)
             print song
             print element
         return False;    
         
+    def _compareTerm_Frequency(self,song,term):
+        f = song[term.type]
+        if f == 0: # zero frequency is defined as INF
+            f = 9999
+        if   term.dir & SEARCH.LE == SEARCH.LE : return        f        <= term.cf
+        elif term.dir & SEARCH.LT              : return        f        <  term.cf
+        elif term.dir & SEARCH.GE == SEARCH.GE : return        f        >= term.cf
+        elif term.dir & SEARCH.GT              : return        f        >  term.cf
+        elif term.dir & SEARCH.EQ              : return song[term.type] == term.cf 
+        
+    def _compareTerm_Number(self,song,term):
+    
+        if   term.dir & SEARCH.LE == SEARCH.LE : return song[term.type] <= term.cf
+        elif term.dir & SEARCH.LT              : return song[term.type] <  term.cf
+        elif term.dir & SEARCH.GE == SEARCH.GE : return song[term.type] >= term.cf
+        elif term.dir & SEARCH.GT              : return song[term.type] >  term.cf
+        elif term.dir & SEARCH.EQ              : return song[term.type] == term.cf 
+       
+    def _compareTerm_String(self,song,term):
+        # contains, the element must be anywhere
+        #  ex: 'st' will match 'stone' and 'rockstar'
+        # equals the entered text must equal the equivalent length in the song
+        #  ex: 'st' will match 'stone' but not 'rockstar'
+        try:
+            result = song[term.type].lower().find(term.cf)
+        except:
+            print "Error with Term:"
+            print "[%X]%s"%(term.dir,song[term.type])
+            return False
+        else:
+            if term.dir&SEARCH.EQ and term.type != EnumSong.EXIF:
+                return  result == 0
+            else:
+                return result >= 0
+            
     def _parseFrame(self,type,frame):
         # parse Frame looks for special characters
         # and then sets the appropriate bit flag.
@@ -730,7 +768,7 @@ class SearchObject(object):
     def _compileTerm(self,flag_type,flag,ostr):
         """
             flag_type: either EXIF, ARTIST,PLAYCOUNT ETC
-            flag     : numeric as defined in SEARCH class
+            flag     : OR combination of SEARCH dir and mod. < <= >= > = and . + ! *
             ostr     : relevant string term for a search of flag_type
         """
         if ostr == "":
@@ -738,8 +776,12 @@ class SearchObject(object):
         ostr = unicode(ostr) 
         cf = ostr[:]
         rf = None;
- 
-        if (flag_type == EnumSong.SPEC_DATESTD ) :
+        fptr = None;
+        
+        if flag_type < EnumSong.STRINGTERM:
+            fptr = self._compareTerm_String
+        
+        if   (flag_type == EnumSong.SPEC_DATESTD ) :
             dt = DateTime(flag_type&0xF)
             cf = dt.getEpochTime(dt.repairDateTime(cf))
             rf = cf + 24*60*60
@@ -752,6 +794,7 @@ class SearchObject(object):
                 flag = flag|SEARCH.GT
                 
             flag_type = EnumSong.DATESTAMP # change type to standard date format
+            fptr = self._compareSongElement
         elif (flag_type == EnumSong.SPEC_DATEEU ) :
             dt = DateTime(flag_type&0xF) # set which format to use for dates, for help check the definition for SPEC_DATESTD, and the enumeration in DateTime
             cf = dt.getEpochTime(dt.repairDateTime(cf)) # autocomplete the entered date then convert to seconds
@@ -763,6 +806,7 @@ class SearchObject(object):
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             flag_type = EnumSong.DATESTAMP # change type to standard date format   
+            fptr = self._compareSongElement
         elif (flag_type == EnumSong.SPEC_DATEUS ) :
             dt = DateTime(flag_type&0xF)
             cf = dt.getEpochTime(dt.repairDateTime(cf))
@@ -774,6 +818,7 @@ class SearchObject(object):
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
             flag_type = EnumSong.DATESTAMP # change type to standard date format
+            fptr = self._compareSongElement
         elif (flag_type == EnumSong.SPEC_MONTH ) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
@@ -784,7 +829,8 @@ class SearchObject(object):
                 rf = cf + 28*24*60*60
                 ostr = "month: %s"%ostr
             except:
-                pass   
+                pass 
+            fptr = self._compareSongElement            
         elif (flag_type == EnumSong.SPEC_WEEK ) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
@@ -795,7 +841,8 @@ class SearchObject(object):
                 rf = cf + 7*24*60*60
                 ostr = "week: %s"%ostr
             except:
-                pass        
+                pass 
+            fptr = self._compareSongElement
         elif (flag_type == EnumSong.DATESTAMP) :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.GT
@@ -806,6 +853,7 @@ class SearchObject(object):
                 ostr = "day: %s"%ostr
             except:
                 pass
+            fptr = self._compareSongElement
         elif (flag_type == EnumSong.DATEADDED) :
             dt = DateTime(EnumSong.SPEC_DATESTD&0xF)
             cf = dt.getEpochTime(dt.repairDateTime(cf))
@@ -816,19 +864,20 @@ class SearchObject(object):
             ostr = dt.repairDateTime(ostr)
             
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
-                flag = flag|SEARCH.GT
-                
+                flag = flag|SEARCH.GT   
+            fptr = self._compareSongElement            
         elif (flag_type == EnumSong.PATH ) :
             if cf == u"":
                 return None
             rf = None
-        
+            fptr = self._compareSongElement
         elif (flag_type == EnumSong.LENGTH ):
             cf = 0;
             try:
                 cf = DateTime.parseTimeDelta(ostr)
             except:
                 pass
+            fptr = self._compareSongElement
         elif flag_type >= EnumSong.STRINGTERM and flag_type < EnumSong.NUMTERM :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.EQ
@@ -838,16 +887,24 @@ class SearchObject(object):
                 cf = 0
                 return None
             rf = None
+            # set the function to do the compare
+            if flag_type == EnumSong.FREQUENCY:
+                fptr = self._compareTerm_Frequency
+            else:
+                fptr = self._compareTerm_Number
+               
         
-        term = (ostr,flag_type,flag,cf,rf)
+        term = SearchTerm(ostr,flag_type,flag,cf,rf,fptr)
 
-        flag_mod = flag&SEARCH.MOD
+        self.addTerm(flag&SEARCH.MOD,term)
 
-        if   flag_mod == SEARCH.OR : self._searchO.append(term);
-        elif flag_mod == SEARCH.NT : self._searchN.append(term);
-        elif flag_mod == SEARCH.IO : self._searchX[-1].append(term);
-        else                       : self._searchC.append(term);
-
+    def addTerm(self,flag,term):
+        
+        if   flag == SEARCH.OR : self._searchO.append(term);
+        elif flag == SEARCH.NT : self._searchN.append(term);
+        elif flag == SEARCH.IO : self._searchX[-1].append(term);
+        else                   : self._searchC.append(term);
+           
     def __unicode__(self):
         string = ""
         for term in self._searchC:
@@ -919,20 +976,55 @@ if __name__ == "__main__":
         song.update();
         return song
     
-    def testso():
-        pass
+
     # newSong("Stone Temple Pilots","unglued","purple",30))
     song = newSong("Blind Melon","No Rain","Blind Melon",60)
     
     #so = SearchObject(".day 5");
     #so = SearchObject(".len 60");
-    print song
+    #print song
 
-    so = SearchObject(".path =/usr/");
+    so = SearchObject(".len 60");
     so.debug();
-    print "Song Match: %s"%so.match(song)
-    print "----------: %s"%so._compareSongElement(song,so._searchC[0])
+    #print "Song Match: %s"%so.match(song)
+    #print "----------: %s"%so._compareSongElement(song,so._searchC[0])
+    #s = set()
+    #for key,value in SearchObject_Controller.D_StrToDec.items():
+    #    s.add(value)
+    #print len(s), len(s)*5*4
+    
+    # ################################################################
+    # to accuratley test all cases of Song_Search, a minimum of:
+    # unique(D_StrToDec) * 5 * 4 >= 540
+    # test cases are needed
+    # this is, for each possible search word in the lookup dictionary
+    # there are 5 searchs, for < <= = >= > and 4 searches ! + * .
+    # many of the words are duplicates, so we can use only the unique words
     
     
+    term_dir = ('','<','<=','=','>=','>')
+    term_typ = ('.','+','!','*')
+    term_key = []
+    done_dict = {}
+    for key,value in sorted(SearchObject_Controller.D_StrToDec.items()):
+        if value not in done_dict:
+            done_dict[value] = True
+            term_key.append(key)
+
+    print term_key
     
-    
+    # def _compileTerm(self,flag_type,flag,ostr):
+    # flag type takes any of the following values:
+    # flag takes any or combination of < = = => > and . + ! *
+    # ostr is a relevant string for
+    #EnumSong.SPEC_DATESTD
+    #EnumSong.SPEC_DATEEU
+    #EnumSong.SPEC_DATEUS
+    #EnumSong.SPEC_MONTH
+    #EnumSong.DATESTAMP
+    #EnumSong.DATEADDED
+    #EnumSong.PATH
+    #EnumSong.LENGTH
+    #~NUMTERM~   any numerical term not already covered e.g. playcount
+    #~STRTERM~  any string term e.g. ARTIST
+        

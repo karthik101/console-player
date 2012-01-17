@@ -8,6 +8,16 @@ from Qt_CustomStyle import *
 from math import ceil,floor
 
 # http://wiki.python.org/moin/TimeComplexity not sure if i should use set,dict,or list for selection, using set for now
+
+#TODO add the following to TableColumn:
+#   - setTextColor(color) : set color to color or None for default. default is set by row color.
+#   - addTextColorComplexRule(rule,color)       : in he same way as rows, text colors can be
+#   - setTextColorComplexRule(index,rule,color) : set on a per column basis. where a rule
+#   - countTextColorComplexRule()               : is a function or lambda that accepts a row object 
+#   - removeTextColorComplexRule(index)         : and returns true/false
+#   - clearTextColorComplexRule()               :
+#   - a Highlight set of functions should also be provided for background color
+
 class LargeTableCore(QWidget):
     """
         LargeTableCore
@@ -16,16 +26,19 @@ class LargeTableCore(QWidget):
         
         LargeTableCore handles all of the rendering and mouse events associated with the table
         
-        all values required for drawing are initialized in __init__
+        all values required for drawing are initialized in __init__d
         
         see LargeTableBase for the implementation of all getter/setters of variables used
         for drawing and rendering data in the table
         
         LargeTableCore cannot be instantiated by itself.
     """
-    
+    SELECT_NONE,SELECT_ONE,SELECT_MULTI = range(3)
     column_header_resize = pyqtSignal() #emit this when the headers are resized
     column_header_sort_request = pyqtSignal('int') # emit this, when a header needs to be sorted
+    column_changed_signal = pyqtSignal() # general signal for changing the order of, hiding, adding columns
+    
+    scroll_horizontal = pyqtSignal('int') # emit whenever you want to scroll the window left (neg) or right (pos)
     
     def __init__(self,parent=None):
         if type(self) == LargeTableCore:
@@ -35,12 +48,19 @@ class LargeTableCore(QWidget):
 
         self.painter_brush_default = None
         
+        self.mutex_data = QMutex() # TODO painting locks this but thread safe manipulation of self.data is still needed
+        
         self.data_x = 0   #set by resize events, 
         self.data_y = 0   # the x,y and width/height of the data drawing region
         self.data_w = 100 # the visible 'cells' of the table
         self.data_x = 100 # These values are dummy until the first resize occurs
         self.data_x2= 100 # after __init__
         self.data_y2= 100 # x2,y2 is the bottom right corner
+        
+        self.data_cell_clip_x = 0  # when drawing data this is the current clip region
+        self.data_cell_clip_y = 0  # when drawing data this is the current clip region
+        self.data_cell_clip_w = 0  # when drawing data this is the current clip region
+        self.data_cell_clip_h = 0  # when drawing data this is the current clip region
         
         self.padding_top    = 0; # padding from widget boundaries to start drawing
         self.padding_bottom = 0; # padding from widget boundaries to start drawing
@@ -83,25 +103,29 @@ class LargeTableCore(QWidget):
         self.mouse_disable_release = False
         self.mouse_disable_col_click_event = False # used when column resizing takes affect
         self.drag_start_enable = False # whether a drag is being performed
+        self.scroll_rate = 4        # used when the mouse is within the auto scroll region
+        self.mouse_enable_autoscroll_hor = False # enable auto scrolling when dragging a column and the mouse is within a certain area
         
         self.columns = []      # columns are defined as an array of Column objects
         self.columns_hidden = []    # list of hidden columns - not being rendered
-        self.initColumns()
+        self.columns_default_order_list = []
         
         self.selection = set();     # set of selected rows
+        self.selection_rule = LargeTableCore.SELECT_MULTI
         self.selection_clone = None;    # copy of the selected row set
         self.selection_last_row_added = 0
         self.selection_first_row_added = 0
         self.selection_defer = False # when true, selection update waits until mouse release
                                      # by defering, we can check for and handle mouse drags on selected data
-        self.data=[]
-        
+         
         self.text_display_none = "<No Data>"
 
         self.draw_debug = False
         
-        self.data = []
+        self.data=[]            # the data currently being displayed
+        self.ghost_data = None   # updated data which will be taken at the next paint event
         
+        self.color_group = QPalette.Active
         self.brush_default = QBrush(QColor(0,0,0,0));
         
         self.setMouseTracking(True);
@@ -124,11 +148,62 @@ class LargeTableCore(QWidget):
                                             # the first item in the tuple is a lambda or function that accepts a row index
                                             # the second item in the tuple is a QColor
         self.rowTextColor_simple_list  = []
+        
+        self.initColumns()
+    
+    def __setattr__(self,name,value):
+        if name == "data":
+            # i should use a mutex, however i was getting deadlock
+            # instead setting the 'data' attribute modifies ghost data
+            # at the start of a paint event the 'data' attribute is updated with the ghost data
+            # this update is only done once for each time the 'data' attribute is modified
+            
+            # '__data__' provides a way of updating the 'data' attribute - and should NEVER be used.
+            
+            # in this way updates to the data on the table can only happen at the start of a paint event
+            # and never at any other moment in time
+            
+            # becuse of this a user should never read from data directly, it could be stale values
+            
+            self.__dict__['ghost_data'] = value[:]
+        if name == "__data__":
+            self.__dict__['data'] = value
+            self.__dict__['ghost_data'] = None
+        else:
+            self.__dict__[name] = value
+    
+    def getData(self):
+        """
+            Retrieving the data model used for displaying can be difficult.
+            when data is set a shadow copy is set until the next paint event happens
+            
+            this data returns a copy* of the shadow if there is one,
+                otherwise a copy* of the data is returned
+            
+            * a shallow copy is made by using the list slice operator [:]
+                all rows will be the same, but a new list-of-rows will be returned
+            
+            because of the shadow copy self.data should never be ready directly outside of
+            either the table itself, or a column in the table.
+            
+        """
+        R = self.ghost_data if self.ghost_data!=None else self.data 
+        if isinstance(R,list):
+            return R[:]
+        return None
+    #def __getattr__(self,name):
+    #    if attr == "data":
+    #        return self[self.index_name]
+    #        print "access"
+    #    else:
+    #        raise AttributeError("%r object has no attribute %r" % (type(self).__name__, attr))    
+            
     def initColumns(self):
         """
             Overload this method to initilize columns
         """
         self.columns = [TableColumn(self,0),]
+    
     def calculateGeometry(self):
         w = self.width()
         h = self.height()
@@ -161,8 +236,15 @@ class LargeTableCore(QWidget):
         
     def paintEvent(self, event):
         #self.dt.timer_start();
+        
         w = self.width()
         h = self.height()
+        
+        self.mutex_data.lock()
+        
+        if self.ghost_data != None:
+            self.__data__ = self.ghost_data
+            
         
         painter = QPainter(self)
         self.setPaletteGroup() # set colors to active/inactive/disabled versions
@@ -203,7 +285,7 @@ class LargeTableCore(QWidget):
         if self.draw_debug:
             self.paint_debug(painter,self.data_x,self.data_y,self.data_w,self.data_h)
         
-        
+        self.mutex_data.unlock()
         
         
         #self.dt.timer_end()
@@ -443,6 +525,11 @@ class LargeTableCore(QWidget):
                 if _cx + _cw >= x+w: # clip the last col if it will draw outside the cell region
                     _cw = x+w-_cx    # width is capped at remaining width in display area
                     
+                self.data_cell_clip_x = _cx
+                self.data_cell_clip_y = _cy
+                self.data_cell_clip_w = _cw  
+                self.data_cell_clip_h = _ch   
+                
                 # set a region so that the item cannot paint outside of it's own cell    
                 painter.setClipRect(_cx,_cy,_cw,_ch)
                 # let the col paint the item
@@ -452,8 +539,10 @@ class LargeTableCore(QWidget):
 
                 painter.setPen( self.row_text_colors[c] )
                 
-                col.paintItem(col,painter,item_row,item,_x,_y,max(_cw,col.width),self.row_height)
-                
+                try:
+                    col.paintItem(col,painter,item_row,item,_x,_y,max(_cw,col.width),self.row_height)
+                except IndexError:
+                    print "IndexError: %d/%d is no longer a valid index"%(item_row,len(self.data))
                 _y += self.row_height
                 c+=1;
 
@@ -558,7 +647,7 @@ class LargeTableCore(QWidget):
         _y = self.data_y - self.col_header_height
         
         # for when user is moving the mouse over a column that has mouse tracking enabled
-        if self.mouse_tracking_column_index >= 0 and cur_c != self.mouse_tracking_column_index:
+        if self.mouse_tracking_column_index >= 0 and (cur_c != self.mouse_tracking_column_index or my < self.data_y or my > self.data_y2):
             self.columns[self.mouse_tracking_column_index].mouseHoverExit(event)
             self.mouse_tracking_column_index = -1
             self.update()
@@ -591,15 +680,27 @@ class LargeTableCore(QWidget):
             #self.setCursor(Qt.ClosedHandCursor)
             #col_list = self._paint_get_col() seems to work better without this
             self.mouse_disable_col_click_event = True
-            for i in range(len(self.columns)):
-                _xl = _x
-                _x += self.columns[i].width
-                if _x < self.padding_left+self.row_header_width:    # skip any col that will be invisible on the left side
-                        continue
-                if mx > _xl and mx < _x:
-                    if self.mouse_move_col_target != i:
-                        self.mouse_move_col_target = i   
-                        self.update();   
+            
+            if mx < self.row_header_width + 16:
+                self.scroll_horizontal.emit(-self.scroll_rate)
+                return
+            
+            elif mx > self.data_x2-16:
+                self.scroll_horizontal.emit(self.scroll_rate)
+                return
+            else:
+                self.mouse_enable_autoscroll_hor = False
+            
+            if my < _y+self.col_header_height-2:
+                for i in range(len(self.columns)):
+                    _xl = _x
+                    _x += self.columns[i].width
+                    if _x < self.padding_left+self.row_header_width:    # skip any col that will be invisible on the left side
+                            continue
+                    if mx > _xl and mx < _x:
+                        if self.mouse_move_col_target != i:
+                            self.mouse_move_col_target = i   
+                            self.update();   
             return;
         # mouse is within the column header structure
         elif my > _y and my < _y+self.col_header_height-2: # use a 2 pixel buffer on mouse detection
@@ -626,7 +727,8 @@ class LargeTableCore(QWidget):
 
                 #check that the mouse is hovering over resize grips
                 if mx > _x-self.tolerance_grips and mx < _x+self.tolerance_grips and not flag_skip_grip and \
-                        ( (i < len(col_list)-1 and self.enable_last_column_expanding) or not self.enable_last_column_expanding):
+                        ( (i < len(col_list)-1 and self.enable_last_column_expanding) or not self.enable_last_column_expanding) \
+                        and self.columns[i].enable_resize:
                     self.setCursor(Qt.SplitHCursor)
                     self.mouse_resize_col = i
                     self.mouse_move_col = -1
@@ -647,7 +749,6 @@ class LargeTableCore(QWidget):
             self.mouse_resize_col = -1
             self.mouse_move_col = -1
             #self.mouse_col_header_hover_index = -1
-        
         elif my > _y+self.col_header_height:
             
             
@@ -659,6 +760,8 @@ class LargeTableCore(QWidget):
             else:
                 if event.buttons() == Qt.LeftButton:
                     self.dragStart(event);
+        
+        self.mouse_enable_autoscroll_hor = False
         
         if self.mouse_col_header_hover_index != -1 or cell_capture:
             self.mouse_col_header_hover_index = -1
@@ -686,7 +789,7 @@ class LargeTableCore(QWidget):
                 if _x < self.padding_left+self.row_header_width:    # skip any col that will be invisible on the left side
                         continue
                 # check for double click on resize grips
-                if mx > _x-self.tolerance_grips and mx < _x+self.tolerance_grips:
+                if mx > _x-self.tolerance_grips and mx < _x+self.tolerance_grips and self.columns[i].enable_resize:
                     self.columns[i].width = self.columns[i].preferredWidth()
                     self.mouse_disable_release = True
                     self.column_header_resize.emit()
@@ -709,9 +812,7 @@ class LargeTableCore(QWidget):
         self.selection_defer = False
         
         self.drag_start_enable = False;
-        
-        if event.buttons() != Qt.LeftButton:
-            return
+       
         
         if my > self.data_y:
             self.mouse_move_col_enable=False
@@ -720,12 +821,12 @@ class LargeTableCore(QWidget):
             self.mouse_move_col_target = -1
                 
                 
-        if self.mouse_resize_col >= 0:
+        if self.mouse_resize_col >= 0 and event.buttons() == Qt.LeftButton:
             self.mouse_pos_drag_start_x = event.x()
             self.mouse_pos_drag_start_y = event.y()
             self.mouse_resize_col_owidth = self.columns[self.mouse_resize_col].width
             self.mouse_resize_col_enable = True
-        elif self.mouse_move_col >= 0:
+        elif self.mouse_move_col >= 0 and event.buttons() == Qt.LeftButton:
             self.mouse_pos_drag_start_x = event.x()
             self.mouse_pos_drag_start_y = event.y()
             self.mouse_move_col_start=True
@@ -738,6 +839,7 @@ class LargeTableCore(QWidget):
                 cell_capture = self.columns[c].mouseClick(r,cx,cy)
                 if cell_capture: # end this function if the cell captured the click
                     return
+                    
             self.mouse_pos_drag_start_x = mx; # used when trying to start a drag
             self.mouse_pos_drag_start_y = my;
         
@@ -745,18 +847,27 @@ class LargeTableCore(QWidget):
             row += self.offset_row_index
             
             if row in self.selection:
-                self.selection_defer = True # update selection on mouse release intead
+                if event.buttons() == Qt.LeftButton:
+                    self.selection_defer = True # update selection on mouse release intead
             else:    
                 self.__modify_selection(_shift,_ctrl,row)
           
     def mouseReleaseEvent(self,event=None):    
-         
+        my = event.y()
+        mx = event.x()
         
         self.mouse_resize_col_enable = False
         self.mouse_resize_col = -1
+        self.mouse_enable_autoscroll_hor = False
         
         if event.button() == Qt.LeftButton:
-            self.__mouseReleaseLeft(event)
+            blocking = False
+            if my < self.col_header_height:
+                blocking = self.mouseReleaseLeftHeader(event)
+            elif mx > self.data_x and mx < self.data_x2 and my > self.data_y and my < self.data_y2:
+                blocking = self.mouseReleaseLeft(event)
+            if not blocking:
+                self.__mouseReleaseLeft(event)  
         elif event.button() == Qt.RightButton:
             self.__mouseReleaseRight(event)
         else:
@@ -770,9 +881,9 @@ class LargeTableCore(QWidget):
         self.mouse_move_col_target = -1
         #self.mouse_col_header_hover_index = -1
         self.setCursor(Qt.ArrowCursor)   
-            
+        self.update()    
         return
-       
+
     def __mouseReleaseLeft(self,event):
     
         w = self.width()
@@ -790,6 +901,7 @@ class LargeTableCore(QWidget):
                     temp = self.columns[self.mouse_move_col]
                     self.columns.remove(temp)
                     self.columns.insert(self.mouse_move_col_target,temp)
+                    self.column_changed_signal.emit()
                     # update the variable which controls drawing of hover state for columns
                     self.mouse_col_header_hover_index = self.mouse_move_col_target
                     self.update();
@@ -893,7 +1005,7 @@ class LargeTableCore(QWidget):
                 drag = QDrag(self)
                 drag.setMimeData(mimeData)
                 drag.start()
-                
+            
     def leaveEvent(self,event=None):
         self.mouse_resize_col_enable = False
         self.mouse_resize_col = -1
@@ -902,6 +1014,9 @@ class LargeTableCore(QWidget):
         self.mouse_move_col_start =False
         self.mouse_move_col = -1
         self.mouse_move_col_target = -1
+        self.mouse_col_header_hover_index = -1
+        
+        self.mouse_enable_autoscroll_hor = False
         
         self.setCursor(Qt.ArrowCursor)
     
@@ -919,6 +1034,12 @@ class LargeTableCore(QWidget):
             private method
             called on mouse press or release to modify the current selection state
         """
+        if self.selection_rule == LargeTableCore.SELECT_NONE:
+            return # cancel selection
+        elif self.selection_rule == LargeTableCore.SELECT_ONE:
+            self.selection = {row,}
+            return # select the new row
+        
         if row < len(self.data):
             if _ctrl and _shift:
                 # for shift click select the range from the LAST click to current row
@@ -972,7 +1093,8 @@ class LargeTableBase(LargeTableCore):
 
     def setData(self,data):
         self.data = data
-     
+        self.update()
+        
     def setRowHeight(self,row_height):
         self.row_height = row_height
     
@@ -1023,9 +1145,9 @@ class LargeTableBase(LargeTableCore):
         if isinstance(col_index,TableColumn):
             col_index.parent = self
             if index < 0:
-                self.columns.append(temp)
+                self.columns.append(col_index)
             else:
-                self.columns.insert(index,temp)
+                self.columns.insert(index,col_index)
         else:    
             index = col_index
             if index < 0:
@@ -1035,6 +1157,8 @@ class LargeTableBase(LargeTableCore):
             else:
                 temp = TableColumn(self,index)
                 self.columns.insert(index,temp)
+                
+        self.column_changed_signal.emit()    
     
     def column(self,index):
         return self.columns[index]
@@ -1071,6 +1195,61 @@ class LargeTableBase(LargeTableCore):
             w+=col.width
         return w
     
+    def columns_getOrder(self):
+        """
+            returns the current order of the columns as a list of strings
+            
+            the columns are differentiated using the name of the column
+            
+            see columns_setOrder
+        """
+        
+        return [ col.name for col in self.columns ]
+        
+    def columns_setOrder(self,order_list):
+        """
+            set the order of the columns by using the name to identify the column
+            
+            does not self.column_changed_signal
+            
+            see columns_setOrder
+        """
+        
+        if len(order_list) == 0:
+            return
+        self.columns_hidden += self.columns
+        self.columns = []
+        
+        for name in order_list:
+            for col in self.columns_hidden:
+                if col.name == name:
+                    self.columns_hidden.remove(col)
+                    self.columns.append(col)
+                    break
+            
+            
+        if len(self.columns) == 0:
+            self.columns = self.columns_hidden
+            self.columns_hidden = []
+         
+        self.update()
+      
+    def columns_setDefaultOrder(self,order_list):
+        """
+            set the order that will be considered 'default'
+            after settings this 'Restore Default' will be seen as an option in
+            the show/hide column context menu
+            
+            pass an empty list to disable this feature
+        """
+        self.columns_default_order_list = order_list
+      
+    def columns_restoreDefaultOrder(self):
+        """
+            restore the order of the columns
+        """
+        self.columns_setOrder(self.columns_default_order_list)
+      
     def addRowTextColorComplexRule(self,fncptr,color):
         self.rowTextColor_complex_list.append( (fncptr,color) )
     def setRowTextColorComplexRule(self,index,fncptr,color):
@@ -1181,10 +1360,27 @@ class LargeTableBase(LargeTableCore):
         
     def mouseReleaseRightHeader(self,event):
         print "header click"
-        
+    
     def mouseReleaseRight(self,event):
         #print self._mousePosToCellPos(event.x(),event.y())
         pass
+        
+    def mouseReleaseLeftHeader(self,event):
+        """
+
+            return true to block further mouse events (e.g. selection)
+        """
+        return False
+        
+    def mouseReleaseLeft(self,event):
+        """
+            Called when user releases the mouse over cell data (not over a header, see mouseReleaseLeftHeader)
+            
+            if you are looking to overload a mouse events for this table use this function
+            
+            return true to block further mouse events (e.g. selection)
+        """
+        return False
         
     def setSortColumn(self,col_index,direction=0):
         """
@@ -1251,22 +1447,23 @@ class LargeTableBase(LargeTableCore):
         """
             Return a  new array containing all selected elements
         """
-        l = len(self.selection)
-        if l == 0:
-            return []
-            
-        temp = [None]*l # create an array with l elements
+        # return all rows that are selected if the index is still valid
+        return [ self.data[index] for index in sorted(list(self.selection)) if index < len(self.data) ]
+      
+    def setSelection(self,row_index_list):
+        """
+            set the selection to the list of indicated rows
+            row_index_list can be a list or set
+        """
         
-        sel = list(self.selection)
-        sel.sort()
+        self.selection = set(row_index_list)
         
-        count = 0
-        for item in sel:
-            temp[count] = self.data[item]
-            count += 1
-        
-        return temp
-        
+    def clearSelection(self):
+        """
+            remove all selected items
+        """
+        self.selection = set()
+      
     def getSelectionString(self):
         """
             return a comma separated value string with one line per row
@@ -1303,11 +1500,11 @@ class TableColumn(object):
     """
         class object provides information on each column
     """
-    def __init__(self,parent,index,name=""):
+    def __init__(self,parent,index,name=None):
         self.parent = parent;
         self.width = 100;   # requested width for drawing
         self.index = index; # index of data from parent this column is responsible for drawing
-        if name == "":
+        if name == None:
             self.name = "Column %d"%index      # what to draw in the column header
         else:
             self.name = name
@@ -1320,6 +1517,8 @@ class TableColumn(object):
         self.text_V_align = Qt.AlignTop; 
         
         self.text_transform = lambda row_data,cell_item: unicode(cell_item);
+        
+        self.enable_resize = True
         
         self.column_sort_indicator = 0 # use 0 for off, -1 for up and 1 for down
         self.column_sort_default = 1 # set to 1/-1, this is the initial direction this column sorts
@@ -1334,7 +1533,7 @@ class TableColumn(object):
         self.text_H_align = halign; 
         self.text_V_align = valign;
       
-    def setTextTransform(funcptr):
+    def setTextTransform(self,funcptr):
         """
             Set the text transformation function when when drawing an item.
             
@@ -1347,6 +1546,10 @@ class TableColumn(object):
             the function of lambda must return a unicode text object.
             
             use this to format data before it is displayed in the table cell.
+            
+            Example:
+            
+            text_transform = lambda row_data,cell_item: unicode(cell_item);
             
         """
         self.text_transform = funcptr
@@ -1395,6 +1598,10 @@ class TableColumn(object):
         """
         self.column_sort_default = -1 if reverse else 1
      
+    def setEnableResize(self,bool):
+        """ when False, the user will be unable to resize the column by grabbing or double clicking the header"""
+        self.enable_resize = bool
+     
     def paintItem(self,col,painter,row,item,x,y,w,h):
         """
             the item 'item' has bin given a rectangle at point x,y with width and height w,h
@@ -1415,6 +1622,17 @@ class TableColumn(object):
             for example, overload it to draw shapes instead of text
             
             a custom paintItem function should not change the clipping regions
+            IF you need to change the clipping regions, becuase requesting the clip
+            region from the painter is expensive, the following variables are available:
+            
+            self.parent.data_cell_clip_x, self.parent.data_cell_clip_y, self.parent.data_cell_clip_w, self.parent.data_cell_clip_h
+            
+            if is proposed that if you want to change the clipping width for a cell, that the following be used
+            
+                if x < self.parent.data_cell_clip_x :
+                    _cw = x + _cw - self.parent.data_cell_clip_x 
+                
+            _cw would be the new clipping width, x is the value passed into the function paintItem
         """
         self.paintItem_text(col,painter,row,item,x,y,w,h)
         
@@ -1471,7 +1689,7 @@ class TableColumn(object):
         """
         
         # arrow is drawn centered, with the tip +/- 4 pixels from the center
-        arrow_point_y = y+h/2+4*self.column_sort_indicator
+        arrow_point_y = y+h/2+4*(-self.column_sort_indicator)
         arrow_base_y = y+h/2
         # use a 2 pixel thick pen to draw the arrow
         pen = QPen();
@@ -1562,7 +1780,22 @@ class TableColumn(object):
             the height of the entire column (all rows) is : self.parent.data_y2
         """
         return False
-     
+    
+class TableColumnImage(TableColumn):
+    """
+        implementation of a TableColumn that draw either a QIcon or QImage
+    """
+    def paintItem(self,col,painter,row,item,x,y,w,h):
+        if isinstance(item,QIcon):
+            #size_list = item.availableSizes()
+            #size = size_list[0]
+            _w = self.parent.row_height
+            #if self.text_H_align == Qt.AlignLeft:
+            
+            painter.drawPixmap(QRect(x,y,_w,_w),item.pixmap(_w,_w))
+        else:
+            painter.drawImage(QRect(x,y,w,h),item)
+        
 class LargeTable(LargeTableBase):
     """
         create a new Table, with scrollbars.
@@ -1606,6 +1839,7 @@ class LargeTable(LargeTableBase):
     
         self.column_header_resize.connect(self._sbar_hor_setrange)
         self.column_header_sort_request.connect(self.sortColumn)
+        self.scroll_horizontal.connect(self.sbar_scroll_hor)
         
         self.setAcceptDrops(True)
         
@@ -1636,7 +1870,7 @@ class LargeTable(LargeTableBase):
 
         self.update();
             
-    def setAlwaysHideScrollbar(scrollbar_vertical,scrollbar_horizontal):
+    def setAlwaysHideScrollbar(self,scrollbar_vertical,scrollbar_horizontal):
         """
             set whether the vertical or horizontal scrollbars should always
             be hidden, even if they would be needed to scroll through data
@@ -1659,7 +1893,7 @@ class LargeTable(LargeTableBase):
         else:
             self.sbar_hor.show();
         
-    def setAutoHideScrollbar(scrollbar_vertical,scrollbar_horizontal):
+    def setAutoHideScrollbar(self,scrollbar_vertical,scrollbar_horizontal):
         """
             set whether the vertical or horizontal scrollbars automatically hide
             when there range becomes insignificant
@@ -1670,14 +1904,80 @@ class LargeTable(LargeTableBase):
         """
         self.sbar_autohide_hor = scrollbar_vertical
         self.sbar_autohide_ver = scrollbar_horizontal
+    def setSelectionRule(self,rule):
+        """
+            change how selection of row items will be handled within the table
+            
+            the selection rules are defined as:
+            LargeTable.SELECT_NONE  : 0 : no selection can be made
+            LargeTable.SELECT_ONE   : 1 : only one item at a time can be selected
+            LargeTable.SELECT_MULTI : 2 : any number of selection, ctrl and shift will be handled
+            
+            #TODO: 2 more rules could be made by splitting multi and it may be useful to implement
+                SELECT_CONTINUOUS - selection must be of contiguous data
+                SELECT_MULTI - select any amount in any order, same  as before
+            
+            default is LargeTable.SELECT_MULTI
+        """
+        self.selection_rule = rule
+    def sbar_scroll_hor(self,value):
+        """
+            Implement auto scrolling on the table
+            LargeTableCore makes available scroll_rate and mouse_enable_autoscroll_hor
+            it also emits a signal, scroll_horizontal with apositive or negative value telling which
+            way to start the scroll
+            use these to move the scrollbar and use timers to continuously move the scrollbar
+
+            move the horizontal scrollbar a relative distance
+            left (neg)
+            right (pos)
+        """
+        #self.offset_col_horizontal += value
+        #self.sbar_hor.setValue(self.offset_col_horizontal)
+        
+        if not self.mouse_enable_autoscroll_hor:
+            self.mouse_enable_autoscroll_hor = True
+            if value > 0:
+                QTimer.singleShot(500,self._sbar_scroll_hor_pos)
+            else:
+                QTimer.singleShot(500,self._sbar_scroll_hor_neg)
+            
+    def _sbar_scroll_hor_pos(self):
+        """Timer function for auto scrolling"""
+        if self.mouse_enable_autoscroll_hor:    
+            self.sbar_hor.setValue(self.sbar_hor.value()+self.scroll_rate)
+            QTimer.singleShot(15,self._sbar_scroll_hor_pos)
+            
+    def _sbar_scroll_hor_neg(self):
+        """Timer function for auto scrolling"""
+        if self.mouse_enable_autoscroll_hor:
+            self.sbar_hor.setValue(self.sbar_hor.value()-self.scroll_rate)
+            QTimer.singleShot(15,self._sbar_scroll_hor_neg)
+    
+    def scrollTo(self,value,count=-1):
+        """ move the scroll bar so that row, 'value' is within view
+            do nothing if that row is already visible
+            an attempt will be made to show 'count' rows after value if possible
+        """
+        rc = max( 1, self.rowCountFloor() - 1 )
+        # if value out of visual range
+        if value < self.offset_row_index or value > self.offset_row_index + rc:
+            if count < 0: # center value
+                value -= rc/2
+            elif count < rc: #center count rows
+                value -= (rc-count)/2
+            #else value is set to top when count > rc
+            self.sbar_ver.setValue(value)
+        
         
     def sbar_move_ver(self,value):
         """
             action taken when the veritical scroll bar changes
         """
+
         self.offset_row_index = value
         
-        if self.enable_last_column_expanding:
+        if self.enable_last_column_expanding: #TODO something seems wrong here this does not need to be done constantly
             self.columns[-1].width = self.columns[-1].preferredWidth()
             self._sbar_hor_setrange()
             
@@ -1698,7 +1998,7 @@ class LargeTable(LargeTableBase):
         self.sbar_ver.setRange(0,l)
         
         # note that the < 0 is so that the scroll bar is still displayed when data length = rowcount
-        if self.sbar_autohide_ver and len(self.data)-self.rowCount() < 0:# and self.sbar_ver.isHidden() == False:
+        if self.sbar_autohide_ver and len(self.data) < self.rowCount():# and self.sbar_ver.isHidden() == False:
             self.sbar_ver.hide();
         elif self.sbar_ver.isHidden() and not self.sbar_alwayshide_ver:
             self.sbar_ver.show();
@@ -1714,19 +2014,19 @@ class LargeTable(LargeTableBase):
         
         self.sbar_hor.setRange(0,_w)
         
-        if self.sbar_autohide_hor and col_w-w <=0:# and self.sbar_hor.isHidden() == False:
+        if self.sbar_autohide_hor and col_w < self.data_w:# and self.sbar_hor.isHidden() == False:
             self.sbar_hor.hide();
         elif self.sbar_hor.isHidden() and not self.sbar_alwayshide_hor:
             self.sbar_hor.show();
 
     def setData(self,data):
-        self.data = data    
-        l = len(data)
-        
+    
+        super(LargeTable,self).setData(data)
         if self.enable_last_column_expanding:
             self.columns[-1].width = self.columns[-1].preferredWidth()
         
-        self._sbar_hor_setrange()
+        #self._sbar_hor_setrange() # no need to set horizontal range on data update
+        self._sbar_ver_setrange()
 
     def addColumn(self,col_index=-1,index=-1):    
         """
@@ -1773,7 +2073,7 @@ class LargeTable(LargeTableBase):
     def dropEvent(self, event):
 
         if event.mimeData().hasFormat("data/list"):
-            data = event.mimeData().retrieveData("data/list",None)
+            data = event.mimeData().retrieveData("data/list",list)
             event.accept()
             x,y = event.pos().x(),event.pos().y()
             _ystart = self.padding_top + self.col_header_height
@@ -1815,27 +2115,38 @@ class LargeTable(LargeTableBase):
         
         cur_r,cur_c = self.positionToRowCol(event.x(),event.y())
         self.menu_column_remove_index = cur_c
-        name = self.columns[cur_c].name
+        
+        rem_act = None
+        res_act = None
         
         contextMenu = QMenu(self)
-          
-        rem_act = contextMenu.addAction("Hide \"%s\""%name,self._remove_column)
+        
+        if cur_c >= 0 and len(self.columns) > 1:  
+            name = self.columns[cur_c].name 
+            rem_act = contextMenu.addAction("Hide \"%s\""%name,self._remove_column)
+            contextMenu.addSeparator()
 
-        contextMenu.addSeparator()
-
-        # addAction(Qicon,QString)
+        self.columns_hidden.sort(key=lambda x: x.name)
         for col in self.columns_hidden:
             contextMenu.addAction("Show \"%s\""%col.name)
 
+        if len(self.columns_default_order_list) > 0:
+            contextMenu.addSeparator()
+            res_act = contextMenu.addAction("Restore Default",self.columns_restoreDefaultOrder)
+            
         action = contextMenu.exec_( event.globalPos() )
         
-        if action != rem_act and action != None:
-            name = action.text()
-            for col in self.columns_hidden:
-                if col.name in name:
-                    self.columns.insert(cur_c,col)
-                    self.columns_hidden.remove(col)
-                    break;
+        # ##############################################
+        # restore the column that was clicked
+        if action != None:
+            if action != rem_act and action != res_act:
+                name = action.text()
+                for col in self.columns_hidden:
+                    if col.name in name:
+                        self.columns.insert(cur_c,col)
+                        self.columns_hidden.remove(col)
+                        self.column_changed_signal.emit()
+                        break;
 
         self._sbar_hor_setrange()
         
@@ -1849,6 +2160,7 @@ class LargeTable(LargeTableBase):
             col = self.columns.pop(self.menu_column_remove_index)
             self.columns_hidden.append(col)
             self.menu_column_remove_index = -1;
+            self.column_changed_signal.emit() 
         
     def mouseReleaseRight(self,event):
         pass
@@ -1883,7 +2195,8 @@ class LargeTable(LargeTableBase):
             self.keyReleaseUp(event)
         elif event.key() == Qt.Key_Down:
             self.keyReleaseDown(event)
-        else:
+        elif event.key() <= 0x7F: # any normal keyboard character
+                                  # special keys, shift,ctrl etc are defined as 0x10000XX 
             self.keyReleaseOther(event)
             self.update()
             
@@ -1994,7 +2307,7 @@ class MimeData(QMimeData):
     
     def retrieveData(self,mimetype,prefered):
         if mimetype in self.custom_types:
-            return self.custom_data.get(mimetype,None);
+            return self.custom_data.get(mimetype,object);
         else:
             return super(MimeData,self).retrieveData(mimetype,prefered)
             
@@ -2049,9 +2362,9 @@ if __name__ == '__main__':
     table.addColumn()
     table.addColumn()
 
-    
+    table.column(2).setEnableResize(False)
     table.setData(getData())
-
+    table.setSelectionRule(1)
     #t2 = LargeTable()
     #t2.setData(getData())
     

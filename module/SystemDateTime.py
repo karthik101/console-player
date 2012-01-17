@@ -71,7 +71,7 @@ class DateTime(object):
 
     def timer_start(self):
         self.timedelta_start = datetime.datetime.now()
-        return self.timedelta_start
+        #return self.timedelta_start
         
     def timer_end(self):
         # set timedelta to the number of elapsed milliseconds
@@ -141,7 +141,67 @@ class DateTime(object):
             pass
             
         return time.strftime(self.datetime_format[self.format], time.gmtime(0))
-      
+    
+    @staticmethod
+    def reformatDateTime(input_fmt,output_fmt,date):
+        """
+            whereas formatDateTime returns a formatted date from seconds since the Epoch
+            this function will reformat the date from one string to another
+            
+            the 'input' date is the cell item from the index
+            of the parent tables' data.
+            
+            the 'output' can use any of the symbols found in input
+            in a different order.
+            
+            the allowed symbols are:
+            %Y - year   %H - hour
+            %m - month  %M - minute 
+            %d - day   
+            %y - 2 digit year
+            if %Y is defined, then %y will be autofilled
+            
+            e.x.:
+                input = "%Y/%m/%d" ==> 1990/3/12
+                output= "%m/%d/%y" ==> 3/12/90
+                
+                or even : "%Y/%m/%d - %H:%M" ==> "%H:%M" 
+                    but this is not the fastest way to extract this information
+                
+            symbols need not be defined anywhere previously, as long as they are unique.
+            using the transform "%1/%2/%3" ==> "%3-%2-%1" will work for any possible input
+            that has three values separated by '/'. -- however %Y is still special in that
+            it expects a 4 digit year and sets %y to a 2 digit year aswell
+            
+            if the input date does not have all of the formats needed in the input_fmt
+            or if the characters do not match between the input_fmt and output_fmt
+            the resulting behavior is undefined and may throw an exception.
+        """
+        tokens = "- /\\:"
+        
+        fmt    = msplit( input_fmt , tokens );
+        input  = msplit( date , tokens );
+        
+        D = {}
+        # build a dictionary of single letters to format values
+        for i in range(len(fmt)):
+            D[ fmt[i][1] ] = input[i] 
+            if fmt[i] == "%Y":
+                D["y"] = input[i][-2:]
+        #print input
+        #print D
+        output = ""
+        index = 0;
+        
+        while index < len(output_fmt):
+            if output_fmt[index] == "%":
+                index += 1 # skip the percent
+                output += D[output_fmt[index]]
+            else:
+                output += output_fmt[index]  
+            index += 1
+    
+        return output
     def getEpochTime(self,datestring):
         """
             return seconds since the Unic Epoch by converting a string formatted
@@ -317,8 +377,8 @@ class DateTime(object):
             _d = R[-4];
         
         h = int(_h) + 24*int(_d) # given time in hours
-        m = int(_m) + 60*_h      # given time in minutes
-        s = int(_s) + 60*_m      # given time in seconds
+        m = int(_m) + 60*h      # given time in minutes
+        s = int(_s) + 60*m      # given time in seconds
         
         return s
         
@@ -496,6 +556,12 @@ if __name__ == "__main__":
     i = dt.getEpochTime( d )
     print i, d
     print "-------------"
+    
+    print dt.timer_start()
+    print dt.timer_end()
+    
+    print "hey"
+    print DateTime.reformatDateTime("%Y/%1/%2","%y:%2:%1","1990/03/12")
     # #################################
     # print dt.formatDateTime(0)
     # print dt.getEpochTime("1970/01/01 00:00")
@@ -520,7 +586,7 @@ if __name__ == "__main__":
     # print "repair day 1: <%s>"%__repair_day__("5")
     # print "repair day 2: <%s>"%__repair_day__("25")
     # print "repair day 3: <%s>"%__repair_day__("901")
-    
+    print DateTime.parseTimeDelta("2:50") # should print 170
     print dt.getEpochTime("89/3/12")
     
 

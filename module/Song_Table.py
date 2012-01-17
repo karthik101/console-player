@@ -38,7 +38,7 @@ class SongTable(LargeTable):
         self.columns[-1].setWidthByCharCount(3)
         self.columns[-1].setMinWidthByCharCount(2)
         self.columns[-1].setShortName("#")
-        self.columns[-1].setTextAlign(Qt.AlignCenter)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns[-1].setDefaultSortReversed(True)
         self.columns.append( TableColumn(self,EnumSong.ARTIST   ,"Artist") )
         self.columns[-1].setWidthByCharCount(30)
@@ -47,12 +47,14 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn(self,EnumSong.ALBUM    ,"Album") )
         self.columns[-1].setWidthByCharCount(20)
         self.columns.append( TableColumn(self,EnumSong.LENGTH   ,"Length") )
-        self.columns[-1].setWidthByCharCount(6)
+        self.columns[-1].setWidthByCharCount(7)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns[-1].text_transform = lambda row_data,cell_item: DateTime.formatTimeDelta(cell_item);
         self.columns.append( TableColumn_Rating(self,EnumSong.RATING   ,"Rating") )
         self.columns[-1].setWidthByCharCount(10)
         self.columns[-1].setMinWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignCenter)
+        self.columns[-1].setDefaultSortReversed(True)
         self.columns.append( TableColumn(self,EnumSong.GENRE    ,"Genre") )
         self.columns[-1].setWidthByCharCount(15)
         self.columns.append( TableColumn(self,EnumSong.FREQUENCY,"Frequency") )
@@ -62,6 +64,7 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn_DateStamp(self,EnumSong.DATESTAMP,"Last Played") )
         self.columns[-1].setWidthByCharCount(16)
         self.columns[-1].setDefaultSortReversed(True)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns.append( TableColumn(self,EnumSong.FILESIZE ,"File Size") )
         self.columns[-1].setWidthByCharCount(9)
         self.columns[-1].setTextAlign(Qt.AlignRight)
@@ -74,15 +77,18 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn(self,EnumSong.DATEADDED,"Date Added") )
         self.columns[-1].text_transform = lambda song,index: song[EnumSong.DATEADDEDS]
         self.columns[-1].setWidthByCharCount(16)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns.append( TableColumn(self,EnumSong.YEAR     ,"Year") )
         self.columns[-1].setWidthByCharCount(4)
         self.columns.append( TableColumn(self,EnumSong.SONGINDEX,"Album Index") )
         self.columns[-1].setWidthByCharCount(11)
         self.columns.append( TableColumn(self,EnumSong.SONGID   ,"ID#") )
         self.columns[-1].text_transform = lambda song,index: unicode(song.id)
-        self.columns[-1].setWidthByCharCount(19)
+        self.columns[-1].setWidthByCharCount(22)
         self.columns.append( TableColumn(self,EnumSong.PATH     ,"Path") )
         self.columns[-1].setWidthByCharCount(30)
+        
+        self.columns_setDefaultOrder( self.columns_getOrder() )
         
     def getColumn(self,song_enum,check_hidden=False):
         """
@@ -143,8 +149,7 @@ class TableColumn_Rating(TableColumn):
         #Qt.WindingFill
         if row == self.suggested_rating_row:
             item = self.suggested_rating
-        if item < 1:
-            return
+        
             
         _c = 2          # top/bottom padding constant
         _h = h-(2*_c)   # height is height minus padding
@@ -152,7 +157,13 @@ class TableColumn_Rating(TableColumn):
         _step = (w-5*_w)/5 # a step is the distance between each star
         _hstep = _step/2   # half step
         if _step < 0:
-            self.paintItem_text(col,painter,row,item,x,y,w,h)
+            if item == 0:
+                self.paintItem_text(col,painter,row,item,x,y,w,h)
+            else:
+                self.paintItem_text(col,painter,row,item/2.0,x,y,w,h)
+            
+            return
+        if item < 1:
             return
         ps = QPointF( 0   , .35*_h   ) # start point
         
@@ -193,9 +204,12 @@ class TableColumn_Rating(TableColumn):
         #   _w+_step
         # _c2 = starting offset + # full stars + half star if needed
         _cw = _hstep + (_w+_step)*(item/2) + (_w/2)*(item%2) + 1
+        if x < self.parent.data_cell_clip_x:
+            _cw = x + _cw - self.parent.data_cell_clip_x 
+            x = self.parent.data_cell_clip_x
         painter.setClipRect(x,y,_cw,h)
                 
-        for i in range(item):
+        for i in range((item+1) / 2):
             #painter.drawPolygon(star_shape,Qt.WindingFill)
             painter.fillPath(path,painter.pen().color())
             path.translate(_w+_step,0)
@@ -232,8 +246,56 @@ class TableColumn_Rating(TableColumn):
     def mouseHoverExit(self,event):            
         self.suggested_rating = -1
         self.suggested_rating_row = -1
+    
+class TableColumn_DateBase(TableColumn): 
+    """
+        Base class for displaying date information.
         
-class TableColumn_DateStamp(TableColumn): 
+        the format for input/output of a date can be set
+        
+        the 'input' date is the cell item from the index
+        of the parent tables' data.
+        
+        the 'output' can use any of the symbols found in input
+        in a different order.
+        
+        the allowed symbols are:
+            %Y - year   %H - hour
+            %m - month  %M - minute 
+            %d - day   
+            %y - 2 digit year
+            if %Y is defined, then %y will be autofilled
+        
+    """
+    
+    def __init__(self,parent,index,name=""):
+        super(TableColumn_DateBase,self).__init__(parent,index,name)
+        
+        self.datefmt_in  = ""
+        self.datefmt_out = ""
+        
+        self.text_transform = self.format
+        
+        self.setDateInputFormat("%Y/%m/%d %H:%M")
+        #self.setDateOutputFormat("%m/%d/%y %H:%M")
+        
+    def setDateInputFormat(self,fmt):
+        """ expected string input format for the date/time display of this cell"""
+        self.datefmt_in = fmt
+        
+    def setDateOutputFormat(self,fmt):
+        """ if set, input date/time data will be transformed by output defined here
+            set the output format to an empty string to disable date transforms.
+        """
+        self.datefmt_out = fmt
+     
+    def format(self,row_data,cell_item):
+       if self.datefmt_out != "" and cell_item != "":
+           return DateTime.reformatDateTime(self.datefmt_in,self.datefmt_out,cell_item)
+       else:
+            return cell_item
+        
+class TableColumn_DateStamp(TableColumn_DateBase): 
     """
         A custom table column for changing the color of the
         text used when drawing the date for the last
@@ -246,7 +308,7 @@ class TableColumn_DateStamp(TableColumn):
         song = self.parent.data[row]
         
         new_pen = default_pen
-        if self.parent.date_mark_1 != 0 and self.parent.date_mark_2 !=0:
+        if self.parent.date_mark_1 != 0 and self.parent.date_mark_2 !=0 and not song.banish:
             if song[EnumSong.DATEVALUE] > self.parent.date_mark_1:
                 new_pen = self.parent.color_text_played_recent
             elif song[EnumSong.DATEVALUE] < self.parent.date_mark_2:
