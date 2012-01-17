@@ -2,6 +2,7 @@
 
 from PyQt4 import QtCore, QtGui
 from Song_Object import *
+
 class InfoDisplay(QtGui.QWidget):
     mousex=0    # last registered mouse position
     

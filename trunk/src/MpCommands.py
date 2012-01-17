@@ -1135,6 +1135,7 @@ def cmd_xx(input):
         for song in MpGlobal.Player.library:
             MpGlobal.EventHandler.postEvent(id3_updateSongInfo,song)
         MpGlobal.EventHandler.postEvent(debug,"Done Tag Update")    
+        
     if input.DecVal[0] == 11 : #xx 11   
         h = helpDialog();
         h.show();

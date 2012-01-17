@@ -38,7 +38,7 @@ class EnumSong(object):
     DATEADDED = 18
     YEAR      = 19;    # year the song was made.
     # #####
-    SPECIAL   = 20; # true when any error makes this file unuseable ever
+    SPECIAL   = 20; # undefined value
     SELECTED  = 21; # Boolean, selected or not
     
     # ########################################
@@ -56,7 +56,7 @@ class EnumSong(object):
     SPEC_FREQ_G  = 106 # return true when the song's days elapsed is >= freq
     SPEC_FREQ_L  = 107 # return true when the song's days elapsed is <  freq
     SPEC_FREQ_E  = 108 # return true when the song's days elapsed is == freq
-
+    BANISH       = 109 # song will fail to be added to a playlist when true
     MAX_RATING = 10
     
     SONGDATASIZE = SELECTED+1 #NOTE: selected must always be the last element in the array
@@ -89,11 +89,14 @@ class EnumSong(object):
         elif exif == EnumSong.DATEADDED : return "DATEADDED";
         elif exif == EnumSong.YEAR      : return "YEAR";
         
+        elif exif == EnumSong.BANISH    : return "BANNED";
+        
         elif exif == EnumSong.SPEC_FREQ_L      : return "FREQ-L";
         elif exif == EnumSong.SPEC_FREQ_E      : return "FREQ-E";
         elif exif == EnumSong.SPEC_FREQ_G      : return "FREQ-G";
 
         return "UNKOWN TAG:%d"%exif
+        
     @staticmethod
     def stringToExif(exif):
 
@@ -121,6 +124,8 @@ class EnumSong(object):
         elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
         elif exif == "DATEADDED" : return EnumSong.DATEADDED
         elif exif == "YEAR"      : return EnumSong.YEAR
+        
+        elif exif == "BANNED"      : return EnumSong.BANNISH
         
         elif exif == "FREQ-L"      : return EnumSong.SPEC_FREQ_L
         elif exif == "FREQ-E"      : return EnumSong.SPEC_FREQ_E
@@ -159,11 +164,13 @@ class Song(list):
         super(Song,self).__init__([0]*EnumSong.SONGDATASIZE)
         self.id = hex64(0);
         self.md5 = "";
-
+        self.banish = False
+        
         if type(varient) == Song:
             # produce a copy of the song.
             self.id = varient.id
             self.md5 = varient.md5
+            self.banish = varient.banish
             self[EnumSong.PATH]      = varient[EnumSong.PATH]
             self[EnumSong.ARTIST]    = varient[EnumSong.ARTIST]
             self[EnumSong.TITLE]     = varient[EnumSong.TITLE]
@@ -186,10 +193,11 @@ class Song(list):
             self[EnumSong.DATEADDED] = varient[EnumSong.DATEADDED]
             self[EnumSong.YEAR ]     = varient[EnumSong.YEAR]
             return;
+            
         elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
             
             if varient.strip().count('\n') > 0:
-                self.from_repr(varient,DRIVELIST,DATEFMT);
+                self.from_repr(varient,DRIVELIST);
                 return;
         
         self[EnumSong.PATH]      = unicode(varient)
@@ -217,7 +225,9 @@ class Song(list):
         
 
     def __str__(self):
-        return "[%s]"%(self.id)
+        #uni = u"[%s] %s - %s"%(self.id,self[EnumSong.ARTIST],self[EnumSong.TITLE])
+        #return uni.encode('unicode-escape');
+        return str(self.id)
     
     def __unicode__(self):
         return "[%s] %s - %s"%(self.id,self[EnumSong.ARTIST],self[EnumSong.TITLE])
@@ -297,10 +307,10 @@ class Song(list):
         # use prev,NOW
         if self[EnumSong.PLAYCOUNT] == 1:
             self[EnumSong.FREQUENCY] = (self[EnumSong.FREQUENCY] + (N-1)*days_elapsed)/N
-        elif self[EnumSong.FREQUENCY] != 0 :
+        elif self[EnumSong.FREQUENCY] >= 1 :
             self[EnumSong.FREQUENCY] = ((N-1)*self[EnumSong.FREQUENCY] + days_elapsed)/N
         else:
-            self[EnumSong.FREQUENCY] = days_elapsed
+            self[EnumSong.FREQUENCY] = 0
             
     @staticmethod
     def __char_to_6bit__(c):
@@ -443,25 +453,27 @@ class Song(list):
                 
         p = p[lmatch:]     
         
-        if p[0] == '\\' or p[0] == '/': # unix bug fix for path restoration
+        if p[0] in '\\/': # unix bug fix for path restoration
             p = p[1:]
             
         # ###################################### 
         # store everything under one multiline string
-        # -1 strips final comma
+        # :-1 strips final comma
         repr  = u"%s\n"%unicode(sfmt[:-1]).encode('unicode-escape')
         repr += u"%s\n"%unicode(nfmt[:-1])
-        repr += u"%s\n"%unicode(p).encode('unicode-escape');
-        repr += u"md5:%s\n"%self.md5;
-        repr += u"lo:\n";   # lo frequency information
-        repr += u"hi:\n";   # hi frequency information
+        repr += u"%s\n"%unicode(p).encode('unicode-escape')
+        repr += u"md5:%s\n"%self.md5
+        repr += u"lo:\n"    # lo frequency information
+        repr += u"hi:\n"    # hi frequency information
+        
+        repr += u"ban:%s\n"%self.banish
         
         # A NEW LINE MUST BE THE LAST CHARACTER IN REPR
         # BUT IS NOT REQUIRED IN RESTORING FROM A REPR
 
         return repr
 
-    def from_repr(self,string,DRIVELIST,FMT):
+    def from_repr(self,string,DRIVELIST):
         """
             take the output from __repr__
             and set the values of the current song.
@@ -470,6 +482,9 @@ class Song(list):
             is saved, as an integer
             
         """
+        
+        FMT = "%Y/%m/%d %H:%M"
+        
         string = str(string).strip() # cannot have an unicode object here
         
         R = string.split("\n") # split the 6 or more line string into multiple lines
@@ -524,9 +539,16 @@ class Song(list):
         R[4] = R[4][3:] # R4 = lo frequency info
         R[5] = R[5][3:] # R5 = hi frequency info
 
+        if len(R) >= 7:
+            self.banish = "True" in R[6]
+        
         self[EnumSong.EXIF]      = self.__format_exif__();
         self[EnumSong.SPECIAL]   = False
         self[EnumSong.SELECTED]  = False 
         
         self.update();
+     
+
+if __name__ == "__main__":
+        print "%r"%Song("C:\\test.mp3")
      

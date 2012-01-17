@@ -118,7 +118,7 @@ def style_set_custom_theme(style_directory,style_name,QApplicationObject=None,di
     
     if QApplicationObject != None:
         QApplicationObject.setStyleSheet(css)
-        dict_update_palette(QApplicationObject,dict_vars);
+        dict_update_palette(dict_vars);
 
     return dict_vars
 
@@ -185,7 +185,8 @@ def css_dict_value(key,cdict,rdict):
         cdict[key] = color_stringToQColor(rdict[key])
     return cdict
 
-def dict_update_palette(obj,dict_vars):
+def dict_update_palette(dict_vars):
+    obj = QApplication.instance() # the current application
     p = obj.palette();
     #print dict_vars["color_highlight"]
     #print type(dict_vars["color_highlight"])

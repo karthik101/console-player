@@ -335,7 +335,7 @@ if isPosix: # def fileGetDrive
             return  '/'+R[0]+'/'
 else:
     def fileGetDrive(filepath):
-        return unicode(filepath)[0] + u":\\"  
+        return unicode(filepath)[0].upper() + u":\\"  
 
 if isPosix: # def driveGetFreeSpace
     def driveGetFreeSpace(path):

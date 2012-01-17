@@ -155,21 +155,26 @@ def id3_flac_createSongFromPath(song):
 
 def id3_updateSongInfo( song ):
     
-  
-    test = id3_createSongFromPath(song[EnumSong.PATH])
     fext = fileGetExt(song[EnumSong.PATH]).lower()
     
-    #r = False;
-    r =      ( song[EnumSong.ARTIST]  == test[EnumSong.ARTIST] )
-    r = r or ( song[EnumSong.TITLE]   == test[EnumSong.TITLE ] )
-    r = r or ( song[EnumSong.ALBUM]   == test[EnumSong.ALBUM ] )
-    r = r or ( song[EnumSong.LENGTH]  == test[EnumSong.LENGTH] )
-    #
-    # if at least one tag does not match update
-    if r == False:
+    if fext not in ext_mp3:
+        print "cannot update non-mp3 file %s"%(song)
+        return
+    test = id3_createSongFromPath(song[EnumSong.PATH])
+    fext = fileGetExt(song[EnumSong.PATH]).lower()
+
+    a = ( song[EnumSong.ARTIST]  == test[EnumSong.ARTIST] )
+    t = ( song[EnumSong.TITLE]   == test[EnumSong.TITLE ] )
+    b = ( song[EnumSong.ALBUM]   == test[EnumSong.ALBUM ] )
+    l = ( song[EnumSong.LENGTH]  == test[EnumSong.LENGTH] )
+    
+    s = (' ' if a else 'a') + (' ' if t else 't') + (' ' if b else 'b') + (' ' if l else 'l')
+
+    if not (a and t and b and l):
+        
         try :
             if fext in ext_mp3:
-                debug("Updateing Song - %s"%song);
+                print "update - %s - %s"%(s,song);
                 id3_mp3_updateSongInfo(song)
     #       if fext in ext_mp4:
     #           print "mp4 saving... %s"%song
@@ -178,8 +183,7 @@ def id3_updateSongInfo( song ):
     #       if fext in ext_flac:
     #           print "flac saving... %s"%song
         except Exception as e:
-            debug(" *** ERROR - %s"%song);
-            print "%s\n%s"%(song,e.args);
+            print " *** ERROR - %s - %s"%(song,e.args);
     return;
     
 def id3_mp3_updateSongInfo( song ):
@@ -191,18 +195,17 @@ def id3_mp3_updateSongInfo( song ):
     try :
         audio = EasyID3(song[EnumSong.PATH])
 
-        audio['artist']  = song[EnumSong.ARTIST]
+        audio['artist'] = song[EnumSong.ARTIST]
         audio['title']  = song[EnumSong.TITLE]
         audio['album']  = song[EnumSong.ALBUM]
-        audio['length'] = DateTime.formatTimeDelta( song[EnumSong.LENGTH] )
+        audio['length'] = str(song[EnumSong.LENGTH])
         
         audio.save()
 
         
     
     except Exception as e:
-        debug(" *** ERROR - %s"%song);
-        print "%s\n%s"%(song,e.args);
+        print " *** ERROR - %s - %s"%(song,e.args);
 
 
     
@@ -230,5 +233,22 @@ def getTag_TupleOfInt(song,audio,key,tag):
 #from MpScripting import *  
 #from MpSort import *
 #from MpSearch import *
-    
+
+
+if __name__ == "__main__":
+    print "test starting"
+    import os
+    #print os.listdir('.')
+    song = id3_createSongFromPath("freebird.mp3")
+    print song[EnumSong.ARTIST] 
+    print song[EnumSong.TITLE]  
+    print song[EnumSong.ALBUM]  
+    print song[EnumSong.LENGTH] 
+    if song != None:
+        song[EnumSong.ARTIST] = "-YUI-"
+        song[EnumSong.TITLE]  = "-FREE BIRD-"
+        song[EnumSong.ALBUM]  = "-LOVE-"
+        song[EnumSong.LENGTH] = 179
+        
+        id3_updateSongInfo(song)
     
