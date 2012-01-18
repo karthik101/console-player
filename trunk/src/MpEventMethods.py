@@ -45,7 +45,7 @@ def event_load_song(filepath):
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%filepath)
         MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%e.args)
     else:
-        MpGlobal.Player.library.append(song)
+        MpGlobal.Player.library.insert(0,song)
         MpGlobal.Window.tab_library.search_label.setText("%d/%d"%(len(MpGlobal.Player.libDisplay),len(MpGlobal.Player.library)))
     # i can get away with posting multiple copies, because only one is saved.    
     MpGlobal.EventHandler.postEndEvent(event_end_load_song);
