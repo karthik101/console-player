@@ -18,10 +18,7 @@ from SystemPathMethods import *
 from App_EventManager import *
 
 from tab_base import *
-"""
-    TODO on click up one level:
-        select the current folder when the parent flder is finished loading use scrollTo()
-"""
+
 class Item_Base(list):
     """
         A LargeTable expects a 2D list of data
@@ -61,16 +58,6 @@ class Item_Base(list):
     def __unicode__(self):
         return unicode(self.name)
     
-class Item_File(Item_Base):
-
-    def __init__(self,name,path,song=None):
-    
-        icon = MpGlobal.icon_None
-        super(Item_File,self).__init__(name,icon,path,song) 
-        
-    def __unicode__(self):
-        return u"2.file: %s"%self.name
-
 class Item_Folder(Item_Base):
 
     def __init__(self,name,path):
@@ -79,8 +66,30 @@ class Item_Folder(Item_Base):
         super(Item_Folder,self).__init__(name,icon,path) 
         
     def __unicode__(self):
-        return u"1.folder: %s"%self.name
+        return u"1.folder: %s"%self.name 
+        
+class Item_File(Item_Base):
 
+    
+        
+    def __init__(self,name,path,song=None):
+    
+        icon = MpGlobal.icon_None
+        super(Item_File,self).__init__(name,icon,path,song) 
+        
+    def __unicode__(self):
+        return u"3.file: %s"%self.name   
+        
+class Item_Song(Item_File):  
+  
+    def __init__(self,name,path,song=None):
+    
+        icon = MpGlobal.icon_note
+        super(Item_File,self).__init__(name,icon,path,song) 
+        
+    def __unicode__(self):
+        return u"2.song: %s"%self.name   
+        
 class Tab_Explorer(Application_Tab):
 
     def __init__(self,parent=None):
@@ -182,9 +191,13 @@ class Tab_Explorer(Application_Tab):
                 if os.path.isdir(temppath) :
                     data.append( Item_Folder(fname,temppath) )
                 else:
-                    item = Item_File(fname,temppath) 
+                    
                     if pathMatchExt(temppath):
+                        item = Item_Song(fname,temppath) 
                         song_item_list.append(item)
+                    else:
+                        item = Item_File(fname,temppath) 
+                        
                     data.append( item )
                     
                 count += 1

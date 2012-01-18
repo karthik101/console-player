@@ -324,6 +324,8 @@ def buildArtistList(minimum=2):
     R.sort(key = k, reverse=False )
     
     MpGlobal.Player.quickList = R
+    # sort the resulting list and update the quick selection tab
+    MpGlobal.Window.tab_quickselect.sortData()
     #MpGlobal.Window.tbl_quicklist.UpdateTable(0,MpGlobal.Player.quickList)
     
 def getStatistics():
