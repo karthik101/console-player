@@ -530,8 +530,12 @@ def cmd_build(input):
         
         rebuilds the quick select list of artists, ignoring artists that have less than # songs.
     """
+    search_prompt = ""
+    if input.hasStrVal >= 2:
+        search_prompt = input.StrVal[1]
+        
     if input.hasDecVal :
-        buildArtistList(input.DecVal[0])
+        buildArtistList(input.DecVal[0],search_prompt)
     else:
         buildArtistList()
     return COMMAND.VALID
@@ -1091,11 +1095,13 @@ def cmd_xx(input):
             song = id3_createSongFromPath(path)
         
     if input.DecVal[0] == 5 : #xx 5
-    
-        tab = Tab_PlaylistEditor()
-        tab.addTab( "New Playlist" )
-        tab.setCloseButton()
-        
+        """ check for correctness """
+        L = MpGlobal.Player.library
+
+        for i in range(1,len(L)):
+            if L[i-1].id == L[i].id:
+                print u"%s"%L[i-1]    
+                print u"%s"%L[i]
         
     if input.DecVal[0] == 6 : #xx 6
         tab = Tab_QuickSelect()
@@ -1274,13 +1280,13 @@ def cmd_repack(input):
         
         a value of zero moves it back
         
-        the debug text window becomes editable. you can now use REPL
+        the debug text window becomes editable. you can now use the REPL command
     """
     if input.DecVal[0]==1:
         MpGlobal.Window.spt_left.addWidget(MpGlobal.Window.txt_main)
         MpGlobal.Window.txt_debug.setReadOnly(False);
     else:
-        MpGlobal.Window.vbox_playlist.insertWidget(0,MpGlobal.Window.txt_main)
+        MpGlobal.Window.frame_main.vbox.insertWidget(0,MpGlobal.Window.txt_main)
         MpGlobal.Window.txt_debug.setReadOnly(True);
    
 def cmd_import(input):

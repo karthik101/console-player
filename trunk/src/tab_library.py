@@ -237,7 +237,7 @@ class LTable_Library(SongTable):
             
     def keyReleaseOther(self,event):
         MpGlobal.Window.tab_library.txt_searchBox.setFocus()
-        MpGlobal.Window.tab_library.txt_searchBox.keyPressEvent(event)
+        MpGlobal.Window.tab_library.txt_searchBox.keyReleaseEvent(event)
      
     def __Action_editSong__(self):
 
@@ -285,10 +285,11 @@ class LineEdit_Search(LineEdit):
         
         self.setPlaceholderText(MpGlobal.SEARCH_PROMPT)
         
-    def txtSearch_KeyBoardRelease(self,event=None):
-        super(LineEdit_Search,self).keyPressEvent(event)
+    def keyReleaseEvent(self,event=None):
+        super(LineEdit_Search,self).keyReleaseEvent(event)
         #print ">"
         if event.key() == Qt.Key_Down:
+            self.parent.table.clearSelection( )
             self.parent.table.setSelection( [0,] )
             self.parent.table.updateTable(0)
             self.parent.table.setFocus()        

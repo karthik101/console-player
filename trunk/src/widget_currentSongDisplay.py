@@ -48,11 +48,11 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
             pass
     def __Action__GoTo_Wiki__(self):
         s = "http://en.wikipedia.org/w/index.php?search="
-        s += MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:].replace(" ","+")
+        s += MpGlobal.Player.CurrentSong[MpMusic.ARTIST].replace(" ","+")
         explorerOpen(s)
     def __Action__GoTo_Lyrics__(self):
         s = "http://www.songmeanings.net/query/?q="
-        s += MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:].replace(" ","+")
+        s += MpGlobal.Player.CurrentSong[MpMusic.ARTIST].replace(" ","+")
         s += "&type=artists"
         explorerOpen(s)
     def __Action__EXPLORE__(self):
@@ -62,12 +62,12 @@ class CurrentSongDisplay(widgetInfoDisplay.InfoDisplay):
         MpGlobal.Window.tabMain.setCurrentIndex(MpGlobal.Window.tab_explorer.getCurrentIndex())
     def __Action_searchARTIST__(self):
         if MpGlobal.Player.CurrentSong != None:
-            s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
+            s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST]+"\""
             
             MpGlobal.Window.tab_library.table.updateDisplay(s);
     def __Action_searchALBUM__(self):
         if MpGlobal.Player.CurrentSong != None:
-            s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST][:]+"\""
-            s += "; .abm \""+MpGlobal.Player.CurrentSong[MpMusic.ALBUM][:]+"\""
+            s = ".art \""+MpGlobal.Player.CurrentSong[MpMusic.ARTIST]+"\""
+            s += "; .abm \""+MpGlobal.Player.CurrentSong[MpMusic.ALBUM]+"\""
             
             MpGlobal.Window.tab_library.table.updateDisplay(s);

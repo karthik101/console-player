@@ -39,6 +39,9 @@
 #       three different formats Date, Time and DateTime
 #       for song edit
 #
+# bug related to the translator, 'ja' goe to two characters but cannot
+#   be translated back into ja.
+#
 # There are multiple multi-string-splitters defined, stringSplit, msplit, etc
 # these should be defined once, and the best implementation should be used
 # but first compare to ensure they all work the same
