@@ -35,7 +35,7 @@ def sort_parameter_str(song,index):
         check to see if the string starts with certain words,
         and remove them
     """
-    s = song[index]
+    s = song[index].upper()
     if s.lower().startswith("the "):
         return s[4:]
     return s

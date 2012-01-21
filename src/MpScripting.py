@@ -261,7 +261,7 @@ def insertIntoPlayList(R,pos):
 # Library Operations
 # ##############################################   
 
-def buildArtistList(minimum=2):
+def buildArtistList(minimum=2,search=""):
 
     """
         Builds a list of each artist in the library
@@ -282,7 +282,12 @@ def buildArtistList(minimum=2):
     c_rct=6 # count of songs rated
     records = 7 # total count of records to keep
     
-    for song in MpGlobal.Player.library:
+    library = MpGlobal.Player.library
+    if search != "":
+        so = SearchObject(search);
+        library = so.search(library)
+        
+    for song in library:
     
         key = song[MpMusic.ARTIST]
         
