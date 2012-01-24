@@ -445,7 +445,7 @@ def cmd_time(input):
     
     if input.hasDecVal:
         value =  input.DecVal[0] 
-    if input.hasDecVal:    
+    else: 
         value = DateTime.parseTimeDelta(input.StrVal[0]) 
         
     song = MpGlobal.Player.getCurrentSong()    
@@ -526,9 +526,12 @@ def cmd_backup(input):
 def cmd_build(input):
     """
         Command: BUILD
-        Usage: build [#]
+        Usage: build [#] [str]
         
         rebuilds the quick select list of artists, ignoring artists that have less than # songs.
+        
+        str as a quoted string, will be used as a search so that the build list will only contain artists that have songs matching the search. 
+     
     """
     search_prompt = ""
     if input.hasStrVal >= 2:

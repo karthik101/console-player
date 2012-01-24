@@ -80,7 +80,7 @@ def createPlayList(size,autoLoad = False, autoStart = False, clrsel = True):
     
 
     R = getSelection(clrsel)
-    S = createPlayListFromSongSet(R,size,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
+    S = createPlayListFromSongList(R,size,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
     
     registerNewListAsPlayList(S,autoLoad,autoStart)
     
@@ -116,7 +116,7 @@ def registerNewListAsPlayList(songList,autoLoad = False, autoStart = False):
     if Settings.SAVE_BACKUP:
         musicBackup(MpGlobal.FOLDERPATH_BACKUP,MpGlobal.Player.library,Settings.SAVE_FORMAT,MpGlobal.Force_Backup);
     
-def createPlayListFromSongSet(songSet,size,hashValue = 0):
+def createPlayListFromSongList(songSet,size,hashValue = 0):
     """
         Return a list of songs of length size, suitable for use as a new playlist
         Pool of songs used is taken from songSet, obvously this set will normally be the
@@ -219,26 +219,30 @@ def selectByNumber(num):
         searchSetSelection(s)
 
 def fromGuiSetSelection():
-    R = []
-    for data in MpGlobal.Player.quickList:
-        if data[1]:
-            R.append(data[0])
-            data[1] = False
+    # get the list of selected artists
+    R = [ data[0] for data in MpGlobal.Player.quickList if data[1]]
+    #for data in MpGlobal.Player.quickList:
+    #    if data[1]:
+    #        R.append(data[0])
+    #        data[1] = False
     #MpGlobal.Window.tbl_quicklist.FillTable(0)
     if len(R) > 0:
         MpGlobal.Player.selCount = 0
+        
         for song in MpGlobal.Player.library:
-            if song[MpMusic.ARTIST] in R and song[MpMusic.RATING] >= MpGlobal.PLAYLIST_GUI_MINIMUM_RATING:
+        
+            if (song[MpMusic.ARTIST] in R) and song[MpMusic.RATING] >= MpGlobal.PLAYLIST_GUI_MINIMUM_RATING:
                 song[MpMusic.SELECTED] = True
                 
             if song[MpMusic.SELECTED] == True :
                 MpGlobal.Player.selCount += 1
+                
         UpdateStatusWidget(0,MpGlobal.Player.selCount)        
 
 def insertSelectionIntoPlayList(size,pos,random = False):
 
     R = getSelection(False)
-    S = createPlayListFromSongSet(R,size,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
+    S = createPlayListFromSongList(R,size,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
 
     #TODO ALLOW SHUFFLE OF REGION pos to end    
     #if random == True:
