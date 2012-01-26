@@ -23,6 +23,9 @@
 # PyDateTime - converting between unix time and date formats. 
 #   now() - get current time as int
 #
+# using QApplication.instance() generate a generic dialog for modfying custom style sheets
+#   the dialog should be opened while passing it the style folder location.
+#
 # *** Error [[0x00000000_00000000]] Reading Tags for Type: mp3
 #    'D:/Music\Misc\Left 4 Dead\L4D2 Midnight Riders - One Bad Man.mp3' doesn't start
 #     with an ID3 tag

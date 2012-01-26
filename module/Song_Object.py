@@ -37,9 +37,10 @@ class EnumSong(object):
     DATEVALUE = 17;    # DATESTAMP, but as INT value ( determined while loading songs
     DATEADDED = 18
     YEAR      = 19;    # year the song was made.
+    EQUILIZER = 20;    # 0..32767 (15bit) value as average volume for 0=0% quite and 32767=100%
     # #####
-    SPECIAL   = 20; # undefined value
-    SELECTED  = 21; # Boolean, selected or not
+    SPECIAL   = 21; # undefined boolean index
+    SELECTED  = 22; # Boolean, selected or not
     
     # ########################################
     # Other Enumerations
@@ -58,6 +59,9 @@ class EnumSong(object):
     SPEC_FREQ_E  = 108 # return true when the song's days elapsed is == freq
     BANISH       = 109 # song will fail to be added to a playlist when true
     MAX_RATING = 10
+    
+    EQ_MID_POINT = 1<<14
+    EQ_MAX_VALUE = 1<<15
     
     SONGDATASIZE = SELECTED+1 #NOTE: selected must always be the last element in the array
     
@@ -149,7 +153,8 @@ class Song(list):
                      EnumSong.FILESIZE,
                      EnumSong.BITRATE,
                      EnumSong.DATEADDED,
-                     EnumSong.YEAR
+                     EnumSong.YEAR,
+                     EnumSong.EQUILIZER,
                    ];        
             
     def __init__(self,varient="",DRIVELIST=[],DATEFMT="%Y/%m/%d %H:%M"):
@@ -165,6 +170,7 @@ class Song(list):
         self.id = hex64(0);
         self.md5 = "";
         self.banish = False
+        self[EnumSong.EQUILIZER] = EnumSong.EQ_MID_POINT 
         
         if type(varient) == Song:
             # produce a copy of the song.
@@ -192,6 +198,7 @@ class Song(list):
             self[EnumSong.DATEADDEDS]= varient[EnumSong.DATEADDEDS]
             self[EnumSong.DATEADDED] = varient[EnumSong.DATEADDED]
             self[EnumSong.YEAR ]     = varient[EnumSong.YEAR]
+            self[EnumSong.EQUILIZER ]= varient[EnumSong.EQUILIZER]
             return;
             
         elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
@@ -223,7 +230,6 @@ class Song(list):
         self[EnumSong.DATEADDED] = 0
         self[EnumSong.YEAR ]     = 0
         
-
     def __str__(self):
         #uni = u"[%s] %s - %s"%(self.id,self[EnumSong.ARTIST],self[EnumSong.TITLE])
         #return uni.encode('unicode-escape');
@@ -414,13 +420,14 @@ class Song(list):
     def __repr__(self,drivelist=[]):
 
         """
-            repr produces the following 6 lines:
+            repr produces the following 7 lines:
             "3 Doors Down","Kryptonite","The Better Life","Alternative Rock","2011/08/28 06:55",""
             5,233,1,12,0,92,3656,0
             D:\\Music\\discography\\discography - 3 doors down\\the better life\\01 kryptonite.mp3
             md5:
             c1:
             c2:
+            ban:
             
             if drivelist is not empty, as in (song.__repr__([]) is called and not "%r"%song ) 
                 then the largest match from drivelist is stripped from the START of PATH

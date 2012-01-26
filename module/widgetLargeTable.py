@@ -191,6 +191,7 @@ class LargeTableCore(QWidget):
         if isinstance(R,list):
             return R[:]
         return None
+        
     #def __getattr__(self,name):
     #    if attr == "data":
     #        return self[self.index_name]
@@ -1463,7 +1464,9 @@ class LargeTableBase(LargeTableCore):
             remove all selected items
         """
         self.selection = set()
-      
+        self.selection_first_row_added = -1
+        self.selection_last_row_added = -1
+        
     def getSelectionString(self):
         """
             return a comma separated value string with one line per row
@@ -1522,6 +1525,13 @@ class TableColumn(object):
         
         self.column_sort_indicator = 0 # use 0 for off, -1 for up and 1 for down
         self.column_sort_default = 1 # set to 1/-1, this is the initial direction this column sorts
+        
+        # in the same way as a table row, a single column can have custom rules
+        self.cellTextColor_complex_list = [] 
+        self.cellHighlight_complex_list = []
+        
+        self.cellTextColor = None # there can be only one, unlike the simple lists of rows
+        self.cellHighlight = None # there can be only one, unlike the simple lists of rows
         
     def setTextAlign(self,halign,valign=Qt.AlignTop):
         """
@@ -1602,6 +1612,80 @@ class TableColumn(object):
         """ when False, the user will be unable to resize the column by grabbing or double clicking the header"""
         self.enable_resize = bool
      
+    def addCellTextColorComplexRule(self,fncptr,color):
+        self.cellTextColor_complex_list.append( (fncptr,color) )
+    def setCellTextColorComplexRule(self,index,fncptr,color):
+        if fncptr == None:  # allow for updateing color only
+            fncptr = self.cellTextColor_complex_list[index][0]
+        self.cellTextColor_complex_list[index] = (fncptr,color) # intentional exception chance  
+    def countCellTextColorComplexRule(self):
+        return len(self.cellTextColor_complex_list)   
+    def removeCellTextColorComplexRule(self,index):
+        self.cellTextColor_complex_list.pop(index)
+    def clearCellTextColorComplexRule(self):
+        self.cellTextColor_complex_list = []
+     
+    def setCellTextColor(self,color):
+        """ set the text color for all cells in this column, None for default """
+        self.cellTextColor = color
+        
+    def addCellHighlightComplexRule(self,fncptr,color):
+        self.cellHighlight_complex_list.append( (fncptr,QBrush(color)) )
+    def setCellHighlightComplexRule(self,index,fncptr,color):
+        if fncptr == None:  # allow for updateing color only
+            fncptr = self.cellHighlight_complex_list[index][0]
+        self.cellHighlight_complex_list[index] = (fncptr,QBrush(color)) # intentional exception chance  
+    def countCellHighlightComplexRule(self): 
+        return len(self.cellHighlight_complex_list)
+    def removeCellHighlightComplexRule(self,index):
+        self.cellHighlight_complex_list.pop(index)
+    def clearCellHighlightComplexRule(self):
+        self.cellHighlight_complex_list = []
+     
+    def setCellHighlight(self,color):
+        """ set the text color for all cells in this column, None for default """
+        self.cellHighlight = color 
+     
+    def getCellTextColor(self,item):  
+        """
+            return the color to use for text in the current cell.
+            item is the item found at self.index in a row of the table data.
+            it is the value before the text transform function is called.
+            
+        """
+        #ctc is defined as a tuple of lambda or function and a Qcolor
+        #the function in the ctc should return true or false
+    
+        for ctc in self.cellTextColor_complex_list:
+            if ctc[0](item):
+                return ctc[1]
+                
+        if self.cellTextColor != None:
+            return self.cellTextColor
+     
+        return None
+        
+    def getCellHighlight(self,item):  
+        """
+            return the color to use for highlight in the current cell.
+            item is the item found at self.index in a row of the table data.
+            it is the value before the text transform function is called.
+            
+        """
+        #cth is defined as a tuple of lambda or function and a Qcolor
+        #sth is defined as a tuple of list,QColor
+        #    where the list is a list of row indexes
+        #the function in the ctc should return true or false
+            
+        for cth in self.cellHighlight_complex_list:
+            if cth[0](item):
+                return cth[1]
+                
+        if self.cellHighlight != None:
+                return self.cellHighlight
+                
+        return None  
+     
     def paintItem(self,col,painter,row,item,x,y,w,h):
         """
             the item 'item' has bin given a rectangle at point x,y with width and height w,h
@@ -1634,6 +1718,11 @@ class TableColumn(object):
                 
             _cw would be the new clipping width, x is the value passed into the function paintItem
         """
+        
+        highlight = self.getCellHighlight(item)
+        if highlight != None:
+            painter.fillRect(x,y,w,h,highlight)
+            
         self.paintItem_text(col,painter,row,item,x,y,w,h)
         
     def paintItem_text(self,col,painter,row,item,x,y,w,h):
@@ -1651,9 +1740,19 @@ class TableColumn(object):
         _w = w - self.parent.text_padding_right
         if item == None:
             item = self.parent.text_display_none
+            
+        default_pen = painter.pen()  
+        
+        textcolor = self.getCellTextColor(item) 
+        
+        if textcolor != None:
+            painter.setPen(textcolor)    
+            
         painter.drawText( _x,_y,_w,_h,self.text_H_align|self.text_V_align,
                           self.text_transform(self.parent.data[row],item)
                         )
+                        
+        painter.setPen(default_pen)                 
                         
     def paintHeader(self,painter,x,y,w,h):
     
@@ -1868,6 +1967,8 @@ class LargeTable(LargeTableBase):
         if new_row_index >= 0:
             self.sbar_ver.setValue(new_row_index)
 
+        
+        
         self.update();
             
     def setAlwaysHideScrollbar(self,scrollbar_vertical,scrollbar_horizontal):
@@ -2362,7 +2463,14 @@ if __name__ == '__main__':
     table.addColumn()
     table.addColumn()
 
+    
     table.column(2).setEnableResize(False)
+    
+    g = lambda item: item[0]%3==0 # rows that divide by 2 or 3
+    h = lambda item: item[0]%2==0
+    table.column(2).addCellTextColorComplexRule(g,QColor(255,255,255))
+    table.column(2).addCellHighlightComplexRule(h,QColor(255,0,0))
+    
     table.setData(getData())
     table.setSelectionRule(1)
     #t2 = LargeTable()

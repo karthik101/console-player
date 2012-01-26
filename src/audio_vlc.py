@@ -207,7 +207,13 @@ else:
         def setVolume(self,value):
             if self.__player__ != None:
                 temp = int( (value/100.0) * 60.0 )
-                temp = max(1,temp)
+                # by definition volume in VLC is from 0 to 100
+                # translate a volume of 100 in the mp3 player to
+                # a value of 60 in vlc.
+                # this will make max volume in the mp3 player 166
+                # even if the player allows values from 0 to 200
+                temp = max(temp,1)
+                temp = min(temp,100)
                 self.__player__.audio_set_volume(temp)
                 self.volume = value
         def getVolume(self):

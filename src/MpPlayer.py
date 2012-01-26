@@ -123,6 +123,11 @@ class MediaManager(object):
     stopIndex = -1     # stop playback when song at index finishes
     lastSortType = 0
     
+    volume = 50;
+    equilizer = 0; # +/- value to add to volume
+    EQ_PLAYBACK_SCALE = 2 # either, 1,2,3,4 for 100%,50%,33%,25%,etc
+                          # determines maximum volume swing of equilizer for playback
+    
     playState = MpMusic.PL_PLAYLIST_CONSECUTIVE
     
    
@@ -151,8 +156,6 @@ class MediaManager(object):
         # it will load zero next. but if a different song is loaded first, that is the chosen song
         # we don't want to go to zero next
         MpGlobal.INPUT_PLAY_GOTO_ZERO = False   
-        
-        
 
         if type(self.CurrentSong) == Song:
         
@@ -174,6 +177,7 @@ class MediaManager(object):
                 
                 MpMusic.AUTO_SIGNAL_ISSUED = False
                 diagMessage(MpGlobal.DIAG_PLAYBACK,'{L}');
+                self.setEquilizer()
                 #if isPosix: print "   < load"
                 return True
 
@@ -400,15 +404,50 @@ class MediaManager(object):
             if self.isPlaying != True:
                 self.play()
             self.mp.media_setTime(time)
+            
     def setVolume(self,value):
-        if value > 100:
-            value = 100
+        if value > 200:
+            value = 200
         if value < 0 :
             value = 0
-        self.mp.setVolume(value)
+
+        self.volume = value
         
+        self.setEquilizer() # which will then set the volume
+    
     def getVolume(self):
-        return self.mp.getVolume()
+        return self.volume
+        
+    def setEquilizer(self):
+        """
+            update the equilizer value for the volume controls
+            the volume is then adjusted automatically
+            
+            a song contains a 15 bit unsigned integer number for the equilizer
+            this value is between 0 to 32767, with 16384 being the
+            value that corresponds to OFF.
+            
+            the eq value of the song can modify the volume of playback by as
+            much as 50% of the current playback volume.
+        """
+        value = self.volume
+        
+        self.equilizer = 0;
+        if self.CurrentSong != None:
+            scale =  - ( float(self.CurrentSong[EnumSong.EQUILIZER] - EnumSong.EQ_MID_POINT) / EnumSong.EQ_MID_POINT )
+            #print scale
+            self.equilizer = ( value / self.EQ_PLAYBACK_SCALE ) * scale
+            
+            value += self.equilizer
+            
+        if value > 200:
+            value = 200
+        if value < 0 :
+            value = 0
+
+        #print "[%d/32767] EQ VALUE: %d VOL: %d"%(self.CurrentSong[EnumSong.EQUILIZER],self.equilizer,value)
+            
+        self.mp.setVolume(value)
         
     def setStopNext(self,value):
         self.stopNext = value
