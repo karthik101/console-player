@@ -68,6 +68,7 @@ class LTable_Library(SongTable):
         self.setLastColumnExpanding(False)
         
         self.modify_song.connect(self.event_modifiy_song)
+
         # enable highlighting of the current song
         s = lambda row: self.data[row][EnumSong.SELECTED]  
         b = lambda row: self.data[row].banish
@@ -78,7 +79,7 @@ class LTable_Library(SongTable):
         # change the text color for the current song
         self.addRowTextColorComplexRule(self.__rt_currentSong,self.color_text_played_recent)
 
-        # change text color for
+        # change text color for banished songs
         self.addRowTextColorComplexRule(b,QColor(128,128,128))
         
     def __rt_currentSong(self,row):

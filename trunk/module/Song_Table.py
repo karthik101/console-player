@@ -22,6 +22,8 @@ class SongTable(LargeTable):
     """
     color_text_played_recent = QColor(200,0,200)
     color_text_played_not_recent = QColor(200,0,0)
+    color_text_banish = QColor(128,128,128)
+    
     color_rating = QColor(200,0,200) 
     date_mark_1 = 0 # time corresponding to the start of the day
     date_mark_2 = 0 # time corresponding to 14 days ago or so.
@@ -32,7 +34,11 @@ class SongTable(LargeTable):
                                         # since each row is a reference to a Song
                                         # this is a modification of Song Data
                                         
+    def __init__(self,parent=None):
     
+        super(SongTable,self).__init__(parent)
+        
+        
     def initColumns(self):
         self.columns.append( TableColumn(self,EnumSong.PLAYCOUNT,"Play Count") )
         self.columns[-1].setWidthByCharCount(3)
@@ -149,6 +155,11 @@ class TableColumn_Rating(TableColumn):
         #Qt.WindingFill
         if row == self.suggested_rating_row:
             item = self.suggested_rating
+            
+        
+        
+        
+        
         
             
         _c = 2          # top/bottom padding constant
@@ -163,8 +174,17 @@ class TableColumn_Rating(TableColumn):
                 self.paintItem_text(col,painter,row,item/2.0,x,y,w,h)
             
             return
+        
+        #pf = u"\u2605" # full BLACK STAR
+        #ph = u"\u2606" # half WHITE STAR
+        #pe = u"\u2022" # empty BLACK DOT 
+        #text = pf*(item/2) + (ph if item%2==1 else '') + pe*((10-item)/2)   
+        #self.paintItem_text(col,painter,row,text,x,y,w,h)
+        #return
+          
         if item < 1:
             return
+          
         ps = QPointF( 0   , .35*_h   ) # start point
         
         #    order of points ( 1 is start/finish)

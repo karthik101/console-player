@@ -1049,32 +1049,18 @@ def cmd_xx(input):
         print RunTime_List_Operation_Int(MpGlobal.Player.libDisplay,input.DecVal[1])
         
     if input.DecVal[0] == 2 : #xx 2
-        src="./user/test.libz"
-        dst="./user/test.txt"
-        ds2="./user/test.libz2"
         
-        tp=0;  # tp = 0 1 2 3 
-        bs = 128
         if input.hasDecVal > 1:
+            MpGlobal.Player.CurrentSong[EnumSong.EQUILIZER] = input.DecVal[1]
+            MpGlobal.Player.setEquilizer()
         
-            tp = input.DecVal[1]
-                
-            if input.DecVal[2] > 50:
-                bs = input.DecVal[2]
-                
-        #print "type  = %X"%tp
-        #print "block = %d"%bs
-        #print MpGlobal.Player.library[0].__repr__(systemDriveList());
+        self = MpGlobal.Player
         
-        musicSave_LIBZ(src,MpGlobal.Player.library);
-        #R=musicLoad_LIBZ(src);
-        #LIBZ_decompress_to_file(src,dst);
-        #LIBZ_compress_to_file(dst,ds2);
-        
-        R=musicLoad_LIBZ(src);
-        musicSave_LIBZ("./user/test-load.libz",R);
-        LIBZ_decompress_to_file("./user/test-load.libz","./user/test-load.txt");
-        
+        e = self.equilizer
+        v = self.getVolume()
+        print "[%d/32767] EQ VALUE: %2d VOL: %2d final: %2d"%(self.CurrentSong[EnumSong.EQUILIZER],e,v,e+v)
+            
+           
     if input.DecVal[0] == 3 : #xx 3
         #MpGlobal.Window.setWindowFlags(MpGlobal.Window.windowFlags() | Qt.WindowStaysOnTopHint)
         #MpGlobal.Window.setWindowFlags(Qt.WindowStaysOnTopHint)
@@ -1106,12 +1092,8 @@ def cmd_xx(input):
                 print u"%s"%L[i-1]    
                 print u"%s"%L[i]
         
-    if input.DecVal[0] == 6 : #xx 6
-        tab = Tab_QuickSelect()
-        #tab.setIcon(MpGlobal.icon_Folder)
-        tab.addTab( "Quick" )
-        tab.setCloseButton()
-        
+    if input.DecVal[0] == 6 : #xx 2
+        pass
         
     if input.DecVal[0] == 7 : #xx 7
         R = xml_open("./library.xml");
