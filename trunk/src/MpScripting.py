@@ -220,24 +220,36 @@ def selectByNumber(num):
 
 def fromGuiSetSelection():
     # get the list of selected artists
-    R = [ data[0] for data in MpGlobal.Player.quickList if data[1]]
-    #for data in MpGlobal.Player.quickList:
-    #    if data[1]:
-    #        R.append(data[0])
-    #        data[1] = False
-    #MpGlobal.Window.tbl_quicklist.FillTable(0)
-    if len(R) > 0:
+    
+
+    MpGlobal.Window.tab_quickselect
+    
+    format = MpGlobal.Window.tab_quickselect.getFormat()
+    qlist  = MpGlobal.Window.tab_quickselect.getQuickList()
+    
+    sel_list = [ data[0].lower() for data in qlist if data[1]]
+
+    h = lambda x : [ item.strip()  for item in x.replace(',',';').replace('\\',';').replace('/',';').lower().split(';') ]
+    
+    if format == MpMusic.ARTIST:
+        g = lambda x: x in sel_list
+    else:
+        g = lambda x: any( item in h(x) for item in sel_list )
+    
+    if len(sel_list) > 0:
         MpGlobal.Player.selCount = 0
         
         for song in MpGlobal.Player.library:
         
-            if (song[MpMusic.ARTIST] in R) and song[MpMusic.RATING] >= MpGlobal.PLAYLIST_GUI_MINIMUM_RATING:
+            if g(song[format].lower()) and song[MpMusic.RATING] >= MpGlobal.PLAYLIST_GUI_MINIMUM_RATING:
                 song[MpMusic.SELECTED] = True
                 
             if song[MpMusic.SELECTED] == True :
                 MpGlobal.Player.selCount += 1
-                
         UpdateStatusWidget(0,MpGlobal.Player.selCount)        
+    print MpGlobal.Player.selCount
+    
+       
 
 def insertSelectionIntoPlayList(size,pos,random = False):
 
@@ -275,6 +287,23 @@ def buildArtistList(minimum=2,search=""):
         total time spent listening to them
     """
 
+    
+    
+    library = MpGlobal.Player.library
+    if search != "":
+        so = SearchObject(search);
+        library = so.search(library)
+ 
+    g = lambda x : [x,]
+    h = lambda x : [ item.strip()  for item in x.replace(',',';').replace('\\',';').replace('/',';').split(';') ]
+ 
+    MpGlobal.Player.quickList = buildQuickList(library,minimum,MpMusic.ARTIST,g)
+    MpGlobal.Player.quickList_Genre = buildQuickList(library,0,MpMusic.GENRE,h)
+    # sort the resulting list and update the quick selection tab
+    MpGlobal.Window.tab_quickselect.sortData()
+
+def buildQuickList(library,minimum,index,text_transform):
+
     D = {}
     #reset counters
     c_cnt=0 # song count
@@ -286,37 +315,42 @@ def buildArtistList(minimum=2,search=""):
     c_rct=6 # count of songs rated
     records = 7 # total count of records to keep
     
-    library = MpGlobal.Player.library
-    if search != "":
-        so = SearchObject(search);
-        library = so.search(library)
-        
     for song in library:
     
-        key = song[MpMusic.ARTIST]
+        svalue = song[index]
         
-        if key not in D:
-            D[key] = [0]*records
+        key_list = text_transform(svalue)
+        
+        for key in key_list :
+        
+            test_key = key.lower()    
+            if test_key not in D  :
+                D[test_key] = [0]*(records+1)
+                D[test_key][records] = key # this way a case sensitive version is saved
 
-        D[key][c_cnt] += 1                    
-        D[key][c_ply] += song[MpMusic.PLAYCOUNT]   
-        D[key][c_len] += song[MpMusic.LENGTH]
-        D[key][c_tme] += song[MpMusic.PLAYCOUNT] * song[MpMusic.LENGTH]  
-        D[key][c_frq] += song[MpMusic.FREQUENCY]
-        D[key][c_rte] += song[MpMusic.RATING]  
-        if song[MpMusic.RATING] > 0:
-            D[key][c_rct] += 1
+            D[test_key][c_cnt] += 1                    
+            D[test_key][c_ply] += song[MpMusic.PLAYCOUNT]   
+            D[test_key][c_len] += song[MpMusic.LENGTH]
+            D[test_key][c_tme] += song[MpMusic.PLAYCOUNT] * song[MpMusic.LENGTH]  
+            D[test_key][c_frq] += song[MpMusic.FREQUENCY]
+            D[test_key][c_rte] += song[MpMusic.RATING]  
+            if song[MpMusic.RATING] > 0:
+                D[test_key][c_rct] += 1
     
     R = []
+    
+    fav_list = Settings.FAVORITE_ARTIST 
+    if index == MpMusic.GENRE:
+        fav_list = Settings.FAVORITE_GENRE
     
     for key in D:
     
         if D[key][c_cnt] >= minimum:
             S = [None]*(records+3)
             
-            S[0] = key
+            S[0] = D[key][records] 
             S[1] = False
-            S[2] = key in Settings.FAVORITE_ARTIST
+            S[2] = key in fav_list
             S[3] = D[key][c_cnt]
             S[4] = D[key][c_ply]
             S[5] = D[key][c_len]
@@ -326,16 +360,9 @@ def buildArtistList(minimum=2,search=""):
             S[9] = D[key][c_rct]
             
             R.append(S)
-
-    k = lambda song: sort_parameter_str(song,0)
-
-        
-    R.sort(key = k, reverse=False )
     
-    MpGlobal.Player.quickList = R
-    # sort the resulting list and update the quick selection tab
-    MpGlobal.Window.tab_quickselect.sortData()
-    #MpGlobal.Window.tbl_quicklist.UpdateTable(0,MpGlobal.Player.quickList)
+    return R
+    
     
 def getStatistics():
     c_ply=0 # total play count

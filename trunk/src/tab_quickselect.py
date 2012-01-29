@@ -22,6 +22,8 @@ from tab_base import *
 
 from MpSort import *
 from MpCommands import *
+
+from tab_explorer import dialogRename
 """
 definition of data being displayed
 S[0] = key
@@ -67,14 +69,13 @@ class Tab_QuickSelect(Application_Tab):
         self.playlist_sel_artist = 0
         
         self.data = []
-        
-        
-    
+
     def __init_status_bar(self):
         """
             add the comboboxes and other widgets to hbox1 and hbox 2
             
         """
+        cbox_type = QComboBox(self) # artist or genre quick selection
         cbox_disp = QComboBox(self) # create a cbox which will choose which information to display
         cbox_sort = QComboBox(self) # create a cbox which will choose which information to sort by
         
@@ -83,6 +84,7 @@ class Tab_QuickSelect(Application_Tab):
         btn_clear  = QPushButton("Clear",self)
         btn_create = QPushButton("Create",self)
         
+        self.hbox1.addWidget(cbox_type,alignment=Qt.AlignLeft)
         self.hbox1.addWidget(QLabel("Display:",self),alignment=Qt.AlignLeft)
         self.hbox1.addWidget(cbox_disp,stretch=1,alignment=Qt.AlignLeft)
         self.hbox1.addWidget(QLabel("Sort:",self),alignment=Qt.AlignLeft)
@@ -95,6 +97,9 @@ class Tab_QuickSelect(Application_Tab):
         self.lbl_status = QLabel("",self)
         self.hbox2.addWidget(self.lbl_status,alignment=Qt.AlignRight)
         
+        cbox_type.addItem("Artist")
+        cbox_type.addItem("Genre")
+        
         cbox_disp.addItem("Song Count")
         cbox_disp.addItem("Play Count")
         cbox_disp.addItem("Play Time")
@@ -103,7 +108,7 @@ class Tab_QuickSelect(Application_Tab):
         cbox_disp.addItem("Rating Count")
         cbox_disp.addItem("Count of Rated songs")
         
-        cbox_sort.addItem("Artist")
+        cbox_sort.addItem("Artist / Genre")
         cbox_sort.addItem("Song Count")
         cbox_sort.addItem("Play Count")
         cbox_sort.addItem("Play Time")
@@ -117,16 +122,32 @@ class Tab_QuickSelect(Application_Tab):
         
         cbox_rev.stateChanged[int].connect(self.check_reverse)
         
+        cbox_type.currentIndexChanged[int].connect(self.chindex_type)
         cbox_disp.currentIndexChanged[int].connect(self.chindex_disp)
         cbox_sort.currentIndexChanged[int].connect(self.chindex_sort)
+        
+        self.cbox_type = cbox_type
      
+    def getQuickList(self):
+        """ the current quicklist can be of artist or genre"""
+        if self.cbox_type.currentIndex() == 0:
+            return MpGlobal.Player.quickList
+        else:
+            return MpGlobal.Player.quickList_Genre
+
+    def getFormat(self):
+        if self.cbox_type.currentIndex() == 0:
+            return MpMusic.ARTIST
+        else:
+            return MpMusic.GENRE
+    
     def switchTo(self):
         self.setStatus()
         self.getData() # sets the data directly
         self.formatData()
      
     def setStatus(self):
-        self.setMaxArtist()
+        self.setMaxHash()
         text =""
         if self.playlist_sel_artist <= 1:
             text = "%d/%d selected"%(self.playlist_sel_artist,len(self.data))
@@ -134,9 +155,10 @@ class Tab_QuickSelect(Application_Tab):
             text = "%d/%d selected. %d songs max from each"%(self.playlist_sel_artist,len(self.data),self.playlist_max_artist)
         self.lbl_status.setText(text)
         
-    def setMaxArtist(self):   
+    def setMaxHash(self):   
         c = 0
-        for item in MpGlobal.Player.quickList:
+        qlist = self.getQuickList()
+        for item in qlist:
             if item[1] :
                 c += 1
                 
@@ -162,6 +184,7 @@ class Tab_QuickSelect(Application_Tab):
             g = lambda x:x[self.sort_index]
             
         MpGlobal.Player.quickList.sort(key=g,reverse=self.sort_direction==-1)
+        MpGlobal.Player.quickList_Genre.sort(key=g,reverse=self.sort_direction==-1)
     
         self.getData() # update
         self.formatData()
@@ -170,7 +193,7 @@ class Tab_QuickSelect(Application_Tab):
         """
             update the main data table with the artist info
         """
-        data = MpGlobal.Player.quickList
+        data = self.getQuickList()
         if self.display_index in (5,6):
             self.data = [ (DateTime.formatTimeDelta(item[self.display_index]),item[0]) for item in data ]
         else:
@@ -225,29 +248,55 @@ class Tab_QuickSelect(Application_Tab):
     
     def setSelected(self,index,bool):
         """ set whether the current row should be selected TRUE or not FALSE """
-        MpGlobal.Player.quickList[index][1] = bool
+        qlist = self.getQuickList()
+        debug( "%s - %d"%(qlist[index][0],bool) ) 
+        qlist[index][1] = bool
         
     def getSelected(self,index):
         """ return the value of the selection for the current row"""
-        return MpGlobal.Player.quickList[index][1]
+        qlist = self.getQuickList()
+        return qlist[index][1]
 
     def setFavorite(self,index,bool):        
         """set whether the indeicated row should be set as a favorite artist TRUE or not FALSE """
-        name = MpGlobal.Player.quickList[index][0]
-        test = name in Settings.FAVORITE_ARTIST
-        
-        if bool and not test:
-            # insert only if the name does not already exist in the setting
-            Settings.FAVORITE_ARTIST.append(name)
-            MpGlobal.Player.quickList[index][2] = True
-        elif not bool and test:
-            # remove only if the value exists
-            Settings.FAVORITE_ARTIST.remove(name)
-            MpGlobal.Player.quickList[index][2] = False
+        qlist = self.getQuickList()
+        name = qlist[index][0]
+        #TODO need Genre varient
+        if self.getFormat() == MpMusic.ARTIST:
+            test = name in Settings.FAVORITE_ARTIST
+            
+            if bool and not test:
+                # insert only if the name does not already exist in the setting
+                Settings.FAVORITE_ARTIST.append(name)
+                qlist[index][2] = True
+            elif not bool and test:
+                # remove only if the value exists
+                Settings.FAVORITE_ARTIST.remove(name)
+                qlist[index][2] = False
+        else:
+            name = name.lower()
+            test = name in Settings.FAVORITE_GENRE
+            
+            print name
+            if bool and not test:
+                # insert only if the name does not already exist in the setting
+                Settings.FAVORITE_GENRE.append(name)
+                qlist[index][2] = True
+            elif not bool and test:
+                # remove only if the value exists
+                Settings.FAVORITE_GENRE.remove(name)
+                qlist[index][2] = False
             
     def getFavorite(self,index):
         """ return whether the current item is favorited"""
-        return MpGlobal.Player.quickList[index][2]
+        qlist = self.getQuickList()
+        return qlist[index][2]
+    
+    def chindex_type(self,index):
+         #print ["Artist","Genre"][index]
+         
+         self.getData()
+         self.formatData()
     
     def chindex_disp(self,index):
         self.display_index = index+3
@@ -260,7 +309,7 @@ class Tab_QuickSelect(Application_Tab):
             
     def click_clear(self,bool=False):
         clearSelection() # clear all selection songs
-        for item in MpGlobal.Player.quickList:
+        for item in self.getQuickList():
             item[1] = False
         self.table.update()
         self.setStatus()
@@ -273,6 +322,31 @@ class Tab_QuickSelect(Application_Tab):
         self.sort_direction = -1 if state else 1
         self.sortData()
 
+    def editGenreName(self,ogenre,ngenre):
+        """
+            replace all instances of ogenre with ngenre in all songs
+        """
+        # the text to list transoform for a genre
+        h = lambda x : [ item.strip()  for item in x.replace(',',';').replace('\\',';').replace('/',';').strip().split(';') ]
+        h2 = lambda x : [ item.strip()  for item in x.replace(',',';').replace('\\',';').replace('/',';').lower().strip().split(';') ]
+        
+        for song in MpGlobal.Player.library:
+            # the tags variable is the working copy to compare against, so that tags are not case sensitive
+            # tags_real is the case sensitive version which will have genres added are removed from
+            tags = h2( song[MpMusic.GENRE] )
+            tags_real = h(song[MpMusic.GENRE])
+            if ogenre.lower() in tags:
+                tags_real.pop( tags.index( ogenre.lower() ) )
+                if ngenre != '': # prevent adding empty tags
+                    tags_real.append(ngenre)
+                song[MpMusic.GENRE] = ', '.join(tags_real)
+                
+    def editArtistName(self,oname,nname):   
+    
+        for song in MpGlobal.Player.library:
+            if song[MpMusic.ARTIST] == oname:
+                song[MpMusic.ARTIST] = nname
+        
 class Table_Quick(LargeTable):
     """
         Quick Selection
@@ -355,18 +429,35 @@ class Table_Quick(LargeTable):
     def mouseReleaseLeft(self,event):
         row,col = self.positionToRowCol(event.x(),event.y())
         index = self.parent.rowColToIndex(row,col/2)
-        R = MpGlobal.Player.quickList
-        debug( "L col = %d, row = %d, index = %d, artist=%s"%(col/2,row,index,R[index][0]) )
+
+        
         self.parent.setSelected(index, not self.parent.getSelected(index) )
         self.parent.setStatus()
+        
         return True
      
     def mouseReleaseRight(self,event):
         row,col = self.positionToRowCol(event.x(),event.y())
         index = self.parent.rowColToIndex(row,col/2)
-        R = MpGlobal.Player.quickList
-        debug( "R col = %d, row = %d, index = %d, artist=%s"%(col/2,row,index,R[index][0]) )
-        self.parent.setFavorite(index, not self.parent.getFavorite(index) )
+
+        contextMenu = QMenu(MpGlobal.Window)
+        
+        fav_text = "clear Favorite" if self.parent.getFavorite(index) else "set Favorite"
+        
+        act_fav = contextMenu.addAction(fav_text)
+        act_edit = contextMenu.addAction("Rename")
+        
+        action = contextMenu.exec_( event.globalPos() )
+        
+        if action != None:
+            if action == act_fav:
+                self.parent.setFavorite(index, not self.parent.getFavorite(index) )
+            elif action == act_edit and self.parent.getFormat() == MpMusic.GENRE:
+                self.action_edit_genre(index)
+              
+            elif action == act_edit and self.parent.getFormat() == MpMusic.ARTIST:
+                self.action_edit_artist(index)
+       
         
     def initColumns(self):
         
@@ -385,6 +476,30 @@ class Table_Quick(LargeTable):
         self.columns[-1].setWidthByCharCount(13)
         self.columns.append( TableColumn_Quick(self,5, "") )
 
+    def action_edit_genre(self,index):  
+        prompt = "Genres are comma ',' separated."
+        
+        qlist = self.parent.getQuickList()
+        
+        dialog = dialogRename(qlist[index][0],"Rename Genre",prompt)
+        
+        if dialog.exec_():
+            new_name = dialog.edit.displayText().strip();
+            self.parent.editGenreName(qlist[index][0],new_name)
+            buildArtistList()
+            
+    def action_edit_artist(self,index):  
+        #prompt = "Genres are comma ',' separated."
+        
+        qlist = self.parent.getQuickList()
+        
+        dialog = dialogRename(qlist[index][0],"Rename Artist")
+        
+        if dialog.exec_():
+            new_name = dialog.edit.displayText().strip();
+            self.parent.editArtistName(qlist[index][0],new_name)
+            buildArtistList()
+            
 class TableColumn_Quick(TableColumn):
     
     def __init__(self,parent,index,name=None):
@@ -396,12 +511,13 @@ class TableColumn_Quick(TableColumn):
         
         sel = False
         fav = False
+        
         if index != -1:
             sel = self.parent.parent.getSelected(index) 
             fav = self.parent.parent.getFavorite(index) 
-
+            
         if sel:
-            painter.fillRect(x,y,w,h,self.parent.color_sel)
+            painter.fillRect(x,y,w,h,self.parent.palette_brush(QPalette.Highlight))
             
         default_pen = painter.pen()
         

@@ -116,6 +116,7 @@ class MediaManager(object):
     playList = []
     selCount = 0
     quickList = []
+    quickList_Genre = []
     isPlaying = False;
     CurrentIndex=0  # current index in the playlist to play
     CurrentSong = None

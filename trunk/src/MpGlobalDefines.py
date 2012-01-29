@@ -44,6 +44,7 @@ class SettingsContainer(object):
         self.SEARCH_PRESET8 = ""
         self.SEARCH_PRESET9 = ""
         self.FAVORITE_ARTIST = []   # array of unicode artist names
+        self.FAVORITE_GENRE  = []   # array of unicode genre names
         self.LIB_COL_ID = []
         self.LIB_COL_ACTIVE=-1;
 
@@ -208,6 +209,8 @@ class GlobalContainer(object):
     SAVE_FORMAT_NOCOMP  = 1  # no compression
     SAVE_FORMAT_CWD     = 2  # drive will always be CWD
 
+    getGenreTags = lambda x : [ item.strip()  for item in x.replace(',',';').replace('\\',';').replace('/',';').split(';') ]
+    
     def updatePaths(self,newPath=''):
         # example use
         # # # Settings.FILE_LOCATION_LIBRARY = ""
