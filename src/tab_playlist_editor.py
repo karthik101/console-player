@@ -108,6 +108,17 @@ class Tab_PlaylistEditor(Application_Tab):
         self.table_library.setData(self.library)
         
         self.setLabels()
+        
+        self.table_library.setRuleColors( \
+            MpGlobal.Window.style_dict["text_important1"], \
+            MpGlobal.Window.style_dict["text_important2"], \
+            MpGlobal.Window.style_dict["theme_p_mid"]    , \
+            MpGlobal.Window.style_dict["color_special1"] )
+        self.table_playlist.setRuleColors( \
+            MpGlobal.Window.style_dict["text_important1"], \
+            MpGlobal.Window.style_dict["text_important2"], \
+            MpGlobal.Window.style_dict["theme_p_mid"]    , \
+            MpGlobal.Window.style_dict["color_special1"] )
   
     def setLabels(self):
         #todo on drop handle this so it does not need to be recalculated

@@ -228,8 +228,10 @@ class Tab_Explorer(Application_Tab):
             
             for i in range(len(self.table.data)):
                 item = self.table.data[i]
-                if item.path ==  self.load_finished_select_directory:
-                    self.table.selection = {i,}
+                # the load_finished_select_directory may have a final back slash, 
+                # while the item.path may not have one.
+                if self.load_finished_select_directory.startswith(item.path):
+                    self.table.setSelection( [i,] )
                     self.table.scrollTo(i)
                     break;
                     

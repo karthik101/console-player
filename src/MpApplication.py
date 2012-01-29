@@ -361,7 +361,9 @@ class MainWindow(QMainWindow):
         # use the print to determine before or after
         
         event.accept()
+    
     def changeEvent(self,event):
+        """ grey out the icons in the menu bar """
         if event.type() == QEvent.ActivationChange:
             if MpGlobal.Application.activeWindow() != None:
                 if self.menu_vol != None and not isPosix:
@@ -407,7 +409,6 @@ class MainWindow(QMainWindow):
 
                 Player_set_unsaved();
                 
-
     def setTheme(self,name='default'):
         D = style_set_custom_theme(MpGlobal.installPath,name,MpGlobal.Application)
         self.set_colorFromCssDict(D)
@@ -498,46 +499,37 @@ class MainWindow(QMainWindow):
         self.update_widget_colors()
         
     def update_widget_colors(self):    
-        #self.tbl_playlist.brush_default = QBrush(self.style_dict["text_color"],0)
-        #self.tbl_playlist.brush_selected = QBrush(self.style_dict["color_highlight"])
-        #self.tbl_playlist.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
-        #self.tbl_playlist.brush_selectedText = QBrush(self.style_dict["text_light"])
-        #self.tbl_playlist.brush_highlight1 = QBrush(self.style_dict["color_special1"])
-        #self.tbl_playlist.brush_highlight2 = QBrush(self.style_dict["color_invalid"])
+
         self.tbl_playlist.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
         self.tbl_playlist.setRowTextColorComplexRule(0,None,self.style_dict["text_important2"])
-        #self.tab_library.table.brush_default = QBrush(self.style_dict["text_color"],0)
-        #self.tab_library.table.brush_selected = QBrush(self.style_dict["color_highlight"])
-        #self.tab_library.table.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
-        #self.tab_library.table.brush_selectedText = QBrush(self.style_dict["text_light"])
-        #self.tab_library.table.brush_highlight1 = QBrush(self.style_dict["color_special1"])
-        #self.tab_library.table.brush_text_default = QBrush(self.style_dict["text_color"])
-        self.tab_library.table.color_text_played_recent = self.style_dict["text_important1"]
-        self.tab_library.table.color_text_played_not_recent = self.style_dict["text_important2"]
-        self.tab_library.table.color_rating = self.style_dict["text_important1"]
-        self.tab_library.table.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
+
+        self.tab_library.table.setRuleColors( \
+            self.style_dict["text_important1"], \
+            self.style_dict["text_important2"], \
+            self.style_dict["theme_p_mid"]    , \
+            self.style_dict["color_special1"] )
+
+        # for all open tabs upadte any tables that need updating
+        for i in range( self.tabMain.count() ):
+            tab = self.tabMain.widget(i)
+            if isinstance(tab,Tab_PlaylistEditor):
+                tab.table_library.setRuleColors( \
+                    self.style_dict["text_important1"], \
+                    self.style_dict["text_important2"], \
+                    self.style_dict["theme_p_mid"]    , \
+                    self.style_dict["color_special1"] )
+                tab.table_playlist.setRuleColors( \
+                    self.style_dict["text_important1"], \
+                    self.style_dict["text_important2"], \
+                    self.style_dict["theme_p_mid"]    , \
+                    self.style_dict["color_special1"] )
+                    
         self.tab_library.table.setRowTextColorComplexRule(0,None,self.style_dict["text_important1"])
-        
-        #self.tab_library.table.brush_special = QBrush(self.style_dict["color_special2"])
-        
+        # for the selected songs
         self.tab_explorer.table.setRowHighlightComplexRule(0,None,self.style_dict["color_special1"])
         
         self.dsp_info.brush_barfill = QBrush(self.style_dict["text_important1"])
         
-        # do not need any of the following
-        #self.tbl_gui.brush_selected = QBrush(self.style_dict["color_special2"])
-        #self.tbl_gui.brush_selectedOOF = QBrush(self.style_dict["color_special2"])
-        #self.tbl_gui.brush_text_default = QBrush(self.style_dict["text_color"])
-        #self.tbl_gui.brush_text_favorite = QBrush(self.style_dict["text_important2"])
-        
-        
-    
-        #self.tbl_explorer.brush_default = QBrush(self.style_dict["text_color"],0)
-        #self.tbl_explorer.brush_selected = QBrush(self.style_dict["color_highlight"])
-        #self.tbl_explorer.brush_selectedOOF = QBrush(self.style_dict["color_highlightOOF"])
-        #self.tbl_explorer.brush_highlight1 = QBrush(self.style_dict["color_special1"]) #already exist
-        #self.tbl_explorer.brush_highlight2 = QBrush(self.style_dict["color_invalid"])  #invalid
-        #self.tbl_explorer.brush_highlight3 = QBrush(self.style_dict["color_special2"]) #loading
 
     def setPlayListWidth(self,w) :
 
@@ -999,8 +991,7 @@ def button_library_SelectAll(bool=0):
 def tabbar_tab_changed(index=0):
     pass
     #if index == 1:
-    #    MpGlobal.Window.tbl_quicklist.UpdateTable();
-    #    s = MpGlobal.Window.tbl_quicklist.calc_hvalue();  
+ 
     #    UpdateStatusWidget(3,"Playlist Length: %d. Maximum Songs per Artist: %d."%(MpGlobal.PLAYLIST_SIZE,s))
        
     
