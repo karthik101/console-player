@@ -150,8 +150,6 @@ class MainWindow(QMainWindow):
         init_MenuBar(self)
         self.init_StatusBar()
         
-        
-        
         # --------------------------------------
         
         self.tab_library = Tab_Library(self)

@@ -367,6 +367,10 @@ class DateTime(object):
         _h = "0";
         _d = "0";
         
+        for i in range(len(R)): # solve input issue where
+            if R[i] == "":      # :30 generates an empty string
+                R[i] = "0"
+            
         l = len(R)
         
         if l > 1:

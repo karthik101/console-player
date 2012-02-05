@@ -317,7 +317,7 @@ def buildQuickList(library,minimum,index,text_transform):
     
     for song in library:
     
-        svalue = song[index]
+        svalue = song[index] # the string value
         
         key_list = text_transform(svalue)
         
@@ -342,7 +342,10 @@ def buildQuickList(library,minimum,index,text_transform):
     fav_list = Settings.FAVORITE_ARTIST 
     if index == MpMusic.GENRE:
         fav_list = Settings.FAVORITE_GENRE
-    
+        
+    for i in range(len(fav_list)):
+        fav_list[i] = fav_list[i].lower();
+        
     for key in D:
     
         if D[key][c_cnt] >= minimum:

@@ -182,9 +182,13 @@ class Tab_QuickSelect(Application_Tab):
             g = lambda x: sort_parameter_str(x,0)
         else:
             g = lambda x:x[self.sort_index]
+          
+        rev = self.sort_direction==-1  
+        if index > 0:
+            rev = not rev
             
-        MpGlobal.Player.quickList.sort(key=g,reverse=self.sort_direction==-1)
-        MpGlobal.Player.quickList_Genre.sort(key=g,reverse=self.sort_direction==-1)
+        MpGlobal.Player.quickList.sort(key=g,reverse=rev)
+        MpGlobal.Player.quickList_Genre.sort(key=g,reverse=rev)
     
         self.getData() # update
         self.formatData()
@@ -382,6 +386,8 @@ class Table_Quick(LargeTable):
         self.setSelectionRule(LargeTable.SELECT_NONE)
         self.showColumnHeader(False)
         
+        self.mouse_hover_index = -1; # tracks row hover, for highlighting, disabled currently
+        
     def setData(self,data):
    
         super(Table_Quick,self).setData(data)
@@ -500,11 +506,17 @@ class Table_Quick(LargeTable):
             self.parent.editArtistName(qlist[index][0],new_name)
             buildArtistList()
             
+    def leaveEvent(self,event):
+        super(Table_Quick,self).leaveEvent(event)
+        self.mouse_hover_index = -1;
+        #self.update();
+            
 class TableColumn_Quick(TableColumn):
     
     def __init__(self,parent,index,name=None):
         super(TableColumn_Quick,self).__init__(parent,index,name)
-
+        self.hover_index = -1;
+        
     def paintItem(self,col,painter,row,item,x,y,w,h):   
         col = self.index/2
         index = self.parent.parent.rowColToIndex(row,col)
@@ -518,6 +530,10 @@ class TableColumn_Quick(TableColumn):
             
         if sel:
             painter.fillRect(x,y,w,h,self.parent.palette_brush(QPalette.Highlight))
+        #elif self.parent.mouse_hover_index == index:
+        #    color = self.parent.palette_brush(QPalette.Highlight).color()
+        #    color.setAlpha(64)
+        #    painter.fillRect(x,y,w,h,color)
             
         default_pen = painter.pen()
         
@@ -528,4 +544,13 @@ class TableColumn_Quick(TableColumn):
     
         painter.setPen(default_pen)
     
+    def mouseHover(self,row_index,posx,posy): 
+
+        index = self.parent.parent.rowColToIndex(row_index,self.index/2)
+        
+        self.parent.mouse_hover_index = index
+        
+        return True;
     
+    def mouseHoverExit(self,event):
+        self.parent.mouse_hover_index = -1;
