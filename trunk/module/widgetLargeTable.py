@@ -33,7 +33,7 @@ class LargeTableCore(QWidget):
         
         LargeTableCore cannot be instantiated by itself.
     """
-    SELECT_NONE,SELECT_ONE,SELECT_MULTI = range(3)
+    SELECT_NONE,SELECT_ONE,SELECT_MULTI,SELECT_CONTINUOUS = range(4)
     column_header_resize = pyqtSignal() #emit this when the headers are resized
     column_header_sort_request = pyqtSignal('int') # emit this, when a header needs to be sorted
     column_changed_signal = pyqtSignal() # general signal for changing the order of, hiding, adding columns
@@ -123,7 +123,7 @@ class LargeTableCore(QWidget):
         self.draw_debug = False
         
         self.data=[]            # the data currently being displayed
-        self.ghost_data = None   # updated data which will be taken at the next paint event
+        self.ghost_data = None  # updated data which will be taken at the next paint event
         
         self.color_group = QPalette.Active
         self.brush_default = QBrush(QColor(0,0,0,0));
@@ -141,13 +141,10 @@ class LargeTableCore(QWidget):
         self.rowHighlight_simple1_color = QColor(0,0,200)
         self.rowHighlight_simple2_color = QColor(0,200,0)
         
-        self.rowHighlight_complex_list = []
-        self.rowHighlight_simple_list  = []
-        self.rowTextColor_complex_list = [] # define a list of complex textColor items,
-                                            # this list is a list of tuples.
-                                            # the first item in the tuple is a lambda or function that accepts a row index
-                                            # the second item in the tuple is a QColor
-        self.rowTextColor_simple_list  = []
+        self.rowHighlight_complex_list = [] # define a list of complex textColor items,
+        self.rowHighlight_simple_list  = [] # this list is a list of tuples.
+        self.rowTextColor_complex_list = [] # the first item in the tuple is a lambda or function that accepts a row index                             
+        self.rowTextColor_simple_list  = [] # the second item in the tuple is a QColor
         
         self.initColumns()
     
@@ -177,7 +174,7 @@ class LargeTableCore(QWidget):
             Retrieving the data model used for displaying can be difficult.
             when data is set a shadow copy is set until the next paint event happens
             
-            this data returns a copy* of the shadow if there is one,
+            this method returns a copy* of the shadow if there is one,
                 otherwise a copy* of the data is returned
             
             * a shallow copy is made by using the list slice operator [:]
@@ -206,6 +203,11 @@ class LargeTableCore(QWidget):
         self.columns = [TableColumn(self,0),]
     
     def calculateGeometry(self):
+        """
+            sets the values for data_x, data_y data_w and data_h
+            
+            these valuesa are used internally for drawing the cells
+        """
         w = self.width()
         h = self.height()
         
@@ -836,7 +838,7 @@ class LargeTableCore(QWidget):
             cx,cy = self._mousePosToCellPos(mx,my)
             r,c = self.positionToRowCol(mx,my)
             cell_capture = False
-            if c != -1:
+            if c != -1 and r < len(self.data):
                 cell_capture = self.columns[c].mouseClick(r,cx,cy)
                 if cell_capture: # end this function if the cell captured the click
                     return
@@ -1021,14 +1023,15 @@ class LargeTableCore(QWidget):
         
         self.setCursor(Qt.ArrowCursor)
     
-    def keyReleaseEvent(Self,event=None):
+    def keyPressEvent(Self,event=None):
         """
-
+            overload this method to handle keyboard press events
         """
-        _shift = event.modifiers()&Qt.ShiftModifier == Qt.ShiftModifier     # this generates a boolean type
-        _ctrl = event.modifiers()&Qt.ControlModifier == Qt.ControlModifier
+        #_shift = event.modifiers()&Qt.ShiftModifier == Qt.ShiftModifier     # this generates a boolean type
+        #_ctrl = event.modifiers()&Qt.ControlModifier == Qt.ControlModifier
         
-        print "%X"%event.key(),_shift,_ctrl
+        #print "%X"%event.key(),_shift,_ctrl
+        pass
     
     def __modify_selection(self,_shift,_ctrl,row):
         """
@@ -1036,9 +1039,13 @@ class LargeTableCore(QWidget):
             called on mouse press or release to modify the current selection state
         """
         if self.selection_rule == LargeTableCore.SELECT_NONE:
+            self.selection_first_row_added = -1
+            self.selection_last_row_added = -1
             return # cancel selection
         elif self.selection_rule == LargeTableCore.SELECT_ONE:
             self.selection = {row,}
+            self.selection_first_row_added = row
+            self.selection_last_row_added = row
             return # select the new row
         
         if row < len(self.data):
@@ -1074,6 +1081,11 @@ class LargeTableCore(QWidget):
                 self.selection_last_row_added = row
                 self.selection_clone = None
                 
+            if self.selection_rule == LargeTableCore.SELECT_CONTINUOUS:
+                _s = min(self.selection_first_row_added,self.selection_last_row_added)
+                _e = max(self.selection_first_row_added,self.selection_last_row_added) + 1
+                self.selection = set ( range(_s,_e) )
+                
             self.update()
 
 class LargeTableBase(LargeTableCore):
@@ -1097,6 +1109,7 @@ class LargeTableBase(LargeTableCore):
         self.update()
         
     def setRowHeight(self,row_height):
+        """ set the height ( as a number of pixels ) of each row in the table. default is 18"""
         self.row_height = row_height
     
     def setCellPadding(self,l,t,r,b):
@@ -1124,7 +1137,7 @@ class LargeTableBase(LargeTableCore):
         self.update()
 
     def setLastColumnExpanding(self,bool):
-        """set whether to auto expand the last column to use all remainging space in the table"""
+        """set whether to auto expand the last column to use all remaining space in the table"""
         self.enable_last_column_expanding = bool
         
     def getLastColumnExpanding(self):
@@ -1172,6 +1185,8 @@ class LargeTableBase(LargeTableCore):
             return the number of rows currently being displayed
             
             this function returns even partial rows counted as a whole row
+            
+            this value is not the number of rows of data in the table
         """
         _ystart = self.padding_top + self.col_header_height
         _h = self.height() - _ystart - self.padding_bottom - self.padding_top
@@ -1252,12 +1267,25 @@ class LargeTableBase(LargeTableCore):
         self.columns_setOrder(self.columns_default_order_list)
       
     def addRowTextColorComplexRule(self,fncptr,color):
+        """ a complex rule takes the form of a function or lambda and a color 
+            the function or lambda accepts a row index and returns true or false. 
+            if true the row text color will be 'color'
+            if there are multiple rules the first one to match will determine the color
+        """
         self.rowTextColor_complex_list.append( (fncptr,color) )
     def setRowTextColorComplexRule(self,index,fncptr,color):
+        """
+            modify the rule at index to now use a new function or lambda and a new color
+            fncprt can be none, in which case the the function will not be changed
+        """
         if fncptr == None:  # allow for updateing color only
             fncptr = self.rowTextColor_complex_list[index][0]
         self.rowTextColor_complex_list[index] = (fncptr,color) # intentional exception chance  
+    def getRowTextColorComplexRule(self):
+        """ return a list of tuples, in format (function,QColor) of all rules """
+        return self.rowTextColor_complex_list
     def countRowTextColorComplexRule(self):
+        """ return the number of rules"""      
         return len(self.rowTextColor_complex_list)   
     def removeRowTextColorComplexRule(self,index):
         self.rowTextColor_complex_list.pop(index)
@@ -1265,16 +1293,29 @@ class LargeTableBase(LargeTableCore):
         self.rowTextColor_complex_list = []
         
     def addRowTextColorSimpleRule(self,list_of_rows,color):
+        """
+            a simple rule consists of a list of rows and a color
+            if the row is in the list, the highlight color will be set to 'color'
+            if there are multiple rules the first one to match will determine the color
+        """
         if isinstance(list_of_rows,int):    # convert integer to list
             list_of_rows = [list_of_rows,]
         self.rowTextColor_simple_list.append( (list_of_rows,color) )
     def setRowTextColorSimpleRule(self,index,list_of_rows,color): 
+        """
+            modify the rule at index to now use a new list_of_rows and a new color
+            list_of_rows can be none, in which case it will not be changed
+        """
         if list_of_rows == None:  # allow for updateing color only
             list_of_rows = self.rowTextColor_simple_list[index][0]
         if isinstance(list_of_rows,int):    # convert integer to list
             list_of_rows = [list_of_rows,]
         self.rowTextColor_simple_list[index] =  (list_of_rows,color) # intentional exception chance  
+    def getRowTextColorComplexRule(self):
+        """ return a list-of-list-of-integers for rules that select rows"""
+        return self.rowTextColor_simple_list
     def countRowTextColorSimpleRule(self):   
+        """ return the number of rules"""      
         return len(self.rowTextColor_simple_list)
     def removeRowTextColorSimpleRule(self,index):
         self.rowTextColor_simple_list.pop(index)
@@ -1282,12 +1323,25 @@ class LargeTableBase(LargeTableCore):
         self.rowTextColor_simple_list = []
     
     def addRowHighlightComplexRule(self,fncptr,color):
+        """ a complex rule takes the form of a function or lambda and a color 
+            the function or lambda accepts a row index and returns true or false. 
+            if true the row highlight will be 'color'
+            if there are multiple rules the first one to match will determine the color
+        """
         self.rowHighlight_complex_list.append( (fncptr,QBrush(color)) )
     def setRowHighlightComplexRule(self,index,fncptr,color):
+        """
+            modify the rule at index to now use a new function or lambda and a new color
+            fncprt can be none, in which case the the function will not be changed
+        """
         if fncptr == None:  # allow for updateing color only
             fncptr = self.rowHighlight_complex_list[index][0]
         self.rowHighlight_complex_list[index] = (fncptr,QBrush(color)) # intentional exception chance  
+    def getRowHighlightComplexRule(self):
+        """ return a list of tuples, in format (function,QColor) of all rules """
+        return self.rowHighlight_complex_list
     def countRowHighlightComplexRule(self): 
+        """ return the number of rules"""      
         return len(self.rowHighlight_complex_list)
     def removeRowHighlightComplexRule(self,index):
         self.rowHighlight_complex_list.pop(index)
@@ -1295,21 +1349,42 @@ class LargeTableBase(LargeTableCore):
         self.rowHighlight_complex_list = []
         
     def addRowHighlightSimpleRule(self,list_of_rows,color):
+        """
+            a simple rule consists of a list of rows and a color
+            if the row is in the list, the highlight color will be set to 'color'
+            if there are multiple rules the first one to match will determine the color
+        """
         if isinstance(list_of_rows,int):    # convert integer to list
             list_of_rows = [list_of_rows,]
         self.rowHighlight_simple_list.append( (list_of_rows,QBrush(color)) )  
     def setRowHighlightSimpleRule(self,index,list_of_rows,color):
+        """
+            modify the rule at index to now use a new list_of_rows and a new color
+            list_of_rows can be none, in which case it will not be changed
+        """
         if list_of_rows == None:  # allow for updateing color only
             list_of_rows = self.rowHighlight_simple_list[index][0]
         if isinstance(list_of_rows,int):    # convert integer to list
             list_of_rows = [list_of_rows,]
         self.rowHighlight_simple_list[index] = (list_of_rows,QBrush(color))
+    def getRowHighlightSimpleRule(self):
+        """ return a list-of-list-of-integers for rules that select rows"""
+        return self.rowHighlight_simple_list
     def countRowHighlightSimpleRule(self,list_of_rows,color):
+        """ return the number of rules"""         
         return len(self.rowHighlight_simple_list)
     def removeRowHighlightSimpleRule(self,index):
         self.rowHighlight_simple_list.pop(index)
     def clearRowHighlightSimpleRule(self,list_of_rows,color):
         self.rowHighlight_simple_list = []
+        
+    def setNoneDisplayText(self,text):
+        """ if a cell item has type 'None', the value in text will be displayed
+            if text is an empty string, the cell will be blank.
+            
+            default is "<No Data>" including the quotes
+        """
+        self.text_display_none = text
         
     def getRowTextColor(self,row):  
         """
@@ -1459,6 +1534,15 @@ class LargeTableBase(LargeTableCore):
         
         self.selection = set(row_index_list)
         
+        R = list(row_index_list)
+        if len(R) > 0:
+            self.selection_first_row_added = R[0]
+            self.selection_last_row_added = R[0]
+        else:
+            self.selection_first_row_added = -1
+            self.selection_last_row_added = -1
+        
+        
     def clearSelection(self):
         """
             remove all selected items
@@ -1466,12 +1550,13 @@ class LargeTableBase(LargeTableCore):
         self.selection = set()
         self.selection_first_row_added = -1
         self.selection_last_row_added = -1
+        self.update()
         
     def getSelectionString(self):
         """
             return a comma separated value string with one line per row
-            uses the column renderer to take each data item and turn it
-            into a string.
+            each cell item is converted to a string using the column render
+            text transform
         """
         l = len(self.selection)
         if l == 0:
@@ -1491,13 +1576,6 @@ class LargeTableBase(LargeTableCore):
             count += 1
         
         return temp    
-        
-    def clearSelection(self):
-        """
-            clear the current selection
-        """
-        self.selection = set()
-        self.update()
 
 class TableColumn(object):
     """
@@ -1613,11 +1691,23 @@ class TableColumn(object):
         self.enable_resize = bool
      
     def addCellTextColorComplexRule(self,fncptr,color):
+        """ a complex rule takes the form of a function or lambda and a color 
+            the function or lambda accepts a cell item (from the current column)
+            and returns true or false. if true the text color will be 'color'
+            if there are multiple rules the first one to match will determine the color
+        """
         self.cellTextColor_complex_list.append( (fncptr,color) )
     def setCellTextColorComplexRule(self,index,fncptr,color):
+        """
+            modify the rule at index to now use a new function or lambda and a new color
+            fncprt can be none, in which case the the function will not be changed
+        """
         if fncptr == None:  # allow for updateing color only
             fncptr = self.cellTextColor_complex_list[index][0]
         self.cellTextColor_complex_list[index] = (fncptr,color) # intentional exception chance  
+    def getCellTextColorComplexRule(self):
+        """ return a list of tuples, in format (function,QColor) of all rules """
+        return self.cellTextColor_complex_list
     def countCellTextColorComplexRule(self):
         return len(self.cellTextColor_complex_list)   
     def removeCellTextColorComplexRule(self,index):
@@ -1626,16 +1716,31 @@ class TableColumn(object):
         self.cellTextColor_complex_list = []
      
     def setCellTextColor(self,color):
-        """ set the text color for all cells in this column, None for default """
+        """ set the text color for all cells in this column, None for default 
+            this color, if set, will be used only if none of the complex rules match
+        """
         self.cellTextColor = color
         
     def addCellHighlightComplexRule(self,fncptr,color):
+        """ a complex rule takes the form of a function or lambda and a color 
+            the function or lambda accepts a cell item (from the current column)
+            and returns true or false. if true the cell highlight will be 'color'
+            if there are multiple rules the first one to match will determine the color
+        """
         self.cellHighlight_complex_list.append( (fncptr,QBrush(color)) )
     def setCellHighlightComplexRule(self,index,fncptr,color):
+        """
+            modify the rule at index to now use a new function or lambda and a new color
+            fncprt can be none, in which case the the function will not be changed
+        """
         if fncptr == None:  # allow for updateing color only
             fncptr = self.cellHighlight_complex_list[index][0]
         self.cellHighlight_complex_list[index] = (fncptr,QBrush(color)) # intentional exception chance  
+    def getCellHighlightComplexRule(self):
+        """ return a list of tuples, in format (function,QColor) of all rules """
+        return self.cellHighlight_complex_list
     def countCellHighlightComplexRule(self): 
+        """ return the number of rules"""    
         return len(self.cellHighlight_complex_list)
     def removeCellHighlightComplexRule(self,index):
         self.cellHighlight_complex_list.pop(index)
@@ -1643,7 +1748,9 @@ class TableColumn(object):
         self.cellHighlight_complex_list = []
      
     def setCellHighlight(self,color):
-        """ set the text color for all cells in this column, None for default """
+        """ set the text color for all cells in this column, None for default 
+            this color, if set, will be used only if none of the complex rules match
+        """
         self.cellHighlight = color 
      
     def getCellTextColor(self,item):  
@@ -1719,9 +1826,7 @@ class TableColumn(object):
             _cw would be the new clipping width, x is the value passed into the function paintItem
         """
         
-        highlight = self.getCellHighlight(item)
-        if highlight != None:
-            painter.fillRect(x,y,w,h,highlight)
+        
             
         self.paintItem_text(col,painter,row,item,x,y,w,h)
         
@@ -1740,6 +1845,10 @@ class TableColumn(object):
         _w = w - self.parent.text_padding_right
         if item == None:
             item = self.parent.text_display_none
+            
+        highlight = self.getCellHighlight(item)
+        if highlight != None:
+            painter.fillRect(x,y,w,h,highlight)    
             
         default_pen = painter.pen()  
         
@@ -1897,8 +2006,34 @@ class TableColumnImage(TableColumn):
         
 class LargeTable(LargeTableBase):
     """
-        create a new Table, with scrollbars.
-        to add this to a display, add the widget self.container
+         A Table widget for handling very large data sets
+ 
+        Instead of a standard table with columns and rows, this table
+        only has columns. Each column handles drawing for data with the
+        cells for that column. A Sliding viewport is used to only 
+        represent a small amount of data at a time.
+        
+        There is no internal data model, instead a 2-D array is maintained by the table.
+        A row will be drawn in the table for each row in the array.
+        
+        While PyQt and specifically QWidget contain methods for handling mouse
+        and keyboard events, the following methods should be overloaded when handling
+        these events, instead of the Qt standard methods
+        
+        Mouse Events:
+            mouseDoubleClick
+            mouseReleaseLeft
+            mouseReleaseLeftHeader
+            mouseReleaseRight
+            mouseReleaseRightHeader
+        
+        Keyboard Events:
+            keyPressEvent - by default calls one of the following
+                keyPressDelete    - user has pressed the delete key - modifies selection by default
+                keyPressDown      - the down arrow key - modifies selection
+                keyPressEnter     - the enter / return key - same as mouseDoubleClick
+                keyPressOther     - handles pressing of any other keyboard key (nothing by default)
+                keyPressUp        - the up arrow key - modifies selection by default
     """
     # other note-worthy methods
     # setAcceptDrops()
@@ -2005,19 +2140,17 @@ class LargeTable(LargeTableBase):
         """
         self.sbar_autohide_hor = scrollbar_vertical
         self.sbar_autohide_ver = scrollbar_horizontal
+        
     def setSelectionRule(self,rule):
         """
             change how selection of row items will be handled within the table
             
             the selection rules are defined as:
-            LargeTable.SELECT_NONE  : 0 : no selection can be made
-            LargeTable.SELECT_ONE   : 1 : only one item at a time can be selected
-            LargeTable.SELECT_MULTI : 2 : any number of selection, ctrl and shift will be handled
-            
-            #TODO: 2 more rules could be made by splitting multi and it may be useful to implement
-                SELECT_CONTINUOUS - selection must be of contiguous data
-                SELECT_MULTI - select any amount in any order, same  as before
-            
+            LargeTable.SELECT_NONE       : 0 : no selection can be made
+            LargeTable.SELECT_ONE        : 1 : only one item at a time can be selected
+            LargeTable.SELECT_MULTI      : 2 : any number of selection, ctrl and shift will be handled
+            LargeTable.SELECT_CONTINUOUS : 3 : selection must always be of a contiguous set of rows
+ 
             default is LargeTable.SELECT_MULTI
         """
         self.selection_rule = rule
@@ -2069,8 +2202,7 @@ class LargeTable(LargeTableBase):
                 value -= (rc-count)/2
             #else value is set to top when count > rc
             self.sbar_ver.setValue(value)
-        
-        
+           
     def sbar_move_ver(self,value):
         """
             action taken when the veritical scroll bar changes
@@ -2121,7 +2253,12 @@ class LargeTable(LargeTableBase):
             self.sbar_hor.show();
 
     def setData(self,data):
-    
+        """
+            set the data to be displayed in the table
+            data must be a 2-Dimensional array.
+            the number of columns in in each row does not need to be the same as the number of columns in the table
+            
+        """
         super(LargeTable,self).setData(data)
         if self.enable_last_column_expanding:
             self.columns[-1].width = self.columns[-1].preferredWidth()
@@ -2147,12 +2284,15 @@ class LargeTable(LargeTableBase):
       
     def sortColumn(self,col_index):
         """
+            
             col_index - column index that user clicked, requesting to sort by this column
+            
+            overload this function with code to handle a sort event. ( do not call super )
             
             to enable sorting, call:
                 dir = self.setSortColumn(col_index)
-            direction will be set to either 1 or -1, and should be used
-            when sorting the data list
+            dir will be set to either 1 or -1, and should be used as the indicator
+            for sorting in ascending or decending. 
             
             setSortColumn will automatically manage the arrow indicator, for the 
             selected column, toggling when needing, or changing to a new column
@@ -2266,7 +2406,7 @@ class LargeTable(LargeTableBase):
     def mouseReleaseRight(self,event):
         pass
         
-    def keyReleaseEvent(self,event=None):
+    def keyPressEvent(self,event=None):
         """
             
 
@@ -2285,23 +2425,23 @@ class LargeTable(LargeTableBase):
         elif event.key() == Qt.Key_End:
             self.sbar_ver.setValue(len(self.data))
         elif event.key() == Qt.Key_Escape:
-            self.selection = set()
+            self.clearSelection()
             self.update()
         elif event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return :
-            self.keyReleaseEnter(event)
+            self.keyPressEnter(event)
         elif event.key() == Qt.Key_Delete or event.key() == Qt.Key_Backspace :
-            self.keyReleaseDelete(event)
+            self.keyPressDelete(event)
             self.update()
         elif event.key() == Qt.Key_Up:
-            self.keyReleaseUp(event)
+            self.keyPressUp(event)
         elif event.key() == Qt.Key_Down:
-            self.keyReleaseDown(event)
+            self.keyPressDown(event)
         elif event.key() <= 0x7F: # any normal keyboard character
                                   # special keys, shift,ctrl etc are defined as 0x10000XX 
-            self.keyReleaseOther(event)
+            self.keyPressOther(event)
             self.update()
             
-    def keyReleaseOther(self,event):
+    def keyPressOther(self,event):
         """
             reimplement in any subclass
             
@@ -2313,7 +2453,7 @@ class LargeTable(LargeTableBase):
         #print "<%X=%s>"%(event.key(),event.text());
         pass
      
-    def keyReleaseUp(self,event):
+    def keyPressUp(self,event):
         """
             performs the action required when the up arrow key is pressed
             
@@ -2344,7 +2484,7 @@ class LargeTable(LargeTableBase):
         else:
             self.update()
     
-    def keyReleaseDown(self,event):
+    def keyPressDown(self,event):
         """
             performs the action required when the down arrow key is pressed
             
@@ -2378,16 +2518,16 @@ class LargeTable(LargeTableBase):
         else:
             self.update()
     
-    def keyReleaseDelete(self,event):
+    def keyPressDelete(self,event):
         """
             reimplement in any subclass
             
             clears selection by default
         """
-        self.selection = set()
+        self.clearSelection()
         self.update()
         
-    def keyReleaseEnter(self,event):
+    def keyPressEnter(self,event):
         """
             reimplement in any subclass
             
@@ -2439,7 +2579,7 @@ class MimeData(QMimeData):
 
  
 if __name__ == '__main__':
-
+    
     def getData():
         data = []
         for ii in range(150):
@@ -2472,7 +2612,7 @@ if __name__ == '__main__':
     table.column(2).addCellHighlightComplexRule(h,QColor(255,0,0))
     
     table.setData(getData())
-    table.setSelectionRule(1)
+    table.setSelectionRule(3)
     #t2 = LargeTable()
     #t2.setData(getData())
     
@@ -2485,9 +2625,38 @@ if __name__ == '__main__':
     w.show()
     w.resize(720,320)
     
+    
+    
+    
+    
+    import types
+
+    #isinstance(f, types.FunctionType)
+    wf = open("D:/Dropbox/Scripting/PyModule/GlobalModules/src/test-doc.txt",'w')  
+    
+    olist = (LargeTableCore,LargeTableBase,LargeTable)
+    o = LargeTableBase
+    for o in olist:
+        R = []
+        wf.write('\n'+'**********************************************************************')
+        wf.write('\n'+str(o))
+        wf.write('\n'+'**********************************************************************')
+        wf.write('\n')
+        for attr in o.__dict__:
+            v = o.__dict__[attr]
+
+            if isinstance(v, (types.FunctionType, types.BuiltinFunctionType)) and not attr.startswith('__'):
+                R.append(attr)
+              
+        for attr in sorted(R):
+
+            wf.write('\n'+attr+"\n            ")
+            doc = o.__dict__[attr].__doc__        
+            wf.write( str(doc) )
+    wf.close() 
+    
     sys.exit(app.exec_())
-    
-    
+        
     #table.column(4).setTextAlign(Qt.AlignHCenter)
     #
     #def custom_paintItem(col,painter,item,x,y,w,h):

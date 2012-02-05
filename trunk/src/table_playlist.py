@@ -56,8 +56,7 @@ class LTable_PlayList(LargeTable):
             contextMenu.addAction("Search for Album",self.__Action_searchALBUM__)
             
             contextMenu.exec_( event.globalPos() )
-            
-        
+             
     def mouseDoubleClick(self,row,col):
         if col != -1:
             MpGlobal.Player.playSong(row)
@@ -125,7 +124,7 @@ class LTable_PlayList(LargeTable):
         if MpGlobal.Player.CurrentSong in sel:
             MpGlobal.Player.CurrentIndex = row + sel.index(MpGlobal.Player.CurrentSong)
        
-    def keyReleaseDelete(self,event):
+    def keyPressDelete(self,event):
         sel = self.getSelection()
         sel_list = list(self.selection) # get the list of selection indexes
         sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one

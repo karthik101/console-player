@@ -24,7 +24,7 @@ class SongTable(LargeTable):
     color_text_played_not_recent = QColor(200,0,0)
     color_text_banish = QColor(128,128,128)
     
-    color_rating = QColor(200,0,200) 
+
     date_mark_1 = 0 # time corresponding to the start of the day
     date_mark_2 = 0 # time corresponding to 14 days ago or so.
 
@@ -38,6 +38,28 @@ class SongTable(LargeTable):
     
         super(SongTable,self).__init__(parent)
         
+        # enable highlighting of the current song
+        self.rule_selected = lambda row: self.data[row][EnumSong.SELECTED]  
+        self.rule_banish = lambda row: self.data[row].banish
+        
+        # highlight songs that are selected
+        self.addRowHighlightComplexRule(self.rule_selected,self.color_text_played_recent)
+
+        # change text color for banished songs
+        self.addRowTextColorComplexRule(self.rule_banish,self.color_text_banish)
+   
+    def setRuleColors(self,rc_recent,rc_not_recent,rc_banish,rc_selected):
+        self.color_text_played_recent     = rc_recent
+        self.color_text_played_not_recent = rc_not_recent
+        self.color_text_banish            = rc_banish
+        
+        for i in range(len( self.getRowHighlightComplexRule() ) ):
+            if self.getRowHighlightComplexRule()[i][0] == self.rule_selected:
+                self.setRowHighlightComplexRule(i,None,rc_selected)
+                
+        for i in range(len( self.getRowTextColorComplexRule() ) ): 
+            if self.getRowTextColorComplexRule()[i][0] == self.rule_banish:
+                self.setRowTextColorComplexRule(i,None,self.color_text_banish)
         
     def initColumns(self):
         self.columns.append( TableColumn(self,EnumSong.PLAYCOUNT,"Play Count") )
@@ -93,6 +115,9 @@ class SongTable(LargeTable):
         self.columns[-1].setWidthByCharCount(22)
         self.columns.append( TableColumn(self,EnumSong.PATH     ,"Path") )
         self.columns[-1].setWidthByCharCount(30)
+        self.columns.append( TableColumn(self,EnumSong.EQUILIZER,"Volume Eq") )
+        self.columns[-1].setWidthByCharCount(10)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
         
         self.columns_setDefaultOrder( self.columns_getOrder() )
         
