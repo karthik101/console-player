@@ -104,16 +104,15 @@ def processTextInput(string):
         value = CommandList[switch](input)
         
     elif input.default=="" and MpGlobal.INPUT_PLAY_GOTO_ZERO :
-        startNewPlaylist(True)
+        MpGlobal.Player.playlist_start(True)
         
     elif input.number != None:
         # when user types just a number, assume it is for a quick playlist
         if input.number < 10:
             selectByNumber(input.number)
             if MpGlobal.Player.selCount > 0:
-                createPlayList(MpGlobal.PLAYLIST_SIZE,clrsel = False)
-                MpGlobal.INPUT_PLAY_GOTO_ZERO = True
-                
+                MpGlobal.Player.playList_new_fromSelection()
+
     elif input.default=="":
         MpGlobal.Player.play()
     # else: finally disabled 2011-08-24 after written day 1, 2010-01-22, this is a sad day
@@ -297,7 +296,7 @@ def cmd_play(input):
     """
     if input.hasDecVal:
         i = input.DecVal[0];
-        if i > 1 and i <= len(MpGlobal.Player.playList):
+        if i > 1 and i <= MpGlobal.Player.len_playlist():
             MpGlobal.Player.playSong(i-1);
     else:
         MpGlobal.Player.play()
@@ -584,7 +583,7 @@ def cmd_clear(input):
         clear internal state variables
         
     """
-    clearSelection()
+    MpGlobal.Player.library_clearSelection()
     MpGlobal.INPUT_PLAY_GOTO_ZERO = False
     MpGlobal.PLAYLIST_ARTIST_HASH_SIZE = 0
     
@@ -649,7 +648,7 @@ def cmd_hash(input):
     MpGlobal.PLAYLIST_ARTIST_HASH_SIZE = input.DecVal[0]
     fromGuiSetSelection()
     if MpGlobal.Player.selCount > 0:
-        createPlayList(MpGlobal.PLAYLIST_SIZE,clrsel = False)
+        MpGlobal.Player.playList_new_fromSelection()
         return COMMAND.VALID
     return COMMAND.ERROR
 def cmd_load(input):
@@ -725,18 +724,15 @@ def cmd_random(input):
     if input.hasDecVal :
         s = input.DecVal[0]
 
-    if s >= MpGlobal.Player.playList:
+    e = MpGlobal.Player.len_playlist()    
+    if s >= e:
         s = 0;
     
     print "Shuffling List at index %d."%s
-    
-    R = MpGlobal.Player.playList[s:]
-    
-    random.shuffle(R);
-    
-    MpGlobal.Player.playList = MpGlobal.Player.playList[:s] + R
-    
-    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList) 
+
+    MpGlobal.Player.playlist_shuffleIndexList( range(s,e) )
+
+    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.get_playlist()) 
     
     return COMMAND.VALID
         
@@ -963,8 +959,8 @@ def cmd_new(input):
             song[MpMusic.SELECTED] = True;
         MpGlobal.Player.selCount = len(MpGlobal.Player.library);
         UpdateStatusWidget(0,MpGlobal.Player.selCount)
-        
-    createPlayList(MpGlobal.PLAYLIST_SIZE,clrsel = False);
+     
+    MpGlobal.Player.playList_new_fromSelection()
     
     if "p" in input.Switch:
         MpGlobal.Player.playSong(0)
@@ -1006,8 +1002,16 @@ def cmd_insert(input):
         
     fromGuiSetSelection()
     
-    insertSelectionIntoPlayList(MpGlobal.PLAYLIST_SIZE,MpGlobal.Player.CurrentIndex+1, "r" in input.Switch)
+    song_list = getSelection(False)
+    
+    song_list = MpGlobal.Player.playlist_create(song_list,MpGlobal.PLAYLIST_SIZE,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
+    
+    index = MpGlobal.Player.CurrentIndex+1
+    
+    MpGlobal.Player.playlist_insertSongList(index,song_list)
+    
     MpGlobal.PLAYLIST_SIZE = Settings.PLAYLIST_SIZE_DEFAULT
+    
     return COMMAND.VALID
 def cmd_remove(input):
     # ##----1----2----3----4----5----6----7----8----9----0----1----2----3----4----5----6
@@ -1387,11 +1391,17 @@ def cmd_playlist(input):
         
         undocumented
     """
+    # create a playlist from the open playlist at index 0.
+    # a playlist must be open in the editor
+    
     if input.hasDecVal:
         i = input.DecVal[0]
         j = input.DecVal[1]
         k = input.DecVal[2] == 0
-        createFromPlayList(MpGlobal.PLAYLIST_SIZE,index = i,shuffle = k,hash = j)
+        #createFromPlayList(MpGlobal.PLAYLIST_SIZE,index = i,shuffle = k,hash = j)
+    
+    pass
+    
 def cmd_libsave(input):
     """
         DEV

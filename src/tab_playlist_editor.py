@@ -287,8 +287,7 @@ class Tab_PlaylistEditor(Application_Tab):
         pass
         
     def btn_click_playlist_play(self,bool=False):
-        registerNewListAsPlayList(self.playlist,autoStart = True)
-        MpGlobal.Player.playSong(0)
+        MpGlobal.Player.playlist_set(self.playlist,autoStart=True)
     
 class PLETable_base(SongTable):
     """

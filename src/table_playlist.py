@@ -58,6 +58,7 @@ class LTable_PlayList(LargeTable):
             contextMenu.exec_( event.globalPos() )
              
     def mouseDoubleClick(self,row,col):
+        print row,col
         if col != -1:
             MpGlobal.Player.playSong(row)
         else:
@@ -76,88 +77,44 @@ class LTable_PlayList(LargeTable):
             
     def processDropEvent(self,source,row,data):
         
-        
-        
         if source == self:
-            self.__dropEvent_self(row,data)
+            sel = self.getSelection()
+            # get the list of currently selected song, these are the indices of the songs in 'data'
+            sel_list = list(self.selection) # get the list of selection indexes
+            # get the updated list of indices after the move
+            sel_list = MpGlobal.Player.playlist_reinsertIndexList(sel_list,row)
+            # update the selection
+            self.setSelection( sel_list )
         else:
-        
-            for item in data: # dropped data must all be songs
-                if not isinstance(item,Song):
-                    return
-                    
-            self.data = self.data[:row] + data + self.data[row:]
-            self.selection = set( range(row,row+len(data) ) )
-            if row < MpGlobal.Player.CurrentIndex:  
-                MpGlobal.Player.CurrentIndex += len(data)
+            # dropped data from other source must all be songs
+            if not all( [ isinstance(item,Song) for item in data ] ):
+                return
+            # insert the songs at the drop index
+            MpGlobal.Player.playlist_insertSongList(row,data)
+            # set the selection to the dropped songs
+            self.setSelection( range(row,row+len(data) ) )
             
-        MpGlobal.Player.playList = self.data    
-        info_UpdateCurrent() # update the info display
-        UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
-        
-        self._sbar_ver_setrange()
-            
-    def __dropEvent_self(self,row,data): 
-        sel = self.getSelection()
-        sel_list = list(self.selection) # get the list of selection indexes
-        sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one
-        
-        for i in sel_list:
-            self.data.pop(i)
-            if i < row:     # update the drop row if we are removing songs from before it
-                row -= 1;
-            if i < MpGlobal.Player.CurrentIndex: # update the current index for similar reseaons
-                MpGlobal.Player.CurrentIndex -= 1
-    
-        
-        self.data = self.data[:row] + sel + self.data[row:]
+        # update the data for this table
+        #self.setData( MpGlobal.Player.get_playlist() )
 
-        if row <= MpGlobal.Player.CurrentIndex: # adjust the current index + the number of songs being dropped before ti
-            MpGlobal.Player.CurrentIndex += len(sel)
-        
-        if row > len(self.data):    # for resetting the selection, we must adjust the row
-            row = len(self.data) - len(sel)
-        self.selection = set( range(row,row+len(sel) ) )
-
-        # if the current song was moved then the current index must be updated
-        # TODO: this may cause a bug, where there are two copies of one song in the selection
-        if MpGlobal.Player.CurrentSong in sel:
-            MpGlobal.Player.CurrentIndex = row + sel.index(MpGlobal.Player.CurrentSong)
-       
     def keyPressDelete(self,event):
         sel = self.getSelection()
         sel_list = list(self.selection) # get the list of selection indexes
-        sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one
-        
-        row = self.selection_last_row_added
-        
-        if row >= len(self.data):   
-            return
-        
-        for i in sel_list:
-            self.data.pop(i)
-            if i < row:     # update the drop row if we are removing songs from before it
-                row -= 1;
-            if i < MpGlobal.Player.CurrentIndex: # update the current index for similar reseaons
-                MpGlobal.Player.CurrentIndex -= 1
-        
-        if row >= len(self.data): 
-            row = len(self.data)-1  # so that the last row will be selected
+
+        if len(sel_list) > 0:
+            MpGlobal.Player.playlist_removeIndexList(sel_list)
             
-        if row >= 0:
-            self.selection = {row,}
-            if MpGlobal.Player.CurrentSong in sel:
-                self.mouseDoubleClick(row,0)
-        else:
-            self.selection = set()
-        self.selection_last_row_added = row
-        self.selection_first_row_added = row      
-        
-        MpGlobal.Player.playList = self.data
+            row = min(sel_list)
             
-        info_UpdateCurrent()
-        
-        UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
+            if row >= MpGlobal.Player.len_playlist():
+                row = MpGlobal.Player.len_playlist() - 1
+                
+            if row >= 0:
+                self.setSelection([row,])
+            else:
+                self.clearSelection()
+            
+            #self.setData( MpGlobal.Player.get_playlist() )
       
     def __Action_StopHere__(self):
         row = list(self.selection)[0]

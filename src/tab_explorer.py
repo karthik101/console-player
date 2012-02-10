@@ -279,12 +279,9 @@ class Tab_Explorer(Application_Tab):
           
     def act_play_song(self,path):
     
-        MpGlobal.Player.playState = MpMusic.PL_NO_PLAYLIST
-        
-        temp = id3_createSongFromPath(path)
-        
-        if MpGlobal.Player.load(temp) :
-            MpGlobal.Player.play()
+
+        MpGlobal.Player.play_fromDisk(path)
+
                 
     def act_load_song(self,item_list):
         """ path_list as path or list-of-paths """

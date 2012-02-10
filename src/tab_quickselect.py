@@ -312,14 +312,14 @@ class Tab_QuickSelect(Application_Tab):
         self.sortData(index if index==0 else index+2)
             
     def click_clear(self,bool=False):
-        clearSelection() # clear all selection songs
+        MpGlobal.Player.library_clearSelection() # clear all selection songs
         for item in self.getQuickList():
             item[1] = False
         self.table.update()
         self.setStatus()
         
     def click_new(self,bool=False):
-        clearSelection() # clear all selection songs
+        MpGlobal.Player.library_clearSelection() # clear all selection songs
         processTextInput("new -h %d -p -t"%self.playlist_max_artist) # this is called 'efficient'
         
     def check_reverse(self,state):

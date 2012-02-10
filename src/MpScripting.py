@@ -70,136 +70,6 @@ def WarningMessage(message,btn1="Ok",btn2="",icon=QMessageBox.Warning):
 # ##############################################
 # Create PlayList
 # ##############################################
-def createPlayList(size,autoLoad = False, autoStart = False, clrsel = True):
-    """
-        Create anew playlist using the songs selected.
-        Playlist is then displayed and playback can begin
-    """
-    # autoLoad, load the song when finished
-    # autoStart, start playing the first song when done
-    
-
-    R = getSelection(clrsel)
-    S = createPlayListFromSongList(R,size,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
-    
-    registerNewListAsPlayList(S,autoLoad,autoStart)
-    
-def registerNewListAsPlayList(songList,autoLoad = False, autoStart = False):
-    """
-        Given a list of songs, set that as the new playlist
-        autoLoad and autoStart specify whether to load or play the zero song immediatly
-    """
-    MpGlobal.Player.playList = songList
-    MpGlobal.Window.dsp_info.text_index = "-/%d"%len(songList)
-    MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Window.dsp_info.update())    
-
-    
-    if autoLoad and not autoStart:
-        MpGlobal.Player.loadNoPlayback(MpGlobal.Player.getPlayListIndex(0))
-        MpGlobal.Player.CurrentIndex = 0;
-    # start playing the song immediatley, or wait for the current song to
-    # finish playing then start the new playlist
-    if autoStart :
-        MpGlobal.Player.playSong(0)
-    else:
-        MpGlobal.INPUT_PLAY_GOTO_ZERO = True
-     
-    UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
-
-    # update the time used when comparing songs played since two weeks.
-    setSearchTime() 
-    
-    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
-    MpGlobal.Window.tab_library.table.updateTable()
-    
-    playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT)
-    if Settings.SAVE_BACKUP:
-        musicBackup(MpGlobal.FOLDERPATH_BACKUP,MpGlobal.Player.library,Settings.SAVE_FORMAT,MpGlobal.Force_Backup);
-    
-def createPlayListFromSongList(songSet,size,hashValue = 0):
-    """
-        Return a list of songs of length size, suitable for use as a new playlist
-        Pool of songs used is taken from songSet, obvously this set will normally be the
-        set of selected songs, taken by using getSelection()
-        hashValue allows for a limit to be placed on the number of songs per artist, or 0 for no limit
-        
-    """
-    S = [] # resulting list
-    
-    if len(songSet) == 0:
-        return []
-    # ###############################
-    # add to selection from gui
-    ShuffleList(songSet)
-
-    size = min(size,len(songSet)) # length of the playlist to return
-    if hashValue > 0:  
-        # create a hash table and count the songs per artist
-        # limit the max number of somgs per artist to the hash number
-        D = {}
-        S = []
-        for song in songSet:
-            a = song[MpMusic.ARTIST]
-            
-            if a in D:
-                D[a] += 1
-            else:
-                D[a] = 1
-                
-            if D[a] <= hashValue:
-                S.append(song)
-                
-            if len(S) == size:
-                break;
-        # shuffle again, because the above searches linearly until
-        # end of list, which could group similar artists together
-        ShuffleList(S)
-    else:
-        S = songSet[:size]
-        
-    return S
-    
-def createFromPlayList(size,index,shuffle=True, hash=0):
-    """
-        create a playlist from a playlist open in an editor, then play the first song
-        
-    """
-    
-    if index < len(MpGlobal.Window.editorTabs):
-    
-        R = MpGlobal.Window.editorTabs[index][3].DataSrc
-        
-        if shuffle :
-            ShuffleList(R)
-        
-        if hash > 0:  
-            # create a hash table and count the songs per artist
-            # limit the max number of somgs per artist to the hash number
-            D = {}
-            MpGlobal.Player.playList = []
-            for song in R:
-                a = song[MpMusic.ARTIST]
-                
-                if a in D:
-                    D[a] += 1
-                else:
-                    D[a] = 1
-                    
-                if D[a] <= hash:
-                    MpGlobal.Player.playList.append(song)
-                    
-                if len(MpGlobal.Player.playList) == size:
-                    break;
-            # shuffle again, because the above searches linearly until
-            # end of list, which could group similar artists together
-            if shuffle :
-                ShuffleList(MpGlobal.Player.playList)
-        else:
-            MpGlobal.Player.playList = R[:size]
-        
-        MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
-        
-        MpGlobal.Player.playSong(0)
 
 def selectByNumber(num):
     
@@ -249,26 +119,15 @@ def fromGuiSetSelection():
         UpdateStatusWidget(0,MpGlobal.Player.selCount)        
     print MpGlobal.Player.selCount
     
-       
 
-def insertSelectionIntoPlayList(size,pos,random = False):
-
-    R = getSelection(False)
-    S = createPlayListFromSongList(R,size,MpGlobal.PLAYLIST_ARTIST_HASH_SIZE)
-
-    #TODO ALLOW SHUFFLE OF REGION pos to end    
-    #if random == True:
-    #    ShuffleList(MpGlobal.Player.playList)
-    
-    insertIntoPlayList(S,pos);
     
 def insertIntoPlayList(R,pos):  
 
-    MpGlobal.Player.playList = MpGlobal.Player.playList[:pos] + R + MpGlobal.Player.playList[pos:]
+    MpGlobal.Player.playlist_insertSongList(pos,R)
 
     MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.playList)
     
-    UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
+    UpdateStatusWidget(1,MpGlobal.Player.playlist_PlayTime())
     
     MpGlobal.Window.emit(SIGNAL("UPDATE_INFODISPLAY"),MpGlobal.Player.CurrentSong)
     
@@ -664,7 +523,7 @@ def Player_set_unsaved():
     MpGlobal.UNSAVED_DATA = True
     l = len(MpGlobal.Player.libDelete)
     if l > 0:
-        MpGlobal.Window.setWindowTitle("*%s - Warning"%MpGlobal.NAME)
+        MpGlobal.Window.setWindowTitle("***%s"%MpGlobal.NAME)
     else:
         MpGlobal.Window.setWindowTitle("*%s"%MpGlobal.NAME)
  
@@ -909,38 +768,6 @@ def getSelection(unselect = True):
     MpGlobal.PLAYLIST_SKIP_RECENT = False
     
     return R[:i]
-    
-def clearSelection():
-    MpGlobal.Player.selCount = 0
-    for x in range(len(MpGlobal.Player.library)):
-        MpGlobal.Player.library[x][MpMusic.SELECTED] = False
-    UpdateStatusWidget(0,MpGlobal.Player.selCount)    
-    MpGlobal.Window.emit(SIGNAL("FILL_LIBRARY")) 
-
-def startNewPlaylist(forceStart = False):
-    """
-        Start playing the playlist (assumed to be recently created)
-        from the first song.
-        
-        Parameters:
-        
-        forceStart : When true the first song will be played
-                     if false, or not specified the player will
-                     check against stopNext to see if playback should
-                     continue
-    """
-    clearSelection()
-    
-    MpGlobal.PLAYLIST_SIZE = Settings.PLAYLIST_SIZE_DEFAULT
-    MpGlobal.PLAYLIST_ARTIST_HASH_SIZE = 0
-    MpGlobal.Player.stopIndex = -1
-    MpGlobal.INPUT_PLAY_GOTO_ZERO = False
-    
-    if MpGlobal.Player.stopNext == False or forceStart == True:
-        MpGlobal.Player.playSong(0)
-    else:
-        MpGlobal.Player.loadNoPlayback(0)
-        MpGlobal.Player.setStopNext(False)
  
 def info_UpdateCurrent():
     info_UpdateDisplay(MpGlobal.Player.CurrentSong);
