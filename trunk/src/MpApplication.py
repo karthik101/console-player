@@ -251,6 +251,7 @@ class MainWindow(QMainWindow):
         QObject.connect(self, SIGNAL("DIAG_MESSAGE"),self.debugMsg, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("UPDATE_TIMEBAR"),self.bar_time.periodicUpdate, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("UPDATE_TIMEBARMAXVAL"),self.bar_time.setMaximum, Qt.QueuedConnection)
+        QObject.connect(self, SIGNAL("UPDATE_SONGINFO"),info_UpdateCurrent, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("UPDATE_TIMEINFO"),self.dsp_info.updateTime, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("UPDATE_INDEXINFO"),self.dsp_info.updateIndex, Qt.QueuedConnection)
         QObject.connect(self, SIGNAL("UPDATE_STATUSBAR"),UpdateStatusWidget, Qt.QueuedConnection)
@@ -744,6 +745,7 @@ def init_preMainWindow():
     MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
     #TODO: FIX THIS FUNCTION CALL
     R = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)
+    
     if len(R) == 2:
         Settings.PLAYER_LAST_INDEX = R[0]
         MpGlobal.Player.playList = R[1]
@@ -761,7 +763,7 @@ def init_postMainWindow():
     MpGlobal.Player.libDisplay = MpGlobal.Player.library[:]
     
     MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.libDisplay) 
-    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList) 
+    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.get_playlist()) 
     
     MpGlobal.Window.setPlayListWidth(MpGlobal.Window.playListWidth)
     if not MpGlobal.Window.txt_debug.isHidden():
@@ -774,7 +776,7 @@ def init_postMainWindow():
         
     MpGlobal.Player.loadSong()
     
-    UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
+    UpdateStatusWidget(1,MpGlobal.Player.playlist_PlayTime())
     
     MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Ready, DevMode : %s"%Settings.DEVMODE)   
 

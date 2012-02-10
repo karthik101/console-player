@@ -84,16 +84,16 @@ class LTable_Library(SongTable):
     
     def mouseDoubleClick(self,row,col):
         sel = self.getSelection()
-        sel_list = list(self.selection) # get the list of selection indexes
-        sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one
+        #sel_list = list(self.selection) # get the list of selection indexes
+        #sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one
         
         if len(sel) > 0 :
             index = MpGlobal.Player.CurrentIndex + 1
-            MpGlobal.Player.playList = MpGlobal.Player.playList[:index] + sel + MpGlobal.Player.playList[index:]
-            info_UpdateCurrent() # update the info display
-            UpdateStatusWidget(1,MpGlobal.Player.playListPlayTime())
-            MpGlobal.Window.tbl_playlist.data = MpGlobal.Player.playList
-            MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.playList)
+            MpGlobal.Player.playlist_insertSongList(index,sel)
+            #info_UpdateCurrent() # update the info display
+            #UpdateStatusWidget(1,MpGlobal.Player.playlist_PlayTime())
+            MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.get_playlist())
+            
         return
     
     def updateTable(self,new_row_index=-1,data=None):

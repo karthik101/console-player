@@ -187,26 +187,24 @@ class Frame_Main(QWidget):
         self.vbox.addSpacing(2)
         
 def button_PlayList_Clear():
-    MpGlobal.Player.playList = []
-    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
+    MpGlobal.Player.playlist_clear()
+    MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.get_playlist())
     
 def button_PlayList_Shuffle():
-    sindex = list(MpGlobal.Window.tbl_playlist.selection) # list of song indexes
-    if len(sindex) > 1:
-        # if multiple songs are selected in the playlist
-        # select these songs into a new array, shuffle
-        # and place back at the original indexes
-        S = MpGlobal.Window.tbl_playlist.getSelection() # list of songs
-        ShuffleList(S) # shuffle selection array in place
-        for x in range(len(sindex)):
-            MpGlobal.Player.playList[sindex[x]] = S[x]
+
+    index_list = list(MpGlobal.Window.tbl_playlist.selection) # list of song indexes
+    
+    if len(index_list) > 1:
+        MpGlobal.Player.playlist_shuffleIndexList(index_list)
+
     else:
         # shuffle the entire playlist starting with the first
         # song after the current song playing
         s = MpGlobal.Player.CurrentIndex + 1
-        e = len(MpGlobal.Player.playList)
-        ShufflePartition(MpGlobal.Player.playList,s,e)
-    MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.playList)
+        e = MpGlobal.Player.len_playlist()
+        MpGlobal.Player.playlist_shuffleIndexList( range(s,e) )
+        
+    MpGlobal.Window.tbl_playlist.updateTable(-1,MpGlobal.Player.get_playlist())
     
 def button_PlayList_AutoPlayList():
     """ change the playlist ending policy

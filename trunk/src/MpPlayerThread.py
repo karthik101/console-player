@@ -92,6 +92,9 @@ class MediaPlayerThread(QThread):
                         p.updateSongRecord(song,time)
                         #if isPosix: print " . RECORD UPDATE"
                         #MpGlobal.Player.autonext()
+                    elif state == MP_ENDED and p.playState == MpMusic.PL_NO_PLAYLIST:
+                        MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Player.loadSong)
+                        
                     # playback: play one, then wait for next song to be assigned
                     elif state == MP_ERROR and p.CurrentSong != None:
                         song = p.CurrentSong
