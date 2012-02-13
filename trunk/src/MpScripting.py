@@ -119,8 +119,6 @@ def fromGuiSetSelection():
         UpdateStatusWidget(0,MpGlobal.Player.selCount)        
     print MpGlobal.Player.selCount
     
-
-    
 def insertIntoPlayList(R,pos):  
 
     MpGlobal.Player.playlist_insertSongList(pos,R)

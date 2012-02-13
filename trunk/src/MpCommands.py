@@ -1096,8 +1096,13 @@ def cmd_xx(input):
                 print u"%s"%L[i-1]    
                 print u"%s"%L[i]
         
-    if input.DecVal[0] == 6 : #xx 2
-        pass
+    if input.DecVal[0] == 6 : #xx 6
+    
+        path = os.path.join(MpGlobal.installPath,"test.m3u")
+        
+        playList_Save_M3U( path, MpGlobal.Player.playList,0)
+        
+        playList_Load_M3U(path,MpGlobal.Player.library)
         
     if input.DecVal[0] == 7 : #xx 7
         R = xml_open("./library.xml");

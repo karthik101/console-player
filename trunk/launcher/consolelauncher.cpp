@@ -33,33 +33,42 @@ int main(int argc, char **argv)
 			sprintf(args,"%s %s",args,argv[i]);
 		}
 	}
-			
+	printf("Console Launcher\r\n");		
+	printf("args: %s\r\n",args);		
 	/*
 		get the path to the current directory
 	*/
 	ind=cstr_rindex(argv[0],"\\/");
 	strncpy(fpath,argv[0],ind+1);
     fpath[ind+1]='\0';
+	printf("arg0: %s\r\n",argv[0]);		
+	printf("fpath: %s\r\n",fpath);		
 	/*
 		Find a session.lock file to open
 	*/
 	success = get_session_lock(&s,".\\user\\session.lock");
+	printf("lock: %d\r\n",success);
+	if (!success) {
+		success = get_session_lock(&s,".\\session.lock");
+		printf("lock-local: %d\r\n",success);
+	}
 	if (!success) {
 		ExpandEnvironmentStrings("%APPDATA%",msg,1024);
 		sprintf(msg,"%s\\ConsolePlayer\\session.lock",msg);
 		success = get_session_lock(&s,msg);
+		printf("lock-appdata: %d\r\n",success);
 	}
 
 	/*
-		with an open sessio.lock
+		with an open sessino.lock
 		check for the process and send any argv values to the open process
 	*/
 	if ( success ) {
 	
-		//printf("%d\r\n",s.proc);
-		//printf("%d\r\n",s.port);
-		//printf("%s\r\n",s.fname);
-		//printf("%s\r\n",s.fpath);
+		printf("%d\r\n",s.proc);
+		printf("%d\r\n",s.port);
+		printf("%s\r\n",s.fname);
+		printf("%s\r\n",s.fpath);
 		
 		if (IsProcessRunning(s.proc) && argc > 1) {
 
@@ -115,7 +124,6 @@ int get_session_lock(Session * s, const char * lockpath) {
 	return 0;
 }
 
-
 int IsProcessRunning(DWORD pid)
 {
     HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
@@ -123,8 +131,6 @@ int IsProcessRunning(DWORD pid)
     CloseHandle(process);
     return ret == WAIT_TIMEOUT;
 }
-
-
 
 int cstr_rindex(const char * cstr, const char * fmt){
 	/*
