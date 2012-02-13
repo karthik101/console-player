@@ -124,7 +124,7 @@ class GlobalContainer(object):
     # ###############################################
     VERSION = "0.0.0.0" # fourth value in version auto updates in init_Settings
     SAVED_VERSION = "0.0.0.0"
-    MINIMUM_VERSION = "0.5.3.0" # hardcoded value to compare against,
+    MINIMUM_VERSION = "0.5.3.0" # hardcoded value to compare against, on start, if version is less than this, re-verify files
     NAME = "Console Player"
 
     SONGDATASIZE  = 22#MusicContainer.NUMTERM; #length of array to use

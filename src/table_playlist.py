@@ -141,7 +141,7 @@ class LTable_PlayList(LargeTable):
         if len(self.selection) > 0:
             song = self.getSelection()[0]
             s = "http://www.songmeanings.net/query/?q="
-            s += song.replace(" ","+")
+            s += song[MpMsic.ARTIST].replace(" ","+")
             s += "&type=artists"
             explorerOpen(s)
         

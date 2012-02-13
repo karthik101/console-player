@@ -84,7 +84,8 @@ try:
 except:
     debugPreboot("No Phonon Object")
 
-
+print "VLC: %s PHONON: %s"%(__IMPORT_VLC__,__IMPORT_PHONON__)
+    
 if not __IMPORT_VLC__ and not __IMPORT_PHONON__:
     app = QtGui.QApplication(sys.argv)
     QtGui.QMessageBox.critical(None, "Music Player",
@@ -315,7 +316,10 @@ class MediaManager(object):
             self.playlist_start(True) # /*IDENTICLE CODE*/ from on Blank Input
                 
         elif ( self.CurrentIndex < len(self.playList)-1 ):
-            self.CurrentIndex += 1
+            # only change the index if in playlist playback mode
+            if self.playState != MpMusic.PL_NO_PLAYLIST:
+                self.CurrentIndex += 1
+            
             if self.stopNext:
                 self.loadSong(self.CurrentIndex)
                 self.setStopNext(False)
@@ -431,8 +435,12 @@ class MediaManager(object):
         
     def prev(self):
         """start playing the prev song (relative to current song)"""
-        if ( self.CurrentIndex > 0 ) :
+        # only change the index when in playlist playback mode
+        if self.playState != MpMusic.PL_NO_PLAYLIST and self.CurrentIndex > 0:
             self.CurrentIndex -= 1
+
+        if ( self.CurrentIndex >= 0 ) :
+  
             if self.stopNext:
                 self.loadSong(self.CurrentIndex)
                 self.setStopNext(False)
@@ -864,7 +872,6 @@ class MediaManager(object):
         """ send a signal to update the display of how long the current playlist is """
         UpdateStatusWidget(1,MpGlobal.Player.playlist_PlayTime())
         
-        
     def updateSongDisplay(self):
         """ not implemented """
         # delay-call info_UpdateDisplay with argumentself.CurrentSong
@@ -886,7 +893,7 @@ class MediaManager(object):
         
     def updateDisplayIndex(self):
         if self.playState == MpMusic.PL_NO_PLAYLIST:
-            MpGlobal.Window.emit(SIGNAL("UPDATE_INDEXINFO"),"disk") 
+            MpGlobal.Window.emit(SIGNAL("UPDATE_INDEXINFO"),"Disk") 
         else:
             MpGlobal.Window.emit(SIGNAL("UPDATE_INDEXINFO"),"%d/%d"%(self.CurrentIndex+1,len(self.playList))) 
 
