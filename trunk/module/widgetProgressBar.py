@@ -1,7 +1,6 @@
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-print "getting things done"
 class ProgressBar(QProgressBar):
     
     _text = ""
@@ -36,8 +35,7 @@ class ProgressBar(QProgressBar):
         
     def setValue(self,v):
         super(ProgressBar, self).setValue(v);
-        
-        
+              
 if __name__ == '__main__':
 
     import sys
