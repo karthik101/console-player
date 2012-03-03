@@ -3,7 +3,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 from SystemDateTime import DateTime
-from Qt_CustomStyle import *
+#from Qt_CustomStyle import *
 
 from math import ceil,floor
 
@@ -248,7 +248,7 @@ class LargeTableCore(QWidget):
         if self.ghost_data != None:
             self.__data__ = self.ghost_data
             
-        
+        #print DateTime.now()
         painter = QPainter(self)
         self.setPaletteGroup() # set colors to active/inactive/disabled versions
         painter.setRenderHint(0) # QPainter.Antialiasing
@@ -616,11 +616,12 @@ class LargeTableCore(QWidget):
             
             return QBrush(g)
         elif color_type == QPalette.Highlight:   
+            brush = self.palette().brush(0,color_type)
+            color = brush.color()
             if not self.hasFocus():
                 color.setAlpha(64)
             else:
                 color.setAlpha(190)
-            
         brush.setColor(color)
         return brush
  
@@ -1506,17 +1507,22 @@ class LargeTableBase(LargeTableCore):
       
     def getItem(self,i,j):
         """
-            Return the item to be displayed at true co'ords i,j
+            Return the item to be displayed at true coords i,j
             
             i,j are indexes into the data, and are not indexes in the displayed table
             
-            if there is no data at that position "No Data" is returned
+            j can either be an integer index into a list, or a key value into a dictionary
+            or any other type of object that implements __getitem__ and __contains__
+            
+            if there is no data at that position "None" is returned
         """
         item = None  
         if i < len(self.data):
-            if j < len(self.data[i]):
+            if isinstance( self.data[i],list):  
+                if j < len(self.data[i]):   # list must be indexed by integers
+                    item = self.data[i][j]
+            elif j in self.data[i]:     # otherwise assume the data type implements __getitem__ and __contains__
                 item = self.data[i][j]
-      
         return item
         
     def getSelection(self):
@@ -1586,7 +1592,7 @@ class TableColumn(object):
         self.width = 100;   # requested width for drawing
         self.index = index; # index of data from parent this column is responsible for drawing
         if name == None:
-            self.name = "Column %d"%index      # what to draw in the column header
+            self.name = "Column %s"%index      # what to draw in the column header
         else:
             self.name = name
         
@@ -1826,7 +1832,8 @@ class TableColumn(object):
             _cw would be the new clipping width, x is the value passed into the function paintItem
         """
         
-        
+        #print self.parent.data[row][self.index]
+        #print type(item)
             
         self.paintItem_text(col,painter,row,item,x,y,w,h)
         
@@ -2015,7 +2022,10 @@ class LargeTable(LargeTableBase):
         
         There is no internal data model, instead a 2-D array is maintained by the table.
         A row will be drawn in the table for each row in the array.
-        
+        Each row must be either a list, dictionary, or object that implements __getitem__ and __contains__
+        By default each column works by using a variable 'index' to index into an element in a row.
+        this 'index' variable can be set to the key value of a dictionary to access the elements that way.
+
         While PyQt and specifically QWidget contain methods for handling mouse
         and keyboard events, the following methods should be overloaded when handling
         these events, instead of the Qt standard methods
@@ -2436,6 +2446,10 @@ class LargeTable(LargeTableBase):
             self.keyPressUp(event)
         elif event.key() == Qt.Key_Down:
             self.keyPressDown(event)
+        elif event.key() == Qt.Key_Left:
+            self.keyPressLeft(event)
+        elif event.key() == Qt.Key_Right:
+            self.keyPressRight(event)
         elif event.key() <= 0x7F: # any normal keyboard character
                                   # special keys, shift,ctrl etc are defined as 0x10000XX 
             self.keyPressOther(event)
@@ -2518,6 +2532,12 @@ class LargeTable(LargeTableBase):
         else:
             self.update()
     
+    def keyPressRight(self,event):
+        self.sbar_hor.setValue(self.sbar_hor.value()+self.scroll_rate)
+        
+    def keyPressLeft(self,event):
+        self.sbar_hor.setValue(self.sbar_hor.value()-self.scroll_rate)
+        
     def keyPressDelete(self,event):
         """
             reimplement in any subclass
@@ -2583,11 +2603,12 @@ if __name__ == '__main__':
     def getData():
         data = []
         for ii in range(150):
-            size = 6
-            R = [()]*size
-            for jj in range(size):
-                R[jj] = (ii+1,jj+1)
-            data.append(R)
+            #size = 6
+            #R = [()]*size
+            #for jj in range(size):
+            #    R[jj] = (ii+1,jj+1)
+            data.append( {'a' : ii,0:0,1:1,2:2,3:3} )
+            #data.append(R)
         return data
     
     import sys
@@ -2596,23 +2617,23 @@ if __name__ == '__main__':
 
     table = LargeTable()
     
-    table.addColumn()
-    table.addColumn()
-    table.addColumn()
-    table.addColumn()
-    table.addColumn()
-    table.addColumn()
-
+    table.addColumn(TableColumn(table,'a'))
+    #table.addColumn()
+    #table.addColumn()
+    #table.addColumn()
+    #table.addColumn()
+    #table.addColumn()
+    #
     
-    table.column(2).setEnableResize(False)
+    #table.column(2).setEnableResize(False)
     
-    g = lambda item: item[0]%3==0 # rows that divide by 2 or 3
-    h = lambda item: item[0]%2==0
-    table.column(2).addCellTextColorComplexRule(g,QColor(255,255,255))
-    table.column(2).addCellHighlightComplexRule(h,QColor(255,0,0))
+    #g = lambda item: item[0]%3==0 # rows that divide by 2 or 3
+    #h = lambda item: item[0]%2==0
+    #table.column(2).addCellTextColorComplexRule(g,QColor(255,255,255))
+    #table.column(2).addCellHighlightComplexRule(h,QColor(255,0,0))
     
     table.setData(getData())
-    table.setSelectionRule(3)
+    #table.setSelectionRule(3)
     #t2 = LargeTable()
     #t2.setData(getData())
     
@@ -2625,35 +2646,33 @@ if __name__ == '__main__':
     w.show()
     w.resize(720,320)
     
-    
-    
-    
-    
-    import types
 
-    #isinstance(f, types.FunctionType)
-    wf = open("D:/Dropbox/Scripting/PyModule/GlobalModules/src/test-doc.txt",'w')  
-    
-    olist = (LargeTableCore,LargeTableBase,LargeTable)
-    o = LargeTableBase
-    for o in olist:
-        R = []
-        wf.write('\n'+'**********************************************************************')
-        wf.write('\n'+str(o))
-        wf.write('\n'+'**********************************************************************')
-        wf.write('\n')
-        for attr in o.__dict__:
-            v = o.__dict__[attr]
-
-            if isinstance(v, (types.FunctionType, types.BuiltinFunctionType)) and not attr.startswith('__'):
-                R.append(attr)
-              
-        for attr in sorted(R):
-
-            wf.write('\n'+attr+"\n            ")
-            doc = o.__dict__[attr].__doc__        
-            wf.write( str(doc) )
-    wf.close() 
+    # 
+    # import types
+    # 
+    # #isinstance(f, types.FunctionType)
+    # wf = open("D:/Dropbox/Scripting/PyModule/GlobalModules/src/test-doc.txt",'w')  
+    # 
+    # olist = (LargeTableCore,LargeTableBase,LargeTable)
+    # o = LargeTableBase
+    # for o in olist:
+    #     R = []
+    #     wf.write('\n'+'**********************************************************************')
+    #     wf.write('\n'+str(o))
+    #     wf.write('\n'+'**********************************************************************')
+    #     wf.write('\n')
+    #     for attr in o.__dict__:
+    #         v = o.__dict__[attr]
+    # 
+    #         if isinstance(v, (types.FunctionType, types.BuiltinFunctionType)) and not attr.startswith('__'):
+    #             R.append(attr)
+    #           
+    #     for attr in sorted(R):
+    # 
+    #         wf.write('\n'+attr+"\n            ")
+    #         doc = o.__dict__[attr].__doc__        
+    #         wf.write( str(doc) )
+    # wf.close() 
     
     sys.exit(app.exec_())
         
