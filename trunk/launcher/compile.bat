@@ -1,10 +1,8 @@
 @echo off
-%~d0
 
-cd %~dp0
+cd /D %~dp0
+
 set flag=-mwindows
-
-:: -mwindows
 
 g++  -I./ ./*.cpp -lwsock32 icon.o -o ConsoleLauncher.exe
 

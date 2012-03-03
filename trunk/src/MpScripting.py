@@ -409,6 +409,7 @@ def settings_get_Update():
     Settings.PLAYER_VOLUME = MpGlobal.Player.getVolume();
     
     Settings.PLAYER_LAST_INDEX = MpGlobal.Player.CurrentIndex
+    
     Settings.SCREEN_POSITION_W = MpGlobal.Window.width()
     Settings.SCREEN_POSITION_H = MpGlobal.Window.height()
     Settings.SCREEN_POSITION_X = MpGlobal.Window.x()

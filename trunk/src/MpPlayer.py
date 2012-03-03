@@ -55,8 +55,8 @@ from Song_LibraryFormat import *
 from datatype_hex64 import *
 from MpSongHistory import *
 
-#__IMPORT_VLC__    = False
-#__IMPORT_PHONON__ = False
+__IMPORT_VLC__    = False # derp, this is needed otherwise it will not be defined
+__IMPORT_PHONON__ = False # when it is not installed
 
 MP_NOTHINGSPECIAL = 0
 MP_OPENING = 1
@@ -102,7 +102,7 @@ def getNewAudioPlayer():
     #TODO: allow sys.argv:
     #   --vlc : force vlc
     #   --phonon : force phonon
-    #  --noaudio : force creatyion of base audio player instead of vlc or phonon
+    #  --noaudio : force creation of base audio player instead of vlc or phonon
     
     #return GenericMediaObject();
     

@@ -229,7 +229,8 @@ class Tab_PlaylistEditor(Application_Tab):
         
         sortList(R,self.sort_index,self.sort_direction==-1)
         
-        index,S = playListLoad(path,R) # index is ignored
+        
+        S = playListLoad(path,R)
 
         for j in range(len(S)) : 
 

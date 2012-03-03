@@ -494,7 +494,7 @@ def cmd_append(input):
             MpGlobal.SEARCH_AUTOAPPEND = ";"+input.StrVal[0]
         return COMMAND.VALID
     else:
-        MpGlobal.SEARCH_AUTOAPPEND = "; .path !\"/japanese\""
+        MpGlobal.SEARCH_AUTOAPPEND = "; !ban;.path !\"/japanese\";"
         return COMMAND.SPECIAL
 def cmd_backup(input):
     """
@@ -1497,7 +1497,8 @@ def cmd_plload(input):
         if os.path.exists(test):
             fname = test
 
-    Settings.PLAYER_LAST_INDEX,MpGlobal.Player.playList = playListLoad(fname,MpGlobal.Player.library)
+    Settings.PLAYER_LAST_INDEX = 0
+    MpGlobal.Player.playList = playListLoad(fname,MpGlobal.Player.library)
     MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.playList)
 
     MpGlobal.Player.loadSong( Settings.PLAYER_LAST_INDEX );

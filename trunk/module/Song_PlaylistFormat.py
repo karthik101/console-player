@@ -63,9 +63,9 @@ def playListLoad(filepath,source):
         new_path = filepath
     
     if new_path != "" and os.path.exists(new_path):
-        return [0,playList_Load_M3U(new_path,source)]
+        return playList_Load_M3U(new_path,source)
             
-    return playList_Load_oldstyle(filepath,source)
+    return playList_Load_oldstyle(filepath,source)[1]
 
 
 def playList_Load_oldstyle(filepath,source):

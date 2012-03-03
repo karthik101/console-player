@@ -36,7 +36,7 @@ def fileGetFileName(file):
 def fileGetName(file):
     """ return only the name part of the file"""
     fname = fileGetFileName(file)
-    return fname[:fname.find(".")]
+    return fname[:fname.rfind(".")]
     
 def fileGetPath(file):
     """ return the path, WITH the final slash"""
@@ -44,6 +44,17 @@ def fileGetPath(file):
     # allow for both types of slashes in path uris
     return file[:max(file.rfind("/"),file.rfind("\\"))+1]  
 
+def fileSetExt(file,new_ext):
+    """ change the extension of file to new_ext
+        if new_ext is an empty string the extension will be removed
+    """
+    if len(new_ext) > 0:
+        if new_ext[0] != '.':
+            new_ext = '.' + new_ext
+    fname = fileGetName(file)
+
+    return os.path.join(fileGetPath(file),fname+new_ext)
+    
 def dirGetParentDirName(path):
     """ path with or without final backslash, and not a file path
         must be dir path

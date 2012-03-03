@@ -5,18 +5,19 @@
 #include "Socket.h"
 
 typedef struct session_t {
-	int proc;
-	int port;
-	char fname[256];
-	char fpath[1024];
+	int proc;			// last process ID (PID) of a running copy of Console Player
+	int port;			// the port that process was running on
+	char fname[256];	// the exe name it had
+	char fpath[1024];   // the filepath to that executable, including the file name
 } Session;
 
+void cstr_strip_newline(char * cstr);
 int get_session_lock(Session * s, const char * lockpath);
 int IsProcessRunning(DWORD pid);
+void dir_find_largest(const char * dir,char* largest);
 int cstr_rindex(const char * cstr, const char * fmt);
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
 	Session s;
 	int success;
@@ -52,6 +53,7 @@ int main(int argc, char **argv)
 		success = get_session_lock(&s,".\\session.lock");
 		printf("lock-local: %d\r\n",success);
 	}
+	// check for a session lock in the appdata folder
 	if (!success) {
 		ExpandEnvironmentStrings("%APPDATA%",msg,1024);
 		sprintf(msg,"%s\\ConsolePlayer\\session.lock",msg);
@@ -116,20 +118,73 @@ int get_session_lock(Session * s, const char * lockpath) {
 	if (rf) {
 		fscanf(rf,"%d\r\n",&(s->proc));
 		fscanf(rf,"%d\r\n",&(s->port));
-		fscanf(rf,"%s\r\n",&(s->fname));
-		fscanf(rf,"%s\r\n",&(s->fpath));
+		//fscanf(rf,"%s\r\n",&(s->fname));
+		//fscanf(rf,"%s\r\n",&(s->fpath));
+		fgets(s->fname, 256, rf);	// fgets reads until a newline
+		fgets(s->fpath, 1024, rf);
+		
 		fclose(rf);
+		
+		cstr_strip_newline( s->fname );
+		cstr_strip_newline( s->fpath );
+
 		return 1;
 	}
 	return 0;
 }
 
-int IsProcessRunning(DWORD pid)
-{
+void cstr_strip_newline(char * cstr){
+	for (int i=0;cstr[i] != '\0'; i++) {
+		if (cstr[i] == '\r' || cstr[i] == '\n') {
+			cstr[i] = '\0';
+		}
+	}
+}
+
+int IsProcessRunning(DWORD pid) {
     HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
     DWORD ret = WaitForSingleObject(process, 0);
     CloseHandle(process);
     return ret == WAIT_TIMEOUT;
+}
+
+void dir_find_largest(const char * dir,char* largest) {
+	//set the string pointer at largest to the passivley sorted
+	// largest file name in the given directory
+	// e.g. : file: test_01.txt is less than test_1.txt
+	// use ./*.txt to enumerate all txt files in the directory
+	// use ./*.exe to enumerate all txt files in the directory
+	// use ./*     to enumerate all files and folders in a directory
+
+	// path to last file found
+	char buffer[1024];// = malloc(1024*sizeof(unsigned char));
+	WIN32_FIND_DATA myimage;
+	HANDLE myHandle;
+	
+	//----------------------------------------------------
+	
+	myHandle=FindFirstFile(dir,&myimage);
+	
+	if(myHandle!=INVALID_HANDLE_VALUE) {
+	
+		strcpy (buffer,myimage.cFileName);
+		strcpy (largest,myimage.cFileName);
+
+		while( 1 ) {
+
+			FindNextFile(myHandle,&myimage);
+
+			if(strcmp(myimage.cFileName,buffer) != 0) {
+				//buffer=myimage.cFileName;
+				strcpy (buffer,myimage.cFileName);
+				if (strcmp(buffer,largest) > 0)
+					strcpy (largest,buffer);
+			}
+			else
+				  break; //end of files reached
+
+		}
+	}
 }
 
 int cstr_rindex(const char * cstr, const char * fmt){

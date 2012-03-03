@@ -58,7 +58,7 @@ class LTable_PlayList(LargeTable):
             contextMenu.exec_( event.globalPos() )
              
     def mouseDoubleClick(self,row,col):
-        print row,col
+        #print row,col
         if col != -1:
             MpGlobal.Player.playSong(row)
         else:
@@ -141,7 +141,7 @@ class LTable_PlayList(LargeTable):
         if len(self.selection) > 0:
             song = self.getSelection()[0]
             s = "http://www.songmeanings.net/query/?q="
-            s += song[MpMsic.ARTIST].replace(" ","+")
+            s += song[MpMusic.ARTIST].replace(" ","+")
             s += "&type=artists"
             explorerOpen(s)
         
