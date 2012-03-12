@@ -257,7 +257,7 @@ class Tab_PlaylistEditor(Application_Tab):
         path = QFileDialog.getOpenFileName(MpGlobal.Window,
                 "Open Playlist File",
                 os.path.join(MpGlobal.installPath,"playlist",self.name+'.m3u'),
-                "M3U Files (*.playlist *.m3u)")
+                "M3U Files (*.m3u *.playlist )")
         
         if path != "":
             name = fileGetName(path)
@@ -274,7 +274,7 @@ class Tab_PlaylistEditor(Application_Tab):
         path = QFileDialog.getSaveFileName(MpGlobal.Window,
             "Save Playlist File",
             os.path.join(MpGlobal.installPath,"playlist",self.name+'.m3u'),
-            "M3U Files (*.playlist)")
+            "M3U Files (*.m3u *.playlist)")
             
         if path != "":
             playListSave(path,self.playlist) 
