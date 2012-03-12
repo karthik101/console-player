@@ -570,12 +570,19 @@ class MainWindow(QMainWindow):
         obj = MpGlobal.Window.txt_main
         obj.setFocus()
         obj.setSelection(0,len(obj.displayText()))
+        
     def __Action_shortcut_toggle_debug__(self):
-        obj = MpGlobal.Window.txt_main
-        obj.setFocus()
-        obj.setSelection(0,len(obj.displayText()))
-        if not Settings.DEVMODE:
-            toggle_DebugText_Show()
+        #obj = MpGlobal.Window.txt_main
+        #obj.setFocus()
+        #obj.setSelection(0,len(obj.displayText()))
+        #if not Settings.DEVMODE:
+        #    toggle_DebugText_Show()
+        
+        if self.isFullScreen():
+            self.showNormal()
+        else:   
+            self.showFullScreen()
+            
     def Action_sel_all(self):
         self.tab_library.table.selection = set(range(len(self.tab_library.table.data)));
         self.tab_library.table.updateTable();            

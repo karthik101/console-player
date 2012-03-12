@@ -206,7 +206,7 @@ else:
                 return MP_UNKOWN
         def setVolume(self,value):
             if self.__player__ != None:
-                temp = int( (value/100.0) * 60.0 )
+                temp = int( (value/100.0) * 100.0 )
                 # by definition volume in VLC is from 0 to 100
                 # translate a volume of 100 in the mp3 player to
                 # a value of 60 in vlc.
