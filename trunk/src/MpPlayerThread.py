@@ -69,7 +69,8 @@ class MediaPlayerThread(QThread):
                 if MpGlobal.Console_State_Counter > 0:
                     MpGlobal.Console_State_Counter -= 1;
                     if MpGlobal.Console_State_Counter == 0:
-                        setConsoleColor()#resets the color
+                        MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),setConsoleColor) # reset color
+                        
                         #MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Console_State_Counter=0")
                 if p.isPlaying :
                     self.mutex.lock()

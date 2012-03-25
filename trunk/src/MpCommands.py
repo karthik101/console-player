@@ -11,6 +11,8 @@ from PyQt4.QtGui import *
 from StringQuoter import StringQuote
 from StringParser import StringParse  
 
+from random import *
+
 CommandList = {};              
                 
 def initCommandList():
@@ -44,6 +46,7 @@ def initCommandList():
               "keyhook"  : cmd_keyhook,
               "libsave"  : cmd_libsave,
               "libload"  : cmd_libload,
+              "libnew"  : cmd_libnew,
               "libz"     : cmd_libz, 
               "load"     : cmd_load, 
               "lut"      : cmd_lut,
@@ -119,8 +122,9 @@ def processTextInput(string):
     #     count = searchSetSelection(input.default)
     #     debug( "Search Found: %d"%count )
     
-    if not isPosix:
-        setFeedBackColor(value)
+    if not isPosix: 
+        MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),setFeedBackColor,value)
+        #setFeedBackColor(value)
 
 def processSwitch_playlist(switch):
     """
@@ -719,19 +723,31 @@ def cmd_random(input):
         
         Randomize the current playlist starting with the song at the sepcified position 
         If no input argument is used then the entire list is shuffled.
+        
+        -s : shuffle with non regard to 
     """
     s = 0 # start index to shuffle
     if input.hasDecVal :
         s = input.DecVal[0]
-
-    e = MpGlobal.Player.len_playlist()    
+        
+    if input.hasDecVal > 1:
+        e = input.DecVal[1]
+    else:    
+        e = MpGlobal.Player.len_playlist()    
+        
     if s >= e:
-        s = 0;
+        s,e = e,s
     
-    print "Shuffling List at index %d."%s
+    print "Shuffling List at index %d - %d."%(s,e)
 
-    MpGlobal.Player.playlist_shuffleIndexList( range(s,e) )
-
+    if "s" in input.Switch:
+        print "s"
+        MpGlobal.Player.playlist_shuffleRandom(s,e)
+        
+    else:    
+        print "n"
+        MpGlobal.Player.playlist_shuffleIndexList( range(s,e) )
+        
     MpGlobal.Window.tbl_playlist.updateTable(0,MpGlobal.Player.get_playlist()) 
     
     return COMMAND.VALID
@@ -1133,7 +1149,8 @@ def cmd_xx(input):
         #test[MpMusic.ALBUM] = "Test ALBUM"
         #id3_updateSongInfo(test)
         for song in MpGlobal.Player.library:
-            MpGlobal.EventHandler.postEvent(id3_updateSongInfo,song)
+            if fileGetExt(song[MpMusic.PATH]).lower() == "mp3":
+                MpGlobal.EventHandler.postEvent(id3_updateSongInfo,song)
         MpGlobal.EventHandler.postEvent(debug,"Done Tag Update")    
         
     if input.DecVal[0] == 11 : #xx 11   
@@ -1428,6 +1445,7 @@ def cmd_libsave(input):
     musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
     debug( len(MpGlobal.Player.library))
     return COMMAND.VALID
+    
 def cmd_libload(input):
     """
         DEV
@@ -1446,6 +1464,10 @@ def cmd_libload(input):
         the location and format is dependant on several settings.
         
     """
+    if input.hasStrVal:
+        MpGlobal.FILEPATH_LIBRARY_NAME = input.StrVal[0]+".libz"
+        MpGlobal.updatePaths()
+        
     if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
         MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
         print  "Found %d Songs."%len(MpGlobal.Player.library)
@@ -1460,6 +1482,30 @@ def cmd_libload(input):
         
     return COMMAND.ERROR 
     
+def cmd_libnew(input):
+    """
+        DEV
+        Command: LIBNEW
+        Usage: libnew str
+        
+        str as a filename, without the file extension
+        a new empty library file will be save with the given name.
+        
+        use libload to then open this library.
+    """
+    if input.hasStrVal:
+    
+        if Settings.FILE_LOCATION_LIBRARY != '':
+            path = os.path.join(Settings.FILE_LOCATION_LIBRARY,input.StrVal[0]+".libz")
+        else:
+            path = os.path.join(MpGlobal.installPath,input.StrVal[0]+".libz")
+            
+        print "creating libz: %s"%path    
+
+        musicSave_LIBZ(path,[],Settings.SAVE_FORMAT|1);
+    
+        return COMMAND.VALID
+    return COMMAND.ERROR 
 def cmd_plsave(input):
     """
         DEV
