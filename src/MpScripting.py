@@ -19,10 +19,22 @@ import random
 import re
 import subprocess
 import ctypes
+import traceback
+
 
 from SystemDateTime import DateTime
 
+def trace():
+    report = ""
+    
+    trace = traceback.format_stack()
+    trace = ''.join(trace[:-1]) # and remove the call that made the trace from the returned list
 
+    report += str(trace).replace(', line', "\nLINE:").replace(', in', '\nMETHOD:').replace('  File', "\nFILE:")
+    
+    return report
+    
+    
 def debug(string):
     """
         convenience function
@@ -808,9 +820,9 @@ def setConsoleColor(hex_color="",counter=0):
     """
     if len(hex_color) != 7:
         hex_color = MpGlobal.Window.style_dict["theme_very_dark"].name()
-        
-    MpGlobal.Window.txt_main.setStyleSheet("background: "+hex_color+";")
     
+    MpGlobal.Window.txt_main.setStyleSheet("background: "+hex_color+";")
+
     if counter > 0:
         MpGlobal.Console_State_Counter = counter;
 

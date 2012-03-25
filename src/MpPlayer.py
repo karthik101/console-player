@@ -42,6 +42,9 @@
 
 import os.path
 from PyQt4.QtCore import *
+
+from random import *
+
 #from MpApplication import *
 
 
@@ -299,8 +302,8 @@ class MediaManager(object):
             MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEBAR"),0) 
             #pGlobal.Window.emit(SIGNAL("UPDATE_INFODISPLAY"),self.CurrentSong) 
             self.updateTimeDisplay(0);
-            #MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),self.mp.mediaStop)
-            self.mp.mediaStop()
+            MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),self.mp.mediaStop)
+            #self.mp.mediaStop()
             
             
         self.isPlaying = False;
@@ -804,6 +807,8 @@ class MediaManager(object):
     def playlist_shuffleIndexList(self,index_list):
         """ take all songs at indices in index_list and shuffle there position"""
         song_list = [ self.playList[index] for index in index_list ]
+        
+
         ShuffleList(song_list) # shuffle selection array in place
         
         for x in range(len(index_list)):
@@ -811,7 +816,25 @@ class MediaManager(object):
             if song_list[x] == self.CurrentSong:
                 self.CurrentIndex = index_list[x]
         
+        
         self.updateDisplayIndex()
+        
+    def playlist_shuffleRandom(self,s,e):
+        """ take all songs at indices in index_list and shuffle there position"""
+
+        p1 = MpGlobal.Player.playList[:s]
+        p2 = MpGlobal.Player.playList[s:e]
+        p3 = MpGlobal.Player.playList[e:]
+        
+        shuffle(p2)
+        
+        self.playList = p1+p2+p3
+        
+        for x in range(s,e):
+            if self.playList[x] == self.CurrentSong:
+                self.CurrentIndex = x
+        
+        #self.updateDisplayIndex()
         
     def playlist_removeIndex(self,index):
     

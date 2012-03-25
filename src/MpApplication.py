@@ -577,7 +577,7 @@ class MainWindow(QMainWindow):
         #obj.setSelection(0,len(obj.displayText()))
         #if not Settings.DEVMODE:
         #    toggle_DebugText_Show()
-        
+        #TODO RENAME THE ASSOCIATED FUNCTIONS TO THE APPROPRIATE NAMES, ESCAPE NO LONGER TOGGLE DEBUG
         if self.isFullScreen():
             self.showNormal()
         else:   
@@ -1054,7 +1054,7 @@ def window_hide_show_library():
     pass
 
 
-def Queue_FunctionCall(function):
+def Queue_FunctionCall(fptr,*args):
     """
         takes as an argument a function reference
         and calls it. this is intended for use
@@ -1063,9 +1063,9 @@ def Queue_FunctionCall(function):
         but the thread does not have access to those objects
         that need to be updated
     """
-    if function != None:
-        function()
-   
+    if fptr != None:
+        fptr(*args)
+
    
 # ##############################################
 # 
