@@ -22,7 +22,7 @@ def history_log(filepath,song,typ):
     
     if (typ == MpMusic.RATING):
         data = "%d"%song[MpMusic.RATING]
-        path = createMiniPath(song)
+        path = song.shortPath()
     else: #if (typ == MpMusic.DATESTAMP)
         data = DateTime().currentDateTime();
         typ = MpMusic.DATESTAMP

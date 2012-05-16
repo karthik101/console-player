@@ -1150,7 +1150,7 @@ def cmd_xx(input):
         #id3_updateSongInfo(test)
         for song in MpGlobal.Player.library:
             if fileGetExt(song[MpMusic.PATH]).lower() == "mp3":
-                MpGlobal.EventHandler.postEvent(id3_updateSongInfo,song)
+                MpGlobal.EventHandler.postEvent(safe_id3_update,song)
         MpGlobal.EventHandler.postEvent(debug,"Done Tag Update")    
         
     if input.DecVal[0] == 11 : #xx 11   
@@ -1450,7 +1450,7 @@ def cmd_libload(input):
     """
         DEV
         Command: LIBLOAD
-        Usage: libload
+        Usage: libload [fname]
         
         reload the library from the current library location
         
@@ -1462,6 +1462,10 @@ def cmd_libload(input):
         Or in a user defined location.
         
         the location and format is dependant on several settings.
+        
+        Optional string argument to load an alternate library file
+            file must be in the same directory as libz.
+            give the file as the filename only, without the ext.
         
     """
     if input.hasStrVal:
@@ -1477,11 +1481,11 @@ def cmd_libload(input):
         processTextInput('plload')
         # update tables
         MpGlobal.Window.tab_library.table.updateTable(0,MpGlobal.Player.library)
+        buildArtistList()
     
         return COMMAND.VALID
         
-    return COMMAND.ERROR 
-    
+    return COMMAND.ERROR    
 def cmd_libnew(input):
     """
         DEV
@@ -1506,6 +1510,7 @@ def cmd_libnew(input):
     
         return COMMAND.VALID
     return COMMAND.ERROR 
+
 def cmd_plsave(input):
     """
         DEV

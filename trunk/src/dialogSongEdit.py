@@ -1,3 +1,6 @@
+
+# TODO: currentyly each edit row is stored as a tuple, and should be it's own object.
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from MpGlobalDefines import *
@@ -9,6 +12,9 @@ from SystemPathMethods import *
 from widgetLineEdit import *
 from SystemDateTime import DateTime
 
+_COL_LBL = 0
+_COL_CHK = 1
+_COL_EDT = 2
 
 class SongEditWindow(QDialog):
         
@@ -19,21 +25,24 @@ class SongEditWindow(QDialog):
     ttl = 1 # string
     abm = 2 # string
     gen = 3 # string
-    com = 4
-    rte = 5 # int
-    pct = 6 # int
-    sct = 7 # int
-    frq = 8 # int
-    ind = 9 # int
-    yer =10
-    dte =11 # string
-    pth =12 # string
-    add =13
+    com = 4 # string
+    pth = 5 # string
+    rte = 6 # int
+    pct = 7 # int
+    sct = 8 # int
+    frq = 9 # int
+    ind =10 # int
+    yer =11 # int
+    dte =12 # date
+    add =13 # date
+    
+    
 
     def __init__(self,parent):
 
         super(SongEditWindow, self).__init__(parent)
         
+        self.gridlayout = QGridLayout();
         self.editList = []
         self.multiList = []   
         
@@ -42,6 +51,8 @@ class SongEditWindow(QDialog):
         #self.resize(300,200)
 
         self.container = QVBoxLayout(self)
+        
+        self.container.addLayout(self.gridlayout)
         #self.setLayout(self.container)
         
         self.cbox = QComboBox(self)
@@ -52,26 +63,21 @@ class SongEditWindow(QDialog):
         self.cbox.addItem("From FileName: Art - Alb")
         self.cbox.addItem("Undo One Playcount")
         
+        self.newMultiTextEdit("Artist")
+        self.newMultiTextEdit("Title")
+        self.newMultiTextEdit("Album")
+        self.newMultiTextEdit("Genre")
+        self.newMultiTextEdit("Comment")
+        self.newTextEdit("Path")
+        self.newIntEdit("Rating",-MpMusic.MAX_RATING,MpMusic.MAX_RATING)
+        self.newIntEdit("Play Count",-100,9999)
+        self.newIntEdit("Skip Count",-100,9999)
+        self.newIntEdit("Frequency",-100,9999)
+        self.newIntEdit("Album Index",0,999)
+        self.newIntEdit("Year",0,9999) # Y10K bug
+        self.newDateEdit("Last Played")
+        self.newDateEdit("Date Added")
         
-        
-        self.editList.append(self.newMultiTextEdit("Artist"))
-        self.editList.append(self.newMultiTextEdit("Title"))
-        self.editList.append(self.newMultiTextEdit("Album"))
-        self.editList.append(self.newMultiTextEdit("Genre"))
-        self.editList.append(self.newMultiTextEdit("Comment"))
-        self.editList.append(self.newIntEdit("Rating",-MpMusic.MAX_RATING,MpMusic.MAX_RATING))
-        self.editList.append(self.newIntEdit("Play Count",-100,9999))
-        self.editList.append(self.newIntEdit("Skip Count",-100,9999))
-        self.editList.append(self.newIntEdit("Frequency",-100,9999))
-        self.editList.append(self.newIntEdit("Album Index",0,999))
-        self.editList.append(self.newIntEdit("Year",0,9999)) # Y10K bug
-        
-        
-        self.editList.append(self.newTextEdit("Last Played"))
-        self.editList.append(self.newTextEdit("Path"))
-        
-        self.editList.append(self.newTextEdit("Date Added"))
-
         self.hbox_btn   = QHBoxLayout()
         self.btn_accept = QPushButton("Accept",self)
         self.btn_cancel = QPushButton("Cancel",self)
@@ -80,12 +86,9 @@ class SongEditWindow(QDialog):
         self.hbox_btn.addWidget(self.btn_reset)
         self.hbox_btn.addWidget(self.btn_cancel)
         self.hbox_btn.addWidget(self.btn_accept)
-        #self.editList.append(self.newTextEdit("File Name"))
 
         self.container.addWidget(self.cbox)
 
-        for x in self.editList:
-            self.container.addLayout(x[0]) 
         self.container.addLayout(self.hbox_btn)
 
         self.btn_reset.clicked.connect(self.reset)
@@ -110,11 +113,6 @@ class SongEditWindow(QDialog):
         self.setHidden(self.frq,not Settings.DEVMODE)
         self.setHidden(self.pth,not Settings.DEVMODE)
         self.setHidden(self.dte,not Settings.DEVMODE)
-        
-        
-        
-        #self.move(200,200) # dialogs autocenter on parentand auto size
-        #self.resize(-1,-1)
 
     def setData(self):
     
@@ -153,8 +151,8 @@ class SongEditWindow(QDialog):
         self.editList[self.pth][1].setText(data[0][MpMusic.PATH])
         self.editList[self.pth][1].setCursorPosition(0)
         
-        self.editList[self.dte][1].setText(data[0][MpMusic.DATESTAMP])
-        self.editList[self.add][1].setText(str(data[0][MpMusic.DATEADDEDS]))
+        self.editList[self.dte][1].setDateTime( DateTime.fmtToQDateTime(data[0][MpMusic.DATESTAMP] ) )
+        self.editList[self.add][1].setDateTime( DateTime.fmtToQDateTime(data[0][MpMusic.DATEADDEDS]) )
         
     def setMultiData(self,data):
         #print self.editList[0]
@@ -218,8 +216,8 @@ class SongEditWindow(QDialog):
         self.editList[self.com][1].addItems(com)
         
         self.editList[self.pth][1].setText(pth)
-        self.editList[self.dte][1].setText(dte)
-        self.editList[self.add][1].setText(add)
+        self.editList[self.dte][1].setDateTime(QDateTime())
+        self.editList[self.add][1].setDateTime(QDateTime())
         
         
         self.editList[self.rte][1].setValue(rte)
@@ -228,8 +226,7 @@ class SongEditWindow(QDialog):
         self.editList[self.frq][1].setValue(frq)
         self.editList[self.ind][1].setValue(ind)
         self.editList[self.yer][1].setValue(yer)
-        
-    
+          
     def getData(self):
         MULTIDATA = len(self.data) > 1
         OPERATION = self.cbox.currentIndex()
@@ -298,22 +295,22 @@ class SongEditWindow(QDialog):
                 song[MpMusic.YEAR] = self.editList[self.yer][1].value()   
                 
             if self.editList[self.pth][2].isChecked():
-                song[MpMusic.PATH] = unicode(self.editList[self.pth][1].text())
+                # auto strip any quotes around the path name
+                s = unicode(self.editList[self.pth][1].text())
+                if s[0] in "'\"" and s[0]==s[-1]:
+                    s = s[1:-1]
+                song[MpMusic.PATH] = s
 
             if self.editList[self.dte][2].isChecked():
-                date = str(self.editList[self.dte][1].text())
-                t = DateTime().getEpochTime(date)
-                if t != 0:
-                    song[MpMusic.DATESTAMP] = date
-                    song[MpMusic.DATESTAMP] = t
+                dt = DateTime.QDateTimeToFmt( self.editList[self.dte][1].dateTime() );
+
+                song[MpMusic.DATESTAMP] = dt
+                song[MpMusic.DATEVALUE] = DateTime().getEpochTime(dt)
                     
             if self.editList[self.add][2].isChecked():
-                date = str(self.editList[self.add][1].text())
-                t = DateTime().getEpochTime(date)
-                print date,t
-                if t != 0:
-                    song[MpMusic.DATEADDEDS] = date
-                    song[MpMusic.DATEADDED]  = t
+                dt = DateTime.QDateTimeToFmt( self.editList[self.add][1].dateTime() );
+                song[MpMusic.DATEADDED] = DateTime().getEpochTime(dt)
+                song[MpMusic.DATEADDEDS] = dt
             
             
             if OPERATION == 4:
@@ -370,73 +367,110 @@ class SongEditWindow(QDialog):
         # create a new set of widgets for editing text fields
         # each field needs a label, a check box and a line edit
         # use the check box to enable the user to change that field
-        hbox  = QHBoxLayout()
+        hbox  = None#QHBoxLayout()
         label = QLabel(field,self)
         check = QCheckBox("",self)
         spring = None
         edit  = QLineEdit(self)
         label.setFixedWidth(100)
-        edit.setFixedWidth(220)
+        #edit.setFixedWidth(220)
+        #edit.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Minimum)
         edit.setDisabled(True)
-        hbox.addWidget(label,0,Qt.AlignLeft)
-        hbox.addWidget(check,0,Qt.AlignLeft)
-        hbox.addWidget(edit ,0,Qt.AlignRight)
+        #hbox.addWidget(label,0,Qt.AlignLeft)
+        #hbox.addWidget(check,0,Qt.AlignLeft)
+        #hbox.addWidget(edit ,0,Qt.AlignRight)
+        self.gridlayout.addWidget(label,len(self.editList),_COL_LBL)
+        self.gridlayout.addWidget(check,len(self.editList),_COL_CHK)
+        self.gridlayout.addWidget(edit ,len(self.editList),_COL_EDT)
         
         check.stateChanged.connect(self.checkClicked)
         
-        return (hbox,edit,check,label,spring)
+        self.editList.append( (hbox,edit,check,label,spring) )
+        
+    def newDateEdit(self,field):
+        # create a new set of widgets for editing Date fields
+        # each field needs a label, a check box and a QDateEdit
+        # use the check box to enable the user to change that field
+        hbox  = None#QHBoxLayout()
+        label = QLabel(field,self)
+        check = QCheckBox("",self)
+        spring = None
+        edit  = QDateTimeEdit(self)
+        label.setFixedWidth(100)
+        #edit.setFixedWidth(220)
+        #edit.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Minimum)
+        edit.setDisabled(True)
+        edit.setDisplayFormat("yyyy/MM/dd HH:mm")
+        #hbox.addWidget(label,0,Qt.AlignLeft)
+        #hbox.addWidget(check,0,Qt.AlignLeft)
+        #hbox.addWidget(edit ,0,Qt.AlignRight)
+        self.gridlayout.addWidget(label,len(self.editList),_COL_LBL)
+        self.gridlayout.addWidget(check,len(self.editList),_COL_CHK)
+        self.gridlayout.addWidget(edit ,len(self.editList),_COL_EDT)
+        
+        
+        check.stateChanged.connect(self.checkClicked)
+        
+        edit.mouseReleaseEvent  = lambda x : debug(x);
+        
+        self.editList.append( (hbox,edit,check,label,spring) )
         
     def newMultiTextEdit(self,field):
         # create a new set of widgets for editing text fields
         # each field needs a label, a check box and a line edit
         # use the check box to enable the user to change that field
-        hbox  = QHBoxLayout()
+        hbox  = None#QHBoxLayout()
         label = QLabel(field,self)
         check = QCheckBox("",self)
         spring = None
         edit  = ComboBox(self)#QLineEdit(self)
         label.setFixedWidth(100)
-        edit.setFixedWidth(200)
+        #edit.setFixedWidth(200)
+        #edit.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Minimum)
         edit.setDisabled(True)
-        hbox.addWidget(label,0,Qt.AlignLeft)
-        hbox.addWidget(check,0,Qt.AlignLeft)
-        hbox.addWidget(edit,0,Qt.AlignRight)
-
+        
+        #hbox.addWidget(label,0,Qt.AlignLeft)
+        #hbox.addWidget(check,0,Qt.AlignLeft)
+        #hbox.addWidget(edit,0,Qt.AlignRight)
+        self.gridlayout.addWidget(label,len(self.editList),_COL_LBL)
+        self.gridlayout.addWidget(check,len(self.editList),_COL_CHK)
+        self.gridlayout.addWidget(edit ,len(self.editList),_COL_EDT)
+        
         edit.setEditable(True)
         edit.addItem("<Multiple Values>")
-        
-        # relevent edit functions:
-        # __len__
-        # removeItem(int)
-        # addItem(String)
-        # currentText()
         
         self.multiList.append(edit)
         
         check.stateChanged.connect(self.checkClicked)
         
-        return (hbox,edit,check,label,spring)
+        self.editList.append( (hbox,edit,check,label,spring) )
         
     def newIntEdit(self,field,min,max):
         # create a new set of widgets for editing text fields
         # each field needs a label, a check box and a line edit
         # use the check box to enable the user to change that field
-        hbox  = QHBoxLayout()
+        hbox  = None#QHBoxLayout()
         label = QLabel(field,self)
         check = QCheckBox("",self)
         spring = None
         spinbox  = QSpinBox(self)
         label.setFixedWidth(100)
-        spinbox.setFixedWidth(220)
+        #spinbox.setFixedWidth(220)
+        #spinbox.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Minimum)
         spinbox.setDisabled(True)
         spinbox.setRange(min,max)
-        hbox.addWidget(label,0,Qt.AlignLeft)
-        hbox.addWidget(check,0,Qt.AlignLeft)
-        hbox.addWidget(spinbox,0,Qt.AlignRight)
+        
+        #hbox.addWidget(label,0,Qt.AlignLeft)
+        #hbox.addWidget(check,0,Qt.AlignLeft)
+        #hbox.addWidget(spinbox,0,Qt.AlignRight)
+        self.gridlayout.addWidget(label   ,len(self.editList),_COL_LBL)
+        self.gridlayout.addWidget(check   ,len(self.editList),_COL_CHK)
+        self.gridlayout.addWidget(spinbox ,len(self.editList),_COL_EDT)
+        
         
         check.stateChanged.connect(self.checkClicked)
         
-        return (hbox,spinbox,check,label,spring)
+        self.editList.append( (hbox,spinbox,check,label,spring) )
         
     def checkClicked(self,event):
         for x in self.editList:
