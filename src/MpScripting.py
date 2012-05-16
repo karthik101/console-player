@@ -601,47 +601,6 @@ def get_md5(filepath):
         else:
             return ""     
      
-def createMiniPath( song ):
-    from UnicodeTranslate import Translate
-    """
-        given a song create a path like string like the following:
-            ex: Artist\Album\filename.ext
-        if artist fails, return "Unknown"
-            ex: Unknown\Album\filename.ext
-        if album fails, return none
-            ex: Artist\filename.ext
-            ex: Unknown\filename.ext
-        this 'mini' path can then be appended to a base path
-    """
-    t_art = Translate(song[MpMusic.ARTIST]).rstring
-    t_abm = Translate(song[MpMusic.ALBUM]).rstring
-    
-    nonascii = re.compile(ur"[^a-zA-z0-9()-+_ ]")
-    #extraspace = re.compile(ur"\s+")
-    
-    t_art = nonascii.sub("",t_art) # remove certain characters that
-    t_abm = nonascii.sub("",t_abm) # don't fit standard windows filepath types
-
-    t_art = t_art.strip()   # strip whitespace
-    t_abm = t_abm.strip()
-    
-    if t_art == "":
-        t_art = "Unknown"
-    
-    t_art = t_art.replace(" ","_")
-    t_abm = t_abm.replace(" ","_")
-    t_art = t_art[:25]
-    t_abm = t_abm[:25]
-    
-    if t_abm == "" or re.match("[none|unknown]",t_abm,re.I) != None:
-        path = os.path.join(t_art,fileGetFileName(song[MpMusic.PATH]));
-    else:
-        path = os.path.join(t_art,t_abm,fileGetFileName(song[MpMusic.PATH]));
-    
-    #path = extraspace.sub(" ",path) # would make a good edition
-    
-    return path
-
 def getInstallPath(forcehome=False):
     """
         Return the path that the application is installed in

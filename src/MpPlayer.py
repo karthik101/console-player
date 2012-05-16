@@ -943,6 +943,9 @@ class MediaManager(object):
 
         song[MpMusic.PLAYCOUNT] += 1 
         
+        delta = DateTime().daysElapsedUTC(song[MpMusic.DATEADDED],DateTime.now())
+        song[MpMusic.SPECIAL]   = int(1000*(float(song[MpMusic.PLAYCOUNT])/delta))
+        
         song.update();
         # refill the library, if it was in view, its text needs to be updated
         #Player_set_unsaved()

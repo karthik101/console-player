@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 
 isPosix = os.name == 'posix'
 
@@ -59,6 +60,7 @@ class SyncSongs(QDialog):
         self.hbox.setSpacing(3)
         self.vbox = QVBoxLayout(self)
         
+        self.txt_debug = QPlainTextEdit("",self)
         
         self.hbox.addWidget(self.cbox)
         self.hbox.addWidget(self.edit)
@@ -67,6 +69,7 @@ class SyncSongs(QDialog):
         
         self.vbox.addLayout(self.hbox)
         self.vbox.addWidget(self.pbar)
+        self.vbox.addWidget(self.txt_debug)
         
         # ##############################
         # Set Parameters
@@ -233,7 +236,15 @@ class SyncSongs(QDialog):
         
         return self.message_result
     
-     
+    def debug(self,msg):
+        pass
+        # move the cursor to the end of the text buffer
+        #self.txt_debug.moveCursor(QTextCursor.End,QTextCursor.MoveAnchor)
+        # insert the text
+        #self.txt_debug.insertPlainText("%s\n"%msg)
+        # move the cursor again to ensure new text is visible
+        #self.txt_debug.moveCursor(QTextCursor.End,QTextCursor.MoveAnchor)
+            
 def sync_setRange(obj,min,max):
     obj.pbar.setRange(min,max)
     
@@ -297,7 +308,6 @@ class SyncFiles(QThread):
             if s==d :
                 self.illegal_diretory = True
                 
-    
     def showWarningMessage(self,message,btn1="0k",btn2=""):
         """
             a message box cannot be started outside of the main thread
@@ -318,7 +328,6 @@ class SyncFiles(QThread):
         print "message result = %d"% self.parent.message_result
         
         return self.parent.message_result
-        
         
     def _get_FileList(self):
         self.filelist = []           # list of files on the drive
@@ -376,8 +385,9 @@ class SyncFiles(QThread):
         # create the initial copy list, a list of src dst pairs for files
         self.listc = []
         for s in range(len(self.parent.data)):
-            path = createMiniPath(self.parent.data[s])
+            path = self.parent.data[s].shortPath()
             path = os.path.join(self.dir,path)
+            self.parent.debug(path);
             self.listc.append( (self.parent.data[s][MpMusic.PATH],path) )
  
         # ###########################################################
@@ -386,6 +396,7 @@ class SyncFiles(QThread):
         # d list, files that will need to be removed
         
         value = 0 # value to give to the progress bar
+        self.parent.debug(len(self.listc));
         for file in self.filelist:
             flag_found = False
             value += 1
@@ -530,15 +541,21 @@ class SyncFiles(QThread):
             # ----------------------------------------------
             bytes=0
             try:
-                if os.path.exists(self.listc[self.index][1]) == False:
+                src = self.listc[self.index][0]
+                dst = self.listc[self.index][1]
+                self.parent.debug("src:%s"%src);
+                self.parent.debug("dst:%s"%dst);
+                if os.path.exists(src) == False:    
+                    self.parent.debug("Cannot Find Source File");
+                elif os.path.exists(dst) == False:
                     #e32.file_copy(self.listc[self.index][0],self.listc[self.index][1])
                     bytes = os.path.getsize(self.listc[self.index][0])
-                    src = self.listc[self.index][0]
-                    dst = self.listc[self.index][1]
-                    MpTest.fcopy(src,dst)
+                    
+                    #MpTest.fcopy(src,dst)
+                    PYCOPY (src, dst)
                     #copy(self.listc[self.index][0],self.listc[self.index][1])
             except:
-                print newPath
+                self.parent.debug( "*** ERROR: %s"%self.listc[self.index][1] )
                 
             # get the end time right before the next update
             dt.timer_end();
@@ -573,20 +590,18 @@ class SyncFiles(QThread):
         data = self.parent.data
         lib = []
         for song in data:
-            path = createMiniPath(song)
+            path = song.shortPath()
             path = os.path.join(self.dir,path)
             copy = Song(song)
             copy[MpMusic.PATH] = path
             lib.append(copy)
-            if path == song[MpMusic.PATH]:
-                print "error with deep copy"
              
         # if the drive we are syncing to contains a copy of the media
         # player, update its library file.
         player_path = os.path.join(self.dir[:2]+"\\","Player","user","");
 
         if (os.path.exists(player_path)):
-            musicSave_LIBZ(player_path+MpGlobal.FILEPATH_LIBRARY_SYNC_NAME,lib,typ=2)
+            musicSave_LIBZ(player_path+"music.libz",lib,typ=2)
     
     def run(self): 
         # ###########################################################
@@ -610,7 +625,7 @@ class SyncFiles(QThread):
             
             self._cpy_files()
             
-            self._build_library_()
+            self._build_library_() # save the playlist as a lbrary to ~/Player/user
             
             self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,"Finished")  
         
@@ -619,7 +634,15 @@ class SyncFiles(QThread):
         else:
             self.showWarningMessage("Cannot Use Same Source and Destination Directories")
         
-        
+def PYCOPY(src,dst):
+    b = 1<<17;
+    with open(src,"rb") as rf:
+        with open(dst,"wb") as wf:
+            buffer = rf.read(b);
+            while buffer:
+                wf.write(buffer)
+                buffer = rf.read(b);
+
     
 from tab_playlist_editor import *        
      
