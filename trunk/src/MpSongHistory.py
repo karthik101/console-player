@@ -6,34 +6,34 @@ from SystemPathMethods import *
 from SystemDateTime import DateTime
 from MpScripting import *
 
+import codecs
+#wf = codecs.open('filepath', 'w', 'utf-8')
+#wf.write(line)
 
+  
 def history_log(filepath,song,typ): 
 
     #exec for song in MpGlobal.Window.tab_library.table.data: print "%s %d %s\n"%(song.id,MpMusic.DATESTAMP,song[MpMusic.DATESTAMP])
 
     if not os.path.exists(filepath):
-        wf = open(filepath,"w")
-        wf.write("#History\n")
-        wf.close()
+        with codecs.open(filepath, 'w', 'utf-8') as wf:
+            wf.write("#History\n")
     #try:
-    wf = open(filepath,"a")
+    with codecs.open(filepath, 'a', 'utf-8') as wf:
    
-    data = "None"
-    
-    if (typ == MpMusic.RATING):
-        data = "%d"%song[MpMusic.RATING]
+        data = 0
         path = song.shortPath()
-    else: #if (typ == MpMusic.DATESTAMP)
-        data = DateTime().currentDateTime();
-        typ = MpMusic.DATESTAMP
+        date = DateTime().currentDateTime().replace(" ","_");
+        
+        if (typ == MpMusic.RATING):
+            data = song[MpMusic.RATING]
+        else: #if (typ == MpMusic.DATESTAMP) 
+            typ = MpMusic.DATESTAMP
+            
+        wf.write("%d %s %04X %s\n"%(typ,date,data,path))
+        
+        wf.close()
 
-    art = song[MpMusic.ARTIST].encode('unicode-escape') 
-    tit = song[MpMusic.TITLE].encode('unicode-escape')
-    wf.write("%s %d %-20s # %-30.30s - %-30.30s\n"%(song.id,typ,data,art,tit))
-    
-    wf.close()
-    #except:
-    #   print "Error Appending to History File"
     return;
     
 def history_load(filepath,lib):
@@ -44,23 +44,23 @@ def history_load(filepath,lib):
     line = True 
     newpath = filepath.replace("history","__history__");
     
-    rf = open(filepath,"r")
-    wf = open(newpath,"w");
+    rf = codecs.open(filepath, 'r', 'utf-8')
+    wf = codecs.open(newpath, 'w', 'utf-8')
     
     success = 0;
     error = 0;
-    MpGlobal.Window.debugMsg("\nPlease Wait While Songs Are Processed. This May Take Awhile...")  
+    print "\nPlease Wait While Songs Are Processed. This May Take Awhile..."
     
-    MpGlobal.Window.debugMsg("\nUpdated %d Songs -- %d Error(s)"%(success,error)) 
+    print "\nUpdated %d Songs -- %d Error(s)"%(success,error)
     
     #last_id = hex64(0);
     errorList = [];
     
     while line:
         
-        if MpGlobal.Application != None:
-            # there is significant slow down delaying this even every 5 counts
-            MpGlobal.Application.processEvents()
+        #if MpGlobal.Application != None:
+        # there is significant slow down delaying this even every 5 counts
+        MpGlobal.Application.processEvents()
             
         line = rf.readline()
         wf.write(line);
@@ -72,55 +72,51 @@ def history_load(filepath,lib):
         
             if field[0] != '#':
             
-                (id,type,data) = field.split(" ",2)
-                
-                id = long(id.replace('_',''),16)
-                id = hex64(id)
-                type = atoi(type)
+                (type,date,data,path) = field.split(" ")
 
-                if __history_NewSongEntry(lib,type,data,id):
+                type = atoi(type)
+                data = int(data,16)
+                date = date.replace("_"," ");
+
+                if __history_NewSongEntry(lib,type,date,data,path):
                     success += 1;
                 else:
                     error += 1;
-                    errorList.append("%d - %s %s"%(type,id, comment))
-                    #MpGlobal.Window.debugMsgReturn("\n%s\n"%(id)) 
- 
+                    errorList.append("%d - %s"%(type,path))
                     
-                #last_id = id;            
-        MpGlobal.Window.debugMsgReturn("\nUpdated %d Songs -- %d Error(s)"%(success,error)) 
+        print "\nUpdated %d Songs -- %d Error(s)"%(success,error)
  
-    MpGlobal.Window.debugMsg(" ... Done!"); 
+    print" ... Done!" 
     
     for err in errorList:
-        MpGlobal.Window.debugMsg("\n%s"%(err)); 
+        print "\n%s"%(err); 
              
     rf.close()
     wf.close();
     
-    wf = open(filepath,"w"); # clear the history file
-    wf.write("#History\n");
-    wf.close();
+    with codecs.open(filepath, 'w', 'utf-8') as wf:
+        wf.write("#History\n")
     
     #MpGlobal.Window.debugMsg("\nUpdated %d Songs -- %d Error(s)"%(success,error))        
 
     return;
                 
-def __history_NewSongEntry(lib,typ,data,id):
+def __history_NewSongEntry(lib,typ,date,data,path):
     # fom file:
     #   item > path
     # last path prevents updating the same songs playcount twice
                     
     for song in lib:
                         
-        if song.id == id:
+        if song.shortPath() == path:
 
             if (typ == MpMusic.RATING):
-                song[MpMusic.RATING] = atoi(data)
+                song[MpMusic.RATING] = data
                 song[MpMusic.SPECIAL] = True 
                 song.update();
                 return True;
             else:
-                __history_NewDate__(data,song);
+                __history_NewDate__(date,song);
                 return True;
             
     return False;

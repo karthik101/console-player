@@ -388,7 +388,7 @@ class MediaManager(object):
             self.playList_new_fromSelection(MpGlobal.PLAYLIST_SIZE,autoStart = not self.stopNext)
             self.library_clearSelection()
             self.setStopNext(False)
-
+            calcScoreHistogram();
             
         elif MpGlobal.PLAYLIST_END_POLICY == MpGlobal.PLAYLIST_END_LOOP_SAME and \
             self.CurrentIndex == len(self.playList)-1 and \
@@ -657,6 +657,9 @@ class MediaManager(object):
             musicBackup(MpGlobal.FOLDERPATH_BACKUP,MpGlobal.Player.library,Settings.SAVE_FORMAT,MpGlobal.Force_Backup);
        
     def playlist_start( self, forceStart=False ):
+        """
+            called when a new playlist is started
+        """
         self.library_clearSelection()
     
         MpGlobal.PLAYLIST_SIZE = Settings.PLAYLIST_SIZE_DEFAULT
@@ -671,6 +674,8 @@ class MediaManager(object):
             self.loadSong(0)
             
         self.setStopNext(False)
+        
+        calcScoreHistogram();
         
     def playlist_removeRange(self,start,end):
         """ remove, and return, the list of songs starting at 'start' and ending at 'end'
@@ -943,8 +948,8 @@ class MediaManager(object):
 
         song[MpMusic.PLAYCOUNT] += 1 
         
-        delta = DateTime().daysElapsedUTC(song[MpMusic.DATEADDED],DateTime.now())
-        song[MpMusic.SPECIAL]   = int(1000*(float(song[MpMusic.PLAYCOUNT])/delta))
+        song.calcScore();
+        song[ MpMusic.SCORE ] = int( 1000*(float(sum(MpGlobal.Histscre[:min(10000,song[ EnumSong.SPECIAL   ] )]))/len(MpGlobal.Player.library)) )
         
         song.update();
         # refill the library, if it was in view, its text needs to be updated

@@ -782,6 +782,8 @@ def init_postMainWindow():
         
     MpGlobal.Player.loadSong()
     
+    calcScoreHistogram();
+    
     UpdateStatusWidget(1,MpGlobal.Player.playlist_PlayTime())
     
     MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"Ready, DevMode : %s"%Settings.DEVMODE)   
