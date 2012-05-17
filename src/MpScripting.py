@@ -323,6 +323,35 @@ def searchSetSelection(string,sel=True):
     
     return count # return the number of songs that matched the input string.    
     
+def calcScoreHistogram():
+    s=10000
+    t=255
+    
+    MpGlobal.Histscre = [0]*(s+1)
+    MpGlobal.Histpcnt = [0]*(t+1)
+
+    for song in MpGlobal.Player.library:
+        song.calcScore();
+
+        MpGlobal.Histscre[ min(s,song[ EnumSong.SPECIAL   ]  )] += 1
+        MpGlobal.Histpcnt[ min(t,song[ EnumSong.PLAYCOUNT ] )] += 1
+
+    l = len(MpGlobal.Player.library)
+
+    for song in MpGlobal.Player.library:
+        m = min(s,song[ EnumSong.SPECIAL   ] );
+        #n = min(t,song[ EnumSong.PLAYCOUNT ] );
+
+        _m = float(sum(MpGlobal.Histscre[:m]));
+        #_n = float(sum(MpGlobal.Histpcnt[:n]));
+     
+        _d = int( 1000*(_m/l) )  # percentile by score
+        #_p = int( 1000*(_n/l) ) # percentile by playcount
+        
+        song[ EnumSong.SCORE ] = _d
+    
+    print "histogram updated"
+    
 @staticmethod
 def SOC_getSearchDictionary():        # These methods are used in the Search Object Controller Class
     return MpMusic.D_StrToDec         # 
