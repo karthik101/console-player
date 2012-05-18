@@ -34,9 +34,11 @@ class LargeTableCore(QWidget):
         LargeTableCore cannot be instantiated by itself.
     """
     SELECT_NONE,SELECT_ONE,SELECT_MULTI,SELECT_CONTINUOUS = range(4)
+    refresh = pyqtSignal() # emit when you want to update from another thread
     column_header_resize = pyqtSignal() #emit this when the headers are resized
     column_header_sort_request = pyqtSignal('int') # emit this, when a header needs to be sorted
     column_changed_signal = pyqtSignal() # general signal for changing the order of, hiding, adding columns
+    selection_changed = pyqtSignal() # general signal for wwhen the user changes the selection
     
     scroll_horizontal = pyqtSignal('int') # emit whenever you want to scroll the window left (neg) or right (pos)
     
@@ -145,6 +147,8 @@ class LargeTableCore(QWidget):
         self.rowHighlight_simple_list  = [] # this list is a list of tuples.
         self.rowTextColor_complex_list = [] # the first item in the tuple is a lambda or function that accepts a row index                             
         self.rowTextColor_simple_list  = [] # the second item in the tuple is a QColor
+        
+        self.refresh.connect(self.update)
         
         self.initColumns()
     
@@ -1024,7 +1028,7 @@ class LargeTableCore(QWidget):
         
         self.setCursor(Qt.ArrowCursor)
     
-    def keyPressEvent(Self,event=None):
+    def keyPressEvent(self,event=None):
         """
             overload this method to handle keyboard press events
         """
@@ -1042,11 +1046,13 @@ class LargeTableCore(QWidget):
         if self.selection_rule == LargeTableCore.SELECT_NONE:
             self.selection_first_row_added = -1
             self.selection_last_row_added = -1
+            self.selection_changed.emit()
             return # cancel selection
         elif self.selection_rule == LargeTableCore.SELECT_ONE:
             self.selection = {row,}
             self.selection_first_row_added = row
             self.selection_last_row_added = row
+            self.selection_changed.emit()
             return # select the new row
         
         if row < len(self.data):
@@ -1087,6 +1093,7 @@ class LargeTableCore(QWidget):
                 _e = max(self.selection_first_row_added,self.selection_last_row_added) + 1
                 self.selection = set ( range(_s,_e) )
                 
+            self.selection_changed.emit()    
             self.update()
 
 class LargeTableBase(LargeTableCore):
@@ -1527,10 +1534,25 @@ class LargeTableBase(LargeTableCore):
         
     def getSelection(self):
         """
-            Return a  new array containing all selected elements
+            Return a list of rows that are currently selected
+            
+            selected means that the row index appears in the set contained in the variable self.selection
+            
+            if selection mode is set to SELECT_ONE a single row (not a list of rows) or none is returned
+            
+            otherwise a list of selected rows is returned, which can be an empty list
         """
         # return all rows that are selected if the index is still valid
-        return [ self.data[index] for index in sorted(list(self.selection)) if index < len(self.data) ]
+        #SELECT_NONE,SELECT_ONE,SELECT_MULTI,SELECT_CONTINUOUS = range(4)
+        selection = [ self.data[index] for index in sorted(list(self.selection)) if index < len(self.data) ]
+        
+        if self.selection_rule == LargeTableCore.SELECT_ONE:
+            if len(selection) == 0:
+                return None
+            else:
+                return selection[0]
+        
+        return selection
       
     def setSelection(self,row_index_list):
         """
@@ -1548,6 +1570,7 @@ class LargeTableBase(LargeTableCore):
             self.selection_first_row_added = -1
             self.selection_last_row_added = -1
         
+        self.selection_changed.emit()
         
     def clearSelection(self):
         """
@@ -1557,6 +1580,8 @@ class LargeTableBase(LargeTableCore):
         self.selection_first_row_added = -1
         self.selection_last_row_added = -1
         self.update()
+        
+        self.selection_changed.emit()
         
     def getSelectionString(self):
         """
@@ -2307,7 +2332,15 @@ class LargeTable(LargeTableBase):
             setSortColumn will automatically manage the arrow indicator, for the 
             selected column, toggling when needing, or changing to a new column
         """
-        self.setSortColumn(col_index)
+        dir = self.setSortColumn(col_index)
+ 
+        index = self.columns[col_index].index   # col_index is the index of the column clicked, 
+                                                # set index to the key used by that column for displaying data
+ 
+        g = lambda row : row[index]             # generate an expression for sorting a row by the given index
+
+        self.data.sort(key=g,reverse=dir==-1)   # sort the data using the expression, if dir is negative reverse the order
+
         
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat("data/list"):
@@ -2493,6 +2526,9 @@ class LargeTable(LargeTableBase):
             _n = max(0,_n)
             self.selection_last_row_added = _n
             self.selection = {_n,}
+            
+        self.selection_changed.emit()
+        
         if _n < self.sbar_ver.value():
             self.sbar_ver.setValue(_n)  # triggers update
         else:
@@ -2527,6 +2563,8 @@ class LargeTable(LargeTableBase):
             self.selection_last_row_added = _n
             self.selection = {_n,}
             
+        self.selection_changed.emit()    
+        
         if _n >= self.sbar_ver.value()+self.rowCountFloor()-1:
             self.sbar_ver.setValue(_n-self.rowCountFloor()+1)  # triggers update
         else:
@@ -2562,6 +2600,16 @@ class LargeTable(LargeTableBase):
         if len(self.selection) > 0:
             self.mouseDoubleClick(self.selection_last_row_added,0)
 
+class LargeTableStore(LargeTable):
+
+
+    def __init__(self,parent=None,cols=4,rows=100):
+        super(LargeTableStore,self).__init__(parent);
+        
+        self.data = []
+        
+    #use __getitem__ and __setitem__ tomodify data.
+            
 class MimeData(QMimeData):
     custom_data = {}    # dictionary which houses the mimetype=>data
     custom_types= ["data/list","data/varient"] # list of supported types

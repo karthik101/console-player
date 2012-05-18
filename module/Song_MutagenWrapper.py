@@ -20,6 +20,8 @@ from SystemDateTime import DateTime
 from Song_Object import *
 from datatype_hex64 import *
 
+import traceback
+
 ext_mp3  = ("mp3",)
 ext_mp4  = ('m4a', 'm4b', 'm4p', 'mpeg4', 'aac')
 ext_asf  = ('asf','wma')
@@ -153,6 +155,13 @@ def id3_flac_createSongFromPath(song):
     #for i in range(len(song)):
     #    print "%d => %s"%(i,song[i]);
 
+def safe_id3_update( song ) :
+
+    try :
+        id3_updateSongInfo(song);
+    except Exception as e:
+        format_exc(e)
+    
 def id3_updateSongInfo( song ):
     
     fext = fileGetExt(song[EnumSong.PATH]).lower()
@@ -234,6 +243,17 @@ def getTag_TupleOfInt(song,audio,key,tag):
 #from MpSort import *
 #from MpSearch import *
 
+
+def format_exc(error):
+    report = ""
+    
+    report += traceback.format_exc().replace(', line', "\nLINE:").replace(', in', '\nMETHOD:').replace('  File', "\nFILE:")
+    report += "\nARGS: %s"%error.args
+    report += "\nMESSAGE: %s"%error.message
+    
+    print report
+    
+    return report
 
 if __name__ == "__main__":
     print "test starting"

@@ -22,11 +22,11 @@
 # #########################################################
 
 import os
-from SystemPathMethods import atoi
 from calendar import timegm
 import time
 import datetime
 
+from PyQt4.QtCore import QDateTime
 
 #todo detect date format, assuming it is complete and one of the 3 builtin formats
 
@@ -39,6 +39,10 @@ class DateTime(object):
                         1:"%m/%d/%Y %H:%M",
                         2:"%d/%m/%Y %H:%M"
                       }
+    qt_datetime_format = { 0:"yyyy/MM/dd HH:mm",
+                           1:"MM/dd/yyyy HH:mm",
+                           2:"dd/MM/yyyy HH:mm"
+                         }
     date_format = { 0:"%Y/%m/%d",
                     1:"%m/%d/%Y",
                     2:"%d/%m/%Y"
@@ -47,6 +51,10 @@ class DateTime(object):
                     1:"%H:%M",
                     2:"%H:%M"
                   }
+    
+    FMT_STD = "%Y/%m/%d %H:%M"
+    FMT_EU  = "%d/%m/%Y %H:%M"
+    FMT_US  = "%m/%d/%Y %H:%M"
     
     def __init__(self,format=0):
         if isinstance(format,basestring):
@@ -278,7 +286,7 @@ class DateTime(object):
         
     def daysElapsed(self,date1,date2=""):
         """
-            return the umber of days elapsed from between two dates
+            return the number of days elapsed from between two dates
             
             the default is days since the given date and today
             
@@ -299,8 +307,28 @@ class DateTime(object):
         except:
             pass
         
-        return 0;
+        return 1;
+        
+    def daysElapsedUTC(self,date1,date2=-1):
+        """
+            return the number of days elapsed from between two dates
+            
+            the default is days since the given date and today
+            
+            a second date can be supplied to compare the two dates
+            
+            use repairDateTime to ensure you are passing in two complete date formats
+        """
+        try:
+            if date2 == -1:
+                date2 = DateTime.now();
 
+            if date1 != 0:
+                return max(1, abs(int(float(date1 - date2)/(60*60*24)) ))
+        except Exception as e:
+            print e 
+        
+        return 1;
     def getTimeDelta(self):
         """
             return the current timedelta, as a formatted string:
@@ -405,6 +433,24 @@ class DateTime(object):
     # the following just make some of the above code easier to read
     # if i always want to get a date/time format, i must use 'get'
     # and supply the default.
+    @staticmethod 
+    def fmtToQDateTime(datetime,fmt_id=DATETIME_STANDARD):
+        """
+           fmt_id as one of the enum date standards within this class
+           datetime should be a string using that format.
+           
+           convert "01/01/2000 12:00" to a Qt-date-time object representing that time
+        """
+        
+        return QDateTime.fromString(datetime,DateTime.qt_datetime_format[fmt_id])
+        
+    @staticmethod 
+    def QDateTimeToFmt(qdatetime,fmt_id=DATETIME_STANDARD):
+        """
+            inverse of fmtToQDateTime
+        """
+        return qdatetime.toString(DateTime.qt_datetime_format[fmt_id]);
+    
     def __dt(self):
         return self.datetime_format.get(self.format,"%Y/%m/%d %H:%M"); 
     def __d(self):
@@ -526,6 +572,26 @@ def msplit(s, seps):
         for seq in s:
             res += seq.split(sep)
     return res
+  
+def atoi(a):
+    """
+        converts string to int by taking only the first integer
+        in the string.
+        
+        int fails on "12A" when i sometimes want it to be 12.
+    """
+    i = "";
+    R = ('0','1','2','3','4','5','6','7','8','9');
+    #a = str(a)
+    for j in range(len(a)):
+        if a[j] in R:
+            i += a[j];
+        else:
+            break;
+    try:
+        return int(i);
+    except:
+        return 0;  
   
 if __name__ == "__main__":
     dt = DateTime(DateTime.DATETIME_STANDARD)

@@ -118,6 +118,12 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn(self,EnumSong.EQUILIZER,"Volume Eq") )
         self.columns[-1].setWidthByCharCount(10)
         self.columns[-1].setTextAlign(Qt.AlignRight)
+        self.columns.append( TableColumn(self,EnumSong.SPECIAL,"Special") )
+        self.columns[-1].setWidthByCharCount(7)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
+        self.columns.append( TableColumn(self,EnumSong.SCORE,"Score") )
+        self.columns[-1].setWidthByCharCount(7)
+        self.columns[-1].setTextAlign(Qt.AlignRight)
         
         self.columns_setDefaultOrder( self.columns_getOrder() )
         

@@ -173,7 +173,7 @@ def copyPlayListToDirectory(dir,list):
         dir += "/"
         
     for song in list:
-        validPath = createMiniPath(song)
+        validPath = song.shortPath()
         
         testMiniPathExists(dir, validPath)
         
@@ -181,19 +181,19 @@ def copyPlayListToDirectory(dir,list):
         
         # if the file does not exist copy it
         if os.path.exists(newPath) == False:
-            copy(song[MpMusic.PATH],newPath)
-
+            copy(song[MpMusic.PATH],newPath)       
+            
 def testMiniPathExists( dir, mpath ):
     """ test that the calculated minpath exists
         if it does not, create it
     """
     # generate a list of all folders in the path name
-    R = mpath.split("\\")
-    R = R[:-1] # cut the file name out of the folder list
-    
+    R = mpath.split("\\")[:-1] # cut the file name out of the folder list
+
     path = dir
-    for x in range(len(R)):
-        os.path.join(path,R[x],"")
+    
+    for p in R:
+        os.path.join(path,p,"")
         if os.path.exists(path) == False :
             os.mkdir(path)
 

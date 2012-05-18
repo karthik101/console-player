@@ -8,11 +8,11 @@
 #
 #   see MpGlobalDefines for MusicContainer, an extension of EnumSong
 # #########################################################
-
+#print MpGlobal.Player.library[0].shortPath()
 import os
 
 from SystemDateTime import DateTime
-
+from SystemPathMethods import *
 from datatype_hex64 import *
 
 class EnumSong(object):
@@ -38,9 +38,10 @@ class EnumSong(object):
     DATEADDED = 18
     YEAR      = 19;    # year the song was made.
     EQUILIZER = 20;    # 0..32767 (15bit) value as average volume for 0=0% quite and 32767=100%
+    SCORE     = 21
     # #####
-    SPECIAL   = 21; # undefined boolean index
-    SELECTED  = 22; # Boolean, selected or not
+    SPECIAL   = 22; # undefined boolean index
+    SELECTED  = 23; # Boolean, selected or not
     
     # ########################################
     # Other Enumerations
@@ -155,6 +156,7 @@ class Song(list):
                      EnumSong.DATEADDED,
                      EnumSong.YEAR,
                      EnumSong.EQUILIZER,
+                     EnumSong.SCORE,
                    ];        
             
     def __init__(self,varient="",DRIVELIST=[],DATEFMT="%Y/%m/%d %H:%M"):
@@ -170,7 +172,9 @@ class Song(list):
         self.id = hex64(0);
         self.md5 = "";
         self.banish = False
+        self.basescore = 0
         self[EnumSong.EQUILIZER] = EnumSong.EQ_MID_POINT 
+        self[EnumSong.SCORE] = 0
         
         if type(varient) == Song:
             # produce a copy of the song.
@@ -199,6 +203,7 @@ class Song(list):
             self[EnumSong.DATEADDED] = varient[EnumSong.DATEADDED]
             self[EnumSong.YEAR ]     = varient[EnumSong.YEAR]
             self[EnumSong.EQUILIZER ]= varient[EnumSong.EQUILIZER]
+            self[EnumSong.SCORE     ]= varient[EnumSong.SCORE]
             return;
             
         elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
@@ -550,12 +555,91 @@ class Song(list):
             self.banish = "True" in R[6]
         
         self[EnumSong.EXIF]      = self.__format_exif__();
-        self[EnumSong.SPECIAL]   = False
+        
+        
         self[EnumSong.SELECTED]  = False 
         
+        self.calcScore();
+        
         self.update();
-     
+    def calcBaseScore(self):
+        """
+s=1000
+t=255
+MpGlobal.Hist = [0]*(s+1)
+MpGlobal.Histpcnt = [0]*(t+1)
 
+for song in MpGlobal.Player.library:
+    delta = DateTime().daysElapsedUTC(song[EnumSong.DATEADDED],DateTime.now())
+    song[EnumSong.SPECIAL]  = int((s)*(float(song[EnumSong.PLAYCOUNT])/delta))
+
+    MpGlobal.Hist    [ min(s,song[ EnumSong.SPECIAL   ] )] += 1
+    MpGlobal.Histpcnt[ min(t,song[ EnumSong.PLAYCOUNT ] )] += 1
+
+l = len(MpGlobal.Player.library)
+
+for song in MpGlobal.Player.library:
+    m = min(s,song[ EnumSong.SPECIAL   ] );
+    n = min(t,song[ EnumSong.PLAYCOUNT ] );
+
+    _m = float(sum(MpGlobal.Hist    [:m]));
+    _n = float(sum(MpGlobal.Histpcnt[:n]));
+ 
+    _d = int( 1000*(_m/l) )
+    _p = int( 1000*(_n/l) )
+    
+    song[ EnumSong.SCORE ] = int(.25*_p+.75*_d)
+
+        """
+        delta = DateTime().daysElapsedUTC(self[EnumSong.DATEADDED],DateTime.now())
+        p = int(1000*(float(self[EnumSong.PLAYCOUNT])/delta))
+        _f = 9999 if self[EnumSong.FREQUENCY] == 0 else self[EnumSong.FREQUENCY]
+        f = int((delta/float(_f))) 
+        
+        self.basescore = (min(99,p)*100)+(min(99,f))
+        self[EnumSong.SPECIAL]   = self.basescore
+        
+        return self.basescore
+        
+    def calcScore(self,hist=None):
+        if hist != None:
+            p = float( hist[self.basescore] )
+            s = hist[-1]
+            self[ EnumSong.SCORE ] = int( 1000*( p / s ) )
+        else:
+            self[ EnumSong.SCORE ] = 0
+        
+        
+    def shortPath( self ):
+        
+        """
+            given a song create a path like string like the following:
+                ex: Artist\Album\filename.ext
+            if artist fails, return "Unknown"
+                ex: Unknown\Album\filename.ext
+            if album fails, return none
+                ex: Artist\filename.ext
+                ex: Unknown\filename.ext
+            this 'mini' path can then be appended to a base path
+        """
+
+        tart = stripIllegalChars(self[EnumSong.ARTIST]).strip().replace(" ","_")
+        tabm = stripIllegalChars(self[EnumSong.ALBUM]).strip().replace(" ","_")
+        tnam = fileGetFileName(self[EnumSong.PATH]).replace(" ","_")
+
+        if tart == "":
+            tart = "Unknown Artist"
+
+        if tabm.lower() in ["none","unknown",""]:
+            path = os.path.join(tart,tnam);
+        else:
+            path = os.path.join(tart,tabm,tnam);
+
+        return path    
+
+def stripIllegalChars(x):
+    return ''.join( [ c for c in x if c not in "<>:\"/\\|?*" ] )
+        
 if __name__ == "__main__":
         print "%r"%Song("C:\\test.mp3")
      
