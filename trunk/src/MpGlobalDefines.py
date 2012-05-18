@@ -86,7 +86,8 @@ class SettingsContainer(object):
         #self.KEYBOARD_INSERT      = 45
         self.VERSION = "0.0.0.0" # dummy value set in GlobalContainer
         self.SIGIL = '.'    # single character to act as sigil
-
+        self.USE_HISTOGRAM = False
+        
     def getPreset(self,index):
         return (self.SEARCH_PRESET0,
                 self.SEARCH_PRESET1,
@@ -210,6 +211,10 @@ class GlobalContainer(object):
     SAVE_FORMAT_CWD     = 2  # drive will always be CWD
 
     getGenreTags = lambda x : [ item.strip()  for item in x.replace(',',';').replace('\\',';').replace('/',';').split(';') ]
+    
+    Histogram = None
+    Histscre = None
+    Histpcnt = None
     
     def updatePaths(self,newPath=''):
         # example use

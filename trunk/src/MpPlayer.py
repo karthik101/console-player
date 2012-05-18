@@ -948,8 +948,8 @@ class MediaManager(object):
 
         song[MpMusic.PLAYCOUNT] += 1 
         
-        song.calcScore();
-        song[ MpMusic.SCORE ] = int( 1000*(float(sum(MpGlobal.Histscre[:min(10000,song[ EnumSong.SPECIAL   ] )]))/len(MpGlobal.Player.library)) )
+        song.calcBaseScore();
+        song.calcScore(MpGlobal.Histogram);
         
         song.update();
         # refill the library, if it was in view, its text needs to be updated

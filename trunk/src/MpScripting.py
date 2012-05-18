@@ -324,31 +324,46 @@ def searchSetSelection(string,sel=True):
     return count # return the number of songs that matched the input string.    
     
 def calcScoreHistogram():
+    # builds 2 histograms based of of basescore and playcount
+    # then builds an accumilator array for calculating the final score of the song
+    # a songs score is float(MpGlobal.Histogram[song.basescore])/MpGlobal.Histogram[-1]
     s=10000
     t=255
-    
+    if Settings.USE_HISTOGRAM == False: # histogram is disabled.
+        MpGlobal.Histscre  = None
+        MpGlobal.Histpcnt  = None
+        MpGlobal.Histogram = None
+        return
+        
     MpGlobal.Histscre = [0]*(s+1)
     MpGlobal.Histpcnt = [0]*(t+1)
 
     for song in MpGlobal.Player.library:
-        song.calcScore();
+        song.calcBaseScore();
 
         MpGlobal.Histscre[ min(s,song[ EnumSong.SPECIAL   ]  )] += 1
         MpGlobal.Histpcnt[ min(t,song[ EnumSong.PLAYCOUNT ] )] += 1
 
     l = len(MpGlobal.Player.library)
 
+    accum = 0
+    MpGlobal.Histogram = [0]*(s+1)
+    for i in range(len(MpGlobal.Histscre)):
+        accum += MpGlobal.Histscre[i]
+        MpGlobal.Histogram[i] = accum
+    
     for song in MpGlobal.Player.library:
-        m = min(s,song[ EnumSong.SPECIAL   ] );
+        #m = min(s,song[ EnumSong.SPECIAL   ] );
         #n = min(t,song[ EnumSong.PLAYCOUNT ] );
 
-        _m = float(sum(MpGlobal.Histscre[:m]));
+        #_m = float(sum(MpGlobal.Histscre[:m]));
         #_n = float(sum(MpGlobal.Histpcnt[:n]));
      
-        _d = int( 1000*(_m/l) )  # percentile by score
+        #_d = int( 1000*(_m/l) )  # percentile by score
         #_p = int( 1000*(_n/l) ) # percentile by playcount
         
-        song[ EnumSong.SCORE ] = _d
+        #song[ EnumSong.SCORE ] = _d
+        song.calcScore(MpGlobal.Histogram)
     
     print "histogram updated"
     
