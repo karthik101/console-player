@@ -871,13 +871,6 @@ class SearchObject(object):
                 return None
             rf = None
             fptr = self._compareSongElement
-        elif (flag_type == EnumSong.LENGTH ):
-            cf = 0;
-            try:
-                cf = DateTime.parseTimeDelta(ostr)
-            except:
-                pass
-            fptr = self._compareSongElement
         elif flag_type >= EnumSong.STRINGTERM and flag_type < EnumSong.NUMTERM :
             if flag&SEARCH.DIR == 0:# if no DIR flags set, set EQ flag
                 flag = flag|SEARCH.EQ
@@ -892,7 +885,9 @@ class SearchObject(object):
                 fptr = self._compareTerm_Frequency
             else:
                 fptr = self._compareTerm_Number
-               
+                
+            if flag_type == EnumSong.LENGTH:
+                cf = DateTime.parseTimeDelta(ostr)  
         
         term = SearchTerm(ostr,flag_type,flag,cf,rf,fptr)
 
@@ -983,8 +978,8 @@ if __name__ == "__main__":
     #so = SearchObject(".day 5");
     #so = SearchObject(".len 60");
     #print song
-
-    so = SearchObject(".len 60");
+    print EnumSong.LENGTH
+    so = SearchObject(".len <=60");
     so.debug();
     #print "Song Match: %s"%so.match(song)
     #print "----------: %s"%so._compareSongElement(song,so._searchC[0])
