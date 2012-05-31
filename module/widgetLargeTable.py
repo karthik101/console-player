@@ -550,6 +550,7 @@ class LargeTableCore(QWidget):
                     col.paintItem(col,painter,item_row,item,_x,_y,max(_cw,col.width),self.row_height)
                 except IndexError:
                     print "IndexError: %d/%d is no longer a valid index"%(item_row,len(self.data))
+                    break;
                 _y += self.row_height
                 c+=1;
 

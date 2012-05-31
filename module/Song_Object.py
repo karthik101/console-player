@@ -173,7 +173,7 @@ class Song(list):
         self.md5 = "";
         self.banish = False
         self.basescore = 0
-        self[EnumSong.EQUILIZER] = EnumSong.EQ_MID_POINT 
+        self[EnumSong.EQUILIZER] = 0#EnumSong.EQ_MID_POINT 
         self[EnumSong.SCORE] = 0
         
         if type(varient) == Song:
@@ -592,11 +592,11 @@ for song in MpGlobal.Player.library:
 
         """
         delta = DateTime().daysElapsedUTC(self[EnumSong.DATEADDED],DateTime.now())
-        p = int(1000*(float(self[EnumSong.PLAYCOUNT])/delta))
-        _f = 9999 if self[EnumSong.FREQUENCY] == 0 else self[EnumSong.FREQUENCY]
-        f = int((delta/float(_f))) 
+        p = int(10000*(float(self[EnumSong.PLAYCOUNT])/delta))
+        _f = float(9999 if self[EnumSong.FREQUENCY] == 0 else self[EnumSong.FREQUENCY])
+        f = int( 1000*(1/_f)*7 ) # 7 scales such that once a week is really good
         
-        self.basescore = (min(99,p)*100)+(min(99,f))
+        self.basescore = (min(999,f) + min(999,p)) / 2
         self[EnumSong.SPECIAL]   = self.basescore
         
         return self.basescore
