@@ -722,7 +722,8 @@ def init_preMainWindow():
         QApplication but before the main windo show.
     """ 
     #MpGlobal.AudioPlayer = VLCObject()
-    MpGlobal.AudioPlayer = getNewAudioPlayer()
+    plugin_path = os.path.join(MpGlobal.installPath,"plugins","")
+    MpGlobal.AudioPlayer = getNewAudioPlayer(plugin_path)
     MpGlobal.Player = MediaManager(MpGlobal.AudioPlayer)
     MpGlobal.EventHandler = EventManager();
     

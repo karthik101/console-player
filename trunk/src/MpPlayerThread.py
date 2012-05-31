@@ -19,6 +19,7 @@ from MpSort import *
 from Song_Search import *
 from MpPlayer import *
 
+import traceback
 
 class MediaPlayerThread(QThread): 
     
@@ -82,17 +83,18 @@ class MediaPlayerThread(QThread):
                         #   from being running again until a new song is loaded in some way
                         # this code can only be run if we are in playlist playback mode "CONSECUTIVE", and a song has finished playing
                         song = p.CurrentSong
-                        diagMessage(MpGlobal.DIAG_PLAYBACK,"\n%s->N:%d O:%d;"%(song[MpMusic.TITLE],time,song[MpMusic.LENGTH]) );
-                        # delaying autonext solves a Phonon Bug (Multi-Threading, registration)
-                        MpMusic.AUTO_SIGNAL_ISSUED = True   # prevent multiple queueings of auto next
+                        if song != None:
+                            diagMessage(MpGlobal.DIAG_PLAYBACK,"\n%s->N:%d O:%d;"%(song[MpMusic.TITLE],time,song[MpMusic.LENGTH]) );
+                            # delaying autonext solves a Phonon Bug (Multi-Threading, registration)
+                            MpMusic.AUTO_SIGNAL_ISSUED = True   # prevent multiple queueings of auto next
 
-                        #if isPosix: print " > AUTONEXT"
-                        MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Player.autonext)
-                        #if isPosix: print " < AUTONEXT"
-                        
-                        p.updateSongRecord(song,time)
-                        #if isPosix: print " . RECORD UPDATE"
-                        #MpGlobal.Player.autonext()
+                            #if isPosix: print " > AUTONEXT"
+                            MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Player.autonext)
+                            #if isPosix: print " < AUTONEXT"
+                            
+                            p.updateSongRecord(song,time)
+                            #if isPosix: print " . RECORD UPDATE"
+                            #MpGlobal.Player.autonext()
                     elif state == MP_ENDED and p.playState == MpMusic.PL_NO_PLAYLIST:
                         MpGlobal.Window.emit(SIGNAL("QUEUE_FUNCTION"),MpGlobal.Player.loadSong)
                         
@@ -113,7 +115,11 @@ class MediaPlayerThread(QThread):
             for i in e:
                 MpGlobal.Window.emit(SIGNAL("DEBUG_MESSAGE"),"%s"%str(i))
                         
-            
+                report = traceback.format_exc().replace(', line', "\nLINE:").replace(', in', '\nMETHOD:').replace('  File', "\nFILE:")
+                report += "\nARGS: %s"%e.args
+                report += "\nMESSAGE: %s"%e.message
+                
+                print report
       
         if (MpGlobal == None):
             # please please please may this code
