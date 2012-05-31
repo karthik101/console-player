@@ -84,10 +84,7 @@ class PyBASSPlayer(GenericMediaObject):
                         ret = PyBASS.load(path_utf16,1);
                         if i > 0: print "Loaded on %d-th attempt"%i
                         break;
-                        
-                
-                
-      
+
             else:
                 debug(" *** File Not Found;")
                 debug("PATH: %s"%file)
