@@ -12,6 +12,7 @@ pack.addFile("./icon.png")
 pack.addFolder("./style/default/")
 pack.addFolder("./style/No Theme/")
 pack.addFolder("./images/")
+pack.addFolder("./plugins/")
 
 for root,file in pack.files:
     print file
