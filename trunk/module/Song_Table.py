@@ -63,9 +63,9 @@ class SongTable(LargeTable):
         
     def initColumns(self):
         self.columns.append( TableColumn(self,EnumSong.PLAYCOUNT,"Play Count") )
+        self.columns[-1].setShortName("#")
         self.columns[-1].setWidthByCharCount(3)
         self.columns[-1].setMinWidthByCharCount(2)
-        self.columns[-1].setShortName("#")
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns[-1].setDefaultSortReversed(True)
         self.columns.append( TableColumn(self,EnumSong.ARTIST   ,"Artist") )
@@ -116,6 +116,7 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn(self,EnumSong.PATH     ,"Path") )
         self.columns[-1].setWidthByCharCount(30)
         self.columns.append( TableColumn(self,EnumSong.EQUILIZER,"Volume Eq") )
+        self.columns[-1].setShortName("Eq")
         self.columns[-1].setWidthByCharCount(10)
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns.append( TableColumn(self,EnumSong.SPECIAL,"Special") )
