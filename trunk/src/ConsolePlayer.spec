@@ -80,6 +80,21 @@ a = Analysis([os.path.join(HOMEPATH,'support/_mountzlib.py'),
              
 pyz = PYZ(a.pure)
 
+print "\n\nSCRIPTS"
+print a.scripts
+print "\n\nbinaries"
+print a.binaries
+print "\n\nzipfiles"
+print a.zipfiles
+print "\n\ndatas"
+print a.datas
+
+#x = raw_input()
+
+#bass_dll = ("","D:\\Dropbox\\Scripting\\PyQt\\console-player\\src\\bass.dll",'DATA')
+#a.datas.append(bass_dll)
+#print "\n\n\n"
+
 exe = EXE( pyz,
            a.scripts,
            a.binaries,

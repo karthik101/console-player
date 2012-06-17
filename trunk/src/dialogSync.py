@@ -209,9 +209,23 @@ class SyncSongs(QDialog):
     def populateFolderList(self):
         drives = systemDriveList()
         sub1 = ['%smusic\\' % d for d in drives if os.path.exists('%s/music/' % d)]
-        sub2 = ['%splayer\\' % d for d in drives if os.path.exists('%s/player/' % d)]
+        #sub2 = ['%splayer\\' % d for d in drives if os.path.exists('%s/player/' % d)]
         
-        R = drives+sub1+sub2
+        R = drives+sub1#+sub2
+        
+        def rem(R,x):
+            if x in R:
+                R.remove(x);
+            if x.lower() in R:
+                R.remove(x.lower());    
+                
+        rem(R,"C:\\")
+        rem(R,"D:\\")
+        rem(R,"D:\\Music\\")
+        rem(R,"D:\\music\\")
+        rem(R,"D:\\Player\\")
+        rem(R,"D:\\player\\")
+        
         R.sort()
 
         for item in R:
@@ -494,8 +508,8 @@ class SyncFiles(QThread):
             # then resume where we left off
         while len(self.listd) > 0:
             file = self.listd.pop(0)
-            #os.remove(file)
-            MpTest.fdelete(file)
+            os.remove(file)
+            #MpTest.fdelete(file)
             #print file
             value += 1
             self.parent.emit(SIGNAL("SYNC_SET_VALUE"),self.parent,value)

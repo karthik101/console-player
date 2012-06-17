@@ -20,15 +20,19 @@ def toUTF16(string):
     return unicode(string).encode("utf-16")[2:]
     
 class PyBASSPlayer(GenericMediaObject):
-        
+    DSP_SETTINGS = {}    
     def __init__(self,plugin_path=""):
         self.invoke(plugin_path);
+        
+        self.DSP_SETTINGS = {"STEREO2MONO":0,"DSPTEST":True}
     
     def invoke(self,plugin_path):
         #plugin_path = "D:\\Dropbox\\Scripting\\PyQt\\console-player\\src\\user\\plugins\\"
         PyBASS.bass_init();    
         
-        for plugin in os.listdir(plugin_path):
+        # get all dlls in the plugins folder and attempt to load them
+        for plugin in [ p for p in os.listdir(plugin_path) if fileGetExt(p).lower()=='dll' ]:
+            
             path = os.path.join(plugin_path,plugin);
             
             val = PyBASS.load_plugin(path);
@@ -82,12 +86,17 @@ class PyBASSPlayer(GenericMediaObject):
                     fex = PyBASS.utf16_fexists(path_utf16)
                     if fex:
                         ret = PyBASS.load(path_utf16,1);
-                        if i > 0: print "Loaded on %d-th attempt"%i
+                        if i > 0: 
+                            print "Loaded on %d-th attempt"%i
+                        PyBASS.setDSPBlock( self.DSP_SETTINGS )
+                        #print self.DSP_SETTINGS
                         break;
-
+                else:
+                    print "for fell thru on load."
             else:
-                debug(" *** File Not Found;")
-                debug("PATH: %s"%file)
+                print "file not found"
+                #debug(" *** File Not Found;")
+                #debug("PATH: %s"%file)
         except Exception as e:
             print "VLC instance Error: %s"%(e.args)
             #self.__media__
@@ -177,7 +186,14 @@ class PyBASSPlayer(GenericMediaObject):
             the subchannel struct needs memory of which blocks are on.
             it then needs to call the respective free for each DSP block that
             is on.
+            dict_dsp is a dict-of-tuples-of arguments eg:
+            
+            STEREO2MONO : (i,) # i can  be 0 - off, 1-R,2-L,3-MONO
+            DSPTEST : True
         """
-        pass
         
+        self.DSP_SETTINGS = dict_dsp
+        
+    def getDSP(self):
+        return self.DSP_SETTINGS
         
