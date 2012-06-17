@@ -43,6 +43,7 @@ class SettingsContainer(object):
         self.SEARCH_PRESET7 = ""
         self.SEARCH_PRESET8 = ""
         self.SEARCH_PRESET9 = ""
+        self.OUTPUTMODE = 0 # 0,1,2,3 for stereo ,LeftOnly, RightOnly, MONO
         self.FAVORITE_ARTIST = []   # array of unicode artist names
         self.FAVORITE_GENRE  = []   # array of unicode genre names
         self.LIB_COL_ID = []
@@ -306,6 +307,7 @@ class MusicContainer(EnumSong):
                      'comment'       : EnumSong.COMMENT, \
                      'day'           : EnumSong.DATESTAMP, \
                      'dateval'       : EnumSong.DATEVALUE, \
+                     'eq'            : EnumSong.EQUILIZER, \
                      'exif'          : EnumSong.EXIF, \
                      'size'          : EnumSong.FILESIZE, \
                      'freq'          : EnumSong.FREQUENCY, \
@@ -322,6 +324,7 @@ class MusicContainer(EnumSong):
                      'skipcount'     : EnumSong.SKIPCOUNT, \
                      'id'            : EnumSong.SONGID, \
                      'index'         : EnumSong.SONGINDEX, \
+                     'score'         : EnumSong.SCORE, \
                      'spec'          : EnumSong.SPECIAL, \
                      'dateeu'        : EnumSong.SPEC_DATEEU, \
                      'dateus'        : EnumSong.SPEC_DATEUS, \

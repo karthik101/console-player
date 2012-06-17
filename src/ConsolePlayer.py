@@ -91,6 +91,7 @@
 import os   
 import sys
 import sip
+import traceback
 
 if __name__ != "__main__":
     print "Console Player must be started as the main script"
@@ -136,57 +137,76 @@ from MpScripting import *
 from MpPlayerThread import MediaPlayerThread
 import MpStartUp
 
+    
+try: 
+    # ######################################
+    # Create the Qt Application
+    # ###################################### 
+    MpGlobal.Application = QApplication(sys.argv)
+    MpGlobal.Application.setApplicationName("Console Player")
+    MpGlobal.Application.setQuitOnLastWindowClosed(True)  
 
+    if __debug: print "Application Created %s"%MpGlobal.Application    
 
-# ######################################
-# Create the Qt Application
-# ###################################### 
-MpGlobal.Application = QApplication(sys.argv)
-MpGlobal.Application.setApplicationName("Console Player")
-MpGlobal.Application.setQuitOnLastWindowClosed(True)  
+    # ######################################
+    # Set the Internal Version
+    # ###################################### 
+    import VersionController
+    MpGlobal.VERSION = VersionController.AutoVersion(__devmode) 
+    MpGlobal.NAME = "Console Player - v%s"%MpGlobal.VERSION
 
-if __debug: print "Application Created %s"%MpGlobal.Application    
+    print MpGlobal.NAME
+      
+    # ######################################
+    # Look for the settings file,
+    # ask the user for an install location
+    # load the settings if found 
+    # extract any files required
+    # ###################################### 
+    MpStartUp.startUpCheck(install=__install); 
 
-# ######################################
-# Set the Internal Version
-# ###################################### 
-import VersionController
-MpGlobal.VERSION = VersionController.AutoVersion(__devmode) 
-MpGlobal.NAME = "Console Player - v%s"%MpGlobal.VERSION
+    if __debug: print "Set Up Check Done\n"  
 
-print MpGlobal.NAME
-  
-# ######################################
-# Look for the settings file,
-# ask the user for an install location
-# load the settings if found 
-# extract any files required
-# ###################################### 
-MpStartUp.startUpCheck(install=__install); 
+    # ######################################
+    # Create the Main Window
+    # ######################################
+    if __debug: print "Creating Main Window..."  
+      
+    init_preMainWindow()        #code to run before MainWindow.__init__()
+    MpGlobal.Window = MainWindow(MpGlobal.NAME)
+    MpGlobal.Window.show()
+    init_postMainWindow()       #code to run after  MainWindow.__init__(), AND after show()
 
-if __debug: print "Set Up Check Done\n"  
-
-# #############################################################################################################
-# #############################################################################################################
-# #############################################################################################################
+    if __debug: print "Main Loop Starting..."    
+      
    
-   
-# ######################################
-# Create the Main Window
-# ######################################
-if __debug: print "Creating Main Window..."  
-  
-init_preMainWindow()        #code to run before MainWindow.__init__()
-MpGlobal.Window = MainWindow(MpGlobal.NAME)
-MpGlobal.Window.show()
-init_postMainWindow()       #code to run after  MainWindow.__init__(), AND after show()
 
-if __debug: print "Main Loop Starting..."    
-  
-# ######################################
-# Start the Main Loop
-# ######################################
-sys.exit(MpGlobal.Application.exec_())
+except Exception as e:
+    # if an exception occurs while initilizing the player, display that exception to the user
+    # find a suitable application object to display a message box with.
+    app = QCoreApplication.instance()
+    if app == None:    
+        app = QApplication(sys.argv)
+    # generate a report, which consists of the traceback, plus any useful information if any.    
+    report = "An exception occured trying to start.\n\n"
+    report += traceback.format_exc().replace(', line', "\nLINE:").replace(', in', '\nMETHOD:').replace('  File', "\nFILE:")
+    if e.args:
+        report += "\nARGS: %s"%e.args
+    if e.message:
+        report += "\nMESSAGE: %s"%e.message
+    report += "\nThis report has been copied to the clipboard"
+    # copy the text to the clipboard so that the user can submit it somewhere
+    QApplication.clipboard().setText(report)
+    QMessageBox.critical(None, "Console Player Start",
+            report,
+            QMessageBox.Ok | QMessageBox.Default,
+            QMessageBox.NoButton)
+    sys.exit(1)
+else:
+    # ######################################
+    # Start the Main Loop
+    # ######################################
+    sys.exit(MpGlobal.Application.exec_())
 
 
 

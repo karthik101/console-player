@@ -91,7 +91,9 @@ except:
 print "VLC: %s PHONON: %s"%(__IMPORT_VLC__,__IMPORT_PHONON__)
     
 # if not __IMPORT_VLC__ and not __IMPORT_PHONON__:
-#     app = QtGui.QApplication(sys.argv)
+#     app = QCoreApplication.instance ()
+#     if app == None:    
+#       app = QtGui.QApplication(sys.argv)
 #     QtGui.QMessageBox.critical(None, "Music Player",
 #             "Unable to import VLC or PHONON media player",
 #             QtGui.QMessageBox.Ok | QtGui.QMessageBox.Default,
@@ -109,7 +111,7 @@ def getNewAudioPlayer( plugin_path ):
     #  --noaudio : force creation of base audio player instead of vlc or phonon
     
     #return GenericMediaObject();
-    print "AHFASKFNDDGD"
+
     debugPreboot("BASS   : Initalizing");
     return PyBASSPlayer(plugin_path);
     

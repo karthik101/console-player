@@ -140,5 +140,8 @@ class GenericMediaObject(object):
         # return the current volume as a value from 0 (off or mute) to 100 (full on)
         return self.volume
         
-        
+    def setDSP(self,d):
+        pass
+    def getDSP(self):
+        return {};
         
