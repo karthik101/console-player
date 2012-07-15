@@ -8,14 +8,15 @@ Console Player is programmed with Python 2.7 (32 bit) and PyQt version 4.8.5. VL
   * [http://www.python.org/getit/releases/2.7/ Python 2.7 32bit]
   * [http://www.riverbankcomputing.co.uk/software/pyqt/intro PyQt]
   * [http://code.google.com/p/mutagen/ Mutagen] - Audio Tagging library 
-  * PyLZMA
+  * -P-y-L-Z-M-A- no longer used
  
 
 == Windows ==
   * http://sourceforge.net/apps/mediawiki/pyhook
 
 == Linux ==
-  * So far there are no linux specific files
+  * sudo apt-get install python-qt4
+  * sudo apt-get install python-mutagen
 
 == Additional ==
   * [http://www.videolan.org/ VLC] - Using the latest version will prevent playback  issues
