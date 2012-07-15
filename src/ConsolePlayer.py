@@ -191,7 +191,7 @@ except Exception as e:
     report = "An exception occured trying to start.\n\n"
     report += traceback.format_exc().replace(', line', "\nLINE:").replace(', in', '\nMETHOD:').replace('  File', "\nFILE:")
     if e.args:
-        report += "\nARGS: %s"%e.args
+        report += "\nARGS: %s"%unicode(e.args)
     if e.message:
         report += "\nMESSAGE: %s"%e.message
     report += "\nThis report has been copied to the clipboard"

@@ -20,7 +20,7 @@ def toUTF16(string):
     return unicode(string).encode("utf-16")[2:]
     
 class PyBASSPlayer(GenericMediaObject):
-    DSP_SETTINGS = {}    
+    
     def __init__(self,plugin_path=""):
         self.invoke(plugin_path);
         

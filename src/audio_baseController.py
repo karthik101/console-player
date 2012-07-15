@@ -14,7 +14,7 @@ MP_ERROR = 7
 MP_UNKOWN = 8
     
 class GenericMediaObject(object):
-    
+    DSP_SETTINGS = {}    
     volume = 0;         
 
     def __init__(self):
@@ -144,4 +144,8 @@ class GenericMediaObject(object):
         pass
     def getDSP(self):
         return {};
+    def setInfo(self,song):
+        pass
+    def getInfo(self,song):
+        return None
         

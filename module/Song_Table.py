@@ -99,6 +99,7 @@ class SongTable(LargeTable):
         self.columns[-1].setDefaultSortReversed(True)
         self.columns.append( TableColumn(self,EnumSong.SKIPCOUNT,"Skip Count") )
         self.columns[-1].setWidthByCharCount(10)
+        self.columns[-1].setDefaultSortReversed(True)
         self.columns[-1].setTextAlign(Qt.AlignCenter)
         self.columns.append( TableColumn(self,EnumSong.COMMENT  ,"Comment") )
         self.columns[-1].setWidthByCharCount(20)
@@ -108,6 +109,7 @@ class SongTable(LargeTable):
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns.append( TableColumn(self,EnumSong.YEAR     ,"Year") )
         self.columns[-1].setWidthByCharCount(4)
+        self.columns[-1].setDefaultSortReversed(True)
         self.columns.append( TableColumn(self,EnumSong.SONGINDEX,"Album Index") )
         self.columns[-1].setWidthByCharCount(11)
         self.columns.append( TableColumn(self,EnumSong.SONGID   ,"ID#") )
@@ -119,12 +121,15 @@ class SongTable(LargeTable):
         self.columns[-1].setShortName("Eq")
         self.columns[-1].setWidthByCharCount(10)
         self.columns[-1].setTextAlign(Qt.AlignRight)
+        self.columns[-1].setDefaultSortReversed(True)
         self.columns.append( TableColumn(self,EnumSong.SPECIAL,"Special") )
         self.columns[-1].setWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignRight)
-        self.columns.append( TableColumn(self,EnumSong.SCORE,"Score") )
+        self.columns[-1].setDefaultSortReversed(True)
+        self.columns.append( TableColumn_Score(self,EnumSong.SCORE,"Score") )
         self.columns[-1].setWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignRight)
+        self.columns[-1].setDefaultSortReversed(True)
         
         self.columns_setDefaultOrder( self.columns_getOrder() )
         
@@ -187,12 +192,6 @@ class TableColumn_Rating(TableColumn):
         #Qt.WindingFill
         if row == self.suggested_rating_row:
             item = self.suggested_rating
-            
-        
-        
-        
-        
-        
             
         _c = 2          # top/bottom padding constant
         _h = h-(2*_c)   # height is height minus padding
@@ -372,7 +371,18 @@ class TableColumn_DateStamp(TableColumn_DateBase):
         
         painter.setPen(default_pen)
 
+class TableColumn_Score(TableColumn): 
+    """
+        A custom table column for changing the color of the
+        text used when drawing the date for the last
+        time the song was played
+    """
     
+    def paintItem(self,col,painter,row,item,x,y,w,h):
+      
+
+        self.paintItem_text(col,painter,row,"%6.3f"%(item/100.0 ),x,y,w,h)
+  
         
 if __name__ == "__main__":
 

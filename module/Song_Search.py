@@ -63,6 +63,7 @@ class SearchObject_Controller(object):
                      'comment'       : EnumSong.COMMENT, \
                      'day'           : EnumSong.DATESTAMP, \
                      'dateval'       : EnumSong.DATEVALUE, \
+                     'eq'            : EnumSong.EQUILIZER, \
                      'exif'          : EnumSong.EXIF, \
                      'size'          : EnumSong.FILESIZE, \
                      'freq'          : EnumSong.FREQUENCY, \
@@ -79,6 +80,7 @@ class SearchObject_Controller(object):
                      'skipcount'     : EnumSong.SKIPCOUNT, \
                      'id'            : EnumSong.SONGID, \
                      'index'         : EnumSong.SONGINDEX, \
+                     'score'         : EnumSong.SCORE, \
                      'spec'          : EnumSong.SPECIAL, \
                      'dateeu'        : EnumSong.SPEC_DATEEU, \
                      'dateus'        : EnumSong.SPEC_DATEUS, \

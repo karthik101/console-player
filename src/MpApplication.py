@@ -727,6 +727,7 @@ def init_preMainWindow():
     MpGlobal.Player = MediaManager(MpGlobal.AudioPlayer)
     MpGlobal.EventHandler = EventManager();
     
+    # set the audio output mode to stereo or mono
     MpGlobal.AudioPlayer.DSP_SETTINGS["STEREO2MONO"] = Settings.OUTPUTMODE
     
     # ######################################

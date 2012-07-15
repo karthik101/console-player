@@ -93,6 +93,8 @@ class EnumSong(object):
         elif exif == EnumSong.DATEADDEDS: return "DATEADDEDS";
         elif exif == EnumSong.DATEADDED : return "DATEADDED";
         elif exif == EnumSong.YEAR      : return "YEAR";
+        elif exif == EnumSong.EQUILIZER : return "EQUILIZER";
+        elif exif == EnumSong.SCORE     : return "SCORE";
         
         elif exif == EnumSong.BANISH    : return "BANNED";
         
@@ -129,6 +131,9 @@ class EnumSong(object):
         elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
         elif exif == "DATEADDED" : return EnumSong.DATEADDED
         elif exif == "YEAR"      : return EnumSong.YEAR
+        elif exif == "SCORE"     : return EnumSong.SCORE
+        elif exif == "EQUILIZER" : return EnumSong.EQUILIZER
+        elif exif == "EQ"        : return EnumSong.EQUILIZER
         
         elif exif == "BANNED"      : return EnumSong.BANNISH
         
@@ -166,7 +171,7 @@ class Song(list):
             
             pass a repr string and a date format to reconstruct a saved song.
             
-            of pass in a Song, and an exact copy will be made.
+            or pass in a Song, and an exact copy will be made.
         """
         super(Song,self).__init__([0]*EnumSong.SONGDATASIZE)
         self.id = hex64(0);
@@ -564,48 +569,51 @@ class Song(list):
         self.update();
     def calcBaseScore(self):
         """
-s=1000
-t=255
-MpGlobal.Hist = [0]*(s+1)
-MpGlobal.Histpcnt = [0]*(t+1)
+        s=1000
+        t=255
+        MpGlobal.Hist = [0]*(s+1)
+        MpGlobal.Histpcnt = [0]*(t+1)
 
-for song in MpGlobal.Player.library:
-    delta = DateTime().daysElapsedUTC(song[EnumSong.DATEADDED],DateTime.now())
-    song[EnumSong.SPECIAL]  = int((s)*(float(song[EnumSong.PLAYCOUNT])/delta))
+        for song in MpGlobal.Player.library:
+            delta = DateTime().daysElapsedUTC(song[EnumSong.DATEADDED],DateTime.now())
+            song[EnumSong.SPECIAL]  = int((s)*(float(song[EnumSong.PLAYCOUNT])/delta))
 
-    MpGlobal.Hist    [ min(s,song[ EnumSong.SPECIAL   ] )] += 1
-    MpGlobal.Histpcnt[ min(t,song[ EnumSong.PLAYCOUNT ] )] += 1
+            MpGlobal.Hist    [ min(s,song[ EnumSong.SPECIAL   ] )] += 1
+            MpGlobal.Histpcnt[ min(t,song[ EnumSong.PLAYCOUNT ] )] += 1
 
-l = len(MpGlobal.Player.library)
+        l = len(MpGlobal.Player.library)
 
-for song in MpGlobal.Player.library:
-    m = min(s,song[ EnumSong.SPECIAL   ] );
-    n = min(t,song[ EnumSong.PLAYCOUNT ] );
+        for song in MpGlobal.Player.library:
+            m = min(s,song[ EnumSong.SPECIAL   ] );
+            n = min(t,song[ EnumSong.PLAYCOUNT ] );
 
-    _m = float(sum(MpGlobal.Hist    [:m]));
-    _n = float(sum(MpGlobal.Histpcnt[:n]));
- 
-    _d = int( 1000*(_m/l) )
-    _p = int( 1000*(_n/l) )
-    
-    song[ EnumSong.SCORE ] = int(.25*_p+.75*_d)
+            _m = float(sum(MpGlobal.Hist    [:m]));
+            _n = float(sum(MpGlobal.Histpcnt[:n]));
+         
+            _d = int( 1000*(_m/l) )
+            _p = int( 1000*(_n/l) )
+            
+            song[ EnumSong.SCORE ] = int(.25*_p+.75*_d)
 
         """
+        MAX_SCORE = 9999
         delta = DateTime().daysElapsedUTC(self[EnumSong.DATEADDED],DateTime.now())
-        p = int(10000*(float(self[EnumSong.PLAYCOUNT])/delta))
+        p = int(MAX_SCORE*(float(self[EnumSong.PLAYCOUNT])/delta))
         _f = float(9999 if self[EnumSong.FREQUENCY] == 0 else self[EnumSong.FREQUENCY])
-        f = int( 1000*(1/_f)*7 ) # 7 scales such that once a week is really good
+        f = int( MAX_SCORE*(1/_f)*7 ) # 7 scales such that once a week is really good
         
-        self.basescore = (min(999,f) + min(999,p)) / 2
+        self.basescore = (min(MAX_SCORE,f) + min(MAX_SCORE,p)) / 2
         self[EnumSong.SPECIAL]   = self.basescore
         
         return self.basescore
         
     def calcScore(self,hist=None):
+        MAX_SCORE = 10000
+        
         if hist != None:
             p = float( hist[self.basescore] )
             s = hist[-1]
-            self[ EnumSong.SCORE ] = int( 1000*( p / s ) )
+            self[ EnumSong.SCORE ] = int( MAX_SCORE*( p / s ) )
         else:
             self[ EnumSong.SCORE ] = 0
         
