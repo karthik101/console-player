@@ -8,7 +8,7 @@
 # #########################################################
 import os
 import sys
-
+isPosix = os.name == 'posix'
 
 
 import struct
@@ -18,11 +18,11 @@ from Song_Object import *
 
 from SystemPathMethods import *
 from SystemDateTime import DateTime
-try:
-    import pylzma
-except:
-    print "cannot import pylzma"
-    pylzma = None
+#try:
+#    import pylzma
+#except:
+#    print "cannot import pylzma"
+pylzma = None
 # ##############################
 #  Library save formats
 def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):

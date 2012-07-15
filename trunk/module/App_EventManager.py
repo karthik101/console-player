@@ -74,7 +74,11 @@ class EventManager(QThread):
             a clean-up script.
         """
         self.eventDict[fptr] = args;
-        
+    
+    def force_clear(self):
+        """ remove all events from the queue
+        """
+    
     def run(self):
 
         while self.eventQueue.qsize() > 0 :

@@ -41,6 +41,9 @@
 
 
 import os.path
+import os,sys
+isPosix = os.name == 'posix'
+
 from PyQt4.QtCore import *
 
 from random import *
@@ -74,7 +77,8 @@ MP_UNKOWN = 8
 from audio_baseController import *
 from audio_phonon import *
 from audio_vlc import *
-from audio_BASS import *
+if not isPosix:
+    from audio_BASS import *
 
 try:
     import vlc
@@ -113,7 +117,8 @@ def getNewAudioPlayer( plugin_path ):
     #return GenericMediaObject();
 
     debugPreboot("BASS   : Initalizing");
-    return PyBASSPlayer(plugin_path);
+    if not isPosix:
+        return PyBASSPlayer(plugin_path);
     
     if __IMPORT_VLC__:
         debugPreboot("VLC   : Initalizing");

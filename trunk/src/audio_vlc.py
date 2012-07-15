@@ -15,6 +15,8 @@
 from audio_baseController import *
 import os.path
 
+from Song_Object import *
+
 from SystemPathMethods import *
 
 try:
@@ -221,4 +223,6 @@ else:
             return self.volume
          
 
+         
+from MpGlobalDefines import *
       
