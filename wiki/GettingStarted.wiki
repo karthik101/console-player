@@ -17,6 +17,7 @@ Console Player is programmed with Python 2.7 (32 bit) and PyQt version 4.8.5. VL
 == Linux ==
   * sudo apt-get install python-qt4
   * sudo apt-get install python-mutagen
+  * sudo apt-get install vlc
 
 == Additional ==
   * [http://www.videolan.org/ VLC] - Using the latest version will prevent playback  issues
