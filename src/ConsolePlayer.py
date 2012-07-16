@@ -164,7 +164,14 @@ try:
     # extract any files required
     # ###################################### 
     MpStartUp.startUpCheck(install=__install); 
-
+    
+    # show a splash screen
+    icopath = os.path.join(MpGlobal.installPath,"icon.png")
+    print icopath
+    splash = QSplashScreen(QPixmap(icopath));
+    splash.show();
+    MpGlobal.Application.processEvents();
+    
     if __debug: print "Set Up Check Done\n"  
 
     # ######################################
@@ -175,6 +182,7 @@ try:
     init_preMainWindow()        #code to run before MainWindow.__init__()
     MpGlobal.Window = MainWindow(MpGlobal.NAME)
     MpGlobal.Window.show()
+    splash.finish(MpGlobal.Window)
     init_postMainWindow()       #code to run after  MainWindow.__init__(), AND after show()
 
     if __debug: print "Main Loop Starting..."    
