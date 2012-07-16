@@ -1,5 +1,5 @@
 #!/usr/bin/python -O
-__VERSION__ = "0.6.0.108"           
+__VERSION__ = "0.6.0.112"           
 #######################################
 # do not edit anything above this line unless you 
 # know what you are doing
