@@ -48,6 +48,8 @@ class SettingsContainer(object):
         self.FAVORITE_GENRE  = []   # array of unicode genre names
         self.LIB_COL_ID = []
         self.LIB_COL_ACTIVE=-1;
+        self.LIB_USE_MULTI=True
+        self.LIB_MULTI = ["music","avril"]
 
         self.SEARCH_FIELD_ALBUM     = "alb"
         self.SEARCH_FIELD_ARTIST    = "art"

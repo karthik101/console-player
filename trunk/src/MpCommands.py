@@ -666,7 +666,8 @@ def cmd_load(input):
 
     #if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
     #TODO CHECK IF ANYPLAYLIST TABS ARE OPEN AND ISSUE WARNING TO CLOSE
-    MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
+    #MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
+    MpGlobal.Player.library = music_library_load()
 
 
     processTextInput('plload')
@@ -1442,7 +1443,8 @@ def cmd_libsave(input):
         the location and format is dependant on several settings.
     """
     type=0;
-    musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
+    #musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
+    music_library_save()
     debug( len(MpGlobal.Player.library))
     return COMMAND.VALID
     
@@ -1473,7 +1475,8 @@ def cmd_libload(input):
         MpGlobal.updatePaths()
         
     if os.path.exists(MpGlobal.FILEPATH_LIBRARY):
-        MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
+        #MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY);
+        MpGlobal.Player.library = music_library_load()
         print  "Found %d Songs."%len(MpGlobal.Player.library)
         # trash playlist editors
         # TODO CLOSE ALL PL EDITORS

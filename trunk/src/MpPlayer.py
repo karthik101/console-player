@@ -403,7 +403,8 @@ class MediaManager(object):
             MpGlobal.INPUT_PLAY_GOTO_ZERO == False:
             #if isPosix: print "   . CREATE NEW LIST FROM INDEX"  
             
-            musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,self.library,Settings.SAVE_FORMAT|1);
+            #musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,self.library,Settings.SAVE_FORMAT|1);
+            music_library_save()
             
             num = MpGlobal.Window.btn_spn.value()
             selectByNumber(num) # set selection to the numbered option option
