@@ -753,7 +753,8 @@ def init_preMainWindow():
         initHook()
         debugPreboot("KeyBoard Hook Enabled")
     
-    MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
+    #MpGlobal.Player.library = musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
+    MpGlobal.Player.library = music_library_load()
 
     #Settings.PLAYER_LAST_INDEX = 
     MpGlobal.Player.playList = playListLoad(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.library)

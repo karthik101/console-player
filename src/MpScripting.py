@@ -257,6 +257,33 @@ def getStatistics():
 # Music Operations
 # ##############################################     
 
+def music_library_save():
+    """
+        save the currently loaded library
+        this file is intended to cover the most usual case of loading the library
+        for this reason it takes no arguments
+    """
+    lib=MpGlobal.Player.library
+    if Settings.LIB_USE_MULTI:
+        basepath = fileGetPath(MpGlobal.FILEPATH_LIBRARY)
+        musicMergeSave_LIBZ(basepath,lib,Settings.SAVE_FORMAT|1);
+    else:
+        musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,lib,Settings.SAVE_FORMAT|1);
+        
+def music_library_load():
+    """
+        return a library of music
+        this file is intended to cover the most usual case of loading the library
+        for this reason it takes no arguments
+    """
+    print "libload"
+    print Settings.FILE_LOCATION_LIBRARY
+    if Settings.LIB_USE_MULTI:
+        basepath = fileGetPath(MpGlobal.FILEPATH_LIBRARY)
+        return musicMergeLoad_LIBZ(basepath,Settings.LIB_MULTI)
+    else:
+        return musicLoad_LIBZ(MpGlobal.FILEPATH_LIBRARY)
+    
 def songGetAlbumIndex(song):
     """
         aggregate function to determine the album index for a song.
@@ -557,7 +584,9 @@ def On_Close_Save_Data(force = False):
     if MpGlobal.UNSAVED_DATA or force == True:
         
         
-        musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
+        #musicSave_LIBZ(MpGlobal.FILEPATH_LIBRARY,MpGlobal.Player.library,Settings.SAVE_FORMAT|1);
+        music_library_save()
+        
         playListSave(MpGlobal.FILEPATH_PLAYLIST_CURRENT,MpGlobal.Player.playList,Settings.SAVE_FORMAT,MpGlobal.Player.CurrentIndex);
         
         MpGlobal.UNSAVED_DATA = False
