@@ -146,6 +146,13 @@ try:
     MpGlobal.Application.setApplicationName("Console Player")
     MpGlobal.Application.setQuitOnLastWindowClosed(True)  
 
+    # show a splash screen
+    import Mp_splashscreen
+    pm = Mp_splashscreen.getPixMap()
+    splash = QSplashScreen(pm);
+    splash.show();
+    MpGlobal.Application.processEvents();
+    
     if __debug: print "Application Created %s"%MpGlobal.Application    
 
     # ######################################
@@ -165,12 +172,7 @@ try:
     # ###################################### 
     MpStartUp.startUpCheck(install=__install); 
     
-    # show a splash screen
-    icopath = os.path.join(MpGlobal.installPath,"icon.png")
-    print icopath
-    splash = QSplashScreen(QPixmap(icopath));
-    splash.show();
-    MpGlobal.Application.processEvents();
+    
     
     if __debug: print "Set Up Check Done\n"  
 
