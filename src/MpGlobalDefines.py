@@ -336,7 +336,8 @@ class MusicContainer(EnumSong):
                      'ttl'           : EnumSong.TITLE, \
                      'tit'           : EnumSong.TITLE, \
                      'title'         : EnumSong.TITLE, \
-                     'year'          : EnumSong.YEAR
+                     'year'          : EnumSong.YEAR, \
+                     'lib'           : EnumSong.SOURCELIB
                     }
 
     def expandExifMacro(self,string,sigil,song):

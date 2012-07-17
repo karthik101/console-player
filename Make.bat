@@ -1,7 +1,9 @@
 @echo off
+
 cd %~dp0src
+
 ::print os.environ['PYTHONPATH']
-print %PYTHONPATH%
+::echo %PYTHONPATH%
 ::set PYTHONPATH=%PYTHONPATH%;C:DropboxScriptingPyModuleGlobalModulessrc
 
 python ./ConsolePlayer.py -Wonce -debug -devmode
