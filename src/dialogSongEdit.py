@@ -22,19 +22,21 @@ class SongEditWindow(QDialog):
     multiList = []    
         
     art = 0 # string
-    ttl = 1 # string
-    abm = 2 # string
-    gen = 3 # string
-    com = 4 # string
-    pth = 5 # string
-    rte = 6 # int
-    pct = 7 # int
-    sct = 8 # int
-    frq = 9 # int
-    ind =10 # int
-    yer =11 # int
-    dte =12 # date
-    add =13 # date
+    cmp = 1 # string
+    ttl = 2 # string
+    abm = 3 # string
+    gen = 4 # string
+    lng = 5 # string
+    com = 6 # string
+    pth = 7 # string
+    rte = 8 # int
+    pct = 9 # int
+    sct =10 # int
+    frq =11 # int
+    ind =12 # int
+    yer =13 # int
+    dte =14 # date
+    add =15 # date
     
     
 
@@ -64,9 +66,11 @@ class SongEditWindow(QDialog):
         self.cbox.addItem("Undo One Playcount")
         
         self.newMultiTextEdit("Artist")
+        self.newMultiTextEdit("Composer")
         self.newMultiTextEdit("Title")
         self.newMultiTextEdit("Album")
         self.newMultiTextEdit("Genre")
+        self.newMultiTextEdit("Language")
         self.newMultiTextEdit("Comment")
         self.newTextEdit("Path")
         self.newIntEdit("Rating",-MpMusic.MAX_RATING,MpMusic.MAX_RATING)
@@ -137,9 +141,11 @@ class SongEditWindow(QDialog):
     def setSingleData(self,data):
         #print self.editList[0]
         self.editList[self.art][1].addItem(data[0][MpMusic.ARTIST])
+        self.editList[self.cmp][1].addItem(data[0][MpMusic.COMPOSER])
         self.editList[self.ttl][1].addItem(data[0][MpMusic.TITLE])
         self.editList[self.abm][1].addItem(data[0][MpMusic.ALBUM])
         self.editList[self.gen][1].addItem(data[0][MpMusic.GENRE])
+        self.editList[self.lng][1].addItem(data[0][MpMusic.LANG])
         self.editList[self.com][1].addItem(data[0][MpMusic.COMMENT])
         self.editList[self.rte][1].setValue(data[0][MpMusic.RATING])
         self.editList[self.pct][1].setValue(data[0][MpMusic.PLAYCOUNT])
@@ -157,11 +163,13 @@ class SongEditWindow(QDialog):
     def setMultiData(self,data):
         #print self.editList[0]
         
-        art = [ data[0][MpMusic.ARTIST ], ]
-        ttl = [ data[0][MpMusic.TITLE  ], ]
-        abm = [ data[0][MpMusic.ALBUM  ], ]
-        gen = [ data[0][MpMusic.GENRE  ], ]
-        com = [ data[0][MpMusic.COMMENT], ]
+        art = [ data[0][MpMusic.ARTIST  ], ]
+        cmp = [ data[0][MpMusic.COMPOSER], ]
+        ttl = [ data[0][MpMusic.TITLE   ], ]
+        abm = [ data[0][MpMusic.ALBUM   ], ]
+        gen = [ data[0][MpMusic.GENRE   ], ]
+        lng = [ data[0][MpMusic.LANG    ], ]
+        com = [ data[0][MpMusic.COMMENT ], ]
         
         
         dte = data[0][MpMusic.DATESTAMP]
@@ -177,12 +185,16 @@ class SongEditWindow(QDialog):
         for x in range(1,len(data)):
             if data[x][MpMusic.ARTIST] not in art:
                 art.append(data[x][MpMusic.ARTIST])
+            if data[x][MpMusic.COMPOSER] not in cmp:
+                cmp.append(data[x][MpMusic.COMPOSER])
             if data[x][MpMusic.TITLE] not in ttl:
                 ttl.append(data[x][MpMusic.TITLE])
             if data[x][MpMusic.ALBUM] not in abm:
                 abm.append(data[x][MpMusic.ALBUM])
             if data[x][MpMusic.GENRE] not in gen:
                 gen.append(data[x][MpMusic.GENRE]) 
+            if data[x][MpMusic.LANG] not in lng:
+                lng.append(data[x][MpMusic.LANG])
             if data[x][MpMusic.COMMENT] not in com:
                 com.append(data[x][MpMusic.COMMENT])
             if pth != fileGetPath(data[x][MpMusic.PATH]).lower() :
@@ -194,12 +206,16 @@ class SongEditWindow(QDialog):
             
         if len(art) > 1:
             art = ["<Multiple Values>",] + art
+        if len(cmp) > 1:
+            cmp = ["<Multiple Values>",] + cmp
         if len(ttl) > 1:
             ttl = ["<Multiple Values>",] + ttl
         if len(abm) > 1:
             abm = ["<Multiple Values>",] + abm
         if len(gen) > 1:
             gen = ["<Multiple Values>",] + gen
+        if len(lng) > 1:
+            lng = ["<Multiple Values>",] + lng
         if len(com) > 1:
             com = ["<Multiple Values>",] + com
             
@@ -210,9 +226,11 @@ class SongEditWindow(QDialog):
             self.editList[self.pth][2].setDisabled(True)
             
         self.editList[self.art][1].addItems(art)
+        self.editList[self.cmp][1].addItems(cmp)
         self.editList[self.ttl][1].addItems(ttl)
         self.editList[self.abm][1].addItems(abm)
         self.editList[self.gen][1].addItems(gen)
+        self.editList[self.lng][1].addItems(lng)
         self.editList[self.com][1].addItems(com)
         
         self.editList[self.pth][1].setText(pth)
@@ -238,6 +256,11 @@ class SongEditWindow(QDialog):
             if self.editList[self.art][2].isChecked():
                 song[MpMusic.ARTIST] = unicode(self.editList[self.art][1].currentText())
                 
+            if self.editList[self.cmp][2].isChecked():
+                print unicode(self.editList[self.cmp][1].currentText())
+                print self.cmp,self.lng
+                song[MpMusic.COMPOSER] = unicode(self.editList[self.cmp][1].currentText())
+                
             if self.editList[self.ttl][2].isChecked():
                 song[MpMusic.TITLE] = unicode(self.editList[self.ttl][1].currentText())
                 
@@ -246,7 +269,10 @@ class SongEditWindow(QDialog):
                 
             if self.editList[self.gen][2].isChecked():
                 song[MpMusic.GENRE] = unicode(self.editList[self.gen][1].currentText())
-            
+                
+            if self.editList[self.lng][2].isChecked():
+                song[MpMusic.LANG] = unicode(self.editList[self.lng][1].currentText())
+                
             if self.editList[self.com][2].isChecked():
                 song[MpMusic.COMMENT] = unicode(self.editList[self.com][1].currentText())
             

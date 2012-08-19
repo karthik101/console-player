@@ -42,10 +42,12 @@ def getPixMap():
 if __name__ == "__main__":
     img = "./icon.png"
     app = QApplication(sys.argv)
+    # turn the image into a string buffer
     strbuf = __file2strbuf(img)
     print strbuf
+    # turn the string buffer into byte array
     buf = __strbuf2buf(__getIcon_strbuf())
-    #
+    # save the buffer as a png file
     pm = QPixmap()
     pm.loadFromData(buf,"png")
     pm.save("./temp-icon.png")

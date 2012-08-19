@@ -280,7 +280,6 @@ def UnixPathCorrect(path):
             temp = R[i].lower();
             for item in S:
                 if item.lower() == temp:
-                    testpath 
                     newpath = os.path.join(newpath,item)
                     break;
             else:
@@ -390,8 +389,8 @@ if isPosix: # def systemDriveList
         for path in R:
             fpath = os.path.join('/media',path,''); # full file path to drive list
             if os.path.isdir(fpath):
-                S.append(fpath);    # append the directo
-        return S + ['/home/','/home/Music/','/']
+                S.append(fpath);    
+        return S + ['/home/Music/','/']
 else:
     def systemDriveList():
         return  ['%s:\\' % d for d in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' if os.path.exists('%s:' % d)]

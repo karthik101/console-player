@@ -61,6 +61,9 @@ class SearchObject_Controller(object):
                      'bitrate'       : EnumSong.BITRATE, \
                      'comm'          : EnumSong.COMMENT, \
                      'comment'       : EnumSong.COMMENT, \
+                     'lang'          : EnumSong.LANG, \
+                     'language'      : EnumSong.LANG, \
+                     'composer'      : EnumSong.COMPOSER, \
                      'day'           : EnumSong.DATESTAMP, \
                      'dateval'       : EnumSong.DATEVALUE, \
                      'eq'            : EnumSong.EQUILIZER, \
@@ -90,7 +93,8 @@ class SearchObject_Controller(object):
                      'ttl'           : EnumSong.TITLE, \
                      'tit'           : EnumSong.TITLE, \
                      'title'         : EnumSong.TITLE, \
-                     'year'          : EnumSong.YEAR
+                     'year'          : EnumSong.YEAR, \
+                     'lib'           : EnumSong.SOURCELIB
                     }
     
     @staticmethod
