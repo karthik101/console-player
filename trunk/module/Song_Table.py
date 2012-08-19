@@ -86,7 +86,7 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn(self,EnumSong.GENRE    ,"Genre") )
         self.columns[-1].setWidthByCharCount(15)
         self.columns.append( TableColumn(self,EnumSong.FREQUENCY,"Frequency") )
-        self.columns[-1].setShortName("freq")
+        self.columns[-1].setShortName("Freq")
         self.columns[-1].setWidthByCharCount(4)
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns.append( TableColumn_DateStamp(self,EnumSong.DATESTAMP,"Last Played") )
@@ -130,6 +130,14 @@ class SongTable(LargeTable):
         self.columns[-1].setWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns[-1].setDefaultSortReversed(True)
+        self.columns.append( TableColumn(self,EnumSong.LANG    ,"Language") )
+        self.columns[-1].setShortName("LANG")
+        self.columns[-1].setWidthByCharCount(15)
+        self.columns.append( TableColumn(self,EnumSong.COMPOSER    ,"Composer") )
+        self.columns[-1].setWidthByCharCount(15)
+        self.columns.append( TableColumn(self,EnumSong.SOURCELIB,"Source Library") )
+        self.columns[-1].setShortName("Src")
+        self.columns[-1].setWidthByCharCount(15)
         
         self.columns_setDefaultOrder( self.columns_getOrder() )
         

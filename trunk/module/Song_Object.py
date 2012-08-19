@@ -25,23 +25,25 @@ class EnumSong(object):
     DATESTAMP =  6;    # Stamp in passive order from the last time this was played. YYYY/MM/DD HH:MM
     COMMENT   =  7;    # user given comment
     DATEADDEDS=  8;    # string form date the song was added to the library
-    
-    RATING    =  9;    # Song Rating
-    LENGTH    = 10;    # total length of the song in -M:SS
-    SONGINDEX = 11;    # Album Index
-    PLAYCOUNT = 12;    # Total count of the number of times this song has played
-    SKIPCOUNT = 13;    # Number of times user has clicked next for this song.
-    FILESIZE  = 14;    # File Size in KB
-    BITRATE   = 15;    # Kb per s
-    FREQUENCY = 16;    # running waited average of play frequency ( a avg value of time between playings
-    DATEVALUE = 17;    # DATESTAMP, but as INT value ( determined while loading songs
-    DATEADDED = 18
-    YEAR      = 19;    # year the song was made.
-    EQUILIZER = 20;    # 0..32767 (15bit) value as average volume for 0=0% quite and 32767=100%
-    SCORE     = 21
+    LANG      =  9;    # song language
+    COMPOSER  = 10;    # well i won't be using this
+    SOURCELIB = 11;    # library song was loaded from. Should be set by the library load function
+    RATING    = 12;    # Song Rating
+    LENGTH    = 13;    # total length of the song in -M:SS
+    SONGINDEX = 14;    # Album Index
+    PLAYCOUNT = 15;    # Total count of the number of times this song has played
+    SKIPCOUNT = 16;    # Number of times user has clicked next for this song.
+    FILESIZE  = 17;    # File Size in KB
+    BITRATE   = 18;    # Kb per s
+    FREQUENCY = 19;    # running waited average of play frequency ( a avg value of time between playings
+    DATEVALUE = 20;    # DATESTAMP, but as INT value ( determined while loading songs
+    DATEADDED = 21;
+    YEAR      = 22;    # year the song was made.
+    EQUILIZER = 23;    # 0..32767 (15bit) value as average volume for 0=0% quite and 32767=100%
+    SCORE     = 24
     # #####
-    SPECIAL   = 22; # undefined boolean index
-    SELECTED  = 23; # Boolean, selected or not
+    SPECIAL   = 25; # undefined boolean index
+    SELECTED  = 26; # Boolean, selected or not
     
     # ########################################
     # Other Enumerations
@@ -77,6 +79,8 @@ class EnumSong(object):
         elif exif == EnumSong.GENRE     : return "GENRE";
         elif exif == EnumSong.DATESTAMP : return "DATESTAMP";
         elif exif == EnumSong.COMMENT   : return "COMMENT";
+        elif exif == EnumSong.LANG      : return "LANGUAGE";
+        elif exif == EnumSong.COMPOSER  : return "COMPOSER";
         elif exif == EnumSong.RATING    : return "RATING";
         elif exif == EnumSong.LENGTH    : return "LENGTH";
         elif exif == EnumSong.SONGINDEX : return "SONGINDEX";
@@ -89,6 +93,7 @@ class EnumSong(object):
         elif exif == EnumSong.SPECIAL   : return "SPECIAL";
         elif exif == EnumSong.SELECTED  : return "SELECTED";
         elif exif == EnumSong.SONGID    : return "ID#";
+        elif exif == EnumSong.SOURCELIB : return "SOURCELIB";
         
         elif exif == EnumSong.DATEADDEDS: return "DATEADDEDS";
         elif exif == EnumSong.DATEADDED : return "DATEADDED";
@@ -115,6 +120,8 @@ class EnumSong(object):
         elif exif == "GENRE"     : return EnumSong.GENRE
         elif exif == "DATESTAMP" : return EnumSong.DATESTAMP
         elif exif == "COMMENT"   : return EnumSong.COMMENT
+        elif exif == "LANGUAGE"  : return EnumSong.LANG
+        elif exif == "COMPOSER"  : return EnumSong.COMPOSER
         elif exif == "RATING"    : return EnumSong.RATING
         elif exif == "LENGTH"    : return EnumSong.LENGTH
         elif exif == "SONGINDEX" : return EnumSong.SONGINDEX
@@ -127,6 +134,7 @@ class EnumSong(object):
         elif exif == "SPECIAL"   : return EnumSong.SPECIAL
         elif exif == "SELECTED"  : return EnumSong.SELECTED
         elif exif == "ID#"       : return EnumSong.SONGID
+        elif exif == "SOURCELIB" : return EnumSong.SOURCELIB
                                          
         elif exif == "DATEADDEDS": return EnumSong.DATEADDEDS
         elif exif == "DATEADDED" : return EnumSong.DATEADDED
@@ -148,6 +156,8 @@ class Song(list):
                      EnumSong.ALBUM,
                      EnumSong.GENRE,
                      EnumSong.COMMENT,
+                     EnumSong.COMPOSER,
+                     EnumSong.LANG,
                    ];
     __repr_num__ = [ EnumSong.RATING,
                      EnumSong.LENGTH,
@@ -164,7 +174,7 @@ class Song(list):
                      EnumSong.SCORE,
                    ];        
             
-    def __init__(self,varient="",DRIVELIST=[],DATEFMT="%Y/%m/%d %H:%M"):
+    def __init__(self,varient="",DRIVELIST=[],SOURCE="music",DATEFMT="%Y/%m/%d %H:%M"):
         """
             Provides 4 different ways to make a new song
             the default, provide only a path and a container will be created with dummy values
@@ -180,6 +190,8 @@ class Song(list):
         self.basescore = 0
         self[EnumSong.EQUILIZER] = 0#EnumSong.EQ_MID_POINT 
         self[EnumSong.SCORE] = 0
+        self[EnumSong.SOURCELIB] = SOURCE
+        
         
         if type(varient) == Song:
             # produce a copy of the song.
@@ -209,6 +221,7 @@ class Song(list):
             self[EnumSong.YEAR ]     = varient[EnumSong.YEAR]
             self[EnumSong.EQUILIZER ]= varient[EnumSong.EQUILIZER]
             self[EnumSong.SCORE     ]= varient[EnumSong.SCORE]
+            self[EnumSong.SOURCELIB ]= varient[EnumSong.SOURCELIB]
             return;
             
         elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
@@ -239,6 +252,7 @@ class Song(list):
         self[EnumSong.DATEADDEDS]= ""
         self[EnumSong.DATEADDED] = 0
         self[EnumSong.YEAR ]     = 0
+        
         
     def __str__(self):
         #uni = u"[%s] %s - %s"%(self.id,self[EnumSong.ARTIST],self[EnumSong.TITLE])

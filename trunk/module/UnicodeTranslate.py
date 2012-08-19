@@ -1,5 +1,7 @@
-
+#! python $this
 import re
+
+_consonants_ = set(__import__('string').ascii_lowercase) - set("aeiou")
 
 class Translate(object):
     """ Use this object to convert a user input string from plain ascii
@@ -170,6 +172,10 @@ class Translate(object):
         # substring as ascii
         if substr in Translate.Hiragana:
             return Translate.Hiragana[substr]
+        if substr == "n": #TODO this special case must be tested, added 7/29/2012
+            return Translate.Katakana['nn']
+        if substr in _consonants_: #TODO this special case must be tested, added 7/29/2012 
+            return Translate.Katakana['dd']
         return u""
     
     def substringToKatakana(self,substr): 
@@ -178,6 +184,11 @@ class Translate(object):
         # substring as ascii
         if substr in Translate.Katakana:
             return Translate.Katakana[substr]
+        if substr == "n": #TODO this special case must be tested, added 7/29/2012 
+            return Translate.Katakana['nn']
+        if substr in _consonants_: #TODO this special case must be tested, added 7/29/2012 
+            return Translate.Katakana['dd']
+            
         return u""
         
     def unicharToHiragana(self,unichar):
@@ -461,18 +472,29 @@ def init_KanaTables():
 (Translate.Hiragana,Translate.Katakana) = init_KanaTables()
 
 if __name__ =="__main__":
-    print "the results of this file cannot be fully realized on windows"
-    print "the console does not allow unicode output"
+    #print "the results of this file cannot be fully realized on windows"
+    #print "the console does not allow unicode output"
     string = "Check out ;;sutereoponi-, A great J-Rock Band"
-    obj = Translate(string)
-    # print the original string
-    print obj.ostring
-    #unicode-escape prevents errors on printing to the screen
-    # print the converted string
-    print obj.nstring.encode('unicode-escape') 
+    # obj = Translate(string)
+    # # print the original string
+    # print obj.ostring
+    # #unicode-escape prevents errors on printing to the screen
+    # # print the converted string
+    # print obj.nstring.encode('unicode-escape') 
+    # 
+    # obj2 = Translate(obj.nstring)
+    # # rstring strips all unicode back to english characters
+    # print obj.rstring
     
-    obj2 = Translate(obj.nstring)
-    # rstring strips all unicode back to english characters
-    print obj.rstring
+    o = Translate(";;ken")
+    print o.ostring
+    print o.nstring.encode('unicode-escape') 
     
+    o = Translate(";;mettsu")
+    print o.ostring
+    print o.nstring.encode('unicode-escape') 
+    
+    o = Translate(";;meddtsu")
+    print o.ostring
+    print o.nstring.encode('unicode-escape') 
     

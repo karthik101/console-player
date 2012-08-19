@@ -176,6 +176,7 @@ class SyncSongs(QDialog):
         #obj = None # obj is the list of objects in editorTabs
         self.data = []
         pl_name = self.cbox.itemText(index)
+        self.playlist_name = pl_name
         for i in range(MpGlobal.Window.tabMain.count()):
         
             widget = MpGlobal.Window.tabMain.widget( i )
@@ -214,6 +215,9 @@ class SyncSongs(QDialog):
         R = drives+sub1#+sub2
         
         def rem(R,x):
+            #for p in R:
+            #    if p.lower().startswith(x.lower())
+            #        R.
             if x in R:
                 R.remove(x);
             if x.lower() in R:
@@ -307,7 +311,7 @@ class SyncFiles(QThread):
     flag_gather = True
     flag_delete = True
     
-    illegal_diretory = False # if the target directory is illegal
+    illegal_directory = False # if the target directory is illegal
     
     def __init__(self,parent,dir):
         super(SyncFiles, self).__init__()
@@ -320,7 +324,7 @@ class SyncFiles(QThread):
             s=fileGetDrive(self.parent.data[0][MpMusic.PATH]) # source drive
             d=fileGetDrive(dir) # destination drive
             if s==d :
-                self.illegal_diretory = True
+                self.illegal_directory = True
                 
     def showWarningMessage(self,message,btn1="0k",btn2=""):
         """
@@ -615,7 +619,10 @@ class SyncFiles(QThread):
         player_path = os.path.join(self.dir[:2]+"\\","Player","user","");
 
         if (os.path.exists(player_path)):
-            musicSave_LIBZ(player_path+"music.libz",lib,typ=2)
+            musicSave_LIBZ(os.path.join(player_path,"music.libz"),lib,typ=2)
+        else:
+            _path = os.path.join(self.dir,self.parent.playlist_name+".libz")
+            musicSave_LIBZ(path,lib,typ=2)
     
     def run(self): 
         # ###########################################################
@@ -623,7 +630,7 @@ class SyncFiles(QThread):
         
         
         
-        if not self.illegal_diretory:
+        if not self.illegal_directory:
         
             self.showWarningMessage("Sync Start")
             

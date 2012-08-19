@@ -25,6 +25,20 @@ from SystemDateTime import DateTime
 pylzma = None
 # ##############################
 #  Library save formats
+def musicMergeSave_LIBZ(basepath,songList,typ=1,block_size=128):
+    """
+        split the songlist into multipple lists
+    """
+    dict_libz = {}
+    for song in songList:
+        if song[EnumSong.SOURCELIB] not in dict_libz:
+            dict_libz.setdefault(song[EnumSong.SOURCELIB],list())
+        dict_libz[song[EnumSong.SOURCELIB]].append(song)
+        
+    for lib,lst in dict_libz.items():
+        filepath = os.path.join(basepath,lib+".libz")
+        musicSave_LIBZ(filepath,lst,typ,block_size)
+        
 def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):
     """
         save a new file, but first compress it using LZMA.
@@ -101,6 +115,23 @@ def musicSave_LIBZ(filepath,songList,typ=1,block_size=128):
     dt.timer_end();
     print "Saved %d songs to libz container in %s"%( len(songList), DateTime.formatTimeDeltams(dt.timedelta))
     
+def musicMergeLoad_LIBZ(basepath,lib_list):
+    """
+        load multiple libraries that all reside in the same directory.
+        use symlinks to move files into the same directory if need be
+        
+        basepath : typically the installPath, 
+        lib_list : a list containing the namepart (no ext) of a library to load
+                    e.g. ["music","alt"]
+                   
+    """
+    R=[]
+    for lib in lib_list:
+        filepath = os.path.join(basepath,lib+".libz")
+        print filepath
+        R+=musicLoad_LIBZ(filepath);
+    return R;
+        
 def musicLoad_LIBZ(filepath):
     """
         load the specified .libz file and return an array of songs.
@@ -115,7 +146,7 @@ def musicLoad_LIBZ(filepath):
         #   LVERABCD, where A,B,C,D are a little endian 32 bit integer with A=0x00
     """
     
-
+    srclib = fileGetName(filepath)
     if not os.path.exists(filepath):
         return [];
     
@@ -155,7 +186,7 @@ def musicLoad_LIBZ(filepath):
             if typ&1 == 0 and pylzma != None: #compression is only used when typ&1 == 0.
                 bin = pylzma.decompress(bin);
             
-            R += LIBZ_process_block( bin , typ, fmt, drivelist );
+            R += LIBZ_process_block( bin , typ, fmt, drivelist,srclib );
 
             bin = FILE.read(8);
             if bin:
@@ -285,7 +316,7 @@ def LIBZ_compress_to_file(src,dst):
    
 # ###########################   
    
-def LIBZ_process_block(data,typ,fmt, drivelist):
+def LIBZ_process_block(data,typ,fmt, drivelist,srclib):
     """
         given a decompressed block of songs return a list of songs.
     """
@@ -302,7 +333,7 @@ def LIBZ_process_block(data,typ,fmt, drivelist):
     while e != -1:  # this block of  code is skippped when the data only contains one song.
         repr = data[s:e-1]
         if len(repr) > 0:
-            R.append( Song( repr,DRIVELIST=drivelist ) );
+            R.append( Song( repr,DRIVELIST=drivelist,SOURCE=srclib ) );
             
         data=data[e+end_tag_len:]
         #s=len("<Song>")

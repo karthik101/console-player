@@ -1277,7 +1277,9 @@ def cmd_repl(input):
     try:
         MpGlobal.Window.txt_debug.setPlainText(text);
         debug( "\n%s\nREPL ignores anything after (and including) this line\n"%l)
-        
+        text = text.replace("LIBRARY","(MpGlobal.Player.library)")
+        text = text.replace("DISPLAY","(MpGlobal.Player.libDisplay)")
+        text = text.replace("PLAYLIST","(MpGlobal.Player.playList)")
         exec (text)
     except Exception as e:
         for i in e:

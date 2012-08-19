@@ -65,8 +65,10 @@ def history_load(filepath,lib):
         line = rf.readline()
         wf.write(line);
         
-        field = line[:line.find('#')].strip()
-        comment = line[line.find('#'):].strip()
+        #field = line[:line.find('#')].strip()
+        #comment = line[line.find('#'):].strip()
+        # i used to support comments in the file - no longer
+        field = line.strip();
         
         if len(field) > 0:
         
