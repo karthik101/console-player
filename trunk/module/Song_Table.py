@@ -1,8 +1,9 @@
+#! python $this
 from widgetLargeTable import *
 from Song_Object import *
 from SystemDateTime import DateTime
 
-
+from TableEditColumn import *
 
 class SongTable(LargeTable):
     """
@@ -68,12 +69,15 @@ class SongTable(LargeTable):
         self.columns[-1].setMinWidthByCharCount(2)
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns[-1].setDefaultSortReversed(True)
-        self.columns.append( TableColumn(self,EnumSong.ARTIST   ,"Artist") )
+        self.columns.append( EditColumn(self,EnumSong.ARTIST   ,"Artist") )
         self.columns[-1].setWidthByCharCount(30)
-        self.columns.append( TableColumn(self,EnumSong.TITLE    ,"Title") )
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
+        self.columns.append( EditColumn(self,EnumSong.TITLE    ,"Title") )
         self.columns[-1].setWidthByCharCount(30)
-        self.columns.append( TableColumn(self,EnumSong.ALBUM    ,"Album") )
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
+        self.columns.append( EditColumn(self,EnumSong.ALBUM    ,"Album") )
         self.columns[-1].setWidthByCharCount(20)
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
         self.columns.append( TableColumn(self,EnumSong.LENGTH   ,"Length") )
         self.columns[-1].setWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignRight)
@@ -83,8 +87,9 @@ class SongTable(LargeTable):
         self.columns[-1].setMinWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignCenter)
         self.columns[-1].setDefaultSortReversed(True)
-        self.columns.append( TableColumn(self,EnumSong.GENRE    ,"Genre") )
+        self.columns.append( EditColumn(self,EnumSong.GENRE    ,"Genre") )
         self.columns[-1].setWidthByCharCount(15)
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
         self.columns.append( TableColumn(self,EnumSong.FREQUENCY,"Frequency") )
         self.columns[-1].setShortName("Freq")
         self.columns[-1].setWidthByCharCount(4)
@@ -101,8 +106,9 @@ class SongTable(LargeTable):
         self.columns[-1].setWidthByCharCount(10)
         self.columns[-1].setDefaultSortReversed(True)
         self.columns[-1].setTextAlign(Qt.AlignCenter)
-        self.columns.append( TableColumn(self,EnumSong.COMMENT  ,"Comment") )
+        self.columns.append( EditColumn(self,EnumSong.COMMENT  ,"Comment") )
         self.columns[-1].setWidthByCharCount(20)
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
         self.columns.append( TableColumn(self,EnumSong.DATEADDED,"Date Added") )
         self.columns[-1].text_transform = lambda song,index: song[EnumSong.DATEADDEDS]
         self.columns[-1].setWidthByCharCount(16)
@@ -115,8 +121,9 @@ class SongTable(LargeTable):
         self.columns.append( TableColumn(self,EnumSong.SONGID   ,"ID#") )
         self.columns[-1].text_transform = lambda song,index: unicode(song.id)
         self.columns[-1].setWidthByCharCount(22)
-        self.columns.append( TableColumn(self,EnumSong.PATH     ,"Path") )
+        self.columns.append( EditColumn(self,EnumSong.PATH     ,"Path") )
         self.columns[-1].setWidthByCharCount(30)
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
         self.columns.append( TableColumn(self,EnumSong.EQUILIZER,"Volume Eq") )
         self.columns[-1].setShortName("Eq")
         self.columns[-1].setWidthByCharCount(10)
@@ -130,14 +137,17 @@ class SongTable(LargeTable):
         self.columns[-1].setWidthByCharCount(7)
         self.columns[-1].setTextAlign(Qt.AlignRight)
         self.columns[-1].setDefaultSortReversed(True)
-        self.columns.append( TableColumn(self,EnumSong.LANG    ,"Language") )
+        self.columns.append( EditColumn(self,EnumSong.LANG    ,"Language") )
         self.columns[-1].setShortName("LANG")
         self.columns[-1].setWidthByCharCount(15)
-        self.columns.append( TableColumn(self,EnumSong.COMPOSER    ,"Composer") )
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
+        self.columns.append( EditColumn(self,EnumSong.COMPOSER    ,"Composer") )
         self.columns[-1].setWidthByCharCount(15)
-        self.columns.append( TableColumn(self,EnumSong.SOURCELIB,"Source Library") )
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
+        self.columns.append( EditColumn(self,EnumSong.SOURCELIB,"Source Library") )
         self.columns[-1].setShortName("Src")
         self.columns[-1].setWidthByCharCount(15)
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
         
         self.columns_setDefaultOrder( self.columns_getOrder() )
         
@@ -173,7 +183,12 @@ class SongTable(LargeTable):
             self.data.sort(key = g, reverse=rev)
         
         self.update()
-        
+     
+    def text_cell_modified(self,rows,text):
+        #print rows,text
+        for row in rows:
+            self.modify_song.emit(self.data[row])
+     
 class TableColumn_Rating(TableColumn): 
     """
         A custom table column for displaying the current rating
@@ -398,10 +413,10 @@ if __name__ == "__main__":
     
     app = QApplication(sys.argv)
     
-    style_set_custom_theme("D:\\Dropbox\\Scripting\\PyModule\\GlobalModules\\src\\","default",app)
+    #style_set_custom_theme("D:\\Dropbox\\Scripting\\PyModule\\GlobalModules\\src\\","default",app)
 
     from Song_LibraryFormat import *
-    path = "C:\\Users\\Nick\\AppData\\Roaming\\ConsolePlayer\\music.libz"
+    path = r"D:\Dropbox\ConsolePlayer\user\music.libz"
     
     t1 = SongTable()
     t1.setData(musicLoad_LIBZ(path))

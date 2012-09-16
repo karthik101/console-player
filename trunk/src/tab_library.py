@@ -82,7 +82,8 @@ class LTable_Library(SongTable):
         """
         return self.data[row]==MpGlobal.Player.CurrentSong
     
-    def mouseDoubleClick(self,row,col):
+    # def mouseDoubleClick(self,row,col):
+    def transfer_selection_to_next(self):
         sel = self.getSelection()
         #sel_list = list(self.selection) # get the list of selection indexes
         #sel_list.sort(reverse=True)     # sort the list in reverse order and being removing one by one
@@ -175,6 +176,8 @@ class LTable_Library(SongTable):
             if len(self.selection) == 1:
                 contextMenu.addAction("Add Song to Pool",self.__Action_addSelectionToPool)
                 
+                contextMenu.addAction("Play Song Next",self.transfer_selection_to_next)
+                
                 contextMenu.addAction("Edit Song",self.__Action_editSong__)
                 contextMenu.addAction("DELETE Song",self.__Action_deleteSingle)
             
@@ -184,6 +187,7 @@ class LTable_Library(SongTable):
                     act_ban = contextMenu.addAction("Banish")
             else:
                 contextMenu.addAction("Add Selection to Pool",self.__Action_addSelectionToPool)
+                contextMenu.addAction("Play Selection Next",self.transfer_selection_to_next)
                 contextMenu.addAction("Edit Songs",self.__Action_editSong__)
                 
                 if item_zero.banish:

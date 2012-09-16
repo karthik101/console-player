@@ -578,6 +578,12 @@ class MainWindow(QMainWindow):
         #if not Settings.DEVMODE:
         #    toggle_DebugText_Show()
         #TODO RENAME THE ASSOCIATED FUNCTIONS TO THE APPROPRIATE NAMES, ESCAPE NO LONGER TOGGLE DEBUG
+        obj = QApplication.focusWidget()
+        if isinstance(obj,LargeTable):
+            lockobj = obj.hasEditLock();
+            if lockobj:
+                return lockobj.editor_close();
+            
         if self.isFullScreen():
             self.showNormal()
         else:   

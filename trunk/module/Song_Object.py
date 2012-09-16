@@ -173,7 +173,8 @@ class Song(list):
                      EnumSong.EQUILIZER,
                      EnumSong.SCORE,
                    ];        
-            
+    def __len__(self):
+        return EnumSong.SELECTED + 1
     def __init__(self,varient="",DRIVELIST=[],SOURCE="music",DATEFMT="%Y/%m/%d %H:%M"):
         """
             Provides 4 different ways to make a new song
@@ -184,6 +185,8 @@ class Song(list):
             or pass in a Song, and an exact copy will be made.
         """
         super(Song,self).__init__([0]*EnumSong.SONGDATASIZE)
+        for i in range(EnumSong.STRINGTERM):
+            self[i] = "" # init all string terms to a default string
         self.id = hex64(0);
         self.md5 = "";
         self.banish = False
@@ -198,30 +201,8 @@ class Song(list):
             self.id = varient.id
             self.md5 = varient.md5
             self.banish = varient.banish
-            self[EnumSong.PATH]      = varient[EnumSong.PATH]
-            self[EnumSong.ARTIST]    = varient[EnumSong.ARTIST]
-            self[EnumSong.TITLE]     = varient[EnumSong.TITLE]
-            self[EnumSong.ALBUM]     = varient[EnumSong.ALBUM]
-            self[EnumSong.GENRE]     = varient[EnumSong.GENRE]
-            self[EnumSong.DATESTAMP] = varient[EnumSong.DATESTAMP]
-            self[EnumSong.DATEVALUE] = varient[EnumSong.DATEVALUE]
-            self[EnumSong.COMMENT]   = varient[EnumSong.COMMENT]
-            self[EnumSong.RATING]    = varient[EnumSong.RATING]
-            self[EnumSong.LENGTH]    = varient[EnumSong.LENGTH]
-            self[EnumSong.SONGINDEX] = varient[EnumSong.SONGINDEX]
-            self[EnumSong.PLAYCOUNT] = varient[EnumSong.PLAYCOUNT]
-            self[EnumSong.SKIPCOUNT] = varient[EnumSong.SKIPCOUNT]
-            self[EnumSong.FILESIZE]  = varient[EnumSong.FILESIZE]
-            self[EnumSong.FREQUENCY] = varient[EnumSong.FREQUENCY]
-            self[EnumSong.BITRATE]   = varient[EnumSong.BITRATE]
-            self[EnumSong.SPECIAL]   = varient[EnumSong.SPECIAL]
-            self[EnumSong.SELECTED]  = varient[EnumSong.SELECTED]
-            self[EnumSong.DATEADDEDS]= varient[EnumSong.DATEADDEDS]
-            self[EnumSong.DATEADDED] = varient[EnumSong.DATEADDED]
-            self[EnumSong.YEAR ]     = varient[EnumSong.YEAR]
-            self[EnumSong.EQUILIZER ]= varient[EnumSong.EQUILIZER]
-            self[EnumSong.SCORE     ]= varient[EnumSong.SCORE]
-            self[EnumSong.SOURCELIB ]= varient[EnumSong.SOURCELIB]
+            for i in range(len(self)):
+                self[i] = varient[i] # copy all fields
             return;
             
         elif type(varient) == str or type(varient) == unicode: # TODO: of type basestring
@@ -460,13 +441,16 @@ class Song(list):
 
         # ######################################
         # generate string and number values
-        q = lambda x: x.replace("\"","\\\"");
-
         sfmt = ""
         nfmt = ""
         
         for field in Song.__repr_str__:
-            sfmt += "\"%s\","%q(self[field])
+            item = self[field]
+            # if it is someow not a string, then the value is wrong.
+            if not isinstance(item,(str,unicode)):
+                item = ""
+            # escape any internal quotes, then wrap in quotes
+            sfmt += "\"%s\","%(item.replace("\"","\\\""))
             
         for field in Song.__repr_num__:
             nfmt += "%d,"%self[field]

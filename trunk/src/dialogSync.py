@@ -14,6 +14,37 @@ from datatype_hex64 import *
 
 from datatype_hex64 import *
 
+"""
+Del : 9
+0H:/music/R.E.M\R.E.M._-_Orange_crush.mp3
+1H:/music/R.E.M\r.e.m._-_nightswimming.mp3
+2H:/music/t.o.L\Gothic_Emily\t.o.L_Baggie_in_the_dollhouse_-_edit.flac
+3H:/music/R.E.M\Automatic_for_the_People\r.e.m._-_man_on_the_moon.mp3
+4H:/music/R.E.M\Eponymous\R.E.M._-_It's_the_End_of_the_World_as_W.mp3
+5H:/music/R.E.M\Out_of_Time\r.e.m._-_losing_my_religion.mp3
+6H:/music/Seatbelts\COWGIRL_ED_O.S.T\cowboy_bebop_movie_-_cowgirl_ed_01_-_goodnight_julia.mp3
+7H:/music/Seatbelts\COWGIRL_ED_O.S.T\Cowboy_Bebop_Movie_-_Cowgirl_Ed_02_-_PAPA_Plastic.mp3
+8H:/music/Seatbelts\COWGIRL_ED_O.S.T\Cowboy_Bebop_Movie_-_Cowgirl_Ed_05_-_Slipper_Sleaze.mp3
+Copy: 9
+0(u'D:/Music/Japanese/OMNIBUS/[2007.11.21] [Omnibus] Gothic Emily/t.o.L Baggie in the dollhouse - edit.flac.flac', 
+  u'H:/music/t.o.L\\Gothic_Emily\\t.o.L_Baggie_in_the_dollhouse_-_edit.flac.flac')
+1(u'D:\\Music\\misc\\r\\r.e.m. - losing my religion.mp3', 
+  u'H:/music/R.E.M.\\Out_of_Time\\r.e.m._-_losing_my_religion.mp3')
+2(u'D:\\Music\\Misc\\R\\R.E.M. - Orange crush.mp3', u'H:/music/R.E.M.\\R.E.M._-_Orange_crush.mp3')
+3(u'D:\\Music\\misc\\r\\r.e.m. - nightswimming.mp3', 
+  u'H:/music/R.E.M.\\r.e.m._-_nightswimming.mp3')
+4(u'D:\\Music\\misc\\r\\r.e.m. - man on the moon.mp3', 
+  u'H:/music/R.E.M.\\Automatic_for_the_People\\r.e.m._-_man_on_the_moon.mp3')
+5(u"D:\\Music\\japanese\\cowboy bebop ost - yoko kanno & the seatbelts\\6 - cowboy bebop - ost4 - knockin' on heaven's door\\6.3 - cowboy bebop - cowgirl ed\\cowboy bebop movie - cowgirl ed 01 - goodnight julia.mp3", 
+  u'H:/music/Seatbelts\\COWGIRL_ED_O.S.T.\\cowboy_bebop_movie_-_cowgirl_ed_01_-_goodnight_julia.mp3')
+6(u"D:\\Music\\Misc\\R\\R.E.M. - It's the End of the World as W.mp3", 
+  u"H:/music/R.E.M.\\Eponymous\\R.E.M._-_It's_the_End_of_the_World_as_W.mp3")
+7(u"D:\\Music\\Japanese\\Cowboy Bebop OST - Yoko Kanno & The Seatbelts\\6 - Cowboy Bebop - OST4 - Knockin' on Heaven's Door\\6.3 - Cowboy Bebop - Cowgirl Ed\\Cowboy Bebop Movie - Cowgirl Ed 02 - PAPA Plastic.mp3",
+  u'H:/music/Seatbelts\\COWGIRL_ED_O.S.T.\\Cowboy_Bebop_Movie_-_Cowgirl_Ed_02_-_PAPA_Plastic.mp3')
+8(u"D:\\Music\\Japanese\\Cowboy Bebop OST - Yoko Kanno & The Seatbelts\\6 - Cowboy Bebop - OST4 - Knockin' on Heaven's Door\\6.3 - Cowboy Bebop - Cowgirl Ed\\Cowboy Bebop Movie - Cowgirl Ed 05 - Slipper Sleaze.mp3", 
+  u'H:/music/Seatbelts\\COWGIRL_ED_O.S.T.\\Cowboy_Bebop_Movie_-_Cowgirl_Ed_05_-_Slipper_Sleaze.mp3')
+"""
+
 
 
 from SystemPathMethods import *
@@ -439,7 +470,11 @@ class SyncFiles(QThread):
             self.parent.emit(SIGNAL("SYNC_SET_TEXT"),self.parent,s%p)
             
         print "Del : %d"%len(self.listd)
+        for d in self.listd:
+            print d
         print "Copy: %d"%len(self.listc)    
+        for c in self.listc:
+            print c
     
     def _get_Dir_List(self):
         
