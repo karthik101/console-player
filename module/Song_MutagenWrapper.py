@@ -14,6 +14,7 @@ from mutagen.mp4 import MP4
 from mutagen.asf import ASF # *.wma
 from mutagen.flac import FLAC
 
+import traceback
 
 from SystemPathMethods import *
 from SystemDateTime import DateTime
@@ -49,6 +50,7 @@ def id3_createSongFromPath(path):
         if fext in ext_flac:
             id3_flac_createSongFromPath(song)
     except Exception as e:
+        print traceback.format_exc()
         print " *** Error [%s] Reading Tags for Type: %s"%(song, fext)
         for i in e:
             print "%s"%str(i)
@@ -160,6 +162,7 @@ def safe_id3_update( song ) :
     try :
         id3_updateSongInfo(song);
     except Exception as e:
+        print "***Errors found"
         format_exc(e)
     
 def id3_updateSongInfo( song ):

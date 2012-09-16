@@ -519,8 +519,9 @@ class LargeTableCore(QWidget):
             c = 0
             while self.offset_row_index+c < len(self.data) and _y < y+h:
                 item_row = self.offset_row_index+c
-                item = self.getItem(item_row,col.index)
                 
+                item = self.getItem(item_row,col.index)
+                #print col.index,item
                 col_width = col.width
                 if col == col_list[-1] and self.enable_last_column_expanding: # the last row
                     _cw = x+w-_cx
@@ -586,7 +587,7 @@ class LargeTableCore(QWidget):
             i can customize some colors by changing the brush besfore it is returned
             
             alt can be set to a non-Falsey value to control colors to an even greater degree
-            
+            palette_brush(QPalette.Highlight)
         """
         brush = self.palette().brush(self.color_group,color_type)
         color = brush.color()
@@ -1441,7 +1442,9 @@ class LargeTableBase(LargeTableCore):
         return None
     
     def mouseDoubleClick(self,row,col):
-        print row,col
+        if col < len(self.columns):
+            self.columns[col].mouseDoubleClick(row)
+        #print row,col
         
     def mouseReleaseRightHeader(self,event):
         print "header click"
@@ -1531,6 +1534,7 @@ class LargeTableBase(LargeTableCore):
                     item = self.data[i][j]
             elif j in self.data[i]:     # otherwise assume the data type implements __getitem__ and __contains__
                 item = self.data[i][j]
+            #print j,j in self.data[i]
         return item
         
     def getSelection(self):
@@ -1752,7 +1756,6 @@ class TableColumn(object):
             this color, if set, will be used only if none of the complex rules match
         """
         self.cellTextColor = color
-        
     def addCellHighlightComplexRule(self,fncptr,color):
         """ a complex rule takes the form of a function or lambda and a color 
             the function or lambda accepts a cell item (from the current column)
@@ -1788,7 +1791,7 @@ class TableColumn(object):
     def getCellTextColor(self,item):  
         """
             return the color to use for text in the current cell.
-            item is the item found at self.index in a row of the table data.
+            item is the item found at self. index in a row of the table data.
             it is the value before the text transform function is called.
             
         """
@@ -1807,7 +1810,7 @@ class TableColumn(object):
     def getCellHighlight(self,item):  
         """
             return the color to use for highlight in the current cell.
-            item is the item found at self.index in a row of the table data.
+            item is the item found at self. index in a row of the table data.
             it is the value before the text transform function is called.
             
         """
@@ -1828,7 +1831,7 @@ class TableColumn(object):
     def paintItem(self,col,painter,row,item,x,y,w,h):
         """
             the item 'item' has bin given a rectangle at point x,y with width and height w,h
-            this item corresponds to self.index in self.parent.data[row]
+            this item corresponds to self. index in self.parent.data[row]
             
             paintItem is responsible for rendering this item within the provided space
             if needed the painter item's clipping region could be adjusted.
@@ -1858,7 +1861,7 @@ class TableColumn(object):
             _cw would be the new clipping width, x is the value passed into the function paintItem
         """
         
-        #print self.parent.data[row][self.index]
+        #print self.parent.data[row][self. index]
         #print type(item)
             
         self.paintItem_text(col,painter,row,item,x,y,w,h)
@@ -1951,6 +1954,8 @@ class TableColumn(object):
         """
         max_width = self.minimum_width;
         for row in range(self.parent.offset_row_index,self.parent.offset_row_index+self.parent.rowCount()):
+           
+                
             item = self.parent.getItem(row,self.index)
             row_data = None
             if row < len(self.parent.data):
@@ -2022,6 +2027,31 @@ class TableColumn(object):
         """
         return False
     
+    def mouseDoubleClick(self,row):
+        print "DOUBLE CLICK on COL: %s row #%d: %s"%(self.name,row,self.parent.getItem(row,self.index))
+    
+    def captureKeyboard(self):
+        self.parent.column_keyboard_capture = self
+        
+    def releaseKeyboard(self):
+        # only release the kyboard if i currently own it.
+        if self.parent.column_keyboard_capture  == self:
+            self.parent.column_keyboard_capture = None
+            
+    def keyPressEvent(self,event):
+    
+        """
+        you must fist call "captureKeyboard" for a column to receive key events
+        """
+        pass
+    
+    def editor_start(self,rows):
+        """
+            rows as an iterable set,list tuple ect
+            return true when editing has started
+        """
+        return False
+   
 class TableColumnImage(TableColumn):
     """
         implementation of a TableColumn that draw either a QIcon or QImage
@@ -2081,6 +2111,8 @@ class LargeTable(LargeTableBase):
         self.sbar_alwayshide_ver = False
         self.sbar_autohide_hor = False
         self.sbar_autohide_ver = False
+        
+        self.column_keyboard_capture = None # reference to a column that has captured the keyboard
         
         self.container = QWidget();
         self.sbar_hor  = QScrollBar(Qt.Horizontal)
@@ -2460,7 +2492,12 @@ class LargeTable(LargeTableBase):
         
         # for PageUp/PageDown, Home and End i abuse the fact that setting the value of
         # the scroll bar does 2 things: range check and an update()
-        if event.key() == Qt.Key_PageUp:
+        
+        if self.column_keyboard_capture != None:
+            self.column_keyboard_capture.keyPressEvent(event)  
+        elif event.modifiers()&Qt.ControlModifier:
+            self.keyPressShortcut(event)
+        elif event.key() == Qt.Key_PageUp:
             self.sbar_ver.setValue(self.sbar_ver.value()-self.rowCount())
         elif event.key() == Qt.Key_PageDown:
             self.sbar_ver.setValue(self.sbar_ver.value()+self.rowCount())
@@ -2488,7 +2525,15 @@ class LargeTable(LargeTableBase):
                                   # special keys, shift,ctrl etc are defined as 0x10000XX 
             self.keyPressOther(event)
             self.update()
-            
+    def keyPressShortcut(self,event):
+        """
+            process keys that are pressed as part of a keyboard shortcuts.
+            e.g. you only need to test if the "A" key was pressed to 
+            have the CTRL+A keboard shortcut activated ( didnt phrase that right, it got lost part way through on me)
+        """
+        if event.key() == Qt.Key_A:
+            self.selection = set(range(len(self.data)))
+            self.update()
     def keyPressOther(self,event):
         """
             reimplement in any subclass
@@ -2601,6 +2646,9 @@ class LargeTable(LargeTableBase):
         if len(self.selection) > 0:
             self.mouseDoubleClick(self.selection_last_row_added,0)
 
+    def hasEditLock(self):
+        return self.column_keyboard_capture
+            
 class LargeTableStore(LargeTable):
 
 
@@ -2729,7 +2777,7 @@ if __name__ == '__main__':
     #
     #def custom_paintItem(col,painter,item,x,y,w,h):
     #    """
-    #        paint the data at index 'self.index', in row 'row' of
+    #        paint the data at index 'self. index', in row 'row' of
     #        the parent data array
     #        
     #        if needed this function can be overloaded to provide custom
