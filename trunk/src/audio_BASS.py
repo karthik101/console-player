@@ -194,6 +194,13 @@ class PyBASSPlayer(GenericMediaObject):
         
         self.DSP_SETTINGS = dict_dsp
         
+    def updateDSP(self,dict_dsp):
+        if "updateDSPBlock" in PyBASS.__dict__:
+            print "pybass dsp update"
+            PyBASS.updateDSPBlock(dict_dsp);
+            for key,val in dict_dsp.items():
+                self.DSP_SETTINGS[key] = val;
+        
     def getDSP(self):
         return self.DSP_SETTINGS
         

@@ -12,7 +12,7 @@ def _alert_(value):
     if value:
         new_time = time.time()
         if new_time > __LAST_ALERT_TIME+.3:
-            os.system("echo \a")
+            QApplication.beep()
             __LAST_ALERT_TIME = new_time
     return value    
 
@@ -24,7 +24,7 @@ class CellEditor(QObject):
         self.insert_index = len(default_text)
     
         self.selection_start = 0# range of selection self.buffer[self.selection_start:self.selection_end]
-        self.__selection_end   = 0
+        self.__selection_end   = len(default_text)
     @property
     def selection(self):
         return self.buffer[self.selection_start:self.selection_end]
@@ -83,8 +83,7 @@ class CellEditor(QObject):
         else:    
             self.buffer = self.buffer[:self.insert_index] + text +  self.buffer[self.insert_index:]
             self.insert_index += len(text)
-    def key_pressed(self,qkeyevent):
-        pass
+            
 
     def format_string(self):
         return self.buffer[:self.insert_index] + CellEditor.INSERT_TOKEN +  self.buffer[self.insert_index:]
@@ -93,17 +92,28 @@ class _sigmanager(QObject):
     """ small bug in my implementation, columns are not QObjects
     and therefor cannot have signals bound to them
     """
-    cell_modified = pyqtSignal( set, unicode )        
+    cell_modified = pyqtSignal( set, object )        
         
 class EditColumn(TableColumn):
     #cell_modified = pyqtSignal(set,unicode)
-    def __init__(self,parent,index,name=None):
+    def __init__(self,parent,index,name=None,data_type=unicode):
+        
+        """
+            data_type as built-in (int,unicode,str) or function that accepts a unicode obj 
+            and returns a value to complete: "self.parent.data[row][index] = value"
+            if the casting of self.data_type(unicode) fails then the values in the table
+            will not be updated
+        """
         super(EditColumn,self).__init__(parent,index,name)
         
         self.editor = None
         self.open_editors = set() #  set of row indices to be editing
         
         self.sigmng = _sigmanager()
+        
+        self.data_type = data_type
+        
+        self.text_edit_offset = 0
          
     @property
     def cell_modified(self):
@@ -113,7 +123,7 @@ class EditColumn(TableColumn):
         
         if self.editor != None and row in self.open_editors:
             painter.fillRect(x,y,w,h,self.parent.palette_brush(QPalette.Base))
-            item = self.editor.format_string()
+            item = self.editor.format_string().replace(" ",u"\u00B7")
             sel = self.editor.selection
             if sel: # if there is a selection to highlight
                 #palette_brush(QPalette.Highlight)
@@ -128,11 +138,22 @@ class EditColumn(TableColumn):
                 else:
                     w2 += painter.fontMetrics().width(CellEditor.INSERT_TOKEN)
                 painter.fillRect(x+w1+self.parent.text_padding_left,y,w2,h,self.parent.palette_brush(QPalette.Highlight))
+                
             self.cellTextColor = self.parent.painter_brush_font.color()
-
-        self.paintItem_text(col,painter,row,item,x,y,w,h)
-        self.cellTextColor = None
-        
+            # cehck for index offset
+            _text = self.editor.buffer[:self.editor.insert_index]
+            if _text:
+                _width = painter.fontMetrics().width(_text)
+                _avg = _width/(len(_text))
+                if _width - self.text_edit_offset > w-(_avg*4):
+                    self.text_edit_offset = (w-(_avg*4)) - _width
+            else:
+                self.text_edit_offset = 0
+            self.paintItem_text(col,painter,row,item,x+self.text_edit_offset,y,w-self.text_edit_offset,h)
+            self.cellTextColor = None
+        else:
+            self.paintItem_text(col,painter,row,item,x,y,w,h)
+         
     def keyPressEvent(self,event):
         mod = event.modifiers()
         _c = mod&Qt.ControlModifier
@@ -150,12 +171,19 @@ class EditColumn(TableColumn):
             elif event.key() == Qt.Key_A:
                 self.editor.selection_all();
         # save and being editing the next sell with Tab
-        elif event.key() in (Qt.Key_Tab,Qt.Key_Backtab):   
+        elif event.key() in (Qt.Key_Tab,Qt.Key_Down):   
             # if we are editing one row at a time TAB can sequentially move through all rows
             if len(self.open_editors) == 1:
-                row = list(self.open_editors)[0]
-                if   event.key() == Qt.Key_Tab     : row += 1
-                else                               : row -= 1
+                row = list(self.open_editors)[0] + 1
+                # if r is still withing range
+                self.editor_save()
+                if 0 <= row < len(self.parent.data):
+                    default_text = self.parent.getItem(row,self.index)
+                    self.editor_start({row,},default_text)
+        elif event.key() in (Qt.Key_Backtab,Qt.Key_Up):   
+            # if we are editing one row at a time TAB can sequentially move through all rows
+            if len(self.open_editors) == 1:
+                row = list(self.open_editors)[0] - 1
                 # if r is still withing range
                 self.editor_save()
                 if 0 <= row < len(self.parent.data):
@@ -196,21 +224,36 @@ class EditColumn(TableColumn):
         else:
             self.editor.insert(event.text())
         self.parent.update()
-    
-        
+         
     def mouseDoubleClick(self,row):
         # todo open/close editor should be moved to it's own function
+
+        opts = self.get_default_opts(row)
+        if opts:
+            self.editor_start(*opts)
         
+    def get_default_opts(self,row):
+        """
+            row as an integer index.
+            return the default options,
+            the selection pool and default text 
+            for editing
+        """
         temp = set()
         sel = self.parent.selection
+        
         if len(sel) > 0:
             temp = set(sel)
+            
         temp.add(row)
         default_text = self.parent.getItem(row,self.index)
+        
         for row in temp:
             if row < 0 or row > len(self.parent.data):
-                return
-        self.editor_start(temp,default_text)
+                return None
+                
+        return temp,default_text
+        
    
     def mouseClick(self,row_index,posx,posy):
         pass
@@ -225,16 +268,24 @@ class EditColumn(TableColumn):
         #for row in self.open_editors:
         #    if self.parent.getItem(row,self.index) != default_text:
         #        default_text = ""
-        self.editor = CellEditor(text)  
+        self.editor = CellEditor(unicode(text))  
  
     def editor_save(self):
         """
             save the modified buffer to 'index; of each row in the data set
         """
+        print self.data_type,self.editor.buffer
+        try:
+            value = self.data_type(unicode(self.editor.buffer).strip())
+        except:
+            self.editor_close()
+            print "fail"
+            return
+            
         for row in self.open_editors:
-            self.parent.data[row][self.index] = self.editor.buffer
+            self.parent.data[row][self.index] = value
         self.parent.update()
-        self.cell_modified.emit(self.open_editors,unicode(self.editor.buffer))
+        self.cell_modified.emit(self.open_editors,value)
         self.editor_close()
         
     def editor_close(self):
@@ -246,7 +297,7 @@ class EditColumn(TableColumn):
         self.open_editors = set() # clear all rows that are being edited
         self.releaseKeyboard()
         self.parent.update()
-          
+        
 if __name__ == '__main__':    
     
     app = QApplication(sys.argv)

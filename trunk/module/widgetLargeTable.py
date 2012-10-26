@@ -148,6 +148,8 @@ class LargeTableCore(QWidget):
         self.rowTextColor_complex_list = [] # the first item in the tuple is a lambda or function that accepts a row index                             
         self.rowTextColor_simple_list  = [] # the second item in the tuple is a QColor
         
+        self.column_keyboard_capture = None # reference to a column that has captured the keyboard away from the table
+        
         self.refresh.connect(self.update)
         
         self.initColumns()
@@ -843,19 +845,22 @@ class LargeTableCore(QWidget):
         # check for a row click - press
         elif mx > self.data_x and mx < self.data_x2 and my > self.data_y and my < self.data_y2:
             cx,cy = self._mousePosToCellPos(mx,my)
-            r,c = self.positionToRowCol(mx,my)
-            cell_capture = False
-            if c != -1 and r < len(self.data):
-                cell_capture = self.columns[c].mouseClick(r,cx,cy)
-                if cell_capture: # end this function if the cell captured the click
+            row,col = self.positionToRowCol(mx,my)
+
+            if col != -1 and row < len(self.data):
+                # end this function if the cell captured the click
+                if self.columns[col].mouseClick(row,cx,cy): 
                     return
-                    
+            # if a cell editor is open send the mouse event to that cell
+            if self.column_keyboard_capture:
+                self.column_keyboard_capture.mouseClickCapture(event,row,col)
+               
             self.mouse_pos_drag_start_x = mx; # used when trying to start a drag
             self.mouse_pos_drag_start_y = my;
         
-            row = (my-self.data_y) / self.row_height # each row is row_height tall, so row calculation is easy
-            row += self.offset_row_index
-            
+            #row = (my-self.data_y) / self.row_height # each row is row_height tall, so row calculation is easy
+            #row += self.offset_row_index
+   
             if row in self.selection:
                 if event.buttons() == Qt.LeftButton:
                     self.selection_defer = True # update selection on mouse release intead
@@ -2012,6 +2017,18 @@ class TableColumn(object):
         """
         pass
     
+    def mouseClickCapture(self,event=None,row=-1,col=-1):
+        """
+            after calling captureKeyboard
+            mouse events will be sent to this function
+            default : close any open editors
+            if the column with the editor is set up to accept
+            mouse events thenthis function will never be called
+            when a click on that column happens
+        """
+        if self.parent.column_keyboard_capture  == self:
+            self.editor_close()
+        
     def mouseClick(self,row_index,posx,posy):
         """
             Perform a mouse click on a cell
@@ -2034,7 +2051,7 @@ class TableColumn(object):
         self.parent.column_keyboard_capture = self
         
     def releaseKeyboard(self):
-        # only release the kyboard if i currently own it.
+        # only release the keyboard if i currently own it.
         if self.parent.column_keyboard_capture  == self:
             self.parent.column_keyboard_capture = None
             
@@ -2051,6 +2068,9 @@ class TableColumn(object):
             return true when editing has started
         """
         return False
+    def editor_close(self):    
+        pass
+        
    
 class TableColumnImage(TableColumn):
     """
@@ -2112,7 +2132,7 @@ class LargeTable(LargeTableBase):
         self.sbar_autohide_hor = False
         self.sbar_autohide_ver = False
         
-        self.column_keyboard_capture = None # reference to a column that has captured the keyboard
+        
         
         self.container = QWidget();
         self.sbar_hor  = QScrollBar(Qt.Horizontal)
@@ -2650,14 +2670,16 @@ class LargeTable(LargeTableBase):
         return self.column_keyboard_capture
             
 class LargeTableStore(LargeTable):
-
-
+    # todo, started and never finished.
+    # table that allows 
+    # __getitem__ and __setitem__ to modify data.
+    
     def __init__(self,parent=None,cols=4,rows=100):
         super(LargeTableStore,self).__init__(parent);
         
         self.data = []
         
-    #use __getitem__ and __setitem__ tomodify data.
+    
             
 class MimeData(QMimeData):
     custom_data = {}    # dictionary which houses the mimetype=>data

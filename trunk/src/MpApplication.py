@@ -38,7 +38,7 @@ from datatype_hex64 import *
 from widgetLargeTable import LargeTable
 
 from table_playlist import *
-
+import DSP
 from frame_main import *
 
 from tab_explorer import * 
@@ -199,8 +199,11 @@ class MainWindow(QMainWindow):
         self.txt_debug.setEnabled(True)
         #self.txt_debug.setMaximumHeight(320)
         self.txt_debug.setReadOnly(True)
+        self.zbpeq = DSP.WidgetOctaveEquilizer();
+        self.zbpeq.hide()
         
         self.spt_left.addWidget(self.tabMain)
+        self.spt_left.addWidget(self.zbpeq)
         self.spt_left.addWidget(self.txt_debug)
 
         self.setCentralWidget(self.splitter)
@@ -816,6 +819,9 @@ def init_postMainWindow():
     if Settings.RELEASE:
         sys.stdout = MpSTDDebug()
         sys.stderr = MpSTDDebug()
+        
+    #TODO zbpeq eq - this needs to be moved to a better place:
+    MpGlobal.Window.zbpeq.gain_updated.connect(MpGlobal.Player.setEQGain);
 
 def init_MenuBar(window):
         # Main Menues

@@ -26,8 +26,8 @@ class SongTable(LargeTable):
     color_text_banish = QColor(128,128,128)
     
 
-    date_mark_1 = 0 # time corresponding to the start of the day
-    date_mark_2 = 0 # time corresponding to 14 days ago or so.
+    date_mark_1 = 0 # time corresponding to the start of the day as integer time stamp
+    date_mark_2 = 0 # time corresponding to 14 days ago or (whatever needs to be defined.
 
     rating_mouse_tracking = True;
     
@@ -113,11 +113,13 @@ class SongTable(LargeTable):
         self.columns[-1].text_transform = lambda song,index: song[EnumSong.DATEADDEDS]
         self.columns[-1].setWidthByCharCount(16)
         self.columns[-1].setTextAlign(Qt.AlignRight)
-        self.columns.append( TableColumn(self,EnumSong.YEAR     ,"Year") )
+        self.columns.append( EditColumn(self,EnumSong.YEAR     ,"Year",int) )
         self.columns[-1].setWidthByCharCount(4)
         self.columns[-1].setDefaultSortReversed(True)
-        self.columns.append( TableColumn(self,EnumSong.SONGINDEX,"Album Index") )
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
+        self.columns.append( EditColumn(self,EnumSong.SONGINDEX,"Album Index",int) )
         self.columns[-1].setWidthByCharCount(11)
+        self.columns[-1].cell_modified.connect(self.text_cell_modified)
         self.columns.append( TableColumn(self,EnumSong.SONGID   ,"ID#") )
         self.columns[-1].text_transform = lambda song,index: unicode(song.id)
         self.columns[-1].setWidthByCharCount(22)
@@ -144,10 +146,10 @@ class SongTable(LargeTable):
         self.columns.append( EditColumn(self,EnumSong.COMPOSER    ,"Composer") )
         self.columns[-1].setWidthByCharCount(15)
         self.columns[-1].cell_modified.connect(self.text_cell_modified)
-        self.columns.append( EditColumn(self,EnumSong.SOURCELIB,"Source Library") )
+        self.columns.append( TableColumn(self,EnumSong.SOURCELIB,"Source Library") )
         self.columns[-1].setShortName("Src")
         self.columns[-1].setWidthByCharCount(15)
-        self.columns[-1].cell_modified.connect(self.text_cell_modified)
+        
         
         self.columns_setDefaultOrder( self.columns_getOrder() )
         
@@ -184,8 +186,9 @@ class SongTable(LargeTable):
         
         self.update()
      
-    def text_cell_modified(self,rows,text):
+    def text_cell_modified(self,rows,value):
         #print rows,text
+        # value could be an integer or unicode value
         for row in rows:
             self.modify_song.emit(self.data[row])
      

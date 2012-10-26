@@ -6,10 +6,13 @@ import os
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+import DSP
+
 isPosix = os.name == 'posix'
 
 from widgetLineEdit import LineEdit
 from widgetLargeTable import *
+from TableEditColumn import EditColumn
 from Song_Table import *
 from Song_Search import *
 from Song_FileManager import *
@@ -76,13 +79,18 @@ class LTable_Library(SongTable):
         b = lambda row: self.data[row].banish
         self.addRowTextColorComplexRule(b,self.color_text_banish)
         
+        self.__next_edit_col = -1;  # need a way to store which row/col to edit
+        self.__next_edit_row = -1;  # when using right click menu
+        
     def __rt_currentSong(self,row):
         """ return true when the given song is the current song playing
             use for highlighting the row
         """
         return self.data[row]==MpGlobal.Player.CurrentSong
     
-    # def mouseDoubleClick(self,row,col):
+    def mouseDoubleClick(self,row,col):
+        self.transfer_selection_to_next();
+        
     def transfer_selection_to_next(self):
         sel = self.getSelection()
         #sel_list = list(self.selection) # get the list of selection indexes
@@ -161,7 +169,8 @@ class LTable_Library(SongTable):
 
         cx,cy = self._mousePosToCellPos(mx,my)
         row,cur_c = self.positionToRowCol(mx,my)
-        
+        self.__next_edit_col = cur_c;
+        self.__next_edit_row = row;
         act_res = None # retore banned songs
         act_ban = None # banish songs
         
@@ -175,10 +184,10 @@ class LTable_Library(SongTable):
 
             if len(self.selection) == 1:
                 contextMenu.addAction("Add Song to Pool",self.__Action_addSelectionToPool)
-                
                 contextMenu.addAction("Play Song Next",self.transfer_selection_to_next)
+                if type(self.columns[cur_c])==EditColumn: # if it is an editable column give the option
+                    contextMenu.addAction("Edit Song \"%s\""%self.columns[cur_c].name,self.__Action_editSong2__)
                 
-                contextMenu.addAction("Edit Song",self.__Action_editSong__)
                 contextMenu.addAction("DELETE Song",self.__Action_deleteSingle)
             
                 if item_zero.banish:
@@ -188,7 +197,8 @@ class LTable_Library(SongTable):
             else:
                 contextMenu.addAction("Add Selection to Pool",self.__Action_addSelectionToPool)
                 contextMenu.addAction("Play Selection Next",self.transfer_selection_to_next)
-                contextMenu.addAction("Edit Songs",self.__Action_editSong__)
+                if type(self.columns[cur_c])==EditColumn: # if it is an editable column give the option
+                    contextMenu.addAction("Edit Song \"%s\""%self.columns[cur_c].name,self.__Action_editSong2__)
                 
                 if item_zero.banish:
                     act_res = contextMenu.addAction("Restore ALL")
@@ -233,13 +243,19 @@ class LTable_Library(SongTable):
         if len(self.selection) > 0:
             row = list(self.selection)[0]
             UpdateStatusWidget(3,self.data[row][MpMusic.PATH])
-            
+    
     def keyReleaseOther(self,event):
+   
+        #if event.key() not in (Qt.Key_Tab,Qt.Key_Backtab):
         MpGlobal.Window.tab_library.txt_searchBox.setFocus()
         MpGlobal.Window.tab_library.txt_searchBox.keyReleaseEvent(event)
      
+    def __Action_editSong2__(self):
+        opts = self.columns[self.__next_edit_col].get_default_opts(self.__next_edit_row)
+        self.columns[self.__next_edit_col].editor_start(*opts)
+        
     def __Action_editSong__(self):
-
+        """ this is the old song edit, using a dialog """
         dialog = dialogSongEdit.SongEditWindow(MpGlobal.Window)
 
         dialog.initData(self.getSelection())

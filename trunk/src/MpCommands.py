@@ -66,6 +66,7 @@ def initCommandList():
               "log"      : cmd_log,
 
               "xx"       : cmd_xx,
+              "eq"       : cmd_eq,
               "eval"     : cmd_eval,
               "exec"     : cmd_exec,
               "explorer" : cmd_explorer,
@@ -1185,7 +1186,32 @@ def cmd_xx(input):
             song.md5 = get_md5(song[MpMusic.PATH])        
             debug( "%s - %s"%(song.md5,song) )
             MpGlobal.Application.processEvents()
-          
+       
+
+def cmd_eq(input):
+    """
+    Command: EQ
+        Usage: eq <str>
+        str : 
+            'show'    : show the eq
+            'hide'    : hide the eq
+            'disable' : the next loaded song will not use the EQ
+            'enable'  : the next loaded song will use the eq.
+            'state'   : print whether enabled/disabled.
+    """
+    
+    if input.string == 'disable':
+        del MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"]
+        print "the next loaded song will not use dsp"
+    elif input.string =='enable':
+        MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"] = MpGlobal.Window.zbpeq.gain
+        MpGlobal.Window.zbpeq.show()
+    elif input.string =='show':
+        MpGlobal.Window.zbpeq.show()
+    elif input.string =='hide':
+        MpGlobal.Window.zbpeq.show()  
+    print "EQ IS ENABLED: %s"% ("ZBPEQ" in MpGlobal.Player.mp.DSP_SETTINGS)
+       
 def cmd_eval(input):
         # ##----1----2----3----4----5----6----7----8----9----0----1----2----3----4----5----6
     """
