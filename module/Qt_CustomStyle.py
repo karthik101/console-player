@@ -203,9 +203,10 @@ def dict_update_palette(dict_vars):
     c2  = color_stringToQColor( dict_vars["theme_p_mid"] )
     c3  = color_stringToQColor( dict_vars["theme_p_dark"] )
     c4  = color_stringToQColor( dict_vars["theme_p_vdark"] )
+    cbg  = color_stringToQColor( dict_vars["theme_bg_color"] )
     c2a = color_avg_rgb(c1,c2)
     c2b = color_avg_rgb(c2,c3)
-    
+    print "my theme color", dict_vars["theme_bg_color"]
     for cg in CG:
         p.setColor( cg, QPalette.Light    , c1   )
         p.setColor( cg, QPalette.Midlight , c2a  )
@@ -213,6 +214,7 @@ def dict_update_palette(dict_vars):
         p.setColor( cg, QPalette.Mid      , c2b  )
         p.setColor( cg, QPalette.Dark     , c3   )
         p.setColor( cg, QPalette.Shadow   , c4   )
+        p.setColor( cg, QPalette.Window   , cbg  )
         
     #c1  = color_stringToQColor( dict_vars["theme_s_mid"] )
     #c2  = color_stringToQColor( dict_vars["theme_s_dark"] )

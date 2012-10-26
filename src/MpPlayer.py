@@ -529,7 +529,11 @@ class MediaManager(object):
         #print "[%d/32767] EQ VALUE: %d VOL: %d"%(self.CurrentSong[EnumSong.EQUILIZER],self.equilizer,value)
             
         self.mp.setVolume(value)
-        
+    
+    def setEQGain(self,gdb_list):
+        if isinstance(self.mp,PyBASSPlayer):
+            print "User Updated EQ : %s"%' '.join(["%.2f"%f for f in gdb_list])
+            self.mp.updateDSP( {"ZBPEQ": gdb_list} )
     def setStopNext(self,value):
         self.stopNext = value
         MpGlobal.Window.emit(SIGNAL("SET_CONTBUTTON_ICON"),self.stopNext)

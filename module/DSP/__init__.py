@@ -1,0 +1,1 @@
+from peqwidget import WidgetOctaveEquilizer
