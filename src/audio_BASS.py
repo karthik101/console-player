@@ -81,6 +81,7 @@ class PyBASSPlayer(GenericMediaObject):
                 # the load still fails, claiming the path does not exist.
                 # by simply re encoding the file path and checking
                 # if the file exists again solves the issue. strange.
+
                 for i in range(5):
                     path_utf16 = toUTF16(file);
                     fex = PyBASS.utf16_fexists(path_utf16)
@@ -93,11 +94,15 @@ class PyBASSPlayer(GenericMediaObject):
                         break;
                 else:
                     print "for fell thru on load."
+                    raise IOError("Failed to load file");
             else:
                 print "file not found"
                 #debug(" *** File Not Found;")
                 #debug("PATH: %s"%file)
+        except IOError:
+            raise IOError("Failed to load file");
         except Exception as e:
+            
             print "VLC instance Error: %s"%(e.args)
             #self.__media__
             #self.__media__ = None;
@@ -196,7 +201,7 @@ class PyBASSPlayer(GenericMediaObject):
         
     def updateDSP(self,dict_dsp):
         if "updateDSPBlock" in PyBASS.__dict__:
-            print "pybass dsp update"
+            #print "pybass dsp update"
             PyBASS.updateDSPBlock(dict_dsp);
             for key,val in dict_dsp.items():
                 self.DSP_SETTINGS[key] = val;

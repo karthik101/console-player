@@ -1201,15 +1201,16 @@ def cmd_eq(input):
     """
     
     if input.string == 'disable':
-        del MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"]
+        if "ZBPEQ" in MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"]:
+            del MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"]
         print "the next loaded song will not use dsp"
     elif input.string =='enable':
-        MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"] = MpGlobal.Window.zbpeq.gain
+        MpGlobal.Player.mp.DSP_SETTINGS["ZBPEQ"] = MpGlobal.Window.zbpeq.getGain()
         MpGlobal.Window.zbpeq.show()
     elif input.string =='show':
         MpGlobal.Window.zbpeq.show()
     elif input.string =='hide':
-        MpGlobal.Window.zbpeq.show()  
+        MpGlobal.Window.zbpeq.hide()  
     print "EQ IS ENABLED: %s"% ("ZBPEQ" in MpGlobal.Player.mp.DSP_SETTINGS)
        
 def cmd_eval(input):

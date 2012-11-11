@@ -198,7 +198,19 @@ class MediaManager(object):
                     if path != '': # if the returned path exists
                         self.CurrentSong[MpMusic.PATH] = path
             #if isPosix: print "   > load"
-            if self.mp.mediaLoad(path) and path != '':
+            try :
+                load_success = self.mp.mediaLoad(path)
+            except IOError:
+                debug("IO error, skipping to next song")
+                debug(unicode(self.CurrentSong))
+                if ( self.CurrentIndex < len(self.playList)-1 ):
+                    # only change the index if in playlist playback mode
+                    if self.playState != MpMusic.PL_NO_PLAYLIST:
+                        self.CurrentIndex += 1
+                        return self.load();
+                return False
+                
+            if load_success and path != '':
                 # if the load was successful update the display info
                 MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEBARMAXVAL"),self.CurrentSong[MpMusic.LENGTH])    
                 MpGlobal.Window.emit(SIGNAL("UPDATE_TIMEBAR"),0)    
@@ -371,9 +383,9 @@ class MediaManager(object):
             #and song[MpMusic.EQUILIZER]==0:
             eqe = song[MpMusic.EQUILIZER]
             eqs = info["DSP_AVERAGE_MAGNITUDE"]
-            if abs(100*float(eqe-eqs)/(max(1,eqe))) > 10.0:
+            if abs(100*float(eqe-eqs)/(max(1,eqe))) > 10.0 and eqs != 0:
                 song[MpMusic.EQUILIZER] = eqs
-            print "New EQ: %d"%info["DSP_AVERAGE_MAGNITUDE"]
+                print "New EQ: %d"%info["DSP_AVERAGE_MAGNITUDE"]
        
         
         if Settings.LOG_HISTORY:
